@@ -1,0 +1,6 @@
+framework module SquareMobileCommerceSDK {
+  umbrella header "SquareMobileCommerceSDK.h"
+
+  export *
+  module * { export * }
+}

@@ -15,8 +15,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  square_mobile_commerce_sdk_flutter_plugin: 26347255c39790e1b331a9b2037e90be3993ed96
+  square_mobile_commerce_sdk_flutter_plugin: 522280d5ce8e3733a5c460cd105d8b3852be628f
 
-PODFILE CHECKSUM: 1e5af4103afd21ca5ead147d7b81d06f494f51a2
+PODFILE CHECKSUM: 0a06a0204dd3c499074b49f5f3b70810d5670e8f
 
 COCOAPODS: 1.5.2
