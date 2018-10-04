@@ -40,6 +40,17 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> onStartCardEntryFlow() async {
+    String result;
+    try {
+      result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow();
+    } on PlatformException {
+      result = 'Failed to get platform version.';
+    }
+
+    print(result);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -48,7 +59,15 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+          child: Column(
+            children: <Widget>[
+              Text('Running on: $_platformVersion\n'),
+              RaisedButton(
+                onPressed: onStartCardEntryFlow,
+                child: Text('Start Checkout'),
+              ),
+            ],
+          ), 
         ),
       ),
     );

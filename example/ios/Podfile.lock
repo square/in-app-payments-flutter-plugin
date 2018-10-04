@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - square_mobile_commerce_sdk_flutter_plugin (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `.symlinks/flutter/ios`)
+  - square_mobile_commerce_sdk_flutter_plugin (from `.symlinks/plugins/square_mobile_commerce_sdk_flutter_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: ".symlinks/flutter/ios"
+  square_mobile_commerce_sdk_flutter_plugin:
+    :path: ".symlinks/plugins/square_mobile_commerce_sdk_flutter_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  square_mobile_commerce_sdk_flutter_plugin: 26347255c39790e1b331a9b2037e90be3993ed96
+
+PODFILE CHECKSUM: 1e5af4103afd21ca5ead147d7b81d06f494f51a2
+
+COCOAPODS: 1.5.2

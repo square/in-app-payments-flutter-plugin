@@ -10,4 +10,9 @@ class SquareMobileCommerceSdkFlutterPlugin {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
+
+  static Future<String> startCardEntryFlow() async {
+    final String version = await _channel.invokeMethod('startCardEntryFlow');
+    return version;
+  }
 }
