@@ -15,4 +15,9 @@ class SquareMobileCommerceSdkFlutterPlugin {
     final String version = await _channel.invokeMethod('startCardEntryFlow');
     return version;
   }
+
+  static Future<String> payWithEWallet() async {
+    final String version = await _channel.invokeMethod('payWithEWallet');
+    return version;
+  }
 }

@@ -45,7 +45,18 @@ class _MyAppState extends State<MyApp> {
     try {
       result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow();
     } on PlatformException {
-      result = 'Failed to get platform version.';
+      result = 'Failed to startCardEntryFlow.';
+    }
+
+    print(result);
+  }
+
+  Future<void> onStartEWalletPay() async {
+    String result;
+    try {
+      result = await SquareMobileCommerceSdkFlutterPlugin.payWithEWallet();
+    } on PlatformException {
+      result = 'Failed to payWithEWallet';
     }
 
     print(result);
@@ -65,6 +76,10 @@ class _MyAppState extends State<MyApp> {
               RaisedButton(
                 onPressed: onStartCardEntryFlow,
                 child: Text('Start Checkout'),
+              ),
+              RaisedButton(
+                onPressed: onStartEWalletPay,
+                child: Text('pay with e-wallet'),
               ),
             ],
           ), 

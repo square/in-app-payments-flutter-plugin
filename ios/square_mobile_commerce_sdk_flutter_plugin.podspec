@@ -15,8 +15,10 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-
+  s.frameworks       = 'SquareMobileCommerceSDK'
+  s.xcconfig         = { 'FRAMEWORK_SEARCH_PATHS' => '$(PROJECT_DIR)/../' }
+  # s.vendored_frameworks = 'SquareMobileCommerceSDK.framework'
   s.ios.deployment_target = '10.0'
-  s.vendored_frameworks = 'SquareMobileCommerceSDK.framework'
+  
 end
 
