@@ -3,6 +3,7 @@ package com.squareup.squaremobilecommercesdkflutterplugin;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.CardRequirements;
 import com.google.android.gms.wallet.PaymentData;
@@ -12,7 +13,9 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
+import com.squareup.mcomm.Callback;
 import com.squareup.mcomm.CallbackReference;
+import com.squareup.mcomm.Card;
 import com.squareup.mcomm.CardEntryActivityCallback;
 import com.squareup.mcomm.CardEntryActivityResult;
 import com.squareup.mcomm.CardEntryManager;
@@ -27,18 +30,15 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /** SquareMobileCommerceSdkFlutterPlugin */
 public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
-  private final static String APPLICATION_ID = "sq0idp-279w1ejUbhuatNoaumEidg";
   private final Activity currentActivity;
 
-  private CallbackReference cardEntryActivityCallbackRef;
-  private final CardEntryManager cardEntryManager;
-
   // Google pay
-  private static final String MERCHANT_LOCATION_ID = "abcdefg";
+  private static final String MERCHANT_LOCATION_ID = "0WWTCG6KCNCM6";
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
   private static final List<Integer> CARD_NETWORKS = Arrays.asList(
       WalletConstants.CARD_NETWORK_AMEX,
@@ -48,7 +48,13 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
       WalletConstants.CARD_NETWORK_MASTERCARD,
       WalletConstants.CARD_NETWORK_OTHER
   );
-  private final GooglePayManager googlePayManager;
+  private MobileCommerceSdk mobileCommerceSdk;
+  private CardEntryManager cardEntryManager;
+  private CallbackReference cardEntryFlowCallbackRef;
+
+  private GooglePayManager googlePayManager;
+  private PaymentsClient googlePayClients;
+  private Result googlePayPluginResult;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -58,34 +64,34 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
 
   private SquareMobileCommerceSdkFlutterPlugin(Registrar registrar) {
     this.currentActivity = registrar.activity();
-    MobileCommerceSdk mobileCommerceSdk = new MobileCommerceSdk(APPLICATION_ID);
-    cardEntryManager = mobileCommerceSdk.cardEntryManager();
-    cardEntryActivityCallbackRef =
-        cardEntryManager.addCardEntryActivityCallback(new CardEntryActivityCallback() {
-          @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
-            Log.d("mCommPlugin", "cardEntryFinished");
-          }
-        });
-    googlePayManager = mobileCommerceSdk.googlePayManager(registrar.activity().getApplication());
-    googlePayManager.addCreateNonceCallback(new CreateNonceCallback() {
-      @Override public void onResult(CreateNonceResult googlePayResult) {
-        if (googlePayResult.isSuccess()) {
-          // saveCard(googlePayResult.cardResult);
-          Log.d("mCommPlugin", "nonce got: " + googlePayResult.getSuccessValue().getCardResult().getNonce());
-        } else if (googlePayResult.isError()) {
-          Log.d("mCommPlugin", "failed to checkout");
-        }
-      }
-    });
-
     registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
       @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE) {
-          PaymentData paymentData = PaymentData.getFromIntent(data);
-          String googlePayToken = paymentData.getPaymentMethodToken().getToken();
-
-          //Request to exchange GooglePay token for Square payment nonce
-          googlePayManager.createNonce(googlePayToken);
+          switch (resultCode) {
+            case Activity.RESULT_OK:
+              PaymentData paymentData = PaymentData.getFromIntent(data);
+              String googlePayToken = paymentData.getPaymentMethodToken().getToken();
+              googlePayManager.createNonce(googlePayToken);
+              break;
+            case Activity.RESULT_CANCELED:
+              googlePayPluginResult.error("fl_mcomm_google_pay_canceled", "", null);
+              googlePayPluginResult = null;
+              break;
+            case AutoResolveHelper.RESULT_ERROR:
+              Status status = AutoResolveHelper.getStatusFromIntent(data);
+              // Log the status for debugging.
+              // Generally, there is no need to show an error to the user.
+              // The Google Pay payment sheet will present any account errors.
+              Log.d("mCommPlugin", "google pay result error: " + status.getStatusMessage());
+              googlePayPluginResult.error("fl_mcomm_google_pay_error",  status.getStatusMessage(), null);
+              googlePayPluginResult = null;
+              break;
+            default:
+              googlePayPluginResult.error("fl_mcomm_google_pay_unknown",  "", null);
+              googlePayPluginResult = null;
+              // Do nothing.
+          }
+          Log.d("mCommPlugin", "google pay returned");
         }
         return false;
       }
@@ -93,21 +99,88 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
   }
 
   @Override
-  public void onMethodCall(MethodCall call, Result result) {
+  public void onMethodCall(MethodCall call, final Result result) {
     if (call.method.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("startCardEntryFlow")) {
-      cardEntryManager.startCardEntryActivity(this.currentActivity);
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("payWithEWallet")) {
-      PaymentsClient paymentsClient = Wallet.getPaymentsClient(
+    } else if (call.method.equals("initialize")) {
+      if (mobileCommerceSdk != null) {
+        result.error("fl_mcomm_dup_initialize", "", null);
+        return;
+      }
+      String applicationId = call.argument("applicationId");
+      mobileCommerceSdk = new MobileCommerceSdk(applicationId);
+      cardEntryManager = mobileCommerceSdk.cardEntryManager();
+      result.success(null);
+    } else if (call.method.equals("initializeGooglePay")) {
+      if (googlePayManager != null) {
+        result.error("fl_mcomm_dup_google_pay_initialize", "", null);
+        return;
+      }
+      String environment = call.argument("environment");
+      int env = WalletConstants.ENVIRONMENT_TEST;
+      if (environment == "PROD") {
+        env = WalletConstants.ENVIRONMENT_PRODUCTION;
+      }
+      googlePayManager = mobileCommerceSdk.googlePayManager(currentActivity.getApplication());
+      googlePayClients = Wallet.getPaymentsClient(
           currentActivity,
           (new Wallet.WalletOptions.Builder())
-              .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+              .setEnvironment(env)
               .build()
       );
+      googlePayManager.addCreateNonceCallback(new CreateNonceCallback() {
+        @Override public void onResult(CreateNonceResult googlePayResult) {
+          if (googlePayResult.isSuccess()) {
+            HashMap<String, Object> mapToReturn = new HashMap<>();
+            mapToReturn.put("nonce", googlePayResult.getSuccessValue().getCardResult().getNonce());
+            mapToReturn.put("card", googlePayResult.getSuccessValue().getCardResult().getCard().toString());
+            googlePayPluginResult.success(mapToReturn);
+            Log.d("mCommPlugin", "nonce got: " + googlePayResult.getSuccessValue().getCardResult().getNonce());
+          } else if (googlePayResult.isError()) {
+            googlePayPluginResult.error("fl_mcomm_google_pay_failed", "", null);
+            Log.d("mCommPlugin", "failed to checkout");
+          }
+          googlePayPluginResult = null;
+        }
+      });
+      result.success(null);
+    } else if (call.method.equals("startCardEntryFlow")) {
+      if (cardEntryFlowCallbackRef != null) {
+        result.error("fl_mcomm_dup_card_entry", "", null);
+        return;
+      }
+
+      cardEntryFlowCallbackRef = cardEntryManager.addCardEntryActivityCallback(new CardEntryActivityCallback() {
+        @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
+          cardEntryFlowCallbackRef.clear();
+          cardEntryFlowCallbackRef = null;
+          if (cardEntryActivityResult.isSuccess()) {
+            String nonce = cardEntryActivityResult.getSuccessValue().getCardResult().getNonce();
+            Card card = cardEntryActivityResult.getSuccessValue().getCardResult().getCard();
+            HashMap<String, Object> mapToReturn = new HashMap<>();
+            mapToReturn.put("nonce", nonce);
+            mapToReturn.put("card", card.toString());
+            result.success(mapToReturn);
+          } else if (cardEntryActivityResult.isCanceled()) {
+            result.error("fl_mcomm_canceled", "", null);
+          }
+          Log.d("mCommPlugin", "cardEntryFinished");
+        }
+      });
+
+      cardEntryManager.startCardEntryActivity(this.currentActivity);
+    } else if (call.method.equals("payWithGooglePay")) {
+      if (googlePayPluginResult != null) {
+        result.error("fl_mcomm_dup_google_pay", "", null);
+        return;
+      }
+
+      googlePayPluginResult = result;
+      String merchantId = call.argument("merchantId");
+      String price = call.argument("price");
+      String currencyCode = call.argument("currencyCode");
       AutoResolveHelper.resolveTask(
-          paymentsClient.loadPaymentData(createPaymentChargeRequest()),
+          googlePayClients.loadPaymentData(createPaymentChargeRequest(merchantId, price, currencyCode)),
           currentActivity,
           LOAD_PAYMENT_DATA_REQUEST_CODE);
     } else {
@@ -120,14 +193,14 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
    * Create a GooglePay payment charge request object to give payment details
    * to the GooglePay activity
    */
-  private PaymentDataRequest createPaymentChargeRequest() {
+  private PaymentDataRequest createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
     PaymentDataRequest.Builder request = PaymentDataRequest
         .newBuilder().setTransactionInfo(
             TransactionInfo.newBuilder()
                 .setTotalPriceStatus(
                     WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                .setTotalPrice("1000") // $10
-                .setCurrencyCode("USD")
+                .setTotalPrice(price)
+                .setCurrencyCode(currencyCode)
                 .build()
         ).addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
         .setCardRequirements(
@@ -140,7 +213,7 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
         .setPaymentMethodTokenizationType(
             WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
         .addParameter("gateway","square")
-        .addParameter("gatewayMerchantId",MERCHANT_LOCATION_ID)
+        .addParameter("gatewayMerchantId", merchantId)
         .build();
     request.setPaymentMethodTokenizationParameters(params);
     return request.build();

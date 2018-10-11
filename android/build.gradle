@@ -40,5 +40,5 @@ android {
 dependencies {
     def readerSdkMinVersion = '0.2'
     api "com.squareup.sdk.mobile-commerce:mobile-commerce-sdk:$readerSdkMinVersion"
-    api 'com.google.android.gms:play-services-wallet:15.0.1'
+    api 'com.google.android.gms:play-services-wallet:16.0.0'
 }

@@ -12,6 +12,10 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+  } else if ([@"initialize" isEqualToString:call.method]) {
+      NSString* applicationId = call.arguments[@"applicationId"];
+      [SQMCMobileCommerceSDK initializeWithApplicationID:applicationId];
+      result(nil);
   } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
     SQMCCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
     cardEntryForm.delegate = self;
@@ -30,7 +34,7 @@
       result(@"NO apple pay support");
     }
     PKPaymentRequest *paymentRequest =
-    [PKPaymentRequest squarePaymentRequestWithMerchantIdentifier:@"abc"
+    [PKPaymentRequest squarePaymentRequestWithMerchantIdentifier:@"merchant.com.mcomm.flutter"
                                                    countryCode: @"US"   // E.g., US
                                                   currencyCode: @"USD" // E.g., USD
     ];
@@ -46,7 +50,7 @@
     paymentAuthorizationViewController.delegate = self;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
-    [rootViewController.navigationController presentViewController:paymentAuthorizationViewController animated:YES completion:nil];
+    [rootViewController presentViewController:paymentAuthorizationViewController animated:YES completion:nil];
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   } else {
     result(FlutterMethodNotImplemented);
