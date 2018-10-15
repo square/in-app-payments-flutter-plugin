@@ -118,7 +118,7 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
       }
       String environment = call.argument("environment");
       int env = WalletConstants.ENVIRONMENT_TEST;
-      if (environment == "PROD") {
+      if (environment.equals("PROD")) {
         env = WalletConstants.ENVIRONMENT_PRODUCTION;
       }
       googlePayManager = mobileCommerceSdk.googlePayManager(currentActivity.getApplication());

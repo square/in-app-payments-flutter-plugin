@@ -13,11 +13,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  bool _paymentInitialized = false;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    initSquarePayment();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -40,15 +42,51 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> onStartCardEntryFlow() async {
-    String result;
-    try {
-      result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow();
-    } on PlatformException {
-      result = 'Failed to startCardEntryFlow.';
+  Future<void> initSquarePayment() async {
+    await SquareMobileCommerceSdkFlutterPlugin.initialize('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
+    if(Theme.of(context).platform == TargetPlatform.android) {
+      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GOOGLE_PAY_ENV_PROD);
+    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+      await SquareMobileCommerceSdkFlutterPlugin.initializeApplePay('merchant.com.mcomm.flutter');
     }
 
-    print(result);
+    setState(() {
+      _paymentInitialized = true;
+    });
+  }
+
+  Future<void> onStartCardEntryFlow() async {
+    try {
+      Map result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow();
+      print(result.toString());
+    } on PlatformException {
+      print('Failed to startCardEntryFlow.');
+    }
+  }
+
+  Future<void> onStartGooglePay() async {
+    try {
+      String merchantId = '0ZXKWWD1CB2T6';
+      String price = '100';
+      String currencyCode = 'USD';
+      Map result = await SquareMobileCommerceSdkFlutterPlugin.payWithGooglePay(merchantId, price, currencyCode);
+      print(result.toString());
+    } on PlatformException {
+       print('Failed to onStartGooglePay.');
+    }
+  }
+  
+  Future<void> onStartApplePay() async {
+    try {
+      String summaryLabel = 'Flutter Test';
+      String price = '100';
+      String countryCode = 'US';
+      String currencyCode = 'USD';
+      Map result = await SquareMobileCommerceSdkFlutterPlugin.payWithApplePay(price, summaryLabel, countryCode, currencyCode);
+      print(result.toString());
+    } on PlatformException {
+       print('Failed to onStartApplePay.');
+    }
   }
 
   Future<void> onStartEWalletPay() async {
@@ -74,12 +112,14 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               Text('Running on: $_platformVersion\n'),
               RaisedButton(
-                onPressed: onStartCardEntryFlow,
+                onPressed: _paymentInitialized ? onStartCardEntryFlow : null,
                 child: Text('Start Checkout'),
               ),
               RaisedButton(
-                onPressed: onStartEWalletPay,
-                child: Text('pay with e-wallet'),
+                onPressed: _paymentInitialized ? 
+                  (Theme.of(context).platform == TargetPlatform.iOS) ? onStartApplePay : onStartGooglePay
+                  : null,
+                child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),
               ),
             ],
           ), 
