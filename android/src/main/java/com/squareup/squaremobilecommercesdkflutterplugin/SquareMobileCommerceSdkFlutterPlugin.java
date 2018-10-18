@@ -38,7 +38,6 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
   private final Activity currentActivity;
 
   // Google pay
-  private static final String MERCHANT_LOCATION_ID = "0WWTCG6KCNCM6";
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
   private static final List<Integer> CARD_NETWORKS = Arrays.asList(
       WalletConstants.CARD_NETWORK_AMEX,
