@@ -2,12 +2,38 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+typedef void CardEntryDidCancelCallback();
+typedef void CardEntryDidSucceedWithResultCallback(Map result);
+
 class SquareMobileCommerceSdkFlutterPlugin {
   static const String GOOGLE_PAY_ENV_PROD = "PROD";
   static const String GOOGLE_PAY_ENV_TEST = "TEST";
 
-  static const MethodChannel _channel =
-      const MethodChannel('square_mobile_commerce_sdk_flutter_plugin');
+  static final MethodChannel _channel =
+      const MethodChannel('square_mobile_commerce_sdk_flutter_plugin')..setMethodCallHandler(_nativeCallHandler);
+
+  static CardEntryDidCancelCallback _cardEntryDidCancelCallback;
+  static CardEntryDidSucceedWithResultCallback _cardEntryDidSucceedWithResultCallback;
+
+  static Future<dynamic> _nativeCallHandler(MethodCall call) async {
+    switch (call.method) {
+      case 'cardEntryDidCancel':
+        print('cardEntryDidCancel is called');
+        if (_cardEntryDidCancelCallback != null) {
+          _cardEntryDidCancelCallback();
+        }
+        break;
+      case 'cardEntryDidSucceedWithResult':
+        print('cardEntryDidSucceedWithResult is called');
+        if (_cardEntryDidSucceedWithResultCallback != null) {
+          _cardEntryDidSucceedWithResultCallback(call.arguments);
+        }
+        break;
+      default:
+        throw Exception('unknown method called from native');
+    }
+    return false;
+  }
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -19,7 +45,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     return version;
   }
 
-  static Future initialize(String applicationId) async {
+  static Future setApplicationId(String applicationId) async {
     if (applicationId == null) {
       throw Exception("applicationId shouldn't be null");
     }
@@ -27,17 +53,28 @@ class SquareMobileCommerceSdkFlutterPlugin {
       Map<String, dynamic> params = <String, dynamic> {
         'applicationId': applicationId,
       };
-      await _channel.invokeMethod('initialize', params);
+      await _channel.invokeMethod('setApplicationId', params);
     } on PlatformException catch (ex) {
       print(ex.toString());
       throw ex;
     }
   }
 
-  static Future<Map> startCardEntryFlow() async {
+  static Future<Map> startCardEntryFlow(CardEntryDidSucceedWithResultCallback cardEntrySuccessCallback, CardEntryDidCancelCallback cardEntryCancelCallback) async {
+    _cardEntryDidCancelCallback = cardEntryCancelCallback;
+    _cardEntryDidSucceedWithResultCallback = cardEntrySuccessCallback;
     try {
       Map cardResult = await _channel.invokeMethod('startCardEntryFlow');
       return cardResult;
+    } on PlatformException catch (ex) {
+      print(ex.toString());
+      throw ex;
+    }
+  }
+
+  static Future<void> closeCardEntryForm() async {
+    try {
+      await _channel.invokeMethod('closeCardEntryForm');
     } on PlatformException catch (ex) {
       print(ex.toString());
       throw ex;

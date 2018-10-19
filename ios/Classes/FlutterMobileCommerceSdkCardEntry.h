@@ -3,6 +3,8 @@
 
 @interface FlutterMobileCommerceSdkCardEntry : NSObject<SQMCCardEntryViewControllerDelegate>
 
+- (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startCardEntryFlow:(FlutterResult)result;
+- (void)closeCardEntryForm:(FlutterResult)result;
 
 @end

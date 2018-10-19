@@ -4,6 +4,7 @@
 
 @interface FlutterMobileCommerceSdkCardEntry()
 
+@property (strong, readwrite) FlutterMethodChannel* channel;
 @property (strong, readwrite) FlutterResult cardEntryResolver;
 @property (strong, readwrite) SQMCTheme *theme;
 
@@ -25,10 +26,10 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
 
 @implementation FlutterMobileCommerceSdkCardEntry
 
-- (instancetype)init
+- (void)initWithMethodChannel:(FlutterMethodChannel *)channel
 {
+    self.channel = channel;
     self.theme = [[SQMCTheme alloc] init];
-    return self;
 }
 
 - (void)startCardEntryFlow:(FlutterResult)result
@@ -49,7 +50,7 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cardEntryForm];
         [rootViewController presentViewController:navigationController animated:YES completion:nil];
     }
-    self.cardEntryResolver = result;
+    result(nil);
 }
 
 - (SQMCCardEntryViewController *)makeCardEntryForm;
@@ -59,22 +60,15 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
 
 - (void)cardEntryViewControllerDidCancel:(nonnull SQMCCardEntryViewController *)cardEntryViewController
 {
-    NSAssert(self.cardEntryResolver != nil, @"The card entry resolver has been released");
-    self.cardEntryResolver([FlutterError errorWithCode:FlutterMobileCommerceCardEntryCanceled
-                                               message:[FlutterMobileCommerceSdkErrorUtilities getPluginErrorMessage:FlutterMobileCommerceCardEntryCanceled]
-                                               details:[FlutterMobileCommerceSdkErrorUtilities getDebugErrorObject:FlutterMobileCommerceCardEntryCanceled debugMessage:FlutterMobileCommerceMessageCardEntryCanceled]]);
-    self.cardEntryResolver = nil;
-    [self closeCardEntryForm];
+    [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
 }
 
 - (void)cardEntryViewController:(nonnull SQMCCardEntryViewController *)cardEntryViewController didSucceedWithResult:(nonnull SQMCCardEntryResult *)result
 {
-    self.cardEntryResolver([result jsonDictionary]);
-    self.cardEntryResolver = nil;
-    [self closeCardEntryForm];
+    [self.channel invokeMethod:@"cardEntryDidSucceedWithResult" arguments:[result jsonDictionary]];
 }
 
-- (void)closeCardEntryForm
+- (void)closeCardEntryForm:(FlutterResult)result
 {
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
@@ -82,6 +76,7 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
     } else {
         [rootViewController dismissViewControllerAnimated:YES completion:nil];
     }
+    result(nil);
 }
 
 - (void)setFormTheme:(FlutterResult)result themeParameters:(NSDictionary *)themeParameters
