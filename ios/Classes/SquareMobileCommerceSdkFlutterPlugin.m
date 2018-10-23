@@ -42,6 +42,8 @@ FlutterMethodChannel* _channel;
         [self.cardEntryModule startCardEntryFlow:result];
     } else if ([@"closeCardEntryForm" isEqualToString:call.method]) {
         [self.cardEntryModule closeCardEntryForm:result];
+    } else if ([@"showCardProcessingError" isEqualToString:call.method]) {
+        [self.cardEntryModule showCardProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"payWithApplePay" isEqualToString:call.method]) {
         NSString *countryCode = call.arguments[@"countryCode"];
         NSString *currencyCode = call.arguments[@"currencyCode"];

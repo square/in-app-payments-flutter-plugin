@@ -79,6 +79,11 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
     result(nil);
 }
 
+- (void)showCardProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage
+{
+    result(FlutterMethodNotImplemented);
+}
+
 - (void)setFormTheme:(FlutterResult)result themeParameters:(NSDictionary *)themeParameters
 {
     result(FlutterMethodNotImplemented);

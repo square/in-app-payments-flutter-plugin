@@ -81,6 +81,18 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
+  static Future<void> showCardProcessingError(String errorMessage) async {
+    try {
+      Map<String, dynamic> params = <String, dynamic> {
+        'errorMessage': errorMessage,
+      };
+      await _channel.invokeMethod('showCardProcessingError', params);
+    } on PlatformException catch (ex) {
+      print(ex.toString());
+      throw ex;
+    }
+  }
+
   static Future initializeGooglePay(String environment) async {
     try {
       Map<String, dynamic> params = <String, dynamic> {
