@@ -13,7 +13,6 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-import com.squareup.mcomm.Callback;
 import com.squareup.mcomm.CallbackReference;
 import com.squareup.mcomm.Card;
 import com.squareup.mcomm.CardEntryActivityCallback;
@@ -23,6 +22,7 @@ import com.squareup.mcomm.CreateNonceCallback;
 import com.squareup.mcomm.CreateNonceResult;
 import com.squareup.mcomm.GooglePayManager;
 import com.squareup.mcomm.MobileCommerceSdk;
+import com.squareup.mcomm.flutter.CardEntryModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -47,6 +47,9 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
       WalletConstants.CARD_NETWORK_MASTERCARD,
       WalletConstants.CARD_NETWORK_OTHER
   );
+  private static MethodChannel channel;
+  private CardEntryModule cardEntryModule;
+
   private MobileCommerceSdk mobileCommerceSdk;
   private CardEntryManager cardEntryManager;
   private CallbackReference cardEntryFlowCallbackRef;
@@ -57,7 +60,7 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
-    final MethodChannel channel = new MethodChannel(registrar.messenger(), "square_mobile_commerce_sdk_flutter_plugin");
+    channel = new MethodChannel(registrar.messenger(), "square_mobile_commerce_sdk_flutter_plugin");
     channel.setMethodCallHandler(new SquareMobileCommerceSdkFlutterPlugin(registrar));
   }
 
@@ -101,15 +104,18 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, final Result result) {
     if (call.method.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("initialize")) {
-      if (mobileCommerceSdk != null) {
-        result.error("fl_mcomm_dup_initialize", "", null);
-        return;
-      }
+    } else if (call.method.equals("setApplicationId")) {
       String applicationId = call.argument("applicationId");
       mobileCommerceSdk = new MobileCommerceSdk(applicationId);
-      cardEntryManager = mobileCommerceSdk.cardEntryManager();
+      cardEntryModule = new CardEntryModule(currentActivity, mobileCommerceSdk, channel);
       result.success(null);
+    } else if (call.method.equals("startCardEntryFlow")) {
+      cardEntryModule.startCardEntryFlow(result);
+    } else if (call.method.equals("closeCardEntryForm")) {
+      cardEntryModule.closeCardEntryForm(result);
+    } else if (call.method.equals("showCardProcessingError")) {
+      String errorMessage = call.argument("errorMessage");
+      cardEntryModule.showCardProcessingError(result, errorMessage);
     } else if (call.method.equals("initializeGooglePay")) {
       if (googlePayManager != null) {
         result.error("fl_mcomm_dup_google_pay_initialize", "", null);
@@ -143,31 +149,6 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
         }
       });
       result.success(null);
-    } else if (call.method.equals("startCardEntryFlow")) {
-      if (cardEntryFlowCallbackRef != null) {
-        result.error("fl_mcomm_dup_card_entry", "", null);
-        return;
-      }
-
-      cardEntryFlowCallbackRef = cardEntryManager.addCardEntryActivityCallback(new CardEntryActivityCallback() {
-        @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
-          cardEntryFlowCallbackRef.clear();
-          cardEntryFlowCallbackRef = null;
-          if (cardEntryActivityResult.isSuccess()) {
-            String nonce = cardEntryActivityResult.getSuccessValue().getCardResult().getNonce();
-            Card card = cardEntryActivityResult.getSuccessValue().getCardResult().getCard();
-            HashMap<String, Object> mapToReturn = new HashMap<>();
-            mapToReturn.put("nonce", nonce);
-            mapToReturn.put("card", card.toString());
-            result.success(mapToReturn);
-          } else if (cardEntryActivityResult.isCanceled()) {
-            result.error("fl_mcomm_canceled", "", null);
-          }
-          Log.d("mCommPlugin", "cardEntryFinished");
-        }
-      });
-
-      cardEntryManager.startCardEntryActivity(this.currentActivity);
     } else if (call.method.equals("payWithGooglePay")) {
       if (googlePayPluginResult != null) {
         result.error("fl_mcomm_dup_google_pay", "", null);

@@ -43,9 +43,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initSquarePayment() async {
-    await SquareMobileCommerceSdkFlutterPlugin.initialize('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
+    await SquareMobileCommerceSdkFlutterPlugin.setApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GOOGLE_PAY_ENV_PROD);
+      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GOOGLE_PAY_ENV_TEST);
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await SquareMobileCommerceSdkFlutterPlugin.initializeApplePay('merchant.com.mcomm.flutter');
     }
@@ -55,9 +55,18 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void onCardEntryDidSucceedWithResult(Map result) async {
+    print(result);
+    await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
+  }
+
+  void onCardEntryCancel() async {
+    await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
+  }
+
   Future<void> onStartCardEntryFlow() async {
     try {
-      Map result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow();
+      Map result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(this.onCardEntryDidSucceedWithResult, this.onCardEntryCancel);
       print(result.toString());
     } on PlatformException {
       print('Failed to startCardEntryFlow.');
