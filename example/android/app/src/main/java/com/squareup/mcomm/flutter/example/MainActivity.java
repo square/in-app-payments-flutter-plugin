@@ -1,4 +1,4 @@
-package com.squareup.squaremobilecommercesdkflutterpluginexample;
+package com.squareup.mcomm.flutter.example;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

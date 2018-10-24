@@ -1,4 +1,4 @@
-group 'com.squareup.squaremobilecommercesdkflutterplugin'
+group 'com.squareup.mcomm.flutter'
 version '1.0-SNAPSHOT'
 
 buildscript {

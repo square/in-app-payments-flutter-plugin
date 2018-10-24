@@ -1,4 +1,4 @@
-package com.squareup.squaremobilecommercesdkflutterplugin;
+package com.squareup.mcomm.flutter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,15 +14,12 @@ import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.squareup.mcomm.CallbackReference;
-import com.squareup.mcomm.Card;
-import com.squareup.mcomm.CardEntryActivityCallback;
-import com.squareup.mcomm.CardEntryActivityResult;
 import com.squareup.mcomm.CardEntryManager;
 import com.squareup.mcomm.CreateNonceCallback;
 import com.squareup.mcomm.CreateNonceResult;
 import com.squareup.mcomm.GooglePayManager;
 import com.squareup.mcomm.MobileCommerceSdk;
-import com.squareup.mcomm.flutter.CardEntryModule;
+import com.squareup.mcomm.flutter.internal.CardEntryModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
