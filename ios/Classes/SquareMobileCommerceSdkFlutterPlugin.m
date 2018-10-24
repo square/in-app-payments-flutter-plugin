@@ -25,7 +25,6 @@ FlutterMethodChannel* _channel;
     self.cardEntryModule = [[FlutterMobileCommerceSdkCardEntry alloc] init];
     [self.cardEntryModule initWithMethodChannel:_channel];
     self.applePayModule = [[FlutterMobileCommerceSdkApplePay alloc] init];
-    [self.applePayModule initWithMethodChannel:_channel];
     return self;
 }
 
