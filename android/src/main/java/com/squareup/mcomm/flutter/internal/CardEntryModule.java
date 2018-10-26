@@ -54,6 +54,7 @@ final public class CardEntryModule {
   }
 
   public void closeCardEntryForm(MethodChannel.Result result) {
+    // TOOD: this is not doing any in alpha 0.2 because activity has been closed.
     Log.i("mcomm_plugin", "closeCardEntryForm");
     result.success(null);
   }

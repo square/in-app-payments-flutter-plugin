@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 
 typedef void CardEntryDidCancelCallback();
 typedef void CardEntryDidSucceedWithResultCallback(Map result);
+typedef void GooglePayCancelCallback();
+typedef void GooglePayDidSucceedWithResultCallback(Map result);
+typedef void GooglePayFailedCallback(Map errorInfo);
 
 class SquareMobileCommerceSdkFlutterPlugin {
   static const String GOOGLE_PAY_ENV_PROD = "PROD";
@@ -14,6 +17,10 @@ class SquareMobileCommerceSdkFlutterPlugin {
 
   static CardEntryDidCancelCallback _cardEntryDidCancelCallback;
   static CardEntryDidSucceedWithResultCallback _cardEntryDidSucceedWithResultCallback;
+
+  static GooglePayCancelCallback _googlePayCancelCallback;
+  static GooglePayDidSucceedWithResultCallback _googlePayDidSucceedWithResultCallback;
+  static GooglePayFailedCallback _googlePayFailedCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     switch (call.method) {
@@ -27,6 +34,24 @@ class SquareMobileCommerceSdkFlutterPlugin {
         print('cardEntryDidSucceedWithResult is called');
         if (_cardEntryDidSucceedWithResultCallback != null) {
           _cardEntryDidSucceedWithResultCallback(call.arguments);
+        }
+        break;
+      case 'onGooglePayCanceled':
+        print('onGooglePayCanceled is called');
+        if (_googlePayCancelCallback != null) {
+          _googlePayCancelCallback();
+        }
+        break;
+      case 'onGooglePayGetNonce':
+        print('onGooglePayGetNonce is called');
+        if (_googlePayDidSucceedWithResultCallback != null) {
+          _googlePayDidSucceedWithResultCallback(call.arguments);
+        }
+        break;
+      case 'onGooglePayFailed':
+        print('onGooglePayFailed is called');
+        if (_googlePayFailedCallback != null) {
+          _googlePayFailedCallback(call.arguments);
         }
         break;
       default:
@@ -60,9 +85,9 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
-  static Future<Map> startCardEntryFlow(CardEntryDidSucceedWithResultCallback cardEntrySuccessCallback, CardEntryDidCancelCallback cardEntryCancelCallback) async {
-    _cardEntryDidCancelCallback = cardEntryCancelCallback;
-    _cardEntryDidSucceedWithResultCallback = cardEntrySuccessCallback;
+  static Future<Map> startCardEntryFlow(CardEntryDidSucceedWithResultCallback onCardEntrySuccess, CardEntryDidCancelCallback onCardEntryCancel) async {
+    _cardEntryDidCancelCallback = onCardEntryCancel;
+    _cardEntryDidSucceedWithResultCallback = onCardEntrySuccess;
     try {
       Map cardResult = await _channel.invokeMethod('startCardEntryFlow');
       return cardResult;
@@ -105,14 +130,17 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
-  static Future<Map> payWithGooglePay(String merchantId, String price, String currencyCode) async {
+  static Future<Map> requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayDidSucceedWithResultCallback onGooglePayDidSucceedWithResult, GooglePayCancelCallback onGooglePayCanceled, GooglePayFailedCallback onGooglePayFailed) async {
+    _googlePayDidSucceedWithResultCallback = onGooglePayDidSucceedWithResult;
+    _googlePayCancelCallback = onGooglePayCanceled;
+    _googlePayFailedCallback = onGooglePayFailed;
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'merchantId': merchantId,
         'price': price,
         'currencyCode': currencyCode,
       };
-      Map cardResult = await _channel.invokeMethod('payWithGooglePay', params);
+      Map cardResult = await _channel.invokeMethod('requestGooglePayNonce', params);
       return cardResult;
     } on PlatformException catch (ex) {
       print(ex.toString());
