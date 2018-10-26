@@ -17,12 +17,13 @@
     card[@"expirationMonth"] = @(self.expirationMonth);
     card[@"expirationYear"] = @(self.expirationYear);
     card[@"postalCode"] = self.postalCode;
-    card[@"brand"] = [self getBrandString:self.brand];
+    card[@"brand"] = [self _stringForBrand:self.brand];
     
     return card;
 }
 
-- (NSString *)getBrandString:(SQMCCardBrand)brand
+#pragma mark - Private Methods
+- (NSString *)_stringForBrand:(SQMCCardBrand)brand
 {
     NSString *result = nil;
     switch (brand) {

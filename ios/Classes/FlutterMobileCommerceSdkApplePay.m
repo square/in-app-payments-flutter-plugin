@@ -11,20 +11,6 @@
 
 @end
 
-// Define all the error codes and messages below
-// These error codes and messages **MUST** align with iOS error codes and dart error codes
-// Search KEEP_IN_SYNC_CHECKOUT_ERROR to update all places
-
-// flutter plugin expected errors
-static NSString *const FlutterMobileCommerceCardEntryCanceled = @"fl_card_entry_canceled";
-
-// flutter plugin debug error codes
-static NSString *const FlutterMobileCommerceCardEntryAlreadyInProgress = @"fl_card_entry_already_in_progress";
-
-// flutter plugin debug messages
-static NSString *const FlutterMobileCommerceMessageCardEntryAlreadyInProgress = @"A card entry flow is already in progress. Ensure that the in-progress card entry flow is completed before calling startCardEntryFlow again.";
-static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The card entry flow is canceled";
-
 @implementation FlutterMobileCommerceSdkApplePay
 
 - (instancetype)init

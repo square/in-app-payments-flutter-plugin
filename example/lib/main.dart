@@ -66,8 +66,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> onStartCardEntryFlow() async {
     try {
-      Map result = await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(this.onCardEntryDidSucceedWithResult, this.onCardEntryCancel);
-      print(result.toString());
+      await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(this.onCardEntryDidSucceedWithResult, this.onCardEntryCancel);
     } on PlatformException {
       print('Failed to startCardEntryFlow.');
     }

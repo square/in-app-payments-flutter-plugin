@@ -10,20 +10,6 @@
 
 @end
 
-// Define all the error codes and messages below
-// These error codes and messages **MUST** align with iOS error codes and dart error codes
-// Search KEEP_IN_SYNC_CHECKOUT_ERROR to update all places
-
-// flutter plugin expected errors
-static NSString *const FlutterMobileCommerceCardEntryCanceled = @"fl_card_entry_canceled";
-
-// flutter plugin debug error codes
-static NSString *const FlutterMobileCommerceCardEntryAlreadyInProgress = @"fl_card_entry_already_in_progress";
-
-// flutter plugin debug messages
-static NSString *const FlutterMobileCommerceMessageCardEntryAlreadyInProgress = @"A card entry flow is already in progress. Ensure that the in-progress card entry flow is completed before calling startCardEntryFlow again.";
-static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The card entry flow is canceled";
-
 @implementation FlutterMobileCommerceSdkCardEntry
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel
@@ -34,13 +20,7 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
 
 - (void)startCardEntryFlow:(FlutterResult)result
 {
-    if (self.cardEntryResolver != nil) {
-        result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                   message:[FlutterMobileCommerceSdkErrorUtilities getPluginErrorMessage:FlutterMobileCommerceCardEntryAlreadyInProgress]
-                                   details:[FlutterMobileCommerceSdkErrorUtilities getDebugErrorObject:FlutterMobileCommerceCardEntryAlreadyInProgress debugMessage:FlutterMobileCommerceMessageCardEntryAlreadyInProgress]]);
-        return;
-    }
-    SQMCCardEntryViewController *cardEntryForm = [self makeCardEntryForm];
+    SQMCCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
     cardEntryForm.delegate = self;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
@@ -51,11 +31,6 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
         [rootViewController presentViewController:navigationController animated:YES completion:nil];
     }
     result(nil);
-}
-
-- (SQMCCardEntryViewController *)makeCardEntryForm;
-{
-    return [[SQMCCardEntryViewController alloc] initWithTheme:self.theme];
 }
 
 - (void)cardEntryViewControllerDidCancel:(nonnull SQMCCardEntryViewController *)cardEntryViewController
@@ -87,6 +62,12 @@ static NSString *const FlutterMobileCommerceMessageCardEntryCanceled = @"The car
 - (void)setFormTheme:(FlutterResult)result themeParameters:(NSDictionary *)themeParameters
 {
     result(FlutterMethodNotImplemented);
+}
+
+#pragma mark - Private Methods
+- (SQMCCardEntryViewController *)_makeCardEntryForm;
+{
+    return [[SQMCCardEntryViewController alloc] initWithTheme:self.theme];
 }
 
 @end
