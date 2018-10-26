@@ -1,6 +1,6 @@
 //
 //  Test.m
-//  square_mobile_commerce_sdk_flutter_plugin
+//  square_mobile_commerce_sdk
 //
 //  Created by Xiao Hu on 10/17/18.
 //

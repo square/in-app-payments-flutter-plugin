@@ -10,7 +10,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
   static const String GOOGLE_PAY_ENV_TEST = "TEST";
 
   static final MethodChannel _channel =
-      const MethodChannel('square_mobile_commerce_sdk_flutter_plugin')..setMethodCallHandler(_nativeCallHandler);
+      const MethodChannel('square_mobile_commerce_sdk')..setMethodCallHandler(_nativeCallHandler);
 
   static CardEntryDidCancelCallback _cardEntryDidCancelCallback;
   static CardEntryDidSucceedWithResultCallback _cardEntryDidSucceedWithResultCallback;

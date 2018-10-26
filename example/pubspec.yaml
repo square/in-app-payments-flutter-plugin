@@ -1,5 +1,5 @@
-name: square_mobile_commerce_sdk_flutter_plugin_example
-description: Demonstrates how to use the square_mobile_commerce_sdk_flutter_plugin plugin.
+name: square_mobile_commerce_sdk_example
+description: Demonstrates how to use the square_mobile_commerce_sdk plugin.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -24,7 +24,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  square_mobile_commerce_sdk_flutter_plugin:
+  square_mobile_commerce_sdk:
     path: ../
 
 # For information on the generic Dart part of this file, see the

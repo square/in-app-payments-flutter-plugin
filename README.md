@@ -1,4 +1,4 @@
-# square_mobile_commerce_sdk_flutter_plugin
+# square_mobile_commerce_sdk
 
 A new flutter plugin project.
 

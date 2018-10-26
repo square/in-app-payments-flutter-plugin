@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:square_mobile_commerce_sdk_flutter_plugin/square_mobile_commerce_sdk_flutter_plugin.dart';
+import 'package:square_mobile_commerce_sdk/square_mobile_commerce_sdk.dart';
 
 void main() => runApp(new MyApp());
 

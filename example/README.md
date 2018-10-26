@@ -1,6 +1,6 @@
-# square_mobile_commerce_sdk_flutter_plugin_example
+# square_mobile_commerce_sdk_example
 
-Demonstrates how to use the square_mobile_commerce_sdk_flutter_plugin plugin.
+Demonstrates how to use the square_mobile_commerce_sdk plugin.
 
 ## Getting Started
 
