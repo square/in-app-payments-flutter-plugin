@@ -5,7 +5,6 @@
 @interface FlutterMobileCommerceSdkCardEntry()
 
 @property (strong, readwrite) FlutterMethodChannel* channel;
-@property (strong, readwrite) FlutterResult cardEntryResolver;
 @property (strong, readwrite) SQMCTheme *theme;
 
 @end
