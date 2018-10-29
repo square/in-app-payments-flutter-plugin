@@ -10,6 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  built_value: "^6.1.5"
+
+dev_dependencies:
+  build:
+  build_runner:
+  source_gen:
+  built_value_generator:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

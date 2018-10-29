@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:square_mobile_commerce_sdk/models.dart';
 import 'package:square_mobile_commerce_sdk/square_mobile_commerce_sdk.dart';
 
 void main() => runApp(new MyApp());
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void onCardEntryDidSucceedWithResult(Map result) async {
+  void onCardEntryDidSucceedWithResult(CardResult result) async {
     print(result);
     await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
   }
@@ -77,13 +78,25 @@ class _MyAppState extends State<MyApp> {
       String merchantId = '0ZXKWWD1CB2T6';
       String price = '100';
       String currencyCode = 'USD';
-      Map result = await SquareMobileCommerceSdkFlutterPlugin.payWithGooglePay(merchantId, price, currencyCode);
-      print(result.toString());
-    } on PlatformException {
-       print('Failed to onStartGooglePay.');
+      await SquareMobileCommerceSdkFlutterPlugin.requestGooglePayNonce(
+        merchantId, price, currencyCode, onGooglePayDidSucceedWithResult, onGooglePayCancel, onGooglePayFailed);
+    } on PlatformException catch(ex) {
+       print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
-  
+
+  void onGooglePayDidSucceedWithResult(CardResult result) {
+      print(result);
+  }
+
+  void onGooglePayCancel() {
+    print('GooglePay is canceled');
+  }
+
+  void onGooglePayFailed(ErrorInfo errorInfo) {
+    print('GooglePay failed. \n ${errorInfo.toString()}');
+  }
+
   Future<void> onStartApplePay() async {
     try {
       String summaryLabel = 'Flutter Test';
@@ -92,20 +105,9 @@ class _MyAppState extends State<MyApp> {
       String currencyCode = 'USD';
       Map result = await SquareMobileCommerceSdkFlutterPlugin.payWithApplePay(price, summaryLabel, countryCode, currencyCode);
       print(result.toString());
-    } on PlatformException {
-       print('Failed to onStartApplePay.');
+    } on PlatformException catch(ex) {
+       print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
-  }
-
-  Future<void> onStartEWalletPay() async {
-    String result;
-    try {
-      result = await SquareMobileCommerceSdkFlutterPlugin.payWithEWallet();
-    } on PlatformException {
-      result = 'Failed to payWithEWallet';
-    }
-
-    print(result);
   }
 
   @override
