@@ -88,8 +88,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('setApplicationId', params);
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -99,8 +98,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     try {
       await _channel.invokeMethod('startCardEntryFlow');
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -108,8 +106,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     try {
       await _channel.invokeMethod('closeCardEntryForm');
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -120,8 +117,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('showCardProcessingError', params);
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -132,8 +128,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('initializeGooglePay', params);
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -149,8 +144,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
   
@@ -161,8 +155,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('initializeApplePay', params);
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
 
@@ -177,8 +170,28 @@ class SquareMobileCommerceSdkFlutterPlugin {
       Map cardResult = await _channel.invokeMethod('payWithApplePay', params);
       return cardResult;
     } on PlatformException catch (ex) {
-      print(ex.toString());
-      throw ex;
+      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
     }
   }
+}
+
+class InAppPaymentException implements Exception {
+
+  final String code;
+
+  final String message;
+
+  final String debugCode;
+
+  final String debugMessage;
+
+  InAppPaymentException(
+    this.code,
+    this.message,
+    this.debugCode,
+    this.debugMessage,
+  ) : assert(code != null), assert(debugCode != null);
+
+  @override
+  String toString() => 'PlatformException($code, $message, $debugCode, $debugMessage)';
 }
