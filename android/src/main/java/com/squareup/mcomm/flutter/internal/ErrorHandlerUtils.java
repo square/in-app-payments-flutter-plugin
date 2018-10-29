@@ -16,4 +16,10 @@ public final class ErrorHandlerUtils {
     errorData.put("debugMessage", debugMessage);
     return errorData;
   }
+
+  public static Map<String, String> getGooglePayErorrInfo(String message) {
+    Map<String, String> errorInfo = new HashMap<>();
+    errorInfo.put("message", message);
+    return errorInfo;
+  }
 }

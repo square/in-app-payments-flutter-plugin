@@ -21,7 +21,7 @@ import com.squareup.mcomm.CardEntryActivityCallback;
 import com.squareup.mcomm.CardEntryActivityResult;
 import com.squareup.mcomm.MobileCommerceSdk;
 import com.squareup.mcomm.flutter.internal.converter.CardConverter;
-import com.squareup.mcomm.flutter.internal.converter.CardEntryResultConverter;
+import com.squareup.mcomm.flutter.internal.converter.CardResultConverter;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.Map;
 
@@ -29,11 +29,11 @@ final public class CardEntryModule {
 
   private final Activity currentActivity;
   private final MobileCommerceSdk mobileCommerceSdk;
-  private final CardEntryResultConverter cardEntryResultConverter;
+  private final CardResultConverter cardResultConverter;
 
   public CardEntryModule(Activity activity, MobileCommerceSdk mobileCommerceSdk, final MethodChannel channel) {
     currentActivity = activity;
-    cardEntryResultConverter = new CardEntryResultConverter(new CardConverter());
+    cardResultConverter = new CardResultConverter(new CardConverter());
     this.mobileCommerceSdk = mobileCommerceSdk;
 
     this.mobileCommerceSdk.cardEntryManager().addCardEntryActivityCallback(new CardEntryActivityCallback() {
@@ -42,7 +42,7 @@ final public class CardEntryModule {
           channel.invokeMethod("cardEntryDidCancel", null);
           return;
         }
-        Map<String, Object> mapToReturn = cardEntryResultConverter.toMapObject(cardEntryActivityResult.getSuccessValue().getCardResult());
+        Map<String, Object> mapToReturn = cardResultConverter.toMapObject(cardEntryActivityResult.getSuccessValue().getCardResult());
         channel.invokeMethod("cardEntryDidSucceedWithResult", mapToReturn);
       }
     });

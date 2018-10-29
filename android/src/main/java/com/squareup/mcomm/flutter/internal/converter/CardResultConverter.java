@@ -4,11 +4,11 @@ import com.squareup.mcomm.CardResult;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CardEntryResultConverter {
+public final class CardResultConverter {
 
   private CardConverter cardConverter;
 
-  public CardEntryResultConverter(CardConverter cardConverter) {
+  public CardResultConverter(CardConverter cardConverter) {
     this.cardConverter = cardConverter;
   }
 
