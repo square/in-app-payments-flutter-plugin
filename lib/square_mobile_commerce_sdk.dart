@@ -10,10 +10,14 @@ typedef void CardEntryDidSucceedWithResultCallback(CardResult result);
 typedef void GooglePayCancelCallback();
 typedef void GooglePayDidSucceedWithResultCallback(CardResult result);
 typedef void GooglePayFailedCallback(ErrorInfo errorInfo);
+typedef void ApplePayDidSucceedWithResultCallback(CardResult result);
+typedef void ApplePayFailedCallback(ErrorInfo errorInfo);
 
 class SquareMobileCommerceSdkFlutterPlugin {
-  static const String GOOGLE_PAY_ENV_PROD = "PROD";
-  static const String GOOGLE_PAY_ENV_TEST = "TEST";
+  static const String GooglePayEnvProdKey = 'PROD';
+  static const String GooglePayEnvTestKey = 'TEST';
+  static const String DebugCodeKey = 'debugCode';
+  static const String DebugMessageKey = 'debugMessage';
 
   static final MethodChannel _channel =
       const MethodChannel('square_mobile_commerce_sdk')..setMethodCallHandler(_nativeCallHandler);
@@ -26,6 +30,9 @@ class SquareMobileCommerceSdkFlutterPlugin {
   static GooglePayCancelCallback _googlePayCancelCallback;
   static GooglePayDidSucceedWithResultCallback _googlePayDidSucceedWithResultCallback;
   static GooglePayFailedCallback _googlePayFailedCallback;
+
+  static ApplePayDidSucceedWithResultCallback _applePayDidSucceedWithResultCallback;
+  static ApplePayFailedCallback _applePayFailedCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
@@ -58,6 +65,18 @@ class SquareMobileCommerceSdkFlutterPlugin {
             _googlePayFailedCallback(errorInfo);
           }
           break;
+        case 'onApplePayGetNonce':
+          if (_applePayDidSucceedWithResultCallback != null) {
+            CardResult result = _standardSerializers.deserializeWith(CardResult.serializer, call.arguments);
+            _applePayDidSucceedWithResultCallback(result);
+          }
+          break;
+        case 'onApplePayFailed':
+          if (_applePayFailedCallback != null) {
+            ErrorInfo errorInfo = _standardSerializers.deserializeWith(ErrorInfo.serializer, call.arguments);
+            _applePayFailedCallback(errorInfo);
+          }
+          break;
         default:
           throw Exception('unknown method called from native');
       }
@@ -86,7 +105,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('setApplicationId', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
@@ -96,7 +115,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     try {
       await _channel.invokeMethod('startCardEntryFlow');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
@@ -104,7 +123,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     try {
       await _channel.invokeMethod('closeCardEntryForm');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
@@ -115,30 +134,31 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('showCardProcessingError', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
   static Future initializeGooglePay(String environment) async {
-    assert(environment == GOOGLE_PAY_ENV_PROD || environment == GOOGLE_PAY_ENV_TEST, 'environment should be either GOOGLE_PAY_ENV_PROD or GOOGLE_PAY_ENV_TEST.');
+    assert(environment == GooglePayEnvProdKey || environment == GooglePayEnvTestKey, 'environment should be either GOOGLE_PAY_ENV_PROD or GOOGLE_PAY_ENV_TEST.');
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'environment': environment,
       };
       await _channel.invokeMethod('initializeGooglePay', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
   static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayDidSucceedWithResultCallback onGooglePayDidSucceedWithResult, GooglePayCancelCallback onGooglePayCanceled, GooglePayFailedCallback onGooglePayFailed) async {
-    assert(merchantId != null && merchantId.isNotEmpty, 'merChantId should not be null or empty.');
+    assert(merchantId != null && merchantId.isNotEmpty, 'merchantId should not be null or empty.');
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty, 'currencyCode should not be null or empty.');
 
     _googlePayDidSucceedWithResultCallback = onGooglePayDidSucceedWithResult;
     _googlePayCancelCallback = onGooglePayCanceled;
     _googlePayFailedCallback = onGooglePayFailed;
+
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'merchantId': merchantId,
@@ -147,7 +167,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
   
@@ -158,11 +178,19 @@ class SquareMobileCommerceSdkFlutterPlugin {
       };
       await _channel.invokeMethod('initializeApplePay', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 
-  static Future<Map> payWithApplePay(String price, String summaryLabel, String countryCode, String currencyCode, ) async {
+  static Future<Map> requestApplePayNonce(String price, String summaryLabel, String countryCode, String currencyCode, ApplePayDidSucceedWithResultCallback onApplePayDidSucceedWithResult, ApplePayFailedCallback onApplePayFailed) async {
+    assert(summaryLabel != null && summaryLabel.isNotEmpty, 'summaryLabel should not be null or empty.');
+    assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
+    assert(countryCode != null && countryCode.isNotEmpty, 'countryCode should not be null or empty.');
+    assert(currencyCode != null && currencyCode.isNotEmpty, 'currencyCode should not be null or empty.');
+
+    _applePayDidSucceedWithResultCallback = onApplePayDidSucceedWithResult;
+    _applePayFailedCallback = onApplePayFailed;
+
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'price': price,
@@ -170,10 +198,18 @@ class SquareMobileCommerceSdkFlutterPlugin {
         'countryCode': countryCode,
         'currencyCode': currencyCode,
       };
-      Map cardResult = await _channel.invokeMethod('payWithApplePay', params);
+      Map cardResult = await _channel.invokeMethod('requestApplePayNonce', params);
       return cardResult;
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details['debugCode'], ex.details['debugMessage']);
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
+    }
+  }
+
+  static Future completeApplePayAuthorization() async {
+    try {
+      await _channel.invokeMethod('completeApplePayAuthorization');
+    } on PlatformException catch (ex) {
+      throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }
   }
 }

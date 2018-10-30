@@ -29,6 +29,7 @@ FlutterMethodChannel* _channel;
     self.cardEntryModule = [[FlutterMobileCommerceSdkCardEntry alloc] init];
     [self.cardEntryModule initWithMethodChannel:_channel];
     self.applePayModule = [[FlutterMobileCommerceSdkApplePay alloc] init];
+    [self.applePayModule initWithMethodChannel:_channel];
     return self;
 }
 
@@ -47,7 +48,7 @@ FlutterMethodChannel* _channel;
         [self.cardEntryModule closeCardEntryForm:result];
     } else if ([@"showCardProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
-    } else if ([@"payWithApplePay" isEqualToString:call.method]) {
+    } else if ([@"requestApplePayNonce" isEqualToString:call.method]) {
         NSString *countryCode = call.arguments[@"countryCode"];
         NSString *currencyCode = call.arguments[@"currencyCode"];
         NSString *summaryLabel = call.arguments[@"summaryLabel"];
@@ -57,6 +58,8 @@ FlutterMethodChannel* _channel;
                                      currencyCode:currencyCode
                                      summaryLabel:summaryLabel
                                             price:price];
+    } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
+        [self.applePayModule completeApplePayAuthorization:result];
     } else {
         result(FlutterMethodNotImplemented);
     }

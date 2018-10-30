@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSquarePayment() async {
     await SquareMobileCommerceSdkFlutterPlugin.setApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GOOGLE_PAY_ENV_TEST);
+      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GooglePayEnvTestKey);
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await SquareMobileCommerceSdkFlutterPlugin.initializeApplePay('merchant.com.mcomm.flutter');
     }
@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void onCardEntryCancel() async {
+    print('card entry flow is canceled.');
     await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
   }
 
@@ -103,11 +104,21 @@ class _MyAppState extends State<MyApp> {
       String price = '100';
       String countryCode = 'US';
       String currencyCode = 'USD';
-      Map result = await SquareMobileCommerceSdkFlutterPlugin.payWithApplePay(price, summaryLabel, countryCode, currencyCode);
+      Map result = await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, onApplePayDidSucceedWithResult, onApplePayFailed);
       print(result.toString());
     } on PlatformException catch(ex) {
        print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
+  }
+
+  void onApplePayDidSucceedWithResult(CardResult result) async {
+    print(result);
+    await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
+  }
+
+  void onApplePayFailed(ErrorInfo errorInfo) async {
+    print('ApplePay failed. \n ${errorInfo.toString()}');
+    await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
   }
 
   @override
