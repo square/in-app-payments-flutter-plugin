@@ -76,7 +76,8 @@ final public class GooglePayModule {
         if (googlePayResult.isSuccess()) {
           channel.invokeMethod("onGooglePayGetNonce", cardResultConverter.toMapObject(googlePayResult.getSuccessValue().getCardResult()));
         } else if (googlePayResult.isError()) {
-          channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getGooglePayErorrInfo("Failed to exchange nonce with google pay token."));
+          CreateNonceResult.Error error = ((CreateNonceResult.Error) googlePayResult);
+          channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getGooglePayErorrInfo(error.getDebugMessage()));
         }
       }
     });

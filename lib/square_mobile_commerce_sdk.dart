@@ -79,9 +79,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
   }
 
   static Future setApplicationId(String applicationId) async {
-    if (applicationId == null) {
-      throw Exception("applicationId shouldn't be null");
-    }
+    assert(applicationId != null && applicationId.isNotEmpty, 'application should not be null or empty.');
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'applicationId': applicationId,
@@ -122,6 +120,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
   }
 
   static Future initializeGooglePay(String environment) async {
+    assert(environment == GOOGLE_PAY_ENV_PROD || environment == GOOGLE_PAY_ENV_TEST, 'environment should be either GOOGLE_PAY_ENV_PROD or GOOGLE_PAY_ENV_TEST.');
     try {
       Map<String, dynamic> params = <String, dynamic> {
         'environment': environment,
@@ -133,6 +132,10 @@ class SquareMobileCommerceSdkFlutterPlugin {
   }
 
   static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayDidSucceedWithResultCallback onGooglePayDidSucceedWithResult, GooglePayCancelCallback onGooglePayCanceled, GooglePayFailedCallback onGooglePayFailed) async {
+    assert(merchantId != null && merchantId.isNotEmpty, 'merChantId should not be null or empty.');
+    assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
+    assert(currencyCode != null && currencyCode.isNotEmpty, 'currencyCode should not be null or empty.');
+
     _googlePayDidSucceedWithResultCallback = onGooglePayDidSucceedWithResult;
     _googlePayCancelCallback = onGooglePayCanceled;
     _googlePayFailedCallback = onGooglePayFailed;
