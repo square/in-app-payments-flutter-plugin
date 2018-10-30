@@ -17,9 +17,12 @@ public final class ErrorHandlerUtils {
     return errorData;
   }
 
-  public static Map<String, String> getGooglePayErorrInfo(String message) {
-    Map<String, String> errorInfo = new HashMap<>();
-    errorInfo.put("message", message);
-    return errorInfo;
+  public static Map<String, String> getCallbackErrorObject(String code, String message, String debugCode, String debugMessage) {
+    Map<String, String> errorObject = new HashMap<>();
+    errorObject.put("code", code);
+    errorObject.put("message", message);
+    errorObject.put("debugCode", debugCode);
+    errorObject.put("debugMessage", debugMessage);
+    return errorObject;
   }
 }

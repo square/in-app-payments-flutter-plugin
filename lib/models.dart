@@ -31,8 +31,10 @@ abstract class Card implements Built<Card, CardBuilder> {
   String get lastFourDigits;
   int get expirationMonth;
   int get expirationYear;
-  String get postalCode;
   String get brand;
+
+  @nullable
+  String get postalCode;
 
   Card._();
   factory Card([updates(CardBuilder b)]) = _$Card;
@@ -40,7 +42,10 @@ abstract class Card implements Built<Card, CardBuilder> {
 }
 
 abstract class ErrorInfo implements Built<ErrorInfo, ErrorInfoBuilder> {
+  String get code;
   String get message;
+  String get debugCode;
+  String get debugMessage;
 
   ErrorInfo._();
   factory ErrorInfo([updates(ErrorInfoBuilder b)]) = _$ErrorInfo;

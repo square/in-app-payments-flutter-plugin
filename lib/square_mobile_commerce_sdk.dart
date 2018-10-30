@@ -182,7 +182,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
-  static Future<Map> requestApplePayNonce(String price, String summaryLabel, String countryCode, String currencyCode, ApplePayDidSucceedWithResultCallback onApplePayDidSucceedWithResult, ApplePayFailedCallback onApplePayFailed) async {
+  static Future requestApplePayNonce(String price, String summaryLabel, String countryCode, String currencyCode, ApplePayDidSucceedWithResultCallback onApplePayDidSucceedWithResult, ApplePayFailedCallback onApplePayFailed) async {
     assert(summaryLabel != null && summaryLabel.isNotEmpty, 'summaryLabel should not be null or empty.');
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
     assert(countryCode != null && countryCode.isNotEmpty, 'countryCode should not be null or empty.');
@@ -198,8 +198,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
         'countryCode': countryCode,
         'currencyCode': currencyCode,
       };
-      Map cardResult = await _channel.invokeMethod('requestApplePayNonce', params);
-      return cardResult;
+      await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[DebugCodeKey], ex.details[DebugMessageKey]);
     }

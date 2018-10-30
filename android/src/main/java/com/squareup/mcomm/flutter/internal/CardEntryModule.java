@@ -60,6 +60,7 @@ final public class CardEntryModule {
   }
 
   public void showCardProcessingError(MethodChannel.Result result, String errorMessage) {
+    // TOOD: this is not doing any in alpha 0.2 because activity has been closed.
     Log.e("mcomm_plugin", errorMessage);
     result.success(null);
   }

@@ -40,6 +40,12 @@ import java.util.List;
 
 final public class GooglePayModule {
 
+  // Android only flutter plugin errors and messages
+  private static final String FL_GOOGLE_PAY_RESULT_ERROR = "fl_google_pay_result_error";
+  private static final String FL_GOOGLE_PAY_UNKNOWN_ERROR = "fl_google_pay_unknown_error";
+  private static final String FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR = "Failed to launch google pay, please make sure you configured google pay correctly.";
+  private static final String FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR = "Unknown google pay activity result status.";
+
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
   private static final List<Integer> CARD_NETWORKS = Arrays.asList(
       WalletConstants.CARD_NETWORK_AMEX,
@@ -77,7 +83,7 @@ final public class GooglePayModule {
           channel.invokeMethod("onGooglePayGetNonce", cardResultConverter.toMapObject(googlePayResult.getSuccessValue().getCardResult()));
         } else if (googlePayResult.isError()) {
           CreateNonceResult.Error error = ((CreateNonceResult.Error) googlePayResult);
-          channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getGooglePayErorrInfo(error.getDebugMessage()));
+          channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
         }
       }
     });
@@ -97,10 +103,12 @@ final public class GooglePayModule {
               break;
             case AutoResolveHelper.RESULT_ERROR:
               Status status = AutoResolveHelper.getStatusFromIntent(data);
-              channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getGooglePayErorrInfo(status.getStatusMessage()));
+              channel.invokeMethod("onGooglePayFailed",
+                  ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_RESULT_ERROR), FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
               break;
             default:
-              channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getGooglePayErorrInfo("Got unknown google pay activity result."));
+              channel.invokeMethod("onGooglePayFailed",
+                  ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_UNKNOWN_ERROR), FL_GOOGLE_PAY_UNKNOWN_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR));
           }
         }
         return false;
@@ -117,6 +125,7 @@ final public class GooglePayModule {
   }
 
   private PaymentDataRequest _createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
+    // TODO: Add support for google pay configuration
     PaymentDataRequest.Builder request = PaymentDataRequest
         .newBuilder().setTransactionInfo(
             TransactionInfo.newBuilder()

@@ -88,13 +88,16 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       'expirationYear',
       serializers.serialize(object.expirationYear,
           specifiedType: const FullType(int)),
-      'postalCode',
-      serializers.serialize(object.postalCode,
-          specifiedType: const FullType(String)),
       'brand',
       serializers.serialize(object.brand,
           specifiedType: const FullType(String)),
     ];
+    if (object.postalCode != null) {
+      result
+        ..add('postalCode')
+        ..add(serializers.serialize(object.postalCode,
+            specifiedType: const FullType(String)));
+    }
 
     return result;
   }
@@ -122,12 +125,12 @@ class _$CardSerializer implements StructuredSerializer<Card> {
           result.expirationYear = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
-        case 'postalCode':
-          result.postalCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
         case 'brand':
           result.brand = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'postalCode':
+          result.postalCode = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
       }
@@ -147,8 +150,16 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   Iterable serialize(Serializers serializers, ErrorInfo object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
+      'code',
+      serializers.serialize(object.code, specifiedType: const FullType(String)),
       'message',
       serializers.serialize(object.message,
+          specifiedType: const FullType(String)),
+      'debugCode',
+      serializers.serialize(object.debugCode,
+          specifiedType: const FullType(String)),
+      'debugMessage',
+      serializers.serialize(object.debugMessage,
           specifiedType: const FullType(String)),
     ];
 
@@ -166,8 +177,20 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'code':
+          result.code = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'message':
           result.message = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'debugCode':
+          result.debugCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'debugMessage':
+          result.debugMessage = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
       }
@@ -286,9 +309,9 @@ class _$Card extends Card {
   @override
   final int expirationYear;
   @override
-  final String postalCode;
-  @override
   final String brand;
+  @override
+  final String postalCode;
 
   factory _$Card([void updates(CardBuilder b)]) =>
       (new CardBuilder()..update(updates)).build();
@@ -297,8 +320,8 @@ class _$Card extends Card {
       {this.lastFourDigits,
       this.expirationMonth,
       this.expirationYear,
-      this.postalCode,
-      this.brand})
+      this.brand,
+      this.postalCode})
       : super._() {
     if (lastFourDigits == null) {
       throw new BuiltValueNullFieldError('Card', 'lastFourDigits');
@@ -308,9 +331,6 @@ class _$Card extends Card {
     }
     if (expirationYear == null) {
       throw new BuiltValueNullFieldError('Card', 'expirationYear');
-    }
-    if (postalCode == null) {
-      throw new BuiltValueNullFieldError('Card', 'postalCode');
     }
     if (brand == null) {
       throw new BuiltValueNullFieldError('Card', 'brand');
@@ -331,8 +351,8 @@ class _$Card extends Card {
         lastFourDigits == other.lastFourDigits &&
         expirationMonth == other.expirationMonth &&
         expirationYear == other.expirationYear &&
-        postalCode == other.postalCode &&
-        brand == other.brand;
+        brand == other.brand &&
+        postalCode == other.postalCode;
   }
 
   @override
@@ -341,8 +361,8 @@ class _$Card extends Card {
         $jc(
             $jc($jc($jc(0, lastFourDigits.hashCode), expirationMonth.hashCode),
                 expirationYear.hashCode),
-            postalCode.hashCode),
-        brand.hashCode));
+            brand.hashCode),
+        postalCode.hashCode));
   }
 
   @override
@@ -351,8 +371,8 @@ class _$Card extends Card {
           ..add('lastFourDigits', lastFourDigits)
           ..add('expirationMonth', expirationMonth)
           ..add('expirationYear', expirationYear)
-          ..add('postalCode', postalCode)
-          ..add('brand', brand))
+          ..add('brand', brand)
+          ..add('postalCode', postalCode))
         .toString();
   }
 }
@@ -375,13 +395,13 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   set expirationYear(int expirationYear) =>
       _$this._expirationYear = expirationYear;
 
-  String _postalCode;
-  String get postalCode => _$this._postalCode;
-  set postalCode(String postalCode) => _$this._postalCode = postalCode;
-
   String _brand;
   String get brand => _$this._brand;
   set brand(String brand) => _$this._brand = brand;
+
+  String _postalCode;
+  String get postalCode => _$this._postalCode;
+  set postalCode(String postalCode) => _$this._postalCode = postalCode;
 
   CardBuilder();
 
@@ -390,8 +410,8 @@ class CardBuilder implements Builder<Card, CardBuilder> {
       _lastFourDigits = _$v.lastFourDigits;
       _expirationMonth = _$v.expirationMonth;
       _expirationYear = _$v.expirationYear;
-      _postalCode = _$v.postalCode;
       _brand = _$v.brand;
+      _postalCode = _$v.postalCode;
       _$v = null;
     }
     return this;
@@ -417,8 +437,8 @@ class CardBuilder implements Builder<Card, CardBuilder> {
             lastFourDigits: lastFourDigits,
             expirationMonth: expirationMonth,
             expirationYear: expirationYear,
-            postalCode: postalCode,
-            brand: brand);
+            brand: brand,
+            postalCode: postalCode);
     replace(_$result);
     return _$result;
   }
@@ -426,14 +446,30 @@ class CardBuilder implements Builder<Card, CardBuilder> {
 
 class _$ErrorInfo extends ErrorInfo {
   @override
+  final String code;
+  @override
   final String message;
+  @override
+  final String debugCode;
+  @override
+  final String debugMessage;
 
   factory _$ErrorInfo([void updates(ErrorInfoBuilder b)]) =>
       (new ErrorInfoBuilder()..update(updates)).build();
 
-  _$ErrorInfo._({this.message}) : super._() {
+  _$ErrorInfo._({this.code, this.message, this.debugCode, this.debugMessage})
+      : super._() {
+    if (code == null) {
+      throw new BuiltValueNullFieldError('ErrorInfo', 'code');
+    }
     if (message == null) {
       throw new BuiltValueNullFieldError('ErrorInfo', 'message');
+    }
+    if (debugCode == null) {
+      throw new BuiltValueNullFieldError('ErrorInfo', 'debugCode');
+    }
+    if (debugMessage == null) {
+      throw new BuiltValueNullFieldError('ErrorInfo', 'debugMessage');
     }
   }
 
@@ -447,17 +483,27 @@ class _$ErrorInfo extends ErrorInfo {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ErrorInfo && message == other.message;
+    return other is ErrorInfo &&
+        code == other.code &&
+        message == other.message &&
+        debugCode == other.debugCode &&
+        debugMessage == other.debugMessage;
   }
 
   @override
   int get hashCode {
-    return $jf($jc(0, message.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, code.hashCode), message.hashCode), debugCode.hashCode),
+        debugMessage.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('ErrorInfo')..add('message', message))
+    return (newBuiltValueToStringHelper('ErrorInfo')
+          ..add('code', code)
+          ..add('message', message)
+          ..add('debugCode', debugCode)
+          ..add('debugMessage', debugMessage))
         .toString();
   }
 }
@@ -465,15 +511,30 @@ class _$ErrorInfo extends ErrorInfo {
 class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   _$ErrorInfo _$v;
 
+  String _code;
+  String get code => _$this._code;
+  set code(String code) => _$this._code = code;
+
   String _message;
   String get message => _$this._message;
   set message(String message) => _$this._message = message;
+
+  String _debugCode;
+  String get debugCode => _$this._debugCode;
+  set debugCode(String debugCode) => _$this._debugCode = debugCode;
+
+  String _debugMessage;
+  String get debugMessage => _$this._debugMessage;
+  set debugMessage(String debugMessage) => _$this._debugMessage = debugMessage;
 
   ErrorInfoBuilder();
 
   ErrorInfoBuilder get _$this {
     if (_$v != null) {
+      _code = _$v.code;
       _message = _$v.message;
+      _debugCode = _$v.debugCode;
+      _debugMessage = _$v.debugMessage;
       _$v = null;
     }
     return this;
@@ -494,7 +555,12 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
 
   @override
   _$ErrorInfo build() {
-    final _$result = _$v ?? new _$ErrorInfo._(message: message);
+    final _$result = _$v ??
+        new _$ErrorInfo._(
+            code: code,
+            message: message,
+            debugCode: debugCode,
+            debugMessage: debugMessage);
     replace(_$result);
     return _$result;
   }

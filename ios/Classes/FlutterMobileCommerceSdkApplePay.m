@@ -1,6 +1,6 @@
 #import "FlutterMobileCommerceSdkApplePay.h"
 #import "FlutterMobileCommerceSdkErrorUtilities.h"
-#import "Converters/SQMCCard+FlutterMobileCommerceSdkAdditions.h"
+#import "Converters/SQMCApplePayNonceResult+FlutterMobileCommerceSdkAdditions.h"
 
 API_AVAILABLE(ios(11.0))
 typedef void (^CompletionHandler)(PKPaymentAuthorizationResult * _Nonnull);
@@ -10,8 +10,6 @@ API_AVAILABLE(ios(11.0))
 
 @property (strong, readwrite) FlutterMethodChannel* channel;
 @property (strong, readwrite) NSString* applePayMerchantId;
-@property (strong, readwrite) SQMCApplePayNonceResult* applePayResult;
-@property (strong, readwrite) NSRecursiveLock* applePayResolverLock;
 @property (strong, readwrite) CompletionHandler completionHandler;
 @property (strong, readwrite) PKPaymentAuthorizationResult* authorizationResult;
 
@@ -28,7 +26,6 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel
 {
     self.channel = channel;
-    self.applePayResolverLock = [[NSRecursiveLock alloc] init];
 }
 
 - (void)initializeApplePay:(FlutterResult)result merchantId:(NSString *)merchantId
@@ -98,12 +95,9 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
                                                                                       debugMessage:debugMessage]];
         } else {
             // if error is not nil, result must be valid
-            NSMutableDictionary *applePayNoncResult = [[NSMutableDictionary alloc] init];
-            applePayNoncResult[@"nonce"] = result.nonce;
-            applePayNoncResult[@"card"] = [result.card jsonDictionary];
             self.completionHandler = completion;
             self.authorizationResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
-            [self.channel invokeMethod:@"onApplePayGetNonce" arguments:applePayNoncResult];
+            [self.channel invokeMethod:@"onApplePayGetNonce" arguments:[result jsonDictionary]];
         }
     }];
 }

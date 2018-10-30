@@ -104,8 +104,7 @@ class _MyAppState extends State<MyApp> {
       String price = '100';
       String countryCode = 'US';
       String currencyCode = 'USD';
-      Map result = await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, onApplePayDidSucceedWithResult, onApplePayFailed);
-      print(result.toString());
+      await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, onApplePayDidSucceedWithResult, onApplePayFailed);
     } on PlatformException catch(ex) {
        print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
