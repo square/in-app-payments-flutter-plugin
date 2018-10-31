@@ -18,7 +18,7 @@ import 'models.dart';
 
 part 'serializers.g.dart';
 
-@SerializersFor(const [
+@SerializersFor([
   CardResult,
   Card,
   ErrorInfo,

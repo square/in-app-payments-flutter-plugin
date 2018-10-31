@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:square_mobile_commerce_sdk/models.dart';
 import 'package:square_mobile_commerce_sdk/square_mobile_commerce_sdk.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -20,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
-    initSquarePayment();
+    _initSquarePayment();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -43,10 +42,10 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> initSquarePayment() async {
+  Future<void> _initSquarePayment() async {
     await SquareMobileCommerceSdkFlutterPlugin.setApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.GooglePayEnvTestKey);
+      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.googlePayEnvTestKey);
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await SquareMobileCommerceSdkFlutterPlugin.initializeApplePay('merchant.com.mcomm.flutter');
     }
@@ -56,88 +55,88 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void onCardEntryDidSucceedWithResult(CardResult result) async {
+  void _onCardEntryDidSucceedWithResult(CardResult result) async {
     print(result);
     await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
   }
 
-  void onCardEntryCancel() async {
+  void _onCardEntryCancel() async {
     print('card entry flow is canceled.');
     await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
   }
 
-  Future<void> onStartCardEntryFlow() async {
+  Future<void> _onStartCardEntryFlow() async {
     try {
-      await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(this.onCardEntryDidSucceedWithResult, this.onCardEntryCancel);
+      await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(_onCardEntryDidSucceedWithResult, _onCardEntryCancel);
     } on PlatformException {
       print('Failed to startCardEntryFlow.');
     }
   }
 
-  Future<void> onStartGooglePay() async {
+  void _onStartGooglePay() async {
     try {
-      String merchantId = '0ZXKWWD1CB2T6';
-      String price = '100';
-      String currencyCode = 'USD';
+      var merchantId = '0ZXKWWD1CB2T6';
+      var price = '100';
+      var currencyCode = 'USD';
       await SquareMobileCommerceSdkFlutterPlugin.requestGooglePayNonce(
-        merchantId, price, currencyCode, onGooglePayDidSucceedWithResult, onGooglePayCancel, onGooglePayFailed);
+        merchantId, price, currencyCode, _onGooglePayDidSucceedWithResult, _onGooglePayCancel, _onGooglePayFailed);
     } on PlatformException catch(ex) {
        print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
 
-  void onGooglePayDidSucceedWithResult(CardResult result) {
+  void _onGooglePayDidSucceedWithResult(CardResult result) {
       print(result);
   }
 
-  void onGooglePayCancel() {
+  void _onGooglePayCancel() {
     print('GooglePay is canceled');
   }
 
-  void onGooglePayFailed(ErrorInfo errorInfo) {
+  void _onGooglePayFailed(ErrorInfo errorInfo) {
     print('GooglePay failed. \n ${errorInfo.toString()}');
   }
 
-  Future<void> onStartApplePay() async {
+  void _onStartApplePay() async {
     try {
-      String summaryLabel = 'Flutter Test';
-      String price = '100';
-      String countryCode = 'US';
-      String currencyCode = 'USD';
-      await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, onApplePayDidSucceedWithResult, onApplePayFailed);
+      var summaryLabel = 'Flutter Test';
+      var price = '100';
+      var countryCode = 'US';
+      var currencyCode = 'USD';
+      await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, _onApplePayDidSucceedWithResult, _onApplePayFailed);
     } on PlatformException catch(ex) {
        print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
   }
 
-  void onApplePayDidSucceedWithResult(CardResult result) async {
+  void _onApplePayDidSucceedWithResult(CardResult result) async {
     print(result);
     await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
   }
 
-  void onApplePayFailed(ErrorInfo errorInfo) async {
+  void _onApplePayFailed(ErrorInfo errorInfo) async {
     print('ApplePay failed. \n ${errorInfo.toString()}');
     await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
+  Widget build(BuildContext context) => 
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: new Center(
+        body: Center(
           child: Column(
             children: <Widget>[
               Text('Running on: $_platformVersion\n'),
               RaisedButton(
-                onPressed: _paymentInitialized ? onStartCardEntryFlow : null,
+                onPressed: _paymentInitialized ? _onStartCardEntryFlow : null,
                 child: Text('Start Checkout'),
               ),
               RaisedButton(
                 onPressed: _paymentInitialized ? 
-                  (Theme.of(context).platform == TargetPlatform.iOS) ? onStartApplePay : onStartGooglePay
+                  (Theme.of(context).platform == TargetPlatform.iOS) ? _onStartApplePay : _onStartGooglePay
                   : null,
                 child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),
               ),
@@ -146,5 +145,4 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
-  }
 }
