@@ -19,18 +19,18 @@ part of 'models.dart';
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
-Serializer<CardResult> _$cardResultSerializer = new _$CardResultSerializer();
+Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<ErrorInfo> _$errorInfoSerializer = new _$ErrorInfoSerializer();
 
-class _$CardResultSerializer implements StructuredSerializer<CardResult> {
+class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   @override
-  final Iterable<Type> types = const [CardResult, _$CardResult];
+  final Iterable<Type> types = const [CardDetails, _$CardDetails];
   @override
-  final String wireName = 'CardResult';
+  final String wireName = 'CardDetails';
 
   @override
-  Iterable serialize(Serializers serializers, CardResult object,
+  Iterable serialize(Serializers serializers, CardDetails object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'nonce',
@@ -44,9 +44,9 @@ class _$CardResultSerializer implements StructuredSerializer<CardResult> {
   }
 
   @override
-  CardResult deserialize(Serializers serializers, Iterable serialized,
+  CardDetails deserialize(Serializers serializers, Iterable serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new CardResultBuilder();
+    final result = new CardDetailsBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -200,35 +200,35 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   }
 }
 
-class _$CardResult extends CardResult {
+class _$CardDetails extends CardDetails {
   @override
   final String nonce;
   @override
   final Card card;
 
-  factory _$CardResult([void updates(CardResultBuilder b)]) =>
-      (new CardResultBuilder()..update(updates)).build();
+  factory _$CardDetails([void updates(CardDetailsBuilder b)]) =>
+      (new CardDetailsBuilder()..update(updates)).build();
 
-  _$CardResult._({this.nonce, this.card}) : super._() {
+  _$CardDetails._({this.nonce, this.card}) : super._() {
     if (nonce == null) {
-      throw new BuiltValueNullFieldError('CardResult', 'nonce');
+      throw new BuiltValueNullFieldError('CardDetails', 'nonce');
     }
     if (card == null) {
-      throw new BuiltValueNullFieldError('CardResult', 'card');
+      throw new BuiltValueNullFieldError('CardDetails', 'card');
     }
   }
 
   @override
-  CardResult rebuild(void updates(CardResultBuilder b)) =>
+  CardDetails rebuild(void updates(CardDetailsBuilder b)) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  CardResultBuilder toBuilder() => new CardResultBuilder()..replace(this);
+  CardDetailsBuilder toBuilder() => new CardDetailsBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is CardResult && nonce == other.nonce && card == other.card;
+    return other is CardDetails && nonce == other.nonce && card == other.card;
   }
 
   @override
@@ -238,15 +238,15 @@ class _$CardResult extends CardResult {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('CardResult')
+    return (newBuiltValueToStringHelper('CardDetails')
           ..add('nonce', nonce)
           ..add('card', card))
         .toString();
   }
 }
 
-class CardResultBuilder implements Builder<CardResult, CardResultBuilder> {
-  _$CardResult _$v;
+class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
+  _$CardDetails _$v;
 
   String _nonce;
   String get nonce => _$this._nonce;
@@ -256,9 +256,9 @@ class CardResultBuilder implements Builder<CardResult, CardResultBuilder> {
   CardBuilder get card => _$this._card ??= new CardBuilder();
   set card(CardBuilder card) => _$this._card = card;
 
-  CardResultBuilder();
+  CardDetailsBuilder();
 
-  CardResultBuilder get _$this {
+  CardDetailsBuilder get _$this {
     if (_$v != null) {
       _nonce = _$v.nonce;
       _card = _$v.card?.toBuilder();
@@ -268,23 +268,23 @@ class CardResultBuilder implements Builder<CardResult, CardResultBuilder> {
   }
 
   @override
-  void replace(CardResult other) {
+  void replace(CardDetails other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$CardResult;
+    _$v = other as _$CardDetails;
   }
 
   @override
-  void update(void updates(CardResultBuilder b)) {
+  void update(void updates(CardDetailsBuilder b)) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$CardResult build() {
-    _$CardResult _$result;
+  _$CardDetails build() {
+    _$CardDetails _$result;
     try {
-      _$result = _$v ?? new _$CardResult._(nonce: nonce, card: card.build());
+      _$result = _$v ?? new _$CardDetails._(nonce: nonce, card: card.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -292,7 +292,7 @@ class CardResultBuilder implements Builder<CardResult, CardResultBuilder> {
         card.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'CardResult', _$failedField, e.toString());
+            'CardDetails', _$failedField, e.toString());
       }
       rethrow;
     }

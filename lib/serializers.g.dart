@@ -21,6 +21,6 @@ part of 'serializers.dart';
 
 Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Card.serializer)
-      ..add(CardResult.serializer)
+      ..add(CardDetails.serializer)
       ..add(ErrorInfo.serializer))
     .build();

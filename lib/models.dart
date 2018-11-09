@@ -18,13 +18,13 @@ import 'package:built_value/serializer.dart';
 
 part 'models.g.dart';
 
-abstract class CardResult implements Built<CardResult, CardResultBuilder> {
+abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   String get nonce;
   Card get card;
 
-  CardResult._();
-  factory CardResult([updates(CardResultBuilder b)]) = _$CardResult;
-  static Serializer<CardResult> get serializer => _$cardResultSerializer;
+  CardDetails._();
+  factory CardDetails([updates(CardDetailsBuilder b)]) = _$CardDetails;
+  static Serializer<CardDetails> get serializer => _$cardDetailsSerializer;
 }
 
 abstract class Card implements Built<Card, CardBuilder> {

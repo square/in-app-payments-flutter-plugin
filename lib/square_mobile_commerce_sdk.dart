@@ -6,15 +6,15 @@ import 'models.dart';
 import 'serializers.dart';
 
 typedef CardEntryDidCancelCallback = void Function();
-typedef CardEntryDidSucceedWithResultCallback = void Function(CardResult result);
+typedef CardEntryDidSucceedWithResultCallback = void Function(CardDetails result);
 typedef GooglePayCancelCallback = void Function();
-typedef GooglePayDidSucceedWithResultCallback = void Function(CardResult result);
+typedef GooglePayDidSucceedWithResultCallback = void Function(CardDetails result);
 typedef GooglePayFailedCallback = void Function(ErrorInfo errorInfo);
-typedef ApplePayDidSucceedWithResultCallback = void Function(CardResult result);
+typedef ApplePayDidSucceedWithResultCallback = void Function(CardDetails result);
 typedef ApplePayFailedCallback = void Function(ErrorInfo errorInfo);
 
 // ignore: avoid_classes_with_only_static_members
-class SquareMobileCommerceSdkFlutterPlugin {
+class InAppPayment {
   static const String googlePayEnvProdKey = 'PROD';
   static const String googlePayEnvTestKey = 'TEST';
   static const String debugCodeKey = 'debugCode';
@@ -45,7 +45,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
           break;
         case 'cardEntryDidSucceedWithResult':
           if (_cardEntryDidSucceedWithResultCallback != null) {
-            var result = _standardSerializers.deserializeWith(CardResult.serializer, call.arguments);
+            var result = _standardSerializers.deserializeWith(CardDetails.serializer, call.arguments);
             _cardEntryDidSucceedWithResultCallback(result);
           }
           break;
@@ -56,7 +56,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
           break;
         case 'onGooglePayGetNonce':
           if (_googlePayDidSucceedWithResultCallback != null) {
-            var result = _standardSerializers.deserializeWith(CardResult.serializer, call.arguments);
+            var result = _standardSerializers.deserializeWith(CardDetails.serializer, call.arguments);
             _googlePayDidSucceedWithResultCallback(result);
           }
           break;
@@ -68,7 +68,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
           break;
         case 'onApplePayGetNonce':
           if (_applePayDidSucceedWithResultCallback != null) {
-            var result = _standardSerializers.deserializeWith(CardResult.serializer, call.arguments);
+            var result = _standardSerializers.deserializeWith(CardDetails.serializer, call.arguments);
             _applePayDidSucceedWithResultCallback(result);
           }
           break;
@@ -98,7 +98,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     return version;
   }
 
-  static Future setApplicationId(String applicationId) async {
+  static Future setSquareApplicationId(String applicationId) async {
     assert(applicationId != null && applicationId.isNotEmpty, 'application should not be null or empty.');
     try {
       var params = <String, dynamic> {
@@ -151,7 +151,7 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
-  static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayDidSucceedWithResultCallback onGooglePayDidSucceedWithResult, GooglePayCancelCallback onGooglePayCanceled, GooglePayFailedCallback onGooglePayFailed) async {
+  static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayDidSucceedWithResultCallback onGooglePayDidSucceedWithResult, GooglePayFailedCallback onGooglePayFailed, GooglePayCancelCallback onGooglePayCanceled) async {
     assert(merchantId != null && merchantId.isNotEmpty, 'merchantId should not be null or empty.');
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty, 'currencyCode should not be null or empty.');
@@ -167,6 +167,14 @@ class SquareMobileCommerceSdkFlutterPlugin {
         'currencyCode': currencyCode,
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
+    } on PlatformException catch (ex) {
+      throw InAppPaymentException(ex.code, ex.message, ex.details[debugCodeKey], ex.details[debugMessageKey]);
+    }
+  }
+
+  static Future<bool> get canUseApplePay async {
+     try {
+      return await _channel.invokeMethod('canUseApplePay');
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[debugCodeKey], ex.details[debugMessageKey]);
     }
@@ -205,9 +213,13 @@ class SquareMobileCommerceSdkFlutterPlugin {
     }
   }
 
-  static Future completeApplePayAuthorization() async {
+  static Future completeApplePayAuthorization({bool isSuccess, String errorMessage = ""}) async {
     try {
-      await _channel.invokeMethod('completeApplePayAuthorization');
+      var params = <String, dynamic> {
+        'isSuccess': isSuccess,
+        'errorMessage': errorMessage,
+      };
+      await _channel.invokeMethod('completeApplePayAuthorization', params);
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[debugCodeKey], ex.details[debugMessageKey]);
     }

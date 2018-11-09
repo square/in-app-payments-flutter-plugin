@@ -18,8 +18,9 @@ import 'models.dart';
 
 part 'serializers.g.dart';
 
-@SerializersFor([
-  CardResult,
+// ignore: unnecessary_const
+@SerializersFor(const [
+  CardDetails,
   Card,
   ErrorInfo,
 ])
