@@ -28,10 +28,10 @@ abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
 }
 
 abstract class Card implements Built<Card, CardBuilder> {
+  String get brand;
   String get lastFourDigits;
   int get expirationMonth;
   int get expirationYear;
-  String get brand;
 
   @nullable
   String get postalCode;
