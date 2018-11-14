@@ -47,7 +47,7 @@ class InAppPayments {
             _cardEntryDidCancelCallback();
           }
           break;
-        case 'didObtainCardDetails':
+        case 'cardEntryDidObtainCardDetails':
           if (_cardEntryGetCardDetailsCallback != null) {
             var result = _standardSerializers.deserializeWith(CardDetails.serializer, call.arguments);
             _cardEntryGetCardDetailsCallback(result);

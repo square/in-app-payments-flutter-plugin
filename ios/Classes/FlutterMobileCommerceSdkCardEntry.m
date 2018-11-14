@@ -38,7 +38,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
     self.completionHandler = completionHandler;
-    [self.channel invokeMethod:@"didObtainCardDetails" arguments:[cardDetails jsonDictionary]];
+    [self.channel invokeMethod:@"cardEntryDidObtainCardDetails" arguments:[cardDetails jsonDictionary]];
 }
 
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status

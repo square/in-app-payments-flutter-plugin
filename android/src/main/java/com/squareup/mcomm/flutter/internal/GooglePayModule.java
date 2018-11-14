@@ -27,12 +27,11 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-import com.squareup.mcomm.CreateNonceCallback;
-import com.squareup.mcomm.CreateNonceResult;
-import com.squareup.mcomm.GooglePayManager;
-import com.squareup.mcomm.MobileCommerceSdk;
 import com.squareup.mcomm.flutter.internal.converter.CardConverter;
-import com.squareup.mcomm.flutter.internal.converter.CardResultConverter;
+import com.squareup.mcomm.flutter.internal.converter.CardDetailsConverter;
+import com.squareup.sqip.Callback;
+import com.squareup.sqip.GooglePay;
+import com.squareup.sqip.GooglePayNonceResult;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Arrays;
@@ -57,36 +56,23 @@ final public class GooglePayModule {
   );
 
   private final Activity currentActivity;
-  private final GooglePayManager googlePayManager;
   private final PaymentsClient googlePayClients;
-  private final CardResultConverter cardResultConverter;
+  private final CardDetailsConverter cardDetailsConverter;
 
-  public GooglePayModule(PluginRegistry.Registrar registrar, MobileCommerceSdk mobileCommerceSdk, String environment, final MethodChannel channel) {
+  public GooglePayModule(PluginRegistry.Registrar registrar, String environment, final MethodChannel channel) {
     currentActivity = registrar.activity();
-    cardResultConverter = new CardResultConverter(new CardConverter());
+    cardDetailsConverter = new CardDetailsConverter(new CardConverter());
     int env = WalletConstants.ENVIRONMENT_TEST;
     if (environment.equals("PROD")) {
       env = WalletConstants.ENVIRONMENT_PRODUCTION;
     }
-    googlePayManager = mobileCommerceSdk.googlePayManager(currentActivity.getApplication());
+
     googlePayClients = Wallet.getPaymentsClient(
         currentActivity,
         (new Wallet.WalletOptions.Builder())
             .setEnvironment(env)
             .build()
     );
-
-    // Register callback when nonce is exchanged from square google pay service with google pay token
-    googlePayManager.addCreateNonceCallback(new CreateNonceCallback() {
-      @Override public void onResult(CreateNonceResult googlePayResult) {
-        if (googlePayResult.isSuccess()) {
-          channel.invokeMethod("onGooglePayNonceRequestSuccess", cardResultConverter.toMapObject(googlePayResult.getSuccessValue().getCardResult()));
-        } else if (googlePayResult.isError()) {
-          CreateNonceResult.Error error = ((CreateNonceResult.Error) googlePayResult);
-          channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
-        }
-      }
-    });
 
     // Register callback when google pay activity is dismissed
     registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
@@ -96,7 +82,17 @@ final public class GooglePayModule {
             case Activity.RESULT_OK:
               PaymentData paymentData = PaymentData.getFromIntent(data);
               String googlePayToken = paymentData.getPaymentMethodToken().getToken();
-              googlePayManager.createNonce(googlePayToken);
+              GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
+                  new Callback<GooglePayNonceResult>() {
+                    @Override public void onResult(GooglePayNonceResult googlePayNonceResult) {
+                      if (googlePayNonceResult.isSuccess()) {
+                        channel.invokeMethod("onGooglePayNonceRequestSuccess", cardDetailsConverter.toMapObject(googlePayNonceResult.getSuccessValue()));
+                      } else if (googlePayNonceResult.isError()) {
+                        GooglePayNonceResult.Error error = ((GooglePayNonceResult.Error) googlePayNonceResult);
+                        channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
+                      }
+                    }
+                  });
               break;
             case Activity.RESULT_CANCELED:
               channel.invokeMethod("onGooglePayCanceled", null);

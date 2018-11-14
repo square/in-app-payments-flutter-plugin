@@ -16,52 +16,80 @@ limitations under the License.
 package com.squareup.mcomm.flutter.internal;
 
 import android.app.Activity;
-import android.util.Log;
-import com.squareup.mcomm.CardEntryActivityCallback;
-import com.squareup.mcomm.CardEntryActivityResult;
-import com.squareup.mcomm.MobileCommerceSdk;
+import android.content.Intent;
 import com.squareup.mcomm.flutter.internal.converter.CardConverter;
-import com.squareup.mcomm.flutter.internal.converter.CardResultConverter;
+import com.squareup.mcomm.flutter.internal.converter.CardDetailsConverter;
+import com.squareup.sqip.Callback;
+import com.squareup.sqip.CardDetails;
+import com.squareup.sqip.CardEntry;
+import com.squareup.sqip.CardEntryActivityCommand;
+import com.squareup.sqip.CardEntryActivityResult;
+import com.squareup.sqip.CardNonceBackgroundHandler;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+import org.jetbrains.annotations.NotNull;
 
 final public class CardEntryModule {
 
   private final Activity currentActivity;
-  private final MobileCommerceSdk mobileCommerceSdk;
-  private final CardResultConverter cardResultConverter;
+  private final CardDetailsConverter cardDetailsConverter;
+  private final AtomicReference<CardEntryActivityCommand> reference;
+  private volatile CountDownLatch countDownLatch;
 
-  public CardEntryModule(Activity activity, MobileCommerceSdk mobileCommerceSdk, final MethodChannel channel) {
-    currentActivity = activity;
-    cardResultConverter = new CardResultConverter(new CardConverter());
-    this.mobileCommerceSdk = mobileCommerceSdk;
+  public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
+    currentActivity = registrar.activity();
+    cardDetailsConverter = new CardDetailsConverter(new CardConverter());
+    reference = new AtomicReference<>();
 
-    this.mobileCommerceSdk.cardEntryManager().addCardEntryActivityCallback(new CardEntryActivityCallback() {
-      @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
-        if (cardEntryActivityResult.isCanceled()) {
-          channel.invokeMethod("cardEntryDidCancel", null);
-          return;
+    registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
+      @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
+          @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
+            if (cardEntryActivityResult.isCanceled()) {
+              channel.invokeMethod("cardEntryDidCancel", null);
+            } else if (cardEntryActivityResult.isSuccess()) {
+              channel.invokeMethod("cardEntryComplete", null);
+            }
+          }
+        });
+        return false;
+      }
+    });
+
+    CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
+      @NotNull @Override
+      public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
+        Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
+        countDownLatch = new CountDownLatch(1);
+        channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
+        try {
+          countDownLatch.await();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
         }
-        Map<String, Object> mapToReturn = cardResultConverter.toMapObject(cardEntryActivityResult.getSuccessValue().getCardResult());
-        channel.invokeMethod("cardEntryDidSucceedWithResult", mapToReturn);
+
+        return reference.get();
       }
     });
   }
 
   public void startCardEntryFlow(MethodChannel.Result result) {
-    this.mobileCommerceSdk.cardEntryManager().startCardEntryActivity(this.currentActivity);
+    CardEntry.startCardEntryActivity(currentActivity);
     result.success(null);
   }
 
-  public void closeCardEntryForm(MethodChannel.Result result) {
-    // TOOD: this is not doing any in alpha 0.2 because activity has been closed.
-    Log.i("mcomm_plugin", "closeCardEntryForm");
+  public void completeCardEntry(MethodChannel.Result result) {
+    reference.set(new CardEntryActivityCommand.Finish());
+    countDownLatch.countDown();
     result.success(null);
   }
 
   public void showCardProcessingError(MethodChannel.Result result, String errorMessage) {
-    // TOOD: this is not doing any in alpha 0.2 because activity has been closed.
-    Log.e("mcomm_plugin", errorMessage);
+    reference.set(new CardEntryActivityCommand.ShowError(errorMessage));
+    countDownLatch.countDown();
     result.success(null);
   }
 }

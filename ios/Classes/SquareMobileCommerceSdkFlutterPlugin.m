@@ -40,16 +40,16 @@ FlutterMethodChannel* _channel;
         NSString* applicationId = call.arguments[@"applicationId"];
         SQIPInAppPaymentsSDK.squareApplicationID = applicationId;
         result(nil);
-    } else if ([@"initializeApplePay" isEqualToString:call.method]) {
-        [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
-    } else if ([@"canUseApplePay" isEqualToString:call.method]) {
-        [self.applePayModule canUseApplePay:result];
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
         [self.cardEntryModule startCardEntryFlow:result];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
+    } else if ([@"initializeApplePay" isEqualToString:call.method]) {
+        [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
+    } else if ([@"canUseApplePay" isEqualToString:call.method]) {
+        [self.applePayModule canUseApplePay:result];
     } else if ([@"requestApplePayNonce" isEqualToString:call.method]) {
         NSString *countryCode = call.arguments[@"countryCode"];
         NSString *currencyCode = call.arguments[@"currencyCode"];

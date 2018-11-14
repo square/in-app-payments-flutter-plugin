@@ -1,6 +1,6 @@
 package com.squareup.mcomm.flutter.internal.converter;
 
-import com.squareup.mcomm.Card;
+import com.squareup.sqip.Card;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +32,8 @@ public final class CardConverter {
         case CHINA_UNION_PAY:
           brandStringMap.put(brand, "CHINA_UNION_PAY");
           break;
-        case OTHER:
-          brandStringMap.put(brand, "OTHER");
+        case OTHER_BRAND:
+          brandStringMap.put(brand, "OTHER_BRAND");
           break;
         default:
           throw new RuntimeException("Unexpected brand value: " + brand.name());
@@ -43,11 +43,11 @@ public final class CardConverter {
 
   public Map<String, Object> toMapObject(Card card) {
     HashMap<String, Object> mapToReturn = new HashMap<>();
+    mapToReturn.put("brand", brandStringMap.get(card.getBrand()));
     mapToReturn.put("lastFourDigits", card.getLastFourDigits());
     mapToReturn.put("expirationMonth", card.getExpirationMonth());
     mapToReturn.put("expirationYear", card.getExpirationYear());
     mapToReturn.put("postalCode", card.getPostalCode());
-    mapToReturn.put("brand", brandStringMap.get(card.getBrand()));
 
     return mapToReturn;
   }

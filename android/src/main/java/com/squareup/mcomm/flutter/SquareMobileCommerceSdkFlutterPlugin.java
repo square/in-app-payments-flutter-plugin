@@ -1,7 +1,7 @@
 package com.squareup.mcomm.flutter;
 
 import android.app.Activity;
-import com.squareup.mcomm.MobileCommerceSdk;
+import com.squareup.sqip.InAppPaymentsSdk;
 import com.squareup.mcomm.flutter.internal.CardEntryModule;
 import com.squareup.mcomm.flutter.internal.ErrorHandlerUtils;
 import com.squareup.mcomm.flutter.internal.GooglePayModule;
@@ -20,7 +20,6 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
 
   private CardEntryModule cardEntryModule;
   private GooglePayModule googlePayModule;
-  private MobileCommerceSdk mobileCommerceSdk;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -31,6 +30,7 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
   private SquareMobileCommerceSdkFlutterPlugin(Registrar registrar) {
     currentRegistrar = registrar;
     currentActivity = registrar.activity();
+    cardEntryModule = new CardEntryModule(currentRegistrar, channel);
   }
 
   @Override
@@ -39,13 +39,12 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else if (call.method.equals("setApplicationId")) {
       String applicationId = call.argument("applicationId");
-      mobileCommerceSdk = new MobileCommerceSdk(applicationId);
-      cardEntryModule = new CardEntryModule(currentActivity, mobileCommerceSdk, channel);
+      InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
       result.success(null);
     } else if (call.method.equals("startCardEntryFlow")) {
       cardEntryModule.startCardEntryFlow(result);
-    } else if (call.method.equals("closeCardEntryForm")) {
-      cardEntryModule.closeCardEntryForm(result);
+    } else if (call.method.equals("completeCardEntry")) {
+      cardEntryModule.completeCardEntry(result);
     } else if (call.method.equals("showCardProcessingError")) {
       String errorMessage = call.argument("errorMessage");
       cardEntryModule.showCardProcessingError(result, errorMessage);
@@ -57,7 +56,7 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
         return;
       }
       String environment = call.argument("environment");
-      googlePayModule = new GooglePayModule(currentRegistrar, mobileCommerceSdk, environment, channel);
+      googlePayModule = new GooglePayModule(currentRegistrar, environment, channel);
       result.success(null);
     } else if (call.method.equals("requestGooglePayNonce")) {
       String merchantId = call.argument("merchantId");
