@@ -1,11 +1,14 @@
 #import "FlutterMobileCommerceSdkCardEntry.h"
 #import "FlutterMobileCommerceSdkErrorUtilities.h"
-#import "Converters/SQMCCardEntryResult+FlutterMobileCommerceSdkAdditions.h"
+#import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
+
+typedef void (^CompletionHandler)(NSError * _Nullable);
 
 @interface FlutterMobileCommerceSdkCardEntry()
 
 @property (strong, readwrite) FlutterMethodChannel* channel;
-@property (strong, readwrite) SQMCTheme *theme;
+@property (strong, readwrite) SQIPTheme *theme;
+@property (strong, readwrite) CompletionHandler completionHandler;
 
 @end
 
@@ -14,12 +17,12 @@
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel
 {
     self.channel = channel;
-    self.theme = [[SQMCTheme alloc] init];
+    self.theme = [[SQIPTheme alloc] init];
 }
 
 - (void)startCardEntryFlow:(FlutterResult)result
 {
-    SQMCCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
+    SQIPCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
     cardEntryForm.delegate = self;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
@@ -32,30 +35,57 @@
     result(nil);
 }
 
-- (void)cardEntryViewControllerDidCancel:(nonnull SQMCCardEntryViewController *)cardEntryViewController
+- (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
-    [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
+    self.completionHandler = completionHandler;
+    [self.channel invokeMethod:@"didObtainCardDetails" arguments:[cardDetails jsonDictionary]];
 }
 
-- (void)cardEntryViewController:(nonnull SQMCCardEntryViewController *)cardEntryViewController didSucceedWithResult:(nonnull SQMCCardEntryResult *)result
-{
-    [self.channel invokeMethod:@"cardEntryDidSucceedWithResult" arguments:[result jsonDictionary]];
-}
-
-- (void)closeCardEntryForm:(FlutterResult)result
+- (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status
 {
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [rootViewController.navigationController popViewControllerAnimated:YES];
+        if (status == SQIPCardEntryCompletionStatusCanceled) {
+            [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
+        } else {
+            [self.channel invokeMethod:@"cardEntryComplete" arguments:nil];
+        }
     } else {
-        [rootViewController dismissViewControllerAnimated:YES completion:nil];
+        if (status == SQIPCardEntryCompletionStatusCanceled) {
+            [rootViewController dismissViewControllerAnimated:YES completion:^{
+                [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
+            }];
+        } else {
+            [rootViewController dismissViewControllerAnimated:YES completion:^{
+                [self.channel invokeMethod:@"cardEntryComplete" arguments:nil];
+            }];
+        }
+       
+    }
+}
+
+- (void)completeCardEntry:(FlutterResult)result
+{
+    if (self.completionHandler) {
+        self.completionHandler(nil);
+        self.completionHandler = nil;
     }
     result(nil);
 }
 
 - (void)showCardProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage
 {
-    result(FlutterMethodNotImplemented);
+    if (self.completionHandler) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: NSLocalizedString(errorMessage, nil)
+                                   };
+        NSError *error = [NSError errorWithDomain:NSGlobalDomain
+                                             code:-57
+                                         userInfo:userInfo];
+        self.completionHandler(error);
+    }
+    result(nil);
 }
 
 - (void)setFormTheme:(FlutterResult)result themeParameters:(NSDictionary *)themeParameters
@@ -64,9 +94,9 @@
 }
 
 #pragma mark - Private Methods
-- (SQMCCardEntryViewController *)_makeCardEntryForm;
+- (SQIPCardEntryViewController *)_makeCardEntryForm;
 {
-    return [[SQMCCardEntryViewController alloc] initWithTheme:self.theme];
+    return [[SQIPCardEntryViewController alloc] initWithTheme:self.theme];
 }
 
 @end

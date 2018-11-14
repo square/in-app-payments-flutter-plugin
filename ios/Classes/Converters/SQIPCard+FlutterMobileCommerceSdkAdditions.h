@@ -5,9 +5,9 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
-@import SquareMobileCommerceSDK;
+@import SquareInAppPaymentsSDK;
 
-@interface SQMCApplePayNonceResult (FlutterMobileCommerceSdkAdditions)
+@interface SQIPCard (FlutterMobileCommerceSdkAdditions)
 
 - (NSMutableDictionary *)jsonDictionary;
 

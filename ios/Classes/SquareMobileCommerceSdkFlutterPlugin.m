@@ -38,14 +38,16 @@ FlutterMethodChannel* _channel;
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else if ([@"setApplicationId" isEqualToString:call.method]) {
         NSString* applicationId = call.arguments[@"applicationId"];
-        [SQMCMobileCommerceSDK initializeWithApplicationID:applicationId];
+        SQIPInAppPaymentsSDK.squareApplicationID = applicationId;
         result(nil);
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
+    } else if ([@"canUseApplePay" isEqualToString:call.method]) {
+        [self.applePayModule canUseApplePay:result];
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
         [self.cardEntryModule startCardEntryFlow:result];
-    } else if ([@"closeCardEntryForm" isEqualToString:call.method]) {
-        [self.cardEntryModule closeCardEntryForm:result];
+    } else if ([@"completeCardEntry" isEqualToString:call.method]) {
+        [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"requestApplePayNonce" isEqualToString:call.method]) {
@@ -59,7 +61,9 @@ FlutterMethodChannel* _channel;
                                      summaryLabel:summaryLabel
                                             price:price];
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
-        [self.applePayModule completeApplePayAuthorization:result];
+        Boolean isSuccess = [call.arguments[@"isSuccess"] boolValue];
+        NSString *errorMessage = call.arguments[@"errorMessage"];
+        [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
     } else {
         result(FlutterMethodNotImplemented);
     }

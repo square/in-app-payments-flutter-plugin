@@ -15,4 +15,4 @@ example/android/app/.project
 example/android/app/.classpath
 example/android/app/.settings/org.eclipse.buildship.core.prefs
 .vscode/settings.json
-example/ios/SquareMobileCommerceSDK.framework
+.vscode/launch.json

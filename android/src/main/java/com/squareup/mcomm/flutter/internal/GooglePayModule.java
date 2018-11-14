@@ -80,10 +80,10 @@ final public class GooglePayModule {
     googlePayManager.addCreateNonceCallback(new CreateNonceCallback() {
       @Override public void onResult(CreateNonceResult googlePayResult) {
         if (googlePayResult.isSuccess()) {
-          channel.invokeMethod("onGooglePayGetNonce", cardResultConverter.toMapObject(googlePayResult.getSuccessValue().getCardResult()));
+          channel.invokeMethod("onGooglePayNonceRequestSuccess", cardResultConverter.toMapObject(googlePayResult.getSuccessValue().getCardResult()));
         } else if (googlePayResult.isError()) {
           CreateNonceResult.Error error = ((CreateNonceResult.Error) googlePayResult);
-          channel.invokeMethod("onGooglePayFailed", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
+          channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
         }
       }
     });
@@ -103,11 +103,11 @@ final public class GooglePayModule {
               break;
             case AutoResolveHelper.RESULT_ERROR:
               Status status = AutoResolveHelper.getStatusFromIntent(data);
-              channel.invokeMethod("onGooglePayFailed",
+              channel.invokeMethod("onGooglePayNonceRequestFailure",
                   ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_RESULT_ERROR), FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
               break;
             default:
-              channel.invokeMethod("onGooglePayFailed",
+              channel.invokeMethod("onGooglePayNonceRequestFailure",
                   ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_UNKNOWN_ERROR), FL_GOOGLE_PAY_UNKNOWN_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR));
           }
         }

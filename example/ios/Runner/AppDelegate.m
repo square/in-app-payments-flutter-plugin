@@ -1,7 +1,7 @@
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
 
-@import SquareMobileCommerceSDK;
+@import SquareInAppPaymentsSDK;
 
 @implementation AppDelegate
 

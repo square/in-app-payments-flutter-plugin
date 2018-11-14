@@ -5,9 +5,9 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
-#import "SQMCCard+FlutterMobileCommerceSdkAdditions.h"
+#import "SQIPCard+FlutterMobileCommerceSdkAdditions.h"
 
-@implementation SQMCCard (FlutterMobileCommerceSdkAdditions)
+@implementation SQIPCard (FlutterMobileCommerceSdkAdditions)
 
 - (NSMutableDictionary *)jsonDictionary
 {
@@ -23,32 +23,32 @@
 }
 
 #pragma mark - Private Methods
-- (NSString *)_stringForBrand:(SQMCCardBrand)brand
+- (NSString *)_stringForBrand:(SQIPCardBrand)brand
 {
     NSString *result = nil;
     switch (brand) {
-            case SQMCCardBrandVisa:
+            case SQIPCardBrandVisa:
             result = @"VISA";
             break;
-            case SQMCCardBrandMastercard:
+            case SQIPCardBrandMastercard:
             result = @"MASTERCARD";
             break;
-            case SQMCCardBrandAmericanExpress:
+            case SQIPCardBrandAmericanExpress:
             result = @"AMERICAN_EXPRESS";
             break;
-            case SQMCCardBrandDiscover:
+            case SQIPCardBrandDiscover:
             result = @"DISCOVER";
             break;
-            case SQMCCardBrandDiscoverDiners:
+            case SQIPCardBrandDiscoverDiners:
             result = @"DISCOVER_DINERS";
             break;
-            case SQMCCardBrandJCB:
+            case SQIPCardBrandJCB:
             result = @"JCB";
             break;
-            case SQMCCardBrandChinaUnionPay:
+            case SQIPCardBrandChinaUnionPay:
             result = @"CHINA_UNIONPAY";
             break;
-            case SQMCCardBrandOther:
+            case SQIPCardBrandOtherBrand:
             result = @"OTHER_BRAND";
             break;
     }

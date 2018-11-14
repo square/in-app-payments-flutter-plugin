@@ -1,6 +1,6 @@
 #import "FlutterMobileCommerceSdkApplePay.h"
 #import "FlutterMobileCommerceSdkErrorUtilities.h"
-#import "Converters/SQMCApplePayNonceResult+FlutterMobileCommerceSdkAdditions.h"
+#import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
 
 API_AVAILABLE(ios(11.0))
 typedef void (^CompletionHandler)(PKPaymentAuthorizationResult * _Nonnull);
@@ -34,13 +34,18 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
     result(nil);
 }
 
+- (void)canUseApplePay:(FlutterResult)result
+{
+    result(@(SQIPInAppPaymentsSDK.canUseApplePay));
+}
+
 - (void)requestApplePayNonce:(FlutterResult)result
                  countryCode:(NSString *)countryCode
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
 {
-    if (!SQMCMobileCommerceSDK.canUseApplePay) {
+    if (!SQIPInAppPaymentsSDK.canUseApplePay) {
         result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
                                    message:[FlutterMobileCommerceSdkErrorUtilities pluginErrorMessageFromErrorCode:FlutterMobileCommerceSdkNoApplePaySupport]
                                    details:[FlutterMobileCommerceSdkErrorUtilities debugErrorObject:FlutterMobileCommerceSdkNoApplePaySupport debugMessage:FlutterMobileCommerceSdkMessageNoApplePaySupport]]);
@@ -67,9 +72,21 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
 }
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
+                            isSuccess:(Boolean)isSuccess
+                         errorMessage:(NSString* __nullable)errorMessage
 {
     if (self.completionHandler) {
-        self.completionHandler(self.authorizationResult);
+        if (isSuccess || [errorMessage isEqual: @""]) {
+            self.completionHandler(self.authorizationResult);
+        } else {
+            NSDictionary *userInfo = @{NSLocalizedDescriptionKey: NSLocalizedString(errorMessage, nil)};
+            NSError *error = [NSError errorWithDomain:NSGlobalDomain
+                                                 code:-57
+                                             userInfo:userInfo];
+            PKPaymentAuthorizationResult* authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[error]];
+            self.completionHandler(authResult);
+        }
+        self.completionHandler = nil;
     }
     result(nil);
 }
@@ -79,16 +96,16 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
                        didAuthorizePayment:(PKPayment *)payment
                                    handler:(CompletionHandler)completion API_AVAILABLE(ios(11.0));
 {
-    SQMCApplePayNonceRequest *nonceRequest = [[SQMCApplePayNonceRequest alloc] initWithPayment:payment];
+    SQIPApplePayNonceRequest *nonceRequest = [[SQIPApplePayNonceRequest alloc] initWithPayment:payment];
     
-    [nonceRequest performWithCompletionHandler:^(SQMCApplePayNonceResult * _Nullable result, NSError * _Nullable error) {
+    [nonceRequest performWithCompletionHandler:^(SQIPCardDetails * _Nullable result, NSError * _Nullable error) {
         if (error) {
             NSLog(@"%@", error.localizedDescription);
             self.completionHandler = completion;
             self.authorizationResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[error]];
-            NSString *debugCode = error.userInfo[SQMCErrorDebugCodeKey];
-            NSString *debugMessage = error.userInfo[SQMCErrorDebugMessageKey];
-            [self.channel invokeMethod:@"onApplePayFailed"
+            NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
+            NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
+            [self.channel invokeMethod:@"onApplePayNonceRequestFailure"
                              arguments:[FlutterMobileCommerceSdkErrorUtilities callbackErrorObject:FlutterMobileCommerceUsageError
                                                                                            message:error.localizedDescription
                                                                                          debugCode:debugCode
@@ -97,7 +114,7 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
             // if error is not nil, result must be valid
             self.completionHandler = completion;
             self.authorizationResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
-            [self.channel invokeMethod:@"onApplePayGetNonce" arguments:[result jsonDictionary]];
+            [self.channel invokeMethod:@"onApplePayNonceRequestSuccess" arguments:[result jsonDictionary]];
         }
     }];
 }
@@ -111,6 +128,7 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
     } else {
         [rootViewController dismissViewControllerAnimated:YES completion:nil];
     }
+    [self.channel invokeMethod:@"onApplePayComplete" arguments:nil];
 }
 
 @end

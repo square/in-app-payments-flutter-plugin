@@ -1,5 +1,5 @@
 #import <Flutter/Flutter.h>
-@import SquareMobileCommerceSDK;
+@import SquareInAppPaymentsSDK;
 
 @interface FlutterMobileCommerceSdkApplePay : NSObject<PKPaymentAuthorizationViewControllerDelegate>
 
@@ -7,12 +7,16 @@
 
 - (void)initializeApplePay:(FlutterResult)result merchantId:(NSString *)merchantId;
 
+- (void)canUseApplePay:(FlutterResult)result;
+
 - (void)requestApplePayNonce:(FlutterResult)result
                  countryCode:(NSString *)countryCode
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price;
 
-- (void)completeApplePayAuthorization:(FlutterResult)result;
+- (void)completeApplePayAuthorization:(FlutterResult)result
+                            isSuccess:(Boolean)isSuccess
+                         errorMessage:(NSString* __nullable)errorMessage;
 
 @end

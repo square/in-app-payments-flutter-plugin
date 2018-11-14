@@ -5,10 +5,10 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
-#import "SQMCCardEntryResult+FlutterMobileCommerceSdkAdditions.h"
-#import "SQMCCard+FlutterMobileCommerceSdkAdditions.h"
+#import "SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
+#import "SQIPCard+FlutterMobileCommerceSdkAdditions.h"
 
-@implementation SQMCCardEntryResult (FlutterMobileCommerceSdkAdditions)
+@implementation SQIPCardDetails (FlutterMobileCommerceSdkAdditions)
 
 - (NSMutableDictionary *)jsonDictionary
 {

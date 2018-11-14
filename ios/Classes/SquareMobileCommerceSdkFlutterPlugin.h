@@ -1,5 +1,5 @@
 #import <Flutter/Flutter.h>
-@import SquareMobileCommerceSDK;
+@import SquareInAppPaymentsSDK;
 
 @interface SquareMobileCommerceSdkFlutterPlugin : NSObject<FlutterPlugin>
 @end
