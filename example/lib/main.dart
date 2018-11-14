@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:square_mobile_commerce_sdk/apple_pay.dart';
-import 'package:square_mobile_commerce_sdk/google_pay.dart';
 import 'package:square_mobile_commerce_sdk/models.dart';
-import 'package:square_mobile_commerce_sdk/square_mobile_commerce_sdk.dart';
+import 'package:square_mobile_commerce_sdk/in_app_payments.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,11 +23,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initSquarePayment() async {
     await InAppPayments.setSquareApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await GooglePay.initializeGooglePay(GooglePay.googlePayEnvTestKey);
+      await InAppPayments.initializeGooglePay(InAppPayments.googlePayEnvTestKey);
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-      var canUseApplePay = await ApplePay.canUseApplePay;
+      var canUseApplePay = await InAppPayments.canUseApplePay;
       if (canUseApplePay) {
-        await ApplePay.initializeApplePay('merchant.com.mcomm.flutter');
+        await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
       }
     }
 
@@ -71,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       var merchantId = '0ZXKWWD1CB2T6';
       var price = '100';
       var currencyCode = 'USD';
-      await GooglePay.requestGooglePayNonce(
+      await InAppPayments.requestGooglePayNonce(
         merchantId, price, currencyCode, _onGooglePayDidSucceedWithResult, _onGooglePayFailed, _onGooglePayCancel);
     } on PlatformException catch(ex) {
        print('Failed to onStartGooglePay. \n ${ex.toString()}');
@@ -96,7 +94,7 @@ class _MyAppState extends State<MyApp> {
       var price = '100';
       var countryCode = 'US';
       var currencyCode = 'USD';
-      await ApplePay.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, _onApplePayNonceRequestSuccess, _onApplePayNonceRequestFailure, _onApplePayComplete);
+      await InAppPayments.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, _onApplePayNonceRequestSuccess, _onApplePayNonceRequestFailure, _onApplePayComplete);
     } on PlatformException catch(ex) {
        print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
@@ -106,15 +104,15 @@ class _MyAppState extends State<MyApp> {
     print(result);
     var success = await _checkout(result);
     if (success) {
-      await ApplePay.completeApplePayAuthorization(isSuccess: true);
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
     } else {
-      await ApplePay.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+      await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
     }
   } 
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     print('ApplePay failed. \n ${errorInfo.toString()}');
-    await ApplePay.completeApplePayAuthorization(isSuccess: false);
+    await InAppPayments.completeApplePayAuthorization(isSuccess: false);
   }
 
   void _onApplePayComplete() {
