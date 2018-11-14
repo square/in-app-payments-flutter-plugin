@@ -2,7 +2,7 @@
 
 extern NSString *const FlutterMobileCommerceUsageError;
 
-@interface SQIPFlutterErrorUtilities : NSObject
+@interface FSQIPErrorUtilities : NSObject
 
 + (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode;
 + (NSDictionary *)debugErrorObject:(NSString *)debugCode debugMessage:(NSString *)debugMessage;

@@ -1,7 +1,7 @@
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
 
-@interface SQIPFlutterCardEntry : NSObject<SQIPCardEntryViewControllerDelegate>
+@interface FSQIPCardEntry : NSObject<SQIPCardEntryViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startCardEntryFlow:(FlutterResult)result;

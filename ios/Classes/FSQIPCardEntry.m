@@ -1,10 +1,10 @@
-#import "SQIPFlutterCardEntry.h"
-#import "SQIPFlutterErrorUtilities.h"
+#import "FSQIPCardEntry.h"
+#import "FSQIPErrorUtilities.h"
 #import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
 
 typedef void (^CompletionHandler)(NSError * _Nullable);
 
-@interface SQIPFlutterCardEntry()
+@interface FSQIPCardEntry()
 
 @property (strong, readwrite) FlutterMethodChannel* channel;
 @property (strong, readwrite) SQIPTheme *theme;
@@ -12,7 +12,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 
 @end
 
-@implementation SQIPFlutterCardEntry
+@implementation FSQIPCardEntry
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel
 {

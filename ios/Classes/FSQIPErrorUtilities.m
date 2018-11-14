@@ -1,9 +1,9 @@
-#import "SQIPFlutterErrorUtilities.h"
+#import "FSQIPErrorUtilities.h"
 
 // Usage error
 NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
 
-@implementation SQIPFlutterErrorUtilities
+@implementation FSQIPErrorUtilities
 
 + (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode
 {

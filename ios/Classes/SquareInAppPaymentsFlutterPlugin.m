@@ -1,11 +1,11 @@
 #import "SquareInAppPaymentsFlutterPlugin.h"
-#import "SQIPFlutterCardEntry.h"
-#import "SQIPFlutterApplePay.h"
+#import "FSQIPCardEntry.h"
+#import "FSQIPApplePay.h"
 
 @interface SquareInAppPaymentsFlutterPlugin()
 
-@property (strong, readwrite) SQIPFlutterCardEntry* cardEntryModule;
-@property (strong, readwrite) SQIPFlutterApplePay* applePayModule;
+@property (strong, readwrite) FSQIPCardEntry* cardEntryModule;
+@property (strong, readwrite) FSQIPApplePay* applePayModule;
 @end
 
 FlutterMethodChannel* _channel;
@@ -26,9 +26,9 @@ FlutterMethodChannel* _channel;
     if (!self) {
         return nil;
     }
-    self.cardEntryModule = [[SQIPFlutterCardEntry alloc] init];
+    self.cardEntryModule = [[FSQIPCardEntry alloc] init];
     [self.cardEntryModule initWithMethodChannel:_channel];
-    self.applePayModule = [[SQIPFlutterApplePay alloc] init];
+    self.applePayModule = [[FSQIPApplePay alloc] init];
     [self.applePayModule initWithMethodChannel:_channel];
     return self;
 }

@@ -1,7 +1,7 @@
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
 
-@interface SQIPFlutterApplePay : NSObject<PKPaymentAuthorizationViewControllerDelegate>
+@interface FSQIPApplePay : NSObject<PKPaymentAuthorizationViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 
