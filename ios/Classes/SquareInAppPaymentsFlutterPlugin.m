@@ -13,7 +13,7 @@ FlutterMethodChannel* _channel;
 @implementation SquareInAppPaymentsFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"square_mobile_commerce_sdk"
+      methodChannelWithName:@"square_in_app_payments"
             binaryMessenger:[registrar messenger]];
     _channel = channel;
     SquareInAppPaymentsFlutterPlugin* instance = [[SquareInAppPaymentsFlutterPlugin alloc] init];

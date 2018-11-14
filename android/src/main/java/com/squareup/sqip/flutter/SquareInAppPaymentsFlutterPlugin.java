@@ -20,7 +20,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "square_mobile_commerce_sdk");
+    channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
     channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
   }
 

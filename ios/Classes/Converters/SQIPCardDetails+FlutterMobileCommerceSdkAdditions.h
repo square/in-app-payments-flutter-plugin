@@ -1,6 +1,6 @@
 //
 //  Test.h
-//  square_mobile_commerce_sdk
+//  square_in_app_payments
 //
 //  Created by Xiao Hu on 10/17/18.
 //

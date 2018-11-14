@@ -23,7 +23,7 @@ class InAppPayments {
   static const String googlePayEnvTestKey = 'TEST';
 
   static final MethodChannel _channel =
-      const MethodChannel('square_mobile_commerce_sdk')..setMethodCallHandler(_nativeCallHandler);
+      const MethodChannel('square_in_app_payments')..setMethodCallHandler(_nativeCallHandler);
 
   static final _standardSerializers = (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
 

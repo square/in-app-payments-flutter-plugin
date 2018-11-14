@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:square_mobile_commerce_sdk/models.dart';
-import 'package:square_mobile_commerce_sdk/in_app_payments.dart';
+import 'package:square_in_app_payments/models.dart';
+import 'package:square_in_app_payments/in_app_payments.dart';
 
 void main() => runApp(MyApp());
 

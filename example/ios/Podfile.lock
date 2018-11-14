@@ -1,21 +1,21 @@
 PODS:
   - Flutter (1.0.0)
-  - square_mobile_commerce_sdk (0.0.1):
+  - square_in_app_payments (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
-  - square_mobile_commerce_sdk (from `.symlinks/plugins/square_mobile_commerce_sdk/ios`)
+  - square_in_app_payments (from `.symlinks/plugins/square_in_app_payments/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
-  square_mobile_commerce_sdk:
-    :path: ".symlinks/plugins/square_mobile_commerce_sdk/ios"
+  square_in_app_payments:
+    :path: ".symlinks/plugins/square_in_app_payments/ios"
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  square_mobile_commerce_sdk: a3a046e5a163bf986ec412f2331903afea984c1b
+  square_in_app_payments: a4880604e582aa3e9967b7a7e7a371f5ca920f4f
 
 PODFILE CHECKSUM: 9c850378aa2d9e45a542af9edd94d1c59c8e60aa
 
