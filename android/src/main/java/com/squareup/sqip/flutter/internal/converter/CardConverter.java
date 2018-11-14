@@ -11,6 +11,9 @@ public final class CardConverter {
     brandStringMap = new HashMap<>();
     for (Card.Brand brand : Card.Brand.values()) {
       switch(brand) {
+        case OTHER_BRAND:
+          brandStringMap.put(brand, "OTHER_BRAND");
+          break;
         case VISA:
           brandStringMap.put(brand, "VISA");
           break;
@@ -31,9 +34,6 @@ public final class CardConverter {
           break;
         case CHINA_UNION_PAY:
           brandStringMap.put(brand, "CHINA_UNION_PAY");
-          break;
-        case OTHER_BRAND:
-          brandStringMap.put(brand, "OTHER_BRAND");
           break;
         default:
           throw new RuntimeException("Unexpected brand value: " + brand.name());

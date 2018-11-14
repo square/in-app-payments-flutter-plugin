@@ -18,6 +18,18 @@ import 'package:built_value/serializer.dart';
 
 part 'models.g.dart';
 
+// ignore: avoid_classes_with_only_static_members
+class CardBrand {
+  static String otherBrand = 'OTHER_BRAND';
+  static String visa = 'VISA';
+  static String masterCard = 'MASTERCARD';
+  static String americanExpress = 'AMERICAN_EXPRESS';
+  static String discover = 'DISCOVER';
+  static String discoverDiners = 'DISCOVER_DINERS';
+  static String jCB = 'JCB';
+  static String chinaUnionPay = 'CHINA_UNION_PAY';
+}
+
 abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   String get nonce;
   Card get card;

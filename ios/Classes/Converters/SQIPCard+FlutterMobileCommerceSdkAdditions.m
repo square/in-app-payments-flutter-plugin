@@ -27,29 +27,29 @@
 {
     NSString *result = nil;
     switch (brand) {
-            case SQIPCardBrandVisa:
+        case SQIPCardBrandOtherBrand:
+            result = @"OTHER_BRAND";
+            break;
+        case SQIPCardBrandVisa:
             result = @"VISA";
             break;
-            case SQIPCardBrandMastercard:
+        case SQIPCardBrandMastercard:
             result = @"MASTERCARD";
             break;
-            case SQIPCardBrandAmericanExpress:
+        case SQIPCardBrandAmericanExpress:
             result = @"AMERICAN_EXPRESS";
             break;
-            case SQIPCardBrandDiscover:
+        case SQIPCardBrandDiscover:
             result = @"DISCOVER";
             break;
-            case SQIPCardBrandDiscoverDiners:
+        case SQIPCardBrandDiscoverDiners:
             result = @"DISCOVER_DINERS";
             break;
-            case SQIPCardBrandJCB:
+        case SQIPCardBrandJCB:
             result = @"JCB";
             break;
-            case SQIPCardBrandChinaUnionPay:
+        case SQIPCardBrandChinaUnionPay:
             result = @"CHINA_UNION_PAY";
-            break;
-            case SQIPCardBrandOtherBrand:
-            result = @"OTHER_BRAND";
             break;
     }
     return result;
