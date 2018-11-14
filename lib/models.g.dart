@@ -79,6 +79,9 @@ class _$CardSerializer implements StructuredSerializer<Card> {
   Iterable serialize(Serializers serializers, Card object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
+      'brand',
+      serializers.serialize(object.brand,
+          specifiedType: const FullType(String)),
       'lastFourDigits',
       serializers.serialize(object.lastFourDigits,
           specifiedType: const FullType(String)),
@@ -88,9 +91,6 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       'expirationYear',
       serializers.serialize(object.expirationYear,
           specifiedType: const FullType(int)),
-      'brand',
-      serializers.serialize(object.brand,
-          specifiedType: const FullType(String)),
     ];
     if (object.postalCode != null) {
       result
@@ -113,6 +113,10 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'brand':
+          result.brand = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'lastFourDigits':
           result.lastFourDigits = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
@@ -124,10 +128,6 @@ class _$CardSerializer implements StructuredSerializer<Card> {
         case 'expirationYear':
           result.expirationYear = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
-          break;
-        case 'brand':
-          result.brand = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
           break;
         case 'postalCode':
           result.postalCode = serializers.deserialize(value,
@@ -303,13 +303,13 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
 
 class _$Card extends Card {
   @override
+  final String brand;
+  @override
   final String lastFourDigits;
   @override
   final int expirationMonth;
   @override
   final int expirationYear;
-  @override
-  final String brand;
   @override
   final String postalCode;
 
@@ -317,12 +317,15 @@ class _$Card extends Card {
       (new CardBuilder()..update(updates)).build();
 
   _$Card._(
-      {this.lastFourDigits,
+      {this.brand,
+      this.lastFourDigits,
       this.expirationMonth,
       this.expirationYear,
-      this.brand,
       this.postalCode})
       : super._() {
+    if (brand == null) {
+      throw new BuiltValueNullFieldError('Card', 'brand');
+    }
     if (lastFourDigits == null) {
       throw new BuiltValueNullFieldError('Card', 'lastFourDigits');
     }
@@ -331,9 +334,6 @@ class _$Card extends Card {
     }
     if (expirationYear == null) {
       throw new BuiltValueNullFieldError('Card', 'expirationYear');
-    }
-    if (brand == null) {
-      throw new BuiltValueNullFieldError('Card', 'brand');
     }
   }
 
@@ -348,10 +348,10 @@ class _$Card extends Card {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Card &&
+        brand == other.brand &&
         lastFourDigits == other.lastFourDigits &&
         expirationMonth == other.expirationMonth &&
         expirationYear == other.expirationYear &&
-        brand == other.brand &&
         postalCode == other.postalCode;
   }
 
@@ -359,19 +359,19 @@ class _$Card extends Card {
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, lastFourDigits.hashCode), expirationMonth.hashCode),
-                expirationYear.hashCode),
-            brand.hashCode),
+            $jc($jc($jc(0, brand.hashCode), lastFourDigits.hashCode),
+                expirationMonth.hashCode),
+            expirationYear.hashCode),
         postalCode.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('Card')
+          ..add('brand', brand)
           ..add('lastFourDigits', lastFourDigits)
           ..add('expirationMonth', expirationMonth)
           ..add('expirationYear', expirationYear)
-          ..add('brand', brand)
           ..add('postalCode', postalCode))
         .toString();
   }
@@ -379,6 +379,10 @@ class _$Card extends Card {
 
 class CardBuilder implements Builder<Card, CardBuilder> {
   _$Card _$v;
+
+  String _brand;
+  String get brand => _$this._brand;
+  set brand(String brand) => _$this._brand = brand;
 
   String _lastFourDigits;
   String get lastFourDigits => _$this._lastFourDigits;
@@ -395,10 +399,6 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   set expirationYear(int expirationYear) =>
       _$this._expirationYear = expirationYear;
 
-  String _brand;
-  String get brand => _$this._brand;
-  set brand(String brand) => _$this._brand = brand;
-
   String _postalCode;
   String get postalCode => _$this._postalCode;
   set postalCode(String postalCode) => _$this._postalCode = postalCode;
@@ -407,10 +407,10 @@ class CardBuilder implements Builder<Card, CardBuilder> {
 
   CardBuilder get _$this {
     if (_$v != null) {
+      _brand = _$v.brand;
       _lastFourDigits = _$v.lastFourDigits;
       _expirationMonth = _$v.expirationMonth;
       _expirationYear = _$v.expirationYear;
-      _brand = _$v.brand;
       _postalCode = _$v.postalCode;
       _$v = null;
     }
@@ -434,10 +434,10 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   _$Card build() {
     final _$result = _$v ??
         new _$Card._(
+            brand: brand,
             lastFourDigits: lastFourDigits,
             expirationMonth: expirationMonth,
             expirationYear: expirationYear,
-            brand: brand,
             postalCode: postalCode);
     replace(_$result);
     return _$result;
