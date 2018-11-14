@@ -13,12 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.squareup.mcomm.flutter.internal;
+package com.squareup.sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
-import com.squareup.mcomm.flutter.internal.converter.CardConverter;
-import com.squareup.mcomm.flutter.internal.converter.CardDetailsConverter;
+import com.squareup.sqip.flutter.internal.converter.CardConverter;
+import com.squareup.sqip.flutter.internal.converter.CardDetailsConverter;
 import com.squareup.sqip.Callback;
 import com.squareup.sqip.CardDetails;
 import com.squareup.sqip.CardEntry;

@@ -1,22 +1,22 @@
-#import "SquareMobileCommerceSdkFlutterPlugin.h"
-#import "FlutterMobileCommerceSdkCardEntry.h"
-#import "FlutterMobileCommerceSdkApplePay.h"
+#import "SquareInAppPaymentsFlutterPlugin.h"
+#import "SQIPFlutterCardEntry.h"
+#import "SQIPFlutterApplePay.h"
 
-@interface SquareMobileCommerceSdkFlutterPlugin()
+@interface SquareInAppPaymentsFlutterPlugin()
 
-@property (strong, readwrite) FlutterMobileCommerceSdkCardEntry* cardEntryModule;
-@property (strong, readwrite) FlutterMobileCommerceSdkApplePay* applePayModule;
+@property (strong, readwrite) SQIPFlutterCardEntry* cardEntryModule;
+@property (strong, readwrite) SQIPFlutterApplePay* applePayModule;
 @end
 
 FlutterMethodChannel* _channel;
 
-@implementation SquareMobileCommerceSdkFlutterPlugin
+@implementation SquareInAppPaymentsFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"square_mobile_commerce_sdk"
             binaryMessenger:[registrar messenger]];
     _channel = channel;
-    SquareMobileCommerceSdkFlutterPlugin* instance = [[SquareMobileCommerceSdkFlutterPlugin alloc] init];
+    SquareInAppPaymentsFlutterPlugin* instance = [[SquareInAppPaymentsFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -26,9 +26,9 @@ FlutterMethodChannel* _channel;
     if (!self) {
         return nil;
     }
-    self.cardEntryModule = [[FlutterMobileCommerceSdkCardEntry alloc] init];
+    self.cardEntryModule = [[SQIPFlutterCardEntry alloc] init];
     [self.cardEntryModule initWithMethodChannel:_channel];
-    self.applePayModule = [[FlutterMobileCommerceSdkApplePay alloc] init];
+    self.applePayModule = [[SQIPFlutterApplePay alloc] init];
     [self.applePayModule initWithMethodChannel:_channel];
     return self;
 }

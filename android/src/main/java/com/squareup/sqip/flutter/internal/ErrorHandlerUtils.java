@@ -1,4 +1,4 @@
-package com.squareup.mcomm.flutter.internal;
+package com.squareup.sqip.flutter.internal;
 
 import java.util.HashMap;
 import java.util.Map;

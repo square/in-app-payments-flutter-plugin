@@ -24,8 +24,8 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   plugin:
-    androidPackage: com.squareup.mcomm.flutter
-    pluginClass: SquareMobileCommerceSdkFlutterPlugin
+    androidPackage: com.squareup.sqip.flutter
+    pluginClass: SquareInAppPaymentsFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

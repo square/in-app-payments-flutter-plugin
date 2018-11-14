@@ -467,7 +467,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.squareup.mcomm.flutter.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.squareup.sqip.flutter.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -493,7 +493,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.squareup.mcomm.flutter.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.squareup.sqip.flutter.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

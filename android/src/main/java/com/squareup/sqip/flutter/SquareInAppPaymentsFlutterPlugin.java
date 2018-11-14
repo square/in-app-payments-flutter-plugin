@@ -1,21 +1,18 @@
-package com.squareup.mcomm.flutter;
+package com.squareup.sqip.flutter;
 
-import android.app.Activity;
 import com.squareup.sqip.InAppPaymentsSdk;
-import com.squareup.mcomm.flutter.internal.CardEntryModule;
-import com.squareup.mcomm.flutter.internal.ErrorHandlerUtils;
-import com.squareup.mcomm.flutter.internal.GooglePayModule;
+import com.squareup.sqip.flutter.internal.CardEntryModule;
+import com.squareup.sqip.flutter.internal.ErrorHandlerUtils;
+import com.squareup.sqip.flutter.internal.GooglePayModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-/** SquareMobileCommerceSdkFlutterPlugin */
-public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
+public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   private static MethodChannel channel;
 
-  private final Activity currentActivity;
   private final Registrar currentRegistrar;
 
   private CardEntryModule cardEntryModule;
@@ -24,12 +21,11 @@ public class SquareMobileCommerceSdkFlutterPlugin implements MethodCallHandler {
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     channel = new MethodChannel(registrar.messenger(), "square_mobile_commerce_sdk");
-    channel.setMethodCallHandler(new SquareMobileCommerceSdkFlutterPlugin(registrar));
+    channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
   }
 
-  private SquareMobileCommerceSdkFlutterPlugin(Registrar registrar) {
+  private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
     currentRegistrar = registrar;
-    currentActivity = registrar.activity();
     cardEntryModule = new CardEntryModule(currentRegistrar, channel);
   }
 

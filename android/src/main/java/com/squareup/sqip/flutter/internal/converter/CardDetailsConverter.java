@@ -1,4 +1,4 @@
-package com.squareup.mcomm.flutter.internal.converter;
+package com.squareup.sqip.flutter.internal.converter;
 
 import com.squareup.sqip.CardDetails;
 import java.util.HashMap;

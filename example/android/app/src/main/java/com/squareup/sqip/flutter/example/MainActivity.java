@@ -1,4 +1,4 @@
-package com.squareup.mcomm.flutter.example;
+package com.squareup.sqip.flutter.example;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

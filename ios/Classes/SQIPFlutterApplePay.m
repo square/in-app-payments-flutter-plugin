@@ -1,12 +1,12 @@
-#import "FlutterMobileCommerceSdkApplePay.h"
-#import "FlutterMobileCommerceSdkErrorUtilities.h"
+#import "SQIPFlutterApplePay.h"
+#import "SQIPFlutterErrorUtilities.h"
 #import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
 
 API_AVAILABLE(ios(11.0))
 typedef void (^CompletionHandler)(PKPaymentAuthorizationResult * _Nonnull);
 
 API_AVAILABLE(ios(11.0))
-@interface FlutterMobileCommerceSdkApplePay()
+@interface SQIPFlutterApplePay()
 
 @property (strong, readwrite) FlutterMethodChannel* channel;
 @property (strong, readwrite) NSString* applePayMerchantId;
@@ -21,7 +21,7 @@ static NSString *const FlutterMobileCommerceSdkNoApplePaySupport = @"fl_mcomm_no
 // flutter plugin debug messages
 static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Apple pay is not supported on this device. Please check the apple pay availability on the device before use apply pay.";
 
-@implementation FlutterMobileCommerceSdkApplePay
+@implementation SQIPFlutterApplePay
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel
 {
@@ -47,8 +47,8 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
 {
     if (!SQIPInAppPaymentsSDK.canUseApplePay) {
         result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                   message:[FlutterMobileCommerceSdkErrorUtilities pluginErrorMessageFromErrorCode:FlutterMobileCommerceSdkNoApplePaySupport]
-                                   details:[FlutterMobileCommerceSdkErrorUtilities debugErrorObject:FlutterMobileCommerceSdkNoApplePaySupport debugMessage:FlutterMobileCommerceSdkMessageNoApplePaySupport]]);
+                                   message:[SQIPFlutterErrorUtilities pluginErrorMessageFromErrorCode:FlutterMobileCommerceSdkNoApplePaySupport]
+                                   details:[SQIPFlutterErrorUtilities debugErrorObject:FlutterMobileCommerceSdkNoApplePaySupport debugMessage:FlutterMobileCommerceSdkMessageNoApplePaySupport]]);
         return;
     }
     PKPaymentRequest *paymentRequest =
@@ -106,7 +106,7 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
             NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
             NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
             [self.channel invokeMethod:@"onApplePayNonceRequestFailure"
-                             arguments:[FlutterMobileCommerceSdkErrorUtilities callbackErrorObject:FlutterMobileCommerceUsageError
+                             arguments:[SQIPFlutterErrorUtilities callbackErrorObject:FlutterMobileCommerceUsageError
                                                                                            message:error.localizedDescription
                                                                                          debugCode:debugCode
                                                                                       debugMessage:debugMessage]];
