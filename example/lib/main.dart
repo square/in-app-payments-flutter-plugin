@@ -13,6 +13,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _paymentInitialized = false;
+  bool _applePayEnabled = false;
+  bool _googlePayEnabled = false;
 
   @override
   void initState() {
@@ -22,17 +24,20 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initSquarePayment() async {
     await InAppPayments.setSquareApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
+    var canUseApplePay = false;
+    var canUseGooglePay = false;
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay(InAppPayments.googlePayEnvTestKey);
+      await InAppPayments.initializeGooglePay(InAppPayments.googlePayEnvProdKey);
+      canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-      var canUseApplePay = await InAppPayments.canUseApplePay;
-      if (canUseApplePay) {
-        await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
-      }
+      await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
+      canUseApplePay = await InAppPayments.canUseApplePay;
     }
 
     setState(() {
       _paymentInitialized = true;
+      _applePayEnabled = canUseApplePay;
+      _googlePayEnabled = canUseGooglePay;
     });
   }
 
@@ -134,7 +139,7 @@ class _MyAppState extends State<MyApp> {
                 child: Text('Start Checkout'),
               ),
               RaisedButton(
-                onPressed: _paymentInitialized ? 
+                onPressed: _paymentInitialized && (_applePayEnabled || _googlePayEnabled) ? 
                   (Theme.of(context).platform == TargetPlatform.iOS) ? _onStartApplePay : _onStartGooglePay
                   : null,
                 child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),

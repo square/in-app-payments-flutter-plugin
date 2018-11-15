@@ -45,16 +45,24 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String errorMessage = call.argument("errorMessage");
       cardEntryModule.showCardProcessingError(result, errorMessage);
     } else if (call.method.equals("initializeGooglePay")) {
-      if (googlePayModule != null) {
-        result.error(ErrorHandlerUtils.USAGE_ERROR,
-            ErrorHandlerUtils.getPluginErrorMessage("fl_mcomm_dup_google_pay_initialize"),
-            ErrorHandlerUtils.getDebugErrorObject("fl_mcomm_dup_google_pay_initialize", "Initialize google pay twice is not allowed."));
-        return;
-      }
       String environment = call.argument("environment");
       googlePayModule = new GooglePayModule(currentRegistrar, environment, channel);
       result.success(null);
+    } else if (call.method.equals("canUseGooglePay")) {
+      if (googlePayModule == null) {
+        result.error(ErrorHandlerUtils.USAGE_ERROR,
+            ErrorHandlerUtils.getPluginErrorMessage("fl_mcomm_google_pay_not_initialize"),
+            ErrorHandlerUtils.getDebugErrorObject("fl_mcomm_google_pay_not_initialize", "You must initialize google pay before use it."));
+        return;
+      }
+      googlePayModule.canUserGooglePay(result);
     } else if (call.method.equals("requestGooglePayNonce")) {
+      if (googlePayModule == null) {
+        result.error(ErrorHandlerUtils.USAGE_ERROR,
+            ErrorHandlerUtils.getPluginErrorMessage("fl_mcomm_google_pay_not_initialize"),
+            ErrorHandlerUtils.getDebugErrorObject("fl_mcomm_google_pay_not_initialize", "You must initialize google pay before use it."));
+        return;
+      }
       String merchantId = call.argument("merchantId");
       String price = call.argument("price");
       String currencyCode = call.argument("currencyCode");

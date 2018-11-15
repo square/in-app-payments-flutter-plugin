@@ -17,9 +17,14 @@ package com.squareup.sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.CardRequirements;
+import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
@@ -108,6 +113,16 @@ final public class GooglePayModule {
           }
         }
         return false;
+      }
+    });
+  }
+
+  public void canUserGooglePay(final MethodChannel.Result result) {
+    IsReadyToPayRequest isReadyToPayRequest = GooglePay.createIsReadyToPayRequest();
+    googlePayClients.isReadyToPay(isReadyToPayRequest).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+      @Override
+      public void onComplete(@NonNull Task<Boolean> task) {
+        result.success(task.isSuccessful());
       }
     });
   }

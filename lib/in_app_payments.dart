@@ -156,6 +156,14 @@ class InAppPayments {
     }
   }
 
+  static Future<bool> get canUseGooglePay async {
+    try {
+      return await _channel.invokeMethod('canUseGooglePay');
+    } on PlatformException catch (ex) {
+      throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
+    }
+  }
+
   static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess, GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure, GooglePayCancelCallback onGooglePayCanceled) async {
     assert(merchantId != null && merchantId.isNotEmpty, 'merchantId should not be null or empty.');
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
@@ -178,7 +186,7 @@ class InAppPayments {
   }
 
   static Future<bool> get canUseApplePay async {
-     try {
+    try {
       return await _channel.invokeMethod('canUseApplePay');
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
