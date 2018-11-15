@@ -6,6 +6,6 @@
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startCardEntryFlow:(FlutterResult)result;
 - (void)completeCardEntry:(FlutterResult)result;
-- (void)showCardProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
+- (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 
 @end

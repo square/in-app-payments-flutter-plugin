@@ -43,8 +43,8 @@ FlutterMethodChannel* _channel;
         [self.cardEntryModule startCardEntryFlow:result];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
-    } else if ([@"showCardProcessingError" isEqualToString:call.method]) {
-        [self.cardEntryModule showCardProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
+    } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
+        [self.cardEntryModule showCardNonceProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         self.applePayModule = [[FSQIPApplePay alloc] init];
         [self.applePayModule initWithMethodChannel:_channel];

@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
+import 'package:meta/meta.dart';
 import 'models.dart';
 import 'serializers.dart';
 
 typedef CardEntryDidCancelCallback = void Function();
 typedef CardEntryCompleteCallback = void Function();
-typedef CardEntryGetCardDetailsCallback = void Function(CardDetails result);
+typedef CardEntryCardNonceRequestSuccessCallback = void Function(CardDetails result);
 
 typedef GooglePayNonceRequestSuccessCallback = void Function(CardDetails result);
 typedef GooglePayNonceRequestFailureCallback = void Function(ErrorInfo errorInfo);
@@ -25,7 +26,7 @@ class InAppPayments {
   static final _standardSerializers = (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
 
   static CardEntryDidCancelCallback _cardEntryDidCancelCallback;
-  static CardEntryGetCardDetailsCallback _cardEntryGetCardDetailsCallback;
+  static CardEntryCardNonceRequestSuccessCallback _cardEntryCardNonceRequestSuccessCallback;
   static CardEntryCompleteCallback _cardEntryCompleteCallback;
 
   static GooglePayNonceRequestSuccessCallback _googlePayNonceRequestSuccessCallback;
@@ -45,9 +46,9 @@ class InAppPayments {
           }
           break;
         case 'cardEntryDidObtainCardDetails':
-          if (_cardEntryGetCardDetailsCallback != null) {
+          if (_cardEntryCardNonceRequestSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(CardDetails.serializer, call.arguments);
-            _cardEntryGetCardDetailsCallback(result);
+            _cardEntryCardNonceRequestSuccessCallback(result);
           }
           break;
         case 'cardEntryComplete':
@@ -111,9 +112,9 @@ class InAppPayments {
     }
   }
 
-  static Future startCardEntryFlow(CardEntryGetCardDetailsCallback onCardEntryGetCardDetails, CardEntryDidCancelCallback onCardEntryCancel) async {
+  static Future startCardEntryFlow({CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess, CardEntryDidCancelCallback onCardEntryCancel}) async {
     _cardEntryDidCancelCallback = onCardEntryCancel;
-    _cardEntryGetCardDetailsCallback = onCardEntryGetCardDetails;
+    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     try {
       await _channel.invokeMethod('startCardEntryFlow');
     } on PlatformException catch (ex) {
@@ -121,8 +122,8 @@ class InAppPayments {
     }
   }
 
-  static Future completeCardEntry(CardEntryCompleteCallback onCardEntryCompelete) async {
-    _cardEntryCompleteCallback = onCardEntryCompelete;
+  static Future completeCardEntry({CardEntryCompleteCallback onCardEntryComplete}) async {
+    _cardEntryCompleteCallback = onCardEntryComplete;
     try {
       await _channel.invokeMethod('completeCardEntry');
     } on PlatformException catch (ex) {
@@ -130,21 +131,24 @@ class InAppPayments {
     }
   }
 
-  static Future showCardProcessingError(String errorMessage) async {
+  static Future showCardNonceProcessingError(String errorMessage) async {
     try {
       var params = <String, dynamic> {
         'errorMessage': errorMessage,
       };
-      await _channel.invokeMethod('showCardProcessingError', params);
+      await _channel.invokeMethod('showCardNonceProcessingError', params);
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
     }
   }
 
-  static Future initializeGooglePay(GooglePayEnvironment environment) async {
+  static Future initializeGooglePay(String merchantId, GooglePayEnvironment environment) async {
+    assert(environment != null, 'environment should not be null.');
+    assert(merchantId != null && merchantId.isNotEmpty, 'merchantId should not be null or empty.');
     try {
       var params = <String, dynamic> {
         'environment': serializers.serializeWith(GooglePayEnvironment.serializer, environment),
+        'merchantId': merchantId,
       };
       await _channel.invokeMethod('initializeGooglePay', params);
     } on PlatformException catch (ex) {
@@ -160,8 +164,13 @@ class InAppPayments {
     }
   }
 
-  static Future requestGooglePayNonce(String merchantId, String price, String currencyCode, GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess, GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure, GooglePayCancelCallback onGooglePayCanceled) async {
-    assert(merchantId != null && merchantId.isNotEmpty, 'merchantId should not be null or empty.');
+  static Future requestGooglePayNonce({
+    @required String price,
+    @required String currencyCode,
+    GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
+    GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
+    GooglePayCancelCallback onGooglePayCanceled
+    }) async {
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty, 'currencyCode should not be null or empty.');
 
@@ -171,11 +180,22 @@ class InAppPayments {
 
     try {
       var params = <String, dynamic> {
-        'merchantId': merchantId,
         'price': price,
         'currencyCode': currencyCode,
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
+    } on PlatformException catch (ex) {
+      throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
+    }
+  }
+
+  static Future initializeApplePay(String applePayMerchantId) async {
+    assert(applePayMerchantId != null && applePayMerchantId.isNotEmpty, 'applePayMerchantId should not be null or empty.');
+    try {
+      var params = <String, dynamic> {
+        'merchantId': applePayMerchantId,
+    };
+      await _channel.invokeMethod('initializeApplePay', params);
     } on PlatformException catch (ex) {
       throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
     }
@@ -188,20 +208,16 @@ class InAppPayments {
       throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
     }
   }
-  
-  static Future initializeApplePay(String merchantId) async {
-     try {
-      var params = <String, dynamic> {
-        'merchantId': merchantId,
-      };
-      await _channel.invokeMethod('initializeApplePay', params);
-    } on PlatformException catch (ex) {
-      throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
-    }
-  }
 
-  static Future requestApplePayNonce(String price, String summaryLabel, String countryCode, String currencyCode,
-    ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess, ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure, ApplePayCompleteCallback onApplePayComplete) async {
+  static Future requestApplePayNonce({
+    @required String price,
+    @required String summaryLabel,
+    @required String countryCode,
+    @required String currencyCode,
+    ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
+    ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
+    ApplePayCompleteCallback onApplePayComplete
+    }) async {
     assert(summaryLabel != null && summaryLabel.isNotEmpty, 'summaryLabel should not be null or empty.');
     assert(price != null && price.isNotEmpty, 'price should not be null or empty.');
     assert(countryCode != null && countryCode.isNotEmpty, 'countryCode should not be null or empty.');
@@ -224,7 +240,7 @@ class InAppPayments {
     }
   }
 
-  static Future completeApplePayAuthorization({bool isSuccess, String errorMessage = ''}) async {
+  static Future completeApplePayAuthorization({@required bool isSuccess, String errorMessage = ''}) async {
     try {
       var params = <String, dynamic> {
         'isSuccess': isSuccess,

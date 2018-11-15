@@ -63,10 +63,12 @@ final public class GooglePayModule {
   private final Activity currentActivity;
   private final PaymentsClient googlePayClients;
   private final CardDetailsConverter cardDetailsConverter;
+  private final String merchantId;
 
-  public GooglePayModule(PluginRegistry.Registrar registrar, String environment, final MethodChannel channel) {
+  public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel, String environment, String merchantId) {
     currentActivity = registrar.activity();
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
+    this.merchantId = merchantId;
     int env = WalletConstants.ENVIRONMENT_TEST;
     if (environment.equals("PROD")) {
       env = WalletConstants.ENVIRONMENT_PRODUCTION;
@@ -127,7 +129,7 @@ final public class GooglePayModule {
     });
   }
 
-  public void requestGooglePayNonce(MethodChannel.Result result, String merchantId, String price, String currencyCode) {
+  public void requestGooglePayNonce(MethodChannel.Result result, String price, String currencyCode) {
     AutoResolveHelper.resolveTask(
         googlePayClients.loadPaymentData(_createPaymentChargeRequest(merchantId, price, currencyCode)),
         currentActivity,

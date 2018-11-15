@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
     var canUseApplePay = false;
     var canUseGooglePay = false;
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay(GooglePayEnvironment.test);
+      await InAppPayments.initializeGooglePay('0ZXKWWD1CB2T6', GooglePayEnvironment.test);
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
@@ -47,13 +47,13 @@ class _MyAppState extends State<MyApp> {
     print('entry is closed');
   }
 
-  void _onCardEntryGetCardDetails(CardDetails result) async {
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     print(result);
     var success = await _checkout(result);
     if (!success) {
-      await InAppPayments.showCardProcessingError('failed to checkout.');
+      await InAppPayments.showCardNonceProcessingError('failed to checkout.');
     } else {
-      await InAppPayments.completeCardEntry(_onCardEntryComplete);
+      await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
     }
   }
 
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onStartCardEntryFlow() async {
     try {
-      await InAppPayments.startCardEntryFlow(_onCardEntryGetCardDetails, _onCardEntryCancel);
+      await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess, onCardEntryCancel: _onCardEntryCancel);
     } on PlatformException {
       print('Failed to startCardEntryFlow.');
     }
@@ -71,17 +71,18 @@ class _MyAppState extends State<MyApp> {
 
   void _onStartGooglePay() async {
     try {
-      var merchantId = '0ZXKWWD1CB2T6';
-      var price = '100';
-      var currencyCode = 'USD';
       await InAppPayments.requestGooglePayNonce(
-        merchantId, price, currencyCode, _onGooglePayDidSucceedWithResult, _onGooglePayFailed, _onGooglePayCancel);
+        price: '100',
+        currencyCode: 'USD',
+        onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+        onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+        onGooglePayCanceled: _onGooglePayCancel);
     } on PlatformException catch(ex) {
        print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
 
-  void _onGooglePayDidSucceedWithResult(CardDetails result) {
+  void _onGooglePayNonceRequestSuccess(CardDetails result) {
       print(result);
   }
 
@@ -89,17 +90,20 @@ class _MyAppState extends State<MyApp> {
     print('GooglePay is canceled');
   }
 
-  void _onGooglePayFailed(ErrorInfo errorInfo) {
+  void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
     print('GooglePay failed. \n ${errorInfo.toString()}');
   }
 
   void _onStartApplePay() async {
     try {
-      var summaryLabel = 'Flutter Test';
-      var price = '100';
-      var countryCode = 'US';
-      var currencyCode = 'USD';
-      await InAppPayments.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, _onApplePayNonceRequestSuccess, _onApplePayNonceRequestFailure, _onApplePayComplete);
+      await InAppPayments.requestApplePayNonce(
+        price: '100', 
+        summaryLabel: 'My Checkout',
+        countryCode: 'US', 
+        currencyCode: 'USD', 
+        onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
+        onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
+        onApplePayComplete: _onApplePayComplete);
     } on PlatformException catch(ex) {
        print('Failed to onStartApplePay. \n ${ex.toString()}');
     }

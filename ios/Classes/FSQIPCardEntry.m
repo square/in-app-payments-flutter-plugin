@@ -74,7 +74,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
     result(nil);
 }
 
-- (void)showCardProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage
+- (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage
 {
     if (self.completionHandler) {
         NSDictionary *userInfo = @{

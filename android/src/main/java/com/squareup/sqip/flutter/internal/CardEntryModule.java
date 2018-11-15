@@ -87,7 +87,7 @@ final public class CardEntryModule {
     result.success(null);
   }
 
-  public void showCardProcessingError(MethodChannel.Result result, String errorMessage) {
+  public void showCardNonceProcessingError(MethodChannel.Result result, String errorMessage) {
     reference.set(new CardEntryActivityCommand.ShowError(errorMessage));
     countDownLatch.countDown();
     result.success(null);
