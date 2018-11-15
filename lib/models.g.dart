@@ -19,9 +19,108 @@ part of 'models.dart';
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
+const ErrorCode _$USAGE_ERROR = const ErrorCode._('USAGE_ERROR');
+const ErrorCode _$NO_NETWORK = const ErrorCode._('NO_NETWORK');
+
+ErrorCode _$errorCodeValueOf(String name) {
+  switch (name) {
+    case 'USAGE_ERROR':
+      return _$USAGE_ERROR;
+    case 'NO_NETWORK':
+      return _$NO_NETWORK;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<ErrorCode> _$errorCodeValues =
+    new BuiltSet<ErrorCode>(const <ErrorCode>[
+  _$USAGE_ERROR,
+  _$NO_NETWORK,
+]);
+
+const Brand _$OTHER_BRAND = const Brand._('OTHER_BRAND');
+const Brand _$VISA = const Brand._('VISA');
+const Brand _$MASTERCARD = const Brand._('MASTERCARD');
+const Brand _$AMERICAN_EXPRESS = const Brand._('AMERICAN_EXPRESS');
+const Brand _$DISCOVER = const Brand._('DISCOVER');
+const Brand _$DISCOVER_DINERS = const Brand._('DISCOVER_DINERS');
+const Brand _$JCB = const Brand._('JCB');
+const Brand _$CHINA_UNION_PAY = const Brand._('CHINA_UNION_PAY');
+
+Brand _$valueOf(String name) {
+  switch (name) {
+    case 'OTHER_BRAND':
+      return _$OTHER_BRAND;
+    case 'VISA':
+      return _$VISA;
+    case 'MASTERCARD':
+      return _$MASTERCARD;
+    case 'AMERICAN_EXPRESS':
+      return _$AMERICAN_EXPRESS;
+    case 'DISCOVER':
+      return _$DISCOVER;
+    case 'DISCOVER_DINERS':
+      return _$DISCOVER_DINERS;
+    case 'JCB':
+      return _$JCB;
+    case 'CHINA_UNION_PAY':
+      return _$CHINA_UNION_PAY;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<Brand> _$values = new BuiltSet<Brand>(const <Brand>[
+  _$OTHER_BRAND,
+  _$VISA,
+  _$MASTERCARD,
+  _$AMERICAN_EXPRESS,
+  _$DISCOVER,
+  _$DISCOVER_DINERS,
+  _$JCB,
+  _$CHINA_UNION_PAY,
+]);
+
+Serializer<ErrorCode> _$errorCodeSerializer = new _$ErrorCodeSerializer();
+Serializer<Brand> _$brandSerializer = new _$BrandSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<ErrorInfo> _$errorInfoSerializer = new _$ErrorInfoSerializer();
+
+class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
+  @override
+  final Iterable<Type> types = const <Type>[ErrorCode];
+  @override
+  final String wireName = 'ErrorCode';
+
+  @override
+  Object serialize(Serializers serializers, ErrorCode object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      object.name;
+
+  @override
+  ErrorCode deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      ErrorCode.valueOf(serialized as String);
+}
+
+class _$BrandSerializer implements PrimitiveSerializer<Brand> {
+  @override
+  final Iterable<Type> types = const <Type>[Brand];
+  @override
+  final String wireName = 'Brand';
+
+  @override
+  Object serialize(Serializers serializers, Brand object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      object.name;
+
+  @override
+  Brand deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      Brand.valueOf(serialized as String);
+}
 
 class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   @override
@@ -80,8 +179,7 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'brand',
-      serializers.serialize(object.brand,
-          specifiedType: const FullType(String)),
+      serializers.serialize(object.brand, specifiedType: const FullType(Brand)),
       'lastFourDigits',
       serializers.serialize(object.lastFourDigits,
           specifiedType: const FullType(String)),
@@ -115,7 +213,7 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       switch (key) {
         case 'brand':
           result.brand = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(Brand)) as Brand;
           break;
         case 'lastFourDigits':
           result.lastFourDigits = serializers.deserialize(value,
@@ -151,7 +249,8 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'code',
-      serializers.serialize(object.code, specifiedType: const FullType(String)),
+      serializers.serialize(object.code,
+          specifiedType: const FullType(ErrorCode)),
       'message',
       serializers.serialize(object.message,
           specifiedType: const FullType(String)),
@@ -179,7 +278,7 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
       switch (key) {
         case 'code':
           result.code = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(ErrorCode)) as ErrorCode;
           break;
         case 'message':
           result.message = serializers.deserialize(value,
@@ -303,7 +402,7 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
 
 class _$Card extends Card {
   @override
-  final String brand;
+  final Brand brand;
   @override
   final String lastFourDigits;
   @override
@@ -380,9 +479,9 @@ class _$Card extends Card {
 class CardBuilder implements Builder<Card, CardBuilder> {
   _$Card _$v;
 
-  String _brand;
-  String get brand => _$this._brand;
-  set brand(String brand) => _$this._brand = brand;
+  Brand _brand;
+  Brand get brand => _$this._brand;
+  set brand(Brand brand) => _$this._brand = brand;
 
   String _lastFourDigits;
   String get lastFourDigits => _$this._lastFourDigits;
@@ -446,7 +545,7 @@ class CardBuilder implements Builder<Card, CardBuilder> {
 
 class _$ErrorInfo extends ErrorInfo {
   @override
-  final String code;
+  final ErrorCode code;
   @override
   final String message;
   @override
@@ -511,9 +610,9 @@ class _$ErrorInfo extends ErrorInfo {
 class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   _$ErrorInfo _$v;
 
-  String _code;
-  String get code => _$this._code;
-  set code(String code) => _$this._code = code;
+  ErrorCode _code;
+  ErrorCode get code => _$this._code;
+  set code(ErrorCode code) => _$this._code = code;
 
   String _message;
   String get message => _$this._message;

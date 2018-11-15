@@ -20,6 +20,8 @@ part 'serializers.g.dart';
 
 // ignore: unnecessary_const
 @SerializersFor(const [
+  ErrorCode,
+  Brand,
   CardDetails,
   Card,
   ErrorInfo,
