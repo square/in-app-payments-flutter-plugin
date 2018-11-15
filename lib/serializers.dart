@@ -20,6 +20,7 @@ part 'serializers.g.dart';
 
 // ignore: unnecessary_const
 @SerializersFor(const [
+  GooglePayEnvironment,
   ErrorCode,
   Brand,
   CardDetails,

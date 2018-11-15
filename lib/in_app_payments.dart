@@ -19,9 +19,6 @@ typedef ApplePayCompleteCallback = void Function();
 
 // ignore: avoid_classes_with_only_static_members
 class InAppPayments {
-  static const String googlePayEnvProdKey = 'PROD';
-  static const String googlePayEnvTestKey = 'TEST';
-
   static final MethodChannel _channel =
       const MethodChannel('square_in_app_payments')..setMethodCallHandler(_nativeCallHandler);
 
@@ -144,11 +141,10 @@ class InAppPayments {
     }
   }
 
-  static Future initializeGooglePay(String environment) async {
-    assert(environment == googlePayEnvProdKey || environment == googlePayEnvTestKey, 'environment should be either GOOGLE_PAY_ENV_PROD or GOOGLE_PAY_ENV_TEST.');
+  static Future initializeGooglePay(GooglePayEnvironment environment) async {
     try {
       var params = <String, dynamic> {
-        'environment': environment,
+        'environment': serializers.serializeWith(GooglePayEnvironment.serializer, environment),
       };
       await _channel.invokeMethod('initializeGooglePay', params);
     } on PlatformException catch (ex) {

@@ -24,5 +24,6 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Card.serializer)
       ..add(CardDetails.serializer)
       ..add(ErrorCode.serializer)
-      ..add(ErrorInfo.serializer))
+      ..add(ErrorInfo.serializer)
+      ..add(GooglePayEnvironment.serializer))
     .build();

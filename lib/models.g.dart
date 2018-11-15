@@ -19,15 +19,35 @@ part of 'models.dart';
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
-const ErrorCode _$USAGE_ERROR = const ErrorCode._('USAGE_ERROR');
-const ErrorCode _$NO_NETWORK = const ErrorCode._('NO_NETWORK');
+const GooglePayEnvironment _$prod = const GooglePayEnvironment._('prod');
+const GooglePayEnvironment _$test = const GooglePayEnvironment._('test');
+
+GooglePayEnvironment _$googlePayEnvironmentValueOf(String name) {
+  switch (name) {
+    case 'prod':
+      return _$prod;
+    case 'test':
+      return _$test;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<GooglePayEnvironment> _$googlePayEnvironmentValues =
+    new BuiltSet<GooglePayEnvironment>(const <GooglePayEnvironment>[
+  _$prod,
+  _$test,
+]);
+
+const ErrorCode _$usageError = const ErrorCode._('usageError');
+const ErrorCode _$noNetwork = const ErrorCode._('noNetwork');
 
 ErrorCode _$errorCodeValueOf(String name) {
   switch (name) {
-    case 'USAGE_ERROR':
-      return _$USAGE_ERROR;
-    case 'NO_NETWORK':
-      return _$NO_NETWORK;
+    case 'usageError':
+      return _$usageError;
+    case 'noNetwork':
+      return _$noNetwork;
     default:
       throw new ArgumentError(name);
   }
@@ -35,60 +55,99 @@ ErrorCode _$errorCodeValueOf(String name) {
 
 final BuiltSet<ErrorCode> _$errorCodeValues =
     new BuiltSet<ErrorCode>(const <ErrorCode>[
-  _$USAGE_ERROR,
-  _$NO_NETWORK,
+  _$usageError,
+  _$noNetwork,
 ]);
 
-const Brand _$OTHER_BRAND = const Brand._('OTHER_BRAND');
-const Brand _$VISA = const Brand._('VISA');
-const Brand _$MASTERCARD = const Brand._('MASTERCARD');
-const Brand _$AMERICAN_EXPRESS = const Brand._('AMERICAN_EXPRESS');
-const Brand _$DISCOVER = const Brand._('DISCOVER');
-const Brand _$DISCOVER_DINERS = const Brand._('DISCOVER_DINERS');
-const Brand _$JCB = const Brand._('JCB');
-const Brand _$CHINA_UNION_PAY = const Brand._('CHINA_UNION_PAY');
+const Brand _$otherBrand = const Brand._('otherBrand');
+const Brand _$visa = const Brand._('visa');
+const Brand _$mastercard = const Brand._('mastercard');
+const Brand _$americanExpress = const Brand._('americanExpress');
+const Brand _$discover = const Brand._('discover');
+const Brand _$discoverDiners = const Brand._('discoverDiners');
+const Brand _$jCB = const Brand._('jCB');
+const Brand _$chinaUnionPay = const Brand._('chinaUnionPay');
 
-Brand _$valueOf(String name) {
+Brand _$brandValueOf(String name) {
   switch (name) {
-    case 'OTHER_BRAND':
-      return _$OTHER_BRAND;
-    case 'VISA':
-      return _$VISA;
-    case 'MASTERCARD':
-      return _$MASTERCARD;
-    case 'AMERICAN_EXPRESS':
-      return _$AMERICAN_EXPRESS;
-    case 'DISCOVER':
-      return _$DISCOVER;
-    case 'DISCOVER_DINERS':
-      return _$DISCOVER_DINERS;
-    case 'JCB':
-      return _$JCB;
-    case 'CHINA_UNION_PAY':
-      return _$CHINA_UNION_PAY;
+    case 'otherBrand':
+      return _$otherBrand;
+    case 'visa':
+      return _$visa;
+    case 'mastercard':
+      return _$mastercard;
+    case 'americanExpress':
+      return _$americanExpress;
+    case 'discover':
+      return _$discover;
+    case 'discoverDiners':
+      return _$discoverDiners;
+    case 'jCB':
+      return _$jCB;
+    case 'chinaUnionPay':
+      return _$chinaUnionPay;
     default:
       throw new ArgumentError(name);
   }
 }
 
-final BuiltSet<Brand> _$values = new BuiltSet<Brand>(const <Brand>[
-  _$OTHER_BRAND,
-  _$VISA,
-  _$MASTERCARD,
-  _$AMERICAN_EXPRESS,
-  _$DISCOVER,
-  _$DISCOVER_DINERS,
-  _$JCB,
-  _$CHINA_UNION_PAY,
+final BuiltSet<Brand> _$brandValues = new BuiltSet<Brand>(const <Brand>[
+  _$otherBrand,
+  _$visa,
+  _$mastercard,
+  _$americanExpress,
+  _$discover,
+  _$discoverDiners,
+  _$jCB,
+  _$chinaUnionPay,
 ]);
 
+Serializer<GooglePayEnvironment> _$googlePayEnvironmentSerializer =
+    new _$GooglePayEnvironmentSerializer();
 Serializer<ErrorCode> _$errorCodeSerializer = new _$ErrorCodeSerializer();
 Serializer<Brand> _$brandSerializer = new _$BrandSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<ErrorInfo> _$errorInfoSerializer = new _$ErrorInfoSerializer();
 
+class _$GooglePayEnvironmentSerializer
+    implements PrimitiveSerializer<GooglePayEnvironment> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'prod': 'PROD',
+    'test': 'TEST',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'PROD': 'prod',
+    'TEST': 'test',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[GooglePayEnvironment];
+  @override
+  final String wireName = 'GooglePayEnvironment';
+
+  @override
+  Object serialize(Serializers serializers, GooglePayEnvironment object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      _toWire[object.name] ?? object.name;
+
+  @override
+  GooglePayEnvironment deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      GooglePayEnvironment.valueOf(
+          _fromWire[serialized] ?? serialized as String);
+}
+
 class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'usageError': 'USAGE_ERROR',
+    'noNetwork': 'NO_NETWORK',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'USAGE_ERROR': 'usageError',
+    'NO_NETWORK': 'noNetwork',
+  };
+
   @override
   final Iterable<Type> types = const <Type>[ErrorCode];
   @override
@@ -97,15 +156,36 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
   @override
   Object serialize(Serializers serializers, ErrorCode object,
           {FullType specifiedType = FullType.unspecified}) =>
-      object.name;
+      _toWire[object.name] ?? object.name;
 
   @override
   ErrorCode deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      ErrorCode.valueOf(serialized as String);
+      ErrorCode.valueOf(_fromWire[serialized] ?? serialized as String);
 }
 
 class _$BrandSerializer implements PrimitiveSerializer<Brand> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'otherBrand': 'OTHER_BRAND',
+    'visa': 'VISA',
+    'mastercard': 'MASTERCARD',
+    'americanExpress': 'AMERICAN_EXPRESS',
+    'discover': 'DISCOVER',
+    'discoverDiners': 'DISCOVER_DINERS',
+    'jCB': 'JCB',
+    'chinaUnionPay': 'CHINA_UNION_PAY',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'OTHER_BRAND': 'otherBrand',
+    'VISA': 'visa',
+    'MASTERCARD': 'mastercard',
+    'AMERICAN_EXPRESS': 'americanExpress',
+    'DISCOVER': 'discover',
+    'DISCOVER_DINERS': 'discoverDiners',
+    'JCB': 'jCB',
+    'CHINA_UNION_PAY': 'chinaUnionPay',
+  };
+
   @override
   final Iterable<Type> types = const <Type>[Brand];
   @override
@@ -114,12 +194,12 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
   @override
   Object serialize(Serializers serializers, Brand object,
           {FullType specifiedType = FullType.unspecified}) =>
-      object.name;
+      _toWire[object.name] ?? object.name;
 
   @override
   Brand deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      Brand.valueOf(serialized as String);
+      Brand.valueOf(_fromWire[serialized] ?? serialized as String);
 }
 
 class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {

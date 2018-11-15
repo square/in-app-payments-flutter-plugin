@@ -19,11 +19,27 @@ import 'package:built_value/serializer.dart';
 
 part 'models.g.dart';
 
+class GooglePayEnvironment extends EnumClass {
+  static Serializer<GooglePayEnvironment> get serializer => _$googlePayEnvironmentSerializer;
+
+  @BuiltValueEnumConst(wireName: 'PROD')
+  static const GooglePayEnvironment prod = _$prod;
+  @BuiltValueEnumConst(wireName: 'TEST')
+  static const GooglePayEnvironment test = _$test;
+
+  const GooglePayEnvironment._(String name) : super(name);
+
+  static BuiltSet<GooglePayEnvironment> get values => _$googlePayEnvironmentValues;
+  static GooglePayEnvironment valueOf(String name) => _$googlePayEnvironmentValueOf(name);
+}
+
 class ErrorCode extends EnumClass {
   static Serializer<ErrorCode> get serializer => _$errorCodeSerializer;
 
-  static const ErrorCode USAGE_ERROR = _$USAGE_ERROR;
-  static const ErrorCode NO_NETWORK = _$NO_NETWORK;
+  @BuiltValueEnumConst(wireName: 'USAGE_ERROR')
+  static const ErrorCode usageError = _$usageError;
+  @BuiltValueEnumConst(wireName: 'NO_NETWORK')
+  static const ErrorCode noNetwork = _$noNetwork;
 
   const ErrorCode._(String name) : super(name);
 
@@ -34,19 +50,27 @@ class ErrorCode extends EnumClass {
 class Brand extends EnumClass {
   static Serializer<Brand> get serializer => _$brandSerializer;
 
-  static const Brand OTHER_BRAND = _$OTHER_BRAND;
-  static const Brand VISA = _$VISA;
-  static const Brand MASTERCARD = _$MASTERCARD;
-  static const Brand AMERICAN_EXPRESS = _$AMERICAN_EXPRESS;
-  static const Brand DISCOVER = _$DISCOVER;
-  static const Brand DISCOVER_DINERS = _$DISCOVER_DINERS;
-  static const Brand JCB = _$JCB;
-  static const Brand CHINA_UNION_PAY = _$CHINA_UNION_PAY;
+  @BuiltValueEnumConst(wireName: 'OTHER_BRAND')
+  static const Brand otherBrand = _$otherBrand;
+  @BuiltValueEnumConst(wireName: 'VISA')
+  static const Brand visa = _$visa;
+  @BuiltValueEnumConst(wireName: 'MASTERCARD')
+  static const Brand mastercard = _$mastercard;
+  @BuiltValueEnumConst(wireName: 'AMERICAN_EXPRESS')
+  static const Brand americanExpress = _$americanExpress;
+  @BuiltValueEnumConst(wireName: 'DISCOVER')
+  static const Brand discover = _$discover;
+  @BuiltValueEnumConst(wireName: 'DISCOVER_DINERS')
+  static const Brand discoverDiners = _$discoverDiners;
+  @BuiltValueEnumConst(wireName: 'JCB')
+  static const Brand jCB = _$jCB;
+  @BuiltValueEnumConst(wireName: 'CHINA_UNION_PAY')
+  static const Brand chinaUnionPay = _$chinaUnionPay;
 
   const Brand._(String name) : super(name);
 
-  static BuiltSet<Brand> get values => _$values;
-  static Brand valueOf(String name) => _$valueOf(name);
+  static BuiltSet<Brand> get values => _$brandValues;
+  static Brand valueOf(String name) => _$brandValueOf(name);
 }
 
 abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
