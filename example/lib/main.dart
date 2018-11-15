@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
     var canUseApplePay = false;
     var canUseGooglePay = false;
     if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay(InAppPayments.googlePayEnvTestKey);
+      await InAppPayments.initializeGooglePay(GooglePayEnvironment.test);
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
