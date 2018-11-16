@@ -278,9 +278,7 @@ class InAppPaymentException implements Exception {
 
   final String debugMessage;
 
-  ErrorCode get code {
-    return _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
-  }
+  ErrorCode get code => _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
 
   InAppPaymentException(
     this._code,
