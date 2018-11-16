@@ -137,18 +137,6 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 #pragma mark - Private Methods
 - (SQIPCardEntryViewController *)_makeCardEntryForm
 {
-//    self.theme.font = [UIFont fontWithName:self.theme.font.fontName size:32.0];
-//    self.theme.emphasisFont = [UIFont fontWithName:self.theme.font.fontName size:13.0];
-//    self.theme.backgroundColor = [UIColor colorWithRed:0.49 green:0.13 blue:0.96 alpha:0.8];
-//    self.theme.foregroundColor = [UIColor colorWithRed:0.49 green:0.13 blue:0.06 alpha:0.8];
-//    self.theme.textColor = [UIColor colorWithRed:0.55 green:0.13 blue:0.06 alpha:1.0];
-//    self.theme.placeholderTextColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
-//    self.theme.tintColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
-//    self.theme.messageColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
-//    self.theme.errorColor = self.theme.errorColor;
-//    self.theme.saveButtonTitle = @"Charge";
-//    self.theme.saveButtonTextColor = [UIColor colorWithRed:0.55 green:0.88 blue:0.06 alpha:1.0];
-//    self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:<#(NSString *)#>];
     return [[SQIPCardEntryViewController alloc] initWithTheme:self.theme];
 }
 
