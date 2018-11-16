@@ -268,7 +268,9 @@ class InAppPaymentException implements Exception {
   static const String debugCodeKey = 'debugCode';
   static const String debugMessageKey = 'debugMessage';
 
-  final String code;
+  static final _standardSerializers = (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
+
+  final String _code;
 
   final String message;
 
@@ -276,8 +278,12 @@ class InAppPaymentException implements Exception {
 
   final String debugMessage;
 
+  ErrorCode get code {
+    return _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
+  }
+
   InAppPaymentException(
-    this.code,
+    this._code,
     this.message,
     this.debugCode,
     this.debugMessage,
