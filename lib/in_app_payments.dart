@@ -287,7 +287,7 @@ class InAppPaymentException implements Exception {
     this.message,
     this.debugCode,
     this.debugMessage,
-  ) : assert(code != null), assert(debugCode != null);
+  ) : assert(_code != null), assert(debugCode != null);
 
   @override
   String toString() => 'PlatformException($code, $message, $debugCode, $debugMessage)';
