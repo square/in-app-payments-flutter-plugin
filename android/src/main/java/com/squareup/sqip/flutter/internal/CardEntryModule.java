@@ -29,6 +29,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,9 +67,12 @@ final public class CardEntryModule {
         countDownLatch = new CountDownLatch(1);
         channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
         try {
-          countDownLatch.await();
+          // Allow developer to finish transaction in 120 seconds before timeout
+          // to prevent thread from leaking
+          countDownLatch.await(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
           e.printStackTrace();
+          return null;
         }
 
         return reference.get();
