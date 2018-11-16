@@ -1,8 +1,6 @@
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
 
-@import SquareInAppPaymentsSDK;
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application

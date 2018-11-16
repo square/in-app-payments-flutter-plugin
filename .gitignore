@@ -9,6 +9,7 @@ build/
 android/.classpath
 android/.project
 android/.settings/org.eclipse.buildship.core.prefs
+android/bin
 example/android/.project
 example/android/.settings/org.eclipse.buildship.core.prefs
 example/android/app/.project
