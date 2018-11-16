@@ -1,6 +1,8 @@
 #import "FSQIPCardEntry.h"
 #import "FSQIPErrorUtilities.h"
-#import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
+#import "Converters/SQIPCardDetails+FSQIPAdditions.h"
+#import "Converters/UIFont+FSQIPAdditions.h"
+#import "Converters/UIColor+FSQIPAdditions.h"
 
 typedef void (^CompletionHandler)(NSError * _Nullable);
 
@@ -88,15 +90,77 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
     result(nil);
 }
 
-- (void)setFormTheme:(FlutterResult)result themeParameters:(NSDictionary *)themeParameters
+- (void)setTheme:(FlutterResult)result themeConfiguration:(NSDictionary *)themeConfiguration
 {
-    result(FlutterMethodNotImplemented);
+    // Create a new theme with default value
+    self.theme = [[SQIPTheme alloc] init];
+    if (themeConfiguration[@"font"]) {
+        self.theme.font = [self.theme.font fromJsonDictionary:themeConfiguration[@"font"]];
+    }
+    if (themeConfiguration[@"emphasisFont"]) {
+        self.theme.emphasisFont = [self.theme.emphasisFont fromJsonDictionary:themeConfiguration[@"emphasisFont"]];
+    }
+    if (themeConfiguration[@"backgroundColor"]) {
+        self.theme.backgroundColor = [self.theme.backgroundColor fromJsonDictionary:themeConfiguration[@"backgroundColor"]];
+    }
+    if (themeConfiguration[@"foregroundColor"]) {
+        self.theme.foregroundColor = [self.theme.foregroundColor fromJsonDictionary:themeConfiguration[@"foregroundColor"]];
+    }
+    if (themeConfiguration[@"textColor"]) {
+        self.theme.textColor = [self.theme.textColor fromJsonDictionary:themeConfiguration[@"textColor"]];
+    }
+    if (themeConfiguration[@"placeholderTextColor"]) {
+        self.theme.placeholderTextColor = [self.theme.placeholderTextColor fromJsonDictionary:themeConfiguration[@"placeholderTextColor"]];
+    }
+    if (themeConfiguration[@"tintColor"]) {
+        self.theme.tintColor = [self.theme.tintColor fromJsonDictionary:themeConfiguration[@"tintColor"]];
+    }
+    if (themeConfiguration[@"messageColor"]) {
+        self.theme.messageColor = [self.theme.messageColor fromJsonDictionary:themeConfiguration[@"messageColor"]];
+    }
+    if (themeConfiguration[@"errorColor"]) {
+        self.theme.errorColor = [self.theme.errorColor fromJsonDictionary:themeConfiguration[@"errorColor"]];
+    }
+    if (themeConfiguration[@"saveButtonTitle"]) {
+        self.theme.saveButtonTitle = themeConfiguration[@"saveButtonTitle"];
+    }
+    if (themeConfiguration[@"saveButtonTextColor"]) {
+        self.theme.saveButtonTextColor = [self.theme.saveButtonTextColor fromJsonDictionary:themeConfiguration[@"saveButtonTextColor"]];
+    }
+    if (themeConfiguration[@"keyboardAppearance"]) {
+        self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:themeConfiguration[@"keyboardAppearance"]];
+    }
+    
+    result(nil);
 }
 
 #pragma mark - Private Methods
-- (SQIPCardEntryViewController *)_makeCardEntryForm;
+- (SQIPCardEntryViewController *)_makeCardEntryForm
 {
+//    self.theme.font = [UIFont fontWithName:self.theme.font.fontName size:32.0];
+//    self.theme.emphasisFont = [UIFont fontWithName:self.theme.font.fontName size:13.0];
+//    self.theme.backgroundColor = [UIColor colorWithRed:0.49 green:0.13 blue:0.96 alpha:0.8];
+//    self.theme.foregroundColor = [UIColor colorWithRed:0.49 green:0.13 blue:0.06 alpha:0.8];
+//    self.theme.textColor = [UIColor colorWithRed:0.55 green:0.13 blue:0.06 alpha:1.0];
+//    self.theme.placeholderTextColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
+//    self.theme.tintColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
+//    self.theme.messageColor = [UIColor colorWithRed:0.13 green:0.43 blue:0.06 alpha:0.8];
+//    self.theme.errorColor = self.theme.errorColor;
+//    self.theme.saveButtonTitle = @"Charge";
+//    self.theme.saveButtonTextColor = [UIColor colorWithRed:0.55 green:0.88 blue:0.06 alpha:1.0];
+//    self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:<#(NSString *)#>];
     return [[SQIPCardEntryViewController alloc] initWithTheme:self.theme];
+}
+
+- (UIKeyboardAppearance)_keyboardAppearanceFromString:(NSString *)keyboardTypeName
+{
+    if([keyboardTypeName isEqualToString:@"Dark"]) {
+        return UIKeyboardAppearanceDark;
+    } else if ([keyboardTypeName isEqualToString:@"Light"]) {
+        return UIKeyboardAppearanceLight;
+    } else {
+        return UIKeyboardAppearanceDefault;
+    }
 }
 
 @end

@@ -251,6 +251,17 @@ class InAppPayments {
       throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
     }
   }
+
+  static Future setIOSCardEntryTheme(IOSTheme themeConfiguration) async {
+    try {
+      var params = <String, dynamic> {
+        'themeConfiguration': _standardSerializers.serializeWith(IOSTheme.serializer, themeConfiguration),
+      };
+      await _channel.invokeMethod('setFormTheme', params);
+    } on PlatformException catch (ex) {
+      throw InAppPaymentException(ex.code, ex.message, ex.details[InAppPaymentException.debugCodeKey], ex.details[InAppPaymentException.debugMessageKey]);
+    }
+  }
 }
 
 class InAppPaymentException implements Exception {

@@ -1,6 +1,6 @@
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
-#import "Converters/SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
+#import "Converters/SQIPCardDetails+FSQIPAdditions.h"
 
 API_AVAILABLE(ios(11.0))
 typedef void (^CompletionHandler)(PKPaymentAuthorizationResult * _Nonnull);

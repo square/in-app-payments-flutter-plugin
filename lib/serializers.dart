@@ -25,6 +25,10 @@ part 'serializers.g.dart';
   Brand,
   CardDetails,
   Card,
+  RGBAColor,
+  Font,
+  KeyboardAppearance,
+  IOSTheme,
   ErrorInfo,
 ])
 

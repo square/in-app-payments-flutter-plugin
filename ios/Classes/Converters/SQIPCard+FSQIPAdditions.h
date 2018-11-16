@@ -7,7 +7,7 @@
 
 @import SquareInAppPaymentsSDK;
 
-@interface SQIPCardDetails (FlutterMobileCommerceSdkAdditions)
+@interface SQIPCard (FSQIPAdditions)
 
 - (NSMutableDictionary *)jsonDictionary;
 

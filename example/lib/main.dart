@@ -41,6 +41,16 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future _setIOSCardEntryTheme() async {
+    var themeConfiguationBuilder = IOSThemeBuilder();
+    themeConfiguationBuilder.font = FontBuilder()..size = 12.0;
+    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()..r=142..g=11..b=123;
+    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
+    themeConfiguationBuilder.saveButtonTitle = 'Pay';
+
+    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+  }
+
   Future<bool> _checkout(CardDetails result) async => true;
 
   void _onCardEntryComplete() {
@@ -63,6 +73,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onStartCardEntryFlow() async {
     try {
+      await _setIOSCardEntryTheme();
       await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess, onCardEntryCancel: _onCardEntryCancel);
     } on PlatformException {
       print('Failed to startCardEntryFlow.');

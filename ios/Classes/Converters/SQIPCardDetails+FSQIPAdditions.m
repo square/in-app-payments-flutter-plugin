@@ -5,10 +5,10 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
-#import "SQIPCardDetails+FlutterMobileCommerceSdkAdditions.h"
-#import "SQIPCard+FlutterMobileCommerceSdkAdditions.h"
+#import "SQIPCardDetails+FSQIPAdditions.h"
+#import "SQIPCard+FSQIPAdditions.h"
 
-@implementation SQIPCardDetails (FlutterMobileCommerceSdkAdditions)
+@implementation SQIPCardDetails (FSQIPAdditions)
 
 - (NSMutableDictionary *)jsonDictionary
 {
