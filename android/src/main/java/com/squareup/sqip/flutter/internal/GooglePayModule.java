@@ -18,16 +18,12 @@ package com.squareup.sqip.flutter.internal;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardRequirements;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
-import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
@@ -39,8 +35,6 @@ import com.squareup.sqip.GooglePay;
 import com.squareup.sqip.GooglePayNonceResult;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
-import java.util.Arrays;
-import java.util.List;
 
 final public class GooglePayModule {
 
@@ -51,14 +45,6 @@ final public class GooglePayModule {
   private static final String FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR = "Unknown google pay activity result status.";
 
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
-  private static final List<Integer> CARD_NETWORKS = Arrays.asList(
-      WalletConstants.CARD_NETWORK_AMEX,
-      WalletConstants.CARD_NETWORK_DISCOVER,
-      WalletConstants.CARD_NETWORK_JCB,
-      WalletConstants.CARD_NETWORK_VISA,
-      WalletConstants.CARD_NETWORK_MASTERCARD,
-      WalletConstants.CARD_NETWORK_OTHER
-  );
 
   private final Activity currentActivity;
   private final PaymentsClient googlePayClients;
@@ -105,7 +91,6 @@ final public class GooglePayModule {
               channel.invokeMethod("onGooglePayCanceled", null);
               break;
             case AutoResolveHelper.RESULT_ERROR:
-              Status status = AutoResolveHelper.getStatusFromIntent(data);
               channel.invokeMethod("onGooglePayNonceRequestFailure",
                   ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_RESULT_ERROR), FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
               break;
@@ -139,28 +124,10 @@ final public class GooglePayModule {
 
   private PaymentDataRequest _createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
     // TODO: Add support for google pay configuration
-    PaymentDataRequest.Builder request = PaymentDataRequest
-        .newBuilder().setTransactionInfo(
-            TransactionInfo.newBuilder()
-                .setTotalPriceStatus(
-                    WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                .setTotalPrice(price)
-                .setCurrencyCode(currencyCode)
-                .build()
-        ).addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
-        .setCardRequirements(
-            CardRequirements.newBuilder()
-                .addAllowedCardNetworks(CARD_NETWORKS)
-                .build()
-        );
-    PaymentMethodTokenizationParameters params = PaymentMethodTokenizationParameters
-        .newBuilder()
-        .setPaymentMethodTokenizationType(
-            WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
-        .addParameter("gateway","square")
-        .addParameter("gatewayMerchantId", merchantId)
-        .build();
-    request.setPaymentMethodTokenizationParameters(params);
-    return request.build();
+    TransactionInfo transactionInfo = TransactionInfo.newBuilder()
+        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+        .setTotalPrice(price)
+        .setCurrencyCode(currencyCode).build();
+    return GooglePay.createPaymentDataRequest(merchantId, transactionInfo);
   }
 }
