@@ -3,6 +3,7 @@
 // Usage error
 NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
 
+
 @implementation FSQIPErrorUtilities
 
 + (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode

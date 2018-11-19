@@ -1,7 +1,8 @@
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
 
-@interface FSQIPApplePay : NSObject<PKPaymentAuthorizationViewControllerDelegate>
+
+@interface FSQIPApplePay : NSObject <PKPaymentAuthorizationViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 
@@ -17,6 +18,6 @@
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
                             isSuccess:(Boolean)isSuccess
-                         errorMessage:(NSString* __nullable)errorMessage;
+                         errorMessage:(NSString *__nullable)errorMessage;
 
 @end

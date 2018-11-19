@@ -7,12 +7,13 @@
 
 #import "UIFont+FSQIPAdditions.h"
 
+
 @implementation UIFont (FSQIPAdditions)
 
-- (UIFont*) fromJsonDictionary:(NSDictionary*)fontDictionary;
+- (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 {
     assert(fontDictionary[@"size"]);
-    NSString* fontName = self.fontName;
+    NSString *fontName = self.fontName;
     if (fontDictionary[@"name"]) {
         fontName = fontDictionary[@"name"];
     }

@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -19,6 +19,7 @@ rootProject.allprojects {
         maven {
             url "https://sdk.squareup.com/public/android"
          }
+        // TODO: remove this after update to public artifactory
         mavenLocal()
     }
 }
@@ -43,5 +44,5 @@ dependencies {
     // def readerSdkMinVersion = '0.2'
     // api "com.squareup.sdk.mobile-commerce:mobile-commerce-sdk:$readerSdkMinVersion"
     api 'com.squareup.sdk.in-app-payments:in-app-payments:0.3-SNAPSHOT'
-    api 'com.google.android.gms:play-services-wallet:16.0.0'
+    api 'com.google.android.gms:play-services-wallet:16.0.1'
 }

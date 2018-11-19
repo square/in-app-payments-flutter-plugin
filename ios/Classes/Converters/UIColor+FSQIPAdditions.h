@@ -5,8 +5,9 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
+
 @interface UIColor (FSQIPAdditions)
 
-- (UIColor*) fromJsonDictionary:(NSDictionary*)fontDictionary;
+- (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 
 @end

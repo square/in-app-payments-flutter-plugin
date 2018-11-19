@@ -3,21 +3,24 @@
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
 
-@interface SquareInAppPaymentsFlutterPlugin()
 
-@property (strong, readwrite) FSQIPCardEntry* cardEntryModule;
-@property (strong, readwrite) FSQIPApplePay* applePayModule;
+@interface SquareInAppPaymentsFlutterPlugin ()
+
+@property (strong, readwrite) FSQIPCardEntry *cardEntryModule;
+@property (strong, readwrite) FSQIPApplePay *applePayModule;
 @end
 
-FlutterMethodChannel* _channel;
+FlutterMethodChannel *_channel;
+
 
 @implementation SquareInAppPaymentsFlutterPlugin
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"square_in_app_payments"
-            binaryMessenger:[registrar messenger]];
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+{
+    FlutterMethodChannel *channel = [FlutterMethodChannel
+        methodChannelWithName:@"square_in_app_payments"
+              binaryMessenger:[registrar messenger]];
     _channel = channel;
-    SquareInAppPaymentsFlutterPlugin* instance = [[SquareInAppPaymentsFlutterPlugin alloc] init];
+    SquareInAppPaymentsFlutterPlugin *instance = [[SquareInAppPaymentsFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -34,9 +37,10 @@ FlutterMethodChannel* _channel;
     return self;
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result
+{
     if ([@"setApplicationId" isEqualToString:call.method]) {
-        NSString* applicationId = call.arguments[@"applicationId"];
+        NSString *applicationId = call.arguments[@"applicationId"];
         SQIPInAppPaymentsSDK.squareApplicationID = applicationId;
         result(nil);
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
@@ -46,7 +50,7 @@ FlutterMethodChannel* _channel;
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardNonceProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"setFormTheme" isEqualToString:call.method]) {
-        NSDictionary* themeConfiguration = call.arguments[@"themeConfiguration"];
+        NSDictionary *themeConfiguration = call.arguments[@"themeConfiguration"];
         [self.cardEntryModule setTheme:result themeConfiguration:themeConfiguration];
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];

@@ -7,6 +7,7 @@
 
 @import SquareInAppPaymentsSDK;
 
+
 @interface SQIPCard (FSQIPAdditions)
 
 - (NSMutableDictionary *)jsonDictionary;

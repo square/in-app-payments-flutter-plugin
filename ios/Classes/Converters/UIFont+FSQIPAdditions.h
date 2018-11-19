@@ -5,8 +5,9 @@
 //  Created by Xiao Hu on 10/17/18.
 //
 
+
 @interface UIFont (FSQIPAdditions)
 
-- (UIFont*) fromJsonDictionary:(NSDictionary*)fontDictionary;
+- (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 
 @end

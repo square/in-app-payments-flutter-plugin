@@ -4,15 +4,17 @@
 #import "Converters/UIFont+FSQIPAdditions.h"
 #import "Converters/UIColor+FSQIPAdditions.h"
 
-typedef void (^CompletionHandler)(NSError * _Nullable);
+typedef void (^CompletionHandler)(NSError *_Nullable);
 
-@interface FSQIPCardEntry()
 
-@property (strong, readwrite) FlutterMethodChannel* channel;
+@interface FSQIPCardEntry ()
+
+@property (strong, readwrite) FlutterMethodChannel *channel;
 @property (strong, readwrite) SQIPTheme *theme;
 @property (strong, readwrite) CompletionHandler completionHandler;
 
 @end
+
 
 @implementation FSQIPCardEntry
 
@@ -29,7 +31,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [((UINavigationController*)rootViewController) pushViewController:cardEntryForm animated:YES];
+        [((UINavigationController *)rootViewController) pushViewController:cardEntryForm animated:YES];
     } else {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cardEntryForm];
         [rootViewController presentViewController:navigationController animated:YES completion:nil];
@@ -63,7 +65,6 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
                 [self.channel invokeMethod:@"cardEntryComplete" arguments:nil];
             }];
         }
-       
     }
 }
 
@@ -80,8 +81,8 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 {
     if (self.completionHandler) {
         NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: NSLocalizedString(errorMessage, nil)
-                                   };
+            NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)
+        };
         NSError *error = [NSError errorWithDomain:NSGlobalDomain
                                              code:-57
                                          userInfo:userInfo];
@@ -130,7 +131,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
     if (themeConfiguration[@"keyboardAppearance"]) {
         self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:themeConfiguration[@"keyboardAppearance"]];
     }
-    
+
     result(nil);
 }
 
@@ -142,7 +143,7 @@ typedef void (^CompletionHandler)(NSError * _Nullable);
 
 - (UIKeyboardAppearance)_keyboardAppearanceFromString:(NSString *)keyboardTypeName
 {
-    if([keyboardTypeName isEqualToString:@"Dark"]) {
+    if ([keyboardTypeName isEqualToString:@"Dark"]) {
         return UIKeyboardAppearanceDark;
     } else if ([keyboardTypeName isEqualToString:@"Light"]) {
         return UIKeyboardAppearanceLight;

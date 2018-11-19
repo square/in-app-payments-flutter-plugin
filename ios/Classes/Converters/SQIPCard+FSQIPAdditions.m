@@ -7,18 +7,19 @@
 
 #import "SQIPCard+FSQIPAdditions.h"
 
+
 @implementation SQIPCard (FSQIPAdditions)
 
 - (NSMutableDictionary *)jsonDictionary
 {
     NSMutableDictionary *card = [[NSMutableDictionary alloc] init];
-    
+
     card[@"brand"] = [self _stringForBrand:self.brand];
     card[@"lastFourDigits"] = self.lastFourDigits;
     card[@"expirationMonth"] = @(self.expirationMonth);
     card[@"expirationYear"] = @(self.expirationYear);
     card[@"postalCode"] = self.postalCode;
-    
+
     return card;
 }
 

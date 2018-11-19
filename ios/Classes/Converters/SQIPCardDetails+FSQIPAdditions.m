@@ -8,15 +8,16 @@
 #import "SQIPCardDetails+FSQIPAdditions.h"
 #import "SQIPCard+FSQIPAdditions.h"
 
+
 @implementation SQIPCardDetails (FSQIPAdditions)
 
 - (NSMutableDictionary *)jsonDictionary
 {
     NSMutableDictionary *cardEntryResult = [[NSMutableDictionary alloc] init];
-    
+
     cardEntryResult[@"nonce"] = self.nonce;
     cardEntryResult[@"card"] = [self.card jsonDictionary];
-    
+
     return cardEntryResult;
 }
 
