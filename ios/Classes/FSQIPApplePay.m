@@ -16,10 +16,12 @@ API_AVAILABLE(ios(11.0))
 @end
 
 // flutter plugin debug error codes
-static NSString *const FlutterMobileCommerceSdkNoApplePaySupport = @"fl_mcomm_no_apple_pay_support";
+static NSString *const FSQIPApplePayNotInitialized = @"fl_apple_pay_not_initialized";
+static NSString *const FSQIPApplePayNotSupport = @"fl_apple_pay_not_support";
 
 // flutter plugin debug messages
-static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Apple pay is not supported on this device. Please check the apple pay availability on the device before use apply pay.";
+static NSString *const FSQIPMessageApplePayNotInitialized = @"Please initialize apple pay before you can call other methods.";
+static NSString *const FSQIPMessageApplePayNotSupport = @"Apple pay is not supported on this device. Please check the apple pay availability on the device before use apply pay.";
 
 @implementation FSQIPApplePay
 
@@ -45,10 +47,16 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
 {
+    if (!self.applePayMerchantId) {
+        result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
+                                   message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotInitialized]
+                                   details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotInitialized debugMessage:FSQIPMessageApplePayNotInitialized]]);
+        return;
+    }
     if (!SQIPInAppPaymentsSDK.canUseApplePay) {
         result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                   message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FlutterMobileCommerceSdkNoApplePaySupport]
-                                   details:[FSQIPErrorUtilities debugErrorObject:FlutterMobileCommerceSdkNoApplePaySupport debugMessage:FlutterMobileCommerceSdkMessageNoApplePaySupport]]);
+                                   message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotSupport]
+                                   details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotSupport debugMessage:FSQIPMessageApplePayNotSupport]]);
         return;
     }
     PKPaymentRequest *paymentRequest =
@@ -83,8 +91,13 @@ static NSString *const FlutterMobileCommerceSdkMessageNoApplePaySupport = @"Appl
             NSError *error = [NSError errorWithDomain:NSGlobalDomain
                                                  code:-57
                                              userInfo:userInfo];
-            PKPaymentAuthorizationResult* authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[error]];
-            self.completionHandler(authResult);
+            if (@available(iOS 11.0, *)) {
+                PKPaymentAuthorizationResult* authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[error]];
+                self.completionHandler(authResult);
+            } else {
+                // This should never happen as we require target to be 11.0
+                assert(false);
+            }
         }
         self.completionHandler = nil;
     }

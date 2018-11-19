@@ -2,7 +2,6 @@ package com.squareup.sqip.flutter;
 
 import com.squareup.sqip.InAppPaymentsSdk;
 import com.squareup.sqip.flutter.internal.CardEntryModule;
-import com.squareup.sqip.flutter.internal.ErrorHandlerUtils;
 import com.squareup.sqip.flutter.internal.GooglePayModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -32,9 +31,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
 
   @Override
   public void onMethodCall(MethodCall call, final Result result) {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("setApplicationId")) {
+    if (call.method.equals("setApplicationId")) {
       String applicationId = call.argument("applicationId");
       InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
       result.success(null);
@@ -51,7 +48,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       googlePayModule.initializeGooglePay(environment, merchantId);
       result.success(null);
     } else if (call.method.equals("canUseGooglePay")) {
-      googlePayModule.canUserGooglePay(result);
+      googlePayModule.canUseGooglePay(result);
     } else if (call.method.equals("requestGooglePayNonce")) {
       String price = call.argument("price");
       String currencyCode = call.argument("currencyCode");

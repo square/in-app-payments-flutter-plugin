@@ -110,7 +110,7 @@ final public class GooglePayModule {
     );
   }
 
-  public void canUserGooglePay(final MethodChannel.Result result) {
+  public void canUseGooglePay(final MethodChannel.Result result) {
     if (googlePayClients == null) {
       result.error(ErrorHandlerUtils.USAGE_ERROR,
           ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_NOT_INITIALIZED),

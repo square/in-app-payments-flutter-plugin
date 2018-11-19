@@ -29,13 +29,13 @@ FlutterMethodChannel* _channel;
     }
     self.cardEntryModule = [[FSQIPCardEntry alloc] init];
     [self.cardEntryModule initWithMethodChannel:_channel];
+    self.applePayModule = [[FSQIPApplePay alloc] init];
+    [self.applePayModule initWithMethodChannel:_channel];
     return self;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([@"getPlatformVersion" isEqualToString:call.method]) {
-        result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-    } else if ([@"setApplicationId" isEqualToString:call.method]) {
+    if ([@"setApplicationId" isEqualToString:call.method]) {
         NSString* applicationId = call.arguments[@"applicationId"];
         SQIPInAppPaymentsSDK.squareApplicationID = applicationId;
         result(nil);
@@ -49,24 +49,10 @@ FlutterMethodChannel* _channel;
         NSDictionary* themeConfiguration = call.arguments[@"themeConfiguration"];
         [self.cardEntryModule setTheme:result themeConfiguration:themeConfiguration];
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
-        self.applePayModule = [[FSQIPApplePay alloc] init];
-        [self.applePayModule initWithMethodChannel:_channel];
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
     } else if ([@"canUseApplePay" isEqualToString:call.method]) {
-        if (!self.applePayModule) {
-            result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                       message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:@"fl_mcomm_apple_pay_not_initialize"]
-                                       details:[FSQIPErrorUtilities debugErrorObject:@"fl_mcomm_apple_pay_not_initialize" debugMessage:@"You must initialize apple pay before use it."]]);
-            return;
-        }
         [self.applePayModule canUseApplePay:result];
     } else if ([@"requestApplePayNonce" isEqualToString:call.method]) {
-        if (!self.applePayModule) {
-            result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                       message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:@"fl_mcomm_apple_pay_not_initialize"]
-                                       details:[FSQIPErrorUtilities debugErrorObject:@"fl_mcomm_apple_pay_not_initialize" debugMessage:@"You must initialize apple pay before use it."]]);
-            return;
-        }
         NSString *countryCode = call.arguments[@"countryCode"];
         NSString *currencyCode = call.arguments[@"currencyCode"];
         NSString *summaryLabel = call.arguments[@"summaryLabel"];
@@ -77,12 +63,6 @@ FlutterMethodChannel* _channel;
                                      summaryLabel:summaryLabel
                                             price:price];
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
-        if (!self.applePayModule) {
-            result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
-                                       message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:@"fl_mcomm_apple_pay_not_initialize"]
-                                       details:[FSQIPErrorUtilities debugErrorObject:@"fl_mcomm_apple_pay_not_initialize" debugMessage:@"You must initialize apple pay before use it."]]);
-            return;
-        }
         Boolean isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
         [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
