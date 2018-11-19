@@ -6,7 +6,7 @@ import java.util.Map;
 
 public final class CardDetailsConverter {
 
-  private CardConverter cardConverter;
+  private final CardConverter cardConverter;
 
   public CardDetailsConverter(CardConverter cardConverter) {
     this.cardConverter = cardConverter;

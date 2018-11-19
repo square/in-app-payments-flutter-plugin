@@ -12,10 +12,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   private static MethodChannel channel;
 
-  private final Registrar currentRegistrar;
-
-  private CardEntryModule cardEntryModule;
-  private GooglePayModule googlePayModule;
+  private final CardEntryModule cardEntryModule;
+  private final GooglePayModule googlePayModule;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -24,9 +22,8 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   }
 
   private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
-    currentRegistrar = registrar;
-    cardEntryModule = new CardEntryModule(currentRegistrar, channel);
-    googlePayModule = new GooglePayModule(currentRegistrar, channel);
+    cardEntryModule = new CardEntryModule(registrar, channel);
+    googlePayModule = new GooglePayModule(registrar, channel);
   }
 
   @Override
@@ -45,6 +42,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
     } else if (call.method.equals("initializeGooglePay")) {
       String merchantId = call.argument("merchantId");
       String environment = call.argument("environment");
+      assert environment != null;
       googlePayModule.initializeGooglePay(environment, merchantId);
       result.success(null);
     } else if (call.method.equals("canUseGooglePay")) {

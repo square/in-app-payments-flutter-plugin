@@ -72,7 +72,7 @@ final public class CardEntryModule {
           countDownLatch.await(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
           e.printStackTrace();
-          return null;
+          return new CardEntryActivityCommand.ShowError(e.getMessage());
         }
 
         return reference.get();

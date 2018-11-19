@@ -3,7 +3,7 @@ package com.squareup.sqip.flutter.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ErrorHandlerUtils {
+final class ErrorHandlerUtils {
   public static final String USAGE_ERROR = "USAGE_ERROR";
 
   public static String getPluginErrorMessage(String pluginErrorCode) {
