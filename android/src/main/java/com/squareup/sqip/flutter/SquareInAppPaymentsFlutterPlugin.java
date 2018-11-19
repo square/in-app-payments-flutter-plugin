@@ -27,6 +27,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
     currentRegistrar = registrar;
     cardEntryModule = new CardEntryModule(currentRegistrar, channel);
+    googlePayModule = new GooglePayModule(currentRegistrar, channel);
   }
 
   @Override
@@ -47,23 +48,11 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
     } else if (call.method.equals("initializeGooglePay")) {
       String merchantId = call.argument("merchantId");
       String environment = call.argument("environment");
-      googlePayModule = new GooglePayModule(currentRegistrar, channel, environment, merchantId);
+      googlePayModule.initializeGooglePay(environment, merchantId);
       result.success(null);
     } else if (call.method.equals("canUseGooglePay")) {
-      if (googlePayModule == null) {
-        result.error(ErrorHandlerUtils.USAGE_ERROR,
-            ErrorHandlerUtils.getPluginErrorMessage("fl_mcomm_google_pay_not_initialize"),
-            ErrorHandlerUtils.getDebugErrorObject("fl_mcomm_google_pay_not_initialize", "You must initialize google pay before use it."));
-        return;
-      }
       googlePayModule.canUserGooglePay(result);
     } else if (call.method.equals("requestGooglePayNonce")) {
-      if (googlePayModule == null) {
-        result.error(ErrorHandlerUtils.USAGE_ERROR,
-            ErrorHandlerUtils.getPluginErrorMessage("fl_mcomm_google_pay_not_initialize"),
-            ErrorHandlerUtils.getDebugErrorObject("fl_mcomm_google_pay_not_initialize", "You must initialize google pay before use it."));
-        return;
-      }
       String price = call.argument("price");
       String currencyCode = call.argument("currencyCode");
       googlePayModule.requestGooglePayNonce(result, price, currencyCode);

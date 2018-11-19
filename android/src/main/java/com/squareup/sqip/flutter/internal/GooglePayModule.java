@@ -39,33 +39,24 @@ import io.flutter.plugin.common.PluginRegistry;
 final public class GooglePayModule {
 
   // Android only flutter plugin errors and messages
+  private static final String FL_GOOGLE_PAY_NOT_INITIALIZED = "fl_google_pay_not_initialized";
   private static final String FL_GOOGLE_PAY_RESULT_ERROR = "fl_google_pay_result_error";
   private static final String FL_GOOGLE_PAY_UNKNOWN_ERROR = "fl_google_pay_unknown_error";
+  private static final String FL_MESSAGE_GOOGLE_PAY_NOT_INITIALIZED = "Please initialize google pay before you can call other methods.";
   private static final String FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR = "Failed to launch google pay, please make sure you configured google pay correctly.";
   private static final String FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR = "Unknown google pay activity result status.";
 
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
 
   private final Activity currentActivity;
-  private final PaymentsClient googlePayClients;
   private final CardDetailsConverter cardDetailsConverter;
-  private final String merchantId;
 
-  public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel, String environment, String merchantId) {
+  private String merchantId;
+  private PaymentsClient googlePayClients;
+
+  public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
     currentActivity = registrar.activity();
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
-    this.merchantId = merchantId;
-    int env = WalletConstants.ENVIRONMENT_TEST;
-    if (environment.equals("PROD")) {
-      env = WalletConstants.ENVIRONMENT_PRODUCTION;
-    }
-
-    googlePayClients = Wallet.getPaymentsClient(
-        currentActivity,
-        (new Wallet.WalletOptions.Builder())
-            .setEnvironment(env)
-            .build()
-    );
 
     // Register callback when google pay activity is dismissed
     registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
@@ -104,7 +95,28 @@ final public class GooglePayModule {
     });
   }
 
+  public void initializeGooglePay(String environment, String merchantId) {
+    this.merchantId = merchantId;
+    int env = WalletConstants.ENVIRONMENT_TEST;
+    if (environment.equals("PROD")) {
+      env = WalletConstants.ENVIRONMENT_PRODUCTION;
+    }
+
+    googlePayClients = Wallet.getPaymentsClient(
+        currentActivity,
+        (new Wallet.WalletOptions.Builder())
+            .setEnvironment(env)
+            .build()
+    );
+  }
+
   public void canUserGooglePay(final MethodChannel.Result result) {
+    if (googlePayClients == null) {
+      result.error(ErrorHandlerUtils.USAGE_ERROR,
+          ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_NOT_INITIALIZED),
+          ErrorHandlerUtils.getDebugErrorObject(FL_GOOGLE_PAY_NOT_INITIALIZED, FL_MESSAGE_GOOGLE_PAY_NOT_INITIALIZED));
+      return;
+    }
     IsReadyToPayRequest isReadyToPayRequest = GooglePay.createIsReadyToPayRequest();
     googlePayClients.isReadyToPay(isReadyToPayRequest).addOnCompleteListener(new OnCompleteListener<Boolean>() {
       @Override
@@ -115,6 +127,12 @@ final public class GooglePayModule {
   }
 
   public void requestGooglePayNonce(MethodChannel.Result result, String price, String currencyCode) {
+    if (googlePayClients == null) {
+      result.error(ErrorHandlerUtils.USAGE_ERROR,
+          ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_NOT_INITIALIZED),
+          ErrorHandlerUtils.getDebugErrorObject(FL_GOOGLE_PAY_NOT_INITIALIZED, FL_MESSAGE_GOOGLE_PAY_NOT_INITIALIZED));
+      return;
+    }
     AutoResolveHelper.resolveTask(
         googlePayClients.loadPaymentData(_createPaymentChargeRequest(merchantId, price, currencyCode)),
         currentActivity,
@@ -123,7 +141,6 @@ final public class GooglePayModule {
   }
 
   private PaymentDataRequest _createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
-    // TODO: Add support for google pay configuration
     TransactionInfo transactionInfo = TransactionInfo.newBuilder()
         .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
         .setTotalPrice(price)
