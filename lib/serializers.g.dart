@@ -20,7 +20,14 @@ part of 'serializers.dart';
 // ignore_for_file: test_types_in_equals
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(Brand.serializer)
       ..add(Card.serializer)
-      ..add(CardResult.serializer)
-      ..add(ErrorInfo.serializer))
+      ..add(CardDetails.serializer)
+      ..add(ErrorCode.serializer)
+      ..add(ErrorInfo.serializer)
+      ..add(Font.serializer)
+      ..add(GooglePayEnvironment.serializer)
+      ..add(IOSTheme.serializer)
+      ..add(KeyboardAppearance.serializer)
+      ..add(RGBAColor.serializer))
     .build();

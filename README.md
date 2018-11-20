@@ -1,4 +1,4 @@
-# square_mobile_commerce_sdk
+# square_in_app_payments
 
 A flutter plugin for Square Mobile Commerce SDK.
 
@@ -27,12 +27,12 @@ flutter create square_mcomm_sdk_example
 
 ### Step 2: Install mComm SDK plugin
 
-Put the *square_mobile_commerce_sdk* project folder in `flutter` folder. Edit the `pubspec.yaml` in *square_reader_sdk_example* to include :
+Put the *square_in_app_payments* project folder in `flutter` folder. Edit the `pubspec.yaml` in *square_reader_sdk_example* to include :
 ```yaml
 dependencies:
     ...
-    square_mobile_commerce_sdk:
-        path: ../square_mobile_commerce_sdk
+    square_in_app_payments:
+        path: ../square_in_app_payments
 ```
 
 ### Step 3: Configure mComm SDK for Android

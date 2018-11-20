@@ -1,8 +1,23 @@
+/*
+ Copyright 2018 Square Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:square_mobile_commerce_sdk/models.dart';
-import 'package:square_mobile_commerce_sdk/square_mobile_commerce_sdk.dart';
+import 'package:square_in_app_payments/models.dart';
+import 'package:square_in_app_payments/in_app_payments.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,137 +27,168 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
   bool _paymentInitialized = false;
+  bool _applePayEnabled = false;
+  bool _googlePayEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
     _initSquarePayment();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await SquareMobileCommerceSdkFlutterPlugin.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
   Future<void> _initSquarePayment() async {
-    await SquareMobileCommerceSdkFlutterPlugin.setApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
-    if(Theme.of(context).platform == TargetPlatform.android) {
-      await SquareMobileCommerceSdkFlutterPlugin.initializeGooglePay(SquareMobileCommerceSdkFlutterPlugin.googlePayEnvTestKey);
+    await InAppPayments.setSquareApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
+    var canUseApplePay = false;
+    var canUseGooglePay = false;
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      await InAppPayments.initializeGooglePay(
+          '0ZXKWWD1CB2T6', GooglePayEnvironment.test);
+      canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-      await SquareMobileCommerceSdkFlutterPlugin.initializeApplePay('merchant.com.mcomm.flutter');
+      await _setIOSCardEntryTheme();
+      await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
+      canUseApplePay = await InAppPayments.canUseApplePay;
     }
 
     setState(() {
       _paymentInitialized = true;
+      _applePayEnabled = canUseApplePay;
+      _googlePayEnabled = canUseGooglePay;
     });
   }
 
-  void _onCardEntryDidSucceedWithResult(CardResult result) async {
+  Future _setIOSCardEntryTheme() async {
+    var themeConfiguationBuilder = IOSThemeBuilder();
+    themeConfiguationBuilder.font = FontBuilder()..size = 24.0;
+    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()
+      ..r = 142
+      ..g = 11
+      ..b = 123;
+    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
+    themeConfiguationBuilder.saveButtonTitle = 'Pay';
+
+    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+  }
+
+  Future<bool> _checkout(CardDetails result) async => true;
+
+  void _onCardEntryComplete() {
+    print('entry is closed');
+  }
+
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     print(result);
-    await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
+    var success = await _checkout(result);
+    if (!success) {
+      await InAppPayments.showCardNonceProcessingError('failed to checkout.');
+    } else {
+      await InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    }
   }
 
   void _onCardEntryCancel() async {
     print('card entry flow is canceled.');
-    await SquareMobileCommerceSdkFlutterPlugin.closeCardEntryForm();
   }
 
   Future<void> _onStartCardEntryFlow() async {
     try {
-      await SquareMobileCommerceSdkFlutterPlugin.startCardEntryFlow(_onCardEntryDidSucceedWithResult, _onCardEntryCancel);
-    } on PlatformException {
+      await InAppPayments.startCardEntryFlow(
+          onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+          onCardEntryCancel: _onCardEntryCancel);
+    } on InAppPaymentsException {
       print('Failed to startCardEntryFlow.');
     }
   }
 
   void _onStartGooglePay() async {
     try {
-      var merchantId = '0ZXKWWD1CB2T6';
-      var price = '100';
-      var currencyCode = 'USD';
-      await SquareMobileCommerceSdkFlutterPlugin.requestGooglePayNonce(
-        merchantId, price, currencyCode, _onGooglePayDidSucceedWithResult, _onGooglePayCancel, _onGooglePayFailed);
-    } on PlatformException catch(ex) {
-       print('Failed to onStartGooglePay. \n ${ex.toString()}');
+      await InAppPayments.requestGooglePayNonce(
+          price: '100',
+          currencyCode: 'USD',
+          onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+          onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+          onGooglePayCanceled: _onGooglePayCancel);
+    } on InAppPaymentsException catch (ex) {
+      print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
 
-  void _onGooglePayDidSucceedWithResult(CardResult result) {
-      print(result);
+  void _onGooglePayNonceRequestSuccess(CardDetails result) {
+    print(result);
   }
 
   void _onGooglePayCancel() {
     print('GooglePay is canceled');
   }
 
-  void _onGooglePayFailed(ErrorInfo errorInfo) {
+  void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
     print('GooglePay failed. \n ${errorInfo.toString()}');
   }
 
   void _onStartApplePay() async {
     try {
-      var summaryLabel = 'Flutter Test';
-      var price = '100';
-      var countryCode = 'US';
-      var currencyCode = 'USD';
-      await SquareMobileCommerceSdkFlutterPlugin.requestApplePayNonce(price, summaryLabel, countryCode, currencyCode, _onApplePayDidSucceedWithResult, _onApplePayFailed);
-    } on PlatformException catch(ex) {
-       print('Failed to onStartApplePay. \n ${ex.toString()}');
+      await InAppPayments.requestApplePayNonce(
+          price: '100',
+          summaryLabel: 'My Checkout',
+          countryCode: 'US',
+          currencyCode: 'USD',
+          onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
+          onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
+          onApplePayComplete: _onApplePayComplete);
+    } on InAppPaymentsException catch (ex) {
+      print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
   }
 
-  void _onApplePayDidSucceedWithResult(CardResult result) async {
+  void _onApplePayNonceRequestSuccess(CardDetails result) async {
     print(result);
-    await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
+    var success = await _checkout(result);
+    if (success) {
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } else {
+      await InAppPayments.completeApplePayAuthorization(
+          isSuccess: false, errorMessage: "failed to charge amount.");
+    }
   }
 
-  void _onApplePayFailed(ErrorInfo errorInfo) async {
+  void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     print('ApplePay failed. \n ${errorInfo.toString()}');
-    await SquareMobileCommerceSdkFlutterPlugin.completeApplePayAuthorization();
+    await InAppPayments.completeApplePayAuthorization(isSuccess: false);
+  }
+
+  void _onApplePayComplete() {
+    print('ApplePay closed');
   }
 
   @override
-  Widget build(BuildContext context) => 
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+  Widget build(BuildContext context) => MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: _paymentInitialized ? _onStartCardEntryFlow : null,
+                  child: Text('Start Checkout'),
+                ),
+                RaisedButton(
+                  onPressed: _paymentInitialized &&
+                          (_applePayEnabled || _googlePayEnabled)
+                      ? (Theme.of(context).platform == TargetPlatform.iOS)
+                          ? _onStartApplePay
+                          : _onStartGooglePay
+                      : null,
+                  child: Text((Theme.of(context).platform == TargetPlatform.iOS)
+                      ? 'pay with ApplePay'
+                      : 'pay with GooglePay'),
+                ),
+              ],
+            ),
+          ),
         ),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              Text('Running on: $_platformVersion\n'),
-              RaisedButton(
-                onPressed: _paymentInitialized ? _onStartCardEntryFlow : null,
-                child: Text('Start Checkout'),
-              ),
-              RaisedButton(
-                onPressed: _paymentInitialized ? 
-                  (Theme.of(context).platform == TargetPlatform.iOS) ? _onStartApplePay : _onStartGooglePay
-                  : null,
-                child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),
-              ),
-            ],
-          ), 
-        ),
-      ),
-    );
+      );
 }

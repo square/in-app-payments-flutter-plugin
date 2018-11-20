@@ -18,10 +18,17 @@ import 'models.dart';
 
 part 'serializers.g.dart';
 
-@SerializersFor([
-  CardResult,
+// ignore: unnecessary_const
+@SerializersFor(const [
+  GooglePayEnvironment,
+  ErrorCode,
+  Brand,
+  CardDetails,
   Card,
+  RGBAColor,
+  Font,
+  KeyboardAppearance,
+  IOSTheme,
   ErrorInfo,
 ])
-
 final Serializers serializers = _$serializers;

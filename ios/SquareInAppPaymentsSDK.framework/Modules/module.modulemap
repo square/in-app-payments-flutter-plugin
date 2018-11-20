@@ -1,0 +1,6 @@
+framework module SquareInAppPaymentsSDK {
+  umbrella header "SquareInAppPaymentsSDK.h"
+
+  export *
+  module * { export * }
+}
