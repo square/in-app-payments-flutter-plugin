@@ -20,7 +20,8 @@ import 'package:built_value/serializer.dart';
 part 'models.g.dart';
 
 class GooglePayEnvironment extends EnumClass {
-  static Serializer<GooglePayEnvironment> get serializer => _$googlePayEnvironmentSerializer;
+  static Serializer<GooglePayEnvironment> get serializer =>
+      _$googlePayEnvironmentSerializer;
 
   @BuiltValueEnumConst(wireName: 'PROD')
   static const GooglePayEnvironment prod = _$prod;
@@ -29,8 +30,10 @@ class GooglePayEnvironment extends EnumClass {
 
   const GooglePayEnvironment._(String name) : super(name);
 
-  static BuiltSet<GooglePayEnvironment> get values => _$googlePayEnvironmentValues;
-  static GooglePayEnvironment valueOf(String name) => _$googlePayEnvironmentValueOf(name);
+  static BuiltSet<GooglePayEnvironment> get values =>
+      _$googlePayEnvironmentValues;
+  static GooglePayEnvironment valueOf(String name) =>
+      _$googlePayEnvironmentValueOf(name);
 }
 
 class ErrorCode extends EnumClass {
@@ -100,7 +103,7 @@ abstract class RGBAColor implements Built<RGBAColor, RGBAColorBuilder> {
   int get r;
   int get g;
   int get b;
-  
+
   @nullable
   double get a;
 
@@ -126,7 +129,8 @@ abstract class Font implements Built<Font, FontBuilder> {
 }
 
 class KeyboardAppearance extends EnumClass {
-  static Serializer<KeyboardAppearance> get serializer => _$keyboardAppearanceSerializer;
+  static Serializer<KeyboardAppearance> get serializer =>
+      _$keyboardAppearanceSerializer;
 
   @BuiltValueEnumConst(wireName: 'Dark')
   static const KeyboardAppearance dark = _$dark;
@@ -136,7 +140,8 @@ class KeyboardAppearance extends EnumClass {
   const KeyboardAppearance._(String name) : super(name);
 
   static BuiltSet<KeyboardAppearance> get values => _$keyboardAppearanceValues;
-  static KeyboardAppearance valueOf(String name) => _$keyboardAppearanceValueOf(name);
+  static KeyboardAppearance valueOf(String name) =>
+      _$keyboardAppearanceValueOf(name);
 }
 
 abstract class IOSTheme implements Built<IOSTheme, IOSThemeBuilder> {

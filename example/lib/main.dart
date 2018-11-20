@@ -42,8 +42,9 @@ class _MyAppState extends State<MyApp> {
     await InAppPayments.setSquareApplicationId('sq0idp-aDbtFl--b2VU5pcqQD7wmg');
     var canUseApplePay = false;
     var canUseGooglePay = false;
-    if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay('0ZXKWWD1CB2T6', GooglePayEnvironment.test);
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      await InAppPayments.initializeGooglePay(
+          '0ZXKWWD1CB2T6', GooglePayEnvironment.test);
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await _setIOSCardEntryTheme();
@@ -61,7 +62,10 @@ class _MyAppState extends State<MyApp> {
   Future _setIOSCardEntryTheme() async {
     var themeConfiguationBuilder = IOSThemeBuilder();
     themeConfiguationBuilder.font = FontBuilder()..size = 24.0;
-    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()..r=142..g=11..b=123;
+    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()
+      ..r = 142
+      ..g = 11
+      ..b = 123;
     themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
     themeConfiguationBuilder.saveButtonTitle = 'Pay';
 
@@ -80,7 +84,8 @@ class _MyAppState extends State<MyApp> {
     if (!success) {
       await InAppPayments.showCardNonceProcessingError('failed to checkout.');
     } else {
-      await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
+      await InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
     }
   }
 
@@ -90,7 +95,9 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onStartCardEntryFlow() async {
     try {
-      await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess, onCardEntryCancel: _onCardEntryCancel);
+      await InAppPayments.startCardEntryFlow(
+          onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+          onCardEntryCancel: _onCardEntryCancel);
     } on PlatformException {
       print('Failed to startCardEntryFlow.');
     }
@@ -99,18 +106,18 @@ class _MyAppState extends State<MyApp> {
   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-        price: '100',
-        currencyCode: 'USD',
-        onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
-        onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
-        onGooglePayCanceled: _onGooglePayCancel);
-    } on PlatformException catch(ex) {
-       print('Failed to onStartGooglePay. \n ${ex.toString()}');
+          price: '100',
+          currencyCode: 'USD',
+          onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+          onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+          onGooglePayCanceled: _onGooglePayCancel);
+    } on PlatformException catch (ex) {
+      print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
 
   void _onGooglePayNonceRequestSuccess(CardDetails result) {
-      print(result);
+    print(result);
   }
 
   void _onGooglePayCancel() {
@@ -124,15 +131,15 @@ class _MyAppState extends State<MyApp> {
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
-        price: '100', 
-        summaryLabel: 'My Checkout',
-        countryCode: 'US', 
-        currencyCode: 'USD', 
-        onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
-        onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
-        onApplePayComplete: _onApplePayComplete);
-    } on PlatformException catch(ex) {
-       print('Failed to onStartApplePay. \n ${ex.toString()}');
+          price: '100',
+          summaryLabel: 'My Checkout',
+          countryCode: 'US',
+          currencyCode: 'USD',
+          onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
+          onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
+          onApplePayComplete: _onApplePayComplete);
+    } on PlatformException catch (ex) {
+      print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
   }
 
@@ -142,9 +149,10 @@ class _MyAppState extends State<MyApp> {
     if (success) {
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
     } else {
-      await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+      await InAppPayments.completeApplePayAuthorization(
+          isSuccess: false, errorMessage: "failed to charge amount.");
     }
-  } 
+  }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     print('ApplePay failed. \n ${errorInfo.toString()}');
@@ -156,28 +164,32 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) => 
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+  Widget build(BuildContext context) => MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: _paymentInitialized ? _onStartCardEntryFlow : null,
+                  child: Text('Start Checkout'),
+                ),
+                RaisedButton(
+                  onPressed: _paymentInitialized &&
+                          (_applePayEnabled || _googlePayEnabled)
+                      ? (Theme.of(context).platform == TargetPlatform.iOS)
+                          ? _onStartApplePay
+                          : _onStartGooglePay
+                      : null,
+                  child: Text((Theme.of(context).platform == TargetPlatform.iOS)
+                      ? 'pay with ApplePay'
+                      : 'pay with GooglePay'),
+                ),
+              ],
+            ),
+          ),
         ),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              RaisedButton(
-                onPressed: _paymentInitialized ? _onStartCardEntryFlow : null,
-                child: Text('Start Checkout'),
-              ),
-              RaisedButton(
-                onPressed: _paymentInitialized && (_applePayEnabled || _googlePayEnabled) ? 
-                  (Theme.of(context).platform == TargetPlatform.iOS) ? _onStartApplePay : _onStartGooglePay
-                  : null,
-                child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),
-              ),
-            ],
-          ), 
-        ),
-      ),
-    );
+      );
 }
