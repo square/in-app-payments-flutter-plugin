@@ -139,11 +139,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('setApplicationId', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -155,11 +155,11 @@ class InAppPayments {
     try {
       await _channel.invokeMethod('startCardEntryFlow');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -169,11 +169,11 @@ class InAppPayments {
     try {
       await _channel.invokeMethod('completeCardEntry');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -184,11 +184,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('showCardNonceProcessingError', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -205,11 +205,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('initializeGooglePay', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -217,11 +217,11 @@ class InAppPayments {
     try {
       return await _channel.invokeMethod('canUseGooglePay');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -247,11 +247,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -264,11 +264,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('initializeApplePay', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -276,11 +276,11 @@ class InAppPayments {
     try {
       return await _channel.invokeMethod('canUseApplePay');
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -314,11 +314,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -331,11 +331,11 @@ class InAppPayments {
       };
       await _channel.invokeMethod('completeApplePayAuthorization', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 
@@ -347,16 +347,16 @@ class InAppPayments {
       };
       await _channel.invokeMethod('setFormTheme', params);
     } on PlatformException catch (ex) {
-      throw InAppPaymentException(
+      throw InAppPaymentsException(
           ex.code,
           ex.message,
-          ex.details[InAppPaymentException.debugCodeKey],
-          ex.details[InAppPaymentException.debugMessageKey]);
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
     }
   }
 }
 
-class InAppPaymentException implements Exception {
+class InAppPaymentsException implements Exception {
   static const String debugCodeKey = 'debugCode';
   static const String debugMessageKey = 'debugMessage';
 
@@ -374,7 +374,7 @@ class InAppPaymentException implements Exception {
   ErrorCode get code =>
       _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
 
-  InAppPaymentException(
+  InAppPaymentsException(
     this._code,
     this.message,
     this.debugCode,
@@ -384,5 +384,5 @@ class InAppPaymentException implements Exception {
 
   @override
   String toString() =>
-      'PlatformException($code, $message, $debugCode, $debugMessage)';
+      'InAppPaymentException($code, $message, $debugCode, $debugMessage)';
 }

@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
       await InAppPayments.startCardEntryFlow(
           onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
           onCardEntryCancel: _onCardEntryCancel);
-    } on PlatformException {
+    } on InAppPaymentsException {
       print('Failed to startCardEntryFlow.');
     }
   }
@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
           onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: _onGooglePayCancel);
-    } on PlatformException catch (ex) {
+    } on InAppPaymentsException catch (ex) {
       print('Failed to onStartGooglePay. \n ${ex.toString()}');
     }
   }
@@ -138,7 +138,7 @@ class _MyAppState extends State<MyApp> {
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayComplete);
-    } on PlatformException catch (ex) {
+    } on InAppPaymentsException catch (ex) {
       print('Failed to onStartApplePay. \n ${ex.toString()}');
     }
   }
