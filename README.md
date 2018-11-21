@@ -110,8 +110,8 @@ limitations under the License.
 [In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
 [Square Dashboard]: https://squareup.com/dashboard/
 [Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
-[`docs`]: https://github.com/JohnMAustin78/in-app-payments-sdk-flutter-plugin/tree/master/docs
-[`example`]: https://github.com/JohnMAustin78/in-app-payments-sdk-flutter-plugin/tree/master/example
+[`docs`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs
+[`example`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/example
 [getting started guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/get-started.md
 [Enable Apple Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-applepay.md
 [Enable Google Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-googlepay.md
