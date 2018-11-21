@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A flutter plugin for suqare in app payments.
                        DESC
-  s.homepage         = 'https://github.com/square/in-app-payments-flutter-plugin
+  s.homepage         = 'https://github.com/square/in-app-payments-flutter-plugin'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Square, Inc.' => 'xiao@squareup.com' }
   s.source           = { :path => '.' }
