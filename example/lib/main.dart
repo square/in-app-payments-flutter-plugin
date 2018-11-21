@@ -93,13 +93,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _onStartCardEntryFlow() async {
-    try {
-      await InAppPayments.startCardEntryFlow(
-          onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
-          onCardEntryCancel: _onCardEntryCancel);
-    } on InAppPaymentsException {
-      print('Failed to startCardEntryFlow.');
-    }
+    await InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCardEntryCancel);
   }
 
   void _onStartGooglePay() async {
