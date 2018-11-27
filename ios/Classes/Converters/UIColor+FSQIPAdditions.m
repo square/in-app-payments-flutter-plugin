@@ -28,10 +28,7 @@
     CGFloat red = [fontDictionary[@"r"] floatValue] / 255;
     CGFloat green = [fontDictionary[@"g"] floatValue] / 255;
     CGFloat blue = [fontDictionary[@"b"] floatValue] / 255;
-    CGFloat alpha = 1.0;
-    if (fontDictionary[@"a"]) {
-        alpha = [fontDictionary[@"a"] floatValue];
-    }
+    CGFloat alpha = fontDictionary[@"a"] ? [fontDictionary[@"a"] floatValue] : 1.0;
 
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }

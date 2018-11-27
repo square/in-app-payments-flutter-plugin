@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+
 @interface UIColor (FSQIPAdditions)
 
 - (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;

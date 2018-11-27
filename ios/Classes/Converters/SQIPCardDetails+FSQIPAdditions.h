@@ -19,6 +19,6 @@
 
 @interface SQIPCardDetails (FSQIPAdditions)
 
-- (NSMutableDictionary *)jsonDictionary;
+- (NSDictionary *)jsonDictionary;
 
 @end

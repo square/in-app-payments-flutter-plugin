@@ -19,17 +19,15 @@
 
 @implementation SQIPCard (FSQIPAdditions)
 
-- (NSMutableDictionary *)jsonDictionary
+- (NSDictionary *)jsonDictionary
 {
-    NSMutableDictionary *card = [[NSMutableDictionary alloc] init];
-
-    card[@"brand"] = [self _stringForBrand:self.brand];
-    card[@"lastFourDigits"] = self.lastFourDigits;
-    card[@"expirationMonth"] = @(self.expirationMonth);
-    card[@"expirationYear"] = @(self.expirationYear);
-    card[@"postalCode"] = self.postalCode;
-
-    return card;
+    return @{
+        @"brand" : [self _stringForBrand:self.brand],
+        @"lastFourDigits" : self.lastFourDigits,
+        @"expirationMonth" : @(self.expirationMonth),
+        @"expirationYear" : @(self.expirationYear),
+        @"postalCode" : self.postalCode,
+    };
 }
 
 #pragma mark - Private Methods
