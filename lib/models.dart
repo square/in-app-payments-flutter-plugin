@@ -19,23 +19,6 @@ import 'package:built_value/serializer.dart';
 
 part 'models.g.dart';
 
-class GooglePayEnvironment extends EnumClass {
-  static Serializer<GooglePayEnvironment> get serializer =>
-      _$googlePayEnvironmentSerializer;
-
-  @BuiltValueEnumConst(wireName: 'PROD')
-  static const GooglePayEnvironment prod = _$prod;
-  @BuiltValueEnumConst(wireName: 'TEST')
-  static const GooglePayEnvironment test = _$test;
-
-  const GooglePayEnvironment._(String name) : super(name);
-
-  static BuiltSet<GooglePayEnvironment> get values =>
-      _$googlePayEnvironmentValues;
-  static GooglePayEnvironment valueOf(String name) =>
-      _$googlePayEnvironmentValueOf(name);
-}
-
 class ErrorCode extends EnumClass {
   static Serializer<ErrorCode> get serializer => _$errorCodeSerializer;
 

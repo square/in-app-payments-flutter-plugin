@@ -13,21 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import 'package:built_value/serializer.dart';
-import 'models.dart';
+const int totalPriceStatusNotCurrentlyKnown = 1;
+const int totalPriceStatusEstimated = 2;
+const int totalPriceStatusFinal = 3;
 
-part 'serializers.g.dart';
-
-// ignore: unnecessary_const
-@SerializersFor(const [
-  ErrorCode,
-  Brand,
-  CardDetails,
-  Card,
-  RGBAColor,
-  Font,
-  KeyboardAppearance,
-  IOSTheme,
-  ErrorInfo,
-])
-final Serializers serializers = _$serializers;
+const int environmentProduction = 1;
+const int environmentTest = 3;

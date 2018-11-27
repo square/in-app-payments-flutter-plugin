@@ -56,16 +56,16 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       cardEntryModule.showCardNonceProcessingError(result, errorMessage);
     } else if (call.method.equals("initializeGooglePay")) {
       String squareLocationId = call.argument("squareLocationId");
-      String environment = call.argument("environment");
-      assert environment != null;
-      googlePayModule.initializeGooglePay(environment, squareLocationId);
+      int environment = call.argument("environment");
+      googlePayModule.initializeGooglePay(squareLocationId, environment);
       result.success(null);
     } else if (call.method.equals("canUseGooglePay")) {
       googlePayModule.canUseGooglePay(result);
     } else if (call.method.equals("requestGooglePayNonce")) {
       String price = call.argument("price");
       String currencyCode = call.argument("currencyCode");
-      googlePayModule.requestGooglePayNonce(result, price, currencyCode);
+      int priceStatus = call.argument("priceStatus");
+      googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
     } else {
       result.notImplemented();
     }

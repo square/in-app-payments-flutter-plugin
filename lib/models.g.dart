@@ -19,26 +19,6 @@ part of 'models.dart';
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
-const GooglePayEnvironment _$prod = const GooglePayEnvironment._('prod');
-const GooglePayEnvironment _$test = const GooglePayEnvironment._('test');
-
-GooglePayEnvironment _$googlePayEnvironmentValueOf(String name) {
-  switch (name) {
-    case 'prod':
-      return _$prod;
-    case 'test':
-      return _$test;
-    default:
-      throw new ArgumentError(name);
-  }
-}
-
-final BuiltSet<GooglePayEnvironment> _$googlePayEnvironmentValues =
-    new BuiltSet<GooglePayEnvironment>(const <GooglePayEnvironment>[
-  _$prod,
-  _$test,
-]);
-
 const ErrorCode _$usageError = const ErrorCode._('usageError');
 const ErrorCode _$noNetwork = const ErrorCode._('noNetwork');
 
@@ -122,8 +102,6 @@ final BuiltSet<KeyboardAppearance> _$keyboardAppearanceValues =
   _$light,
 ]);
 
-Serializer<GooglePayEnvironment> _$googlePayEnvironmentSerializer =
-    new _$GooglePayEnvironmentSerializer();
 Serializer<ErrorCode> _$errorCodeSerializer = new _$ErrorCodeSerializer();
 Serializer<Brand> _$brandSerializer = new _$BrandSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
@@ -134,34 +112,6 @@ Serializer<KeyboardAppearance> _$keyboardAppearanceSerializer =
     new _$KeyboardAppearanceSerializer();
 Serializer<IOSTheme> _$iOSThemeSerializer = new _$IOSThemeSerializer();
 Serializer<ErrorInfo> _$errorInfoSerializer = new _$ErrorInfoSerializer();
-
-class _$GooglePayEnvironmentSerializer
-    implements PrimitiveSerializer<GooglePayEnvironment> {
-  static const Map<String, String> _toWire = const <String, String>{
-    'prod': 'PROD',
-    'test': 'TEST',
-  };
-  static const Map<String, String> _fromWire = const <String, String>{
-    'PROD': 'prod',
-    'TEST': 'test',
-  };
-
-  @override
-  final Iterable<Type> types = const <Type>[GooglePayEnvironment];
-  @override
-  final String wireName = 'GooglePayEnvironment';
-
-  @override
-  Object serialize(Serializers serializers, GooglePayEnvironment object,
-          {FullType specifiedType = FullType.unspecified}) =>
-      _toWire[object.name] ?? object.name;
-
-  @override
-  GooglePayEnvironment deserialize(Serializers serializers, Object serialized,
-          {FullType specifiedType = FullType.unspecified}) =>
-      GooglePayEnvironment.valueOf(
-          _fromWire[serialized] ?? serialized as String);
-}
 
 class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
   static const Map<String, String> _toWire = const <String, String>{
