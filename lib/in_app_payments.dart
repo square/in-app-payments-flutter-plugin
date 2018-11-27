@@ -161,14 +161,13 @@ class InAppPayments {
   }
 
   static Future initializeGooglePay(
-      String merchantId, GooglePayEnvironment environment) async {
+      String squareLocationId, int environment) async {
     assert(environment != null, 'environment should not be null.');
-    assert(merchantId != null && merchantId.isNotEmpty,
-        'merchantId should not be null or empty.');
+    assert(squareLocationId != null && squareLocationId.isNotEmpty,
+        'squareLocationId should not be null or empty.');
     var params = <String, dynamic>{
-      'environment': serializers.serializeWith(
-          GooglePayEnvironment.serializer, environment),
-      'merchantId': merchantId,
+      'environment': environment,
+      'squareLocationId': squareLocationId,
     };
     await _channel.invokeMethod('initializeGooglePay', params);
   }
@@ -188,6 +187,7 @@ class InAppPayments {
   static Future requestGooglePayNonce(
       {@required String price,
       @required String currencyCode,
+      @required int priceStatus,
       GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
       GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
       GooglePayCancelCallback onGooglePayCanceled}) async {
@@ -195,7 +195,8 @@ class InAppPayments {
         'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty,
         'currencyCode should not be null or empty.');
-
+    assert(priceStatus != null,
+        'priceStatus should not be null.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -204,6 +205,7 @@ class InAppPayments {
       var params = <String, dynamic>{
         'price': price,
         'currencyCode': currencyCode,
+        'priceStatus': priceStatus,
       };
       await _channel.invokeMethod('requestGooglePayNonce', params);
     } on PlatformException catch (ex) {
@@ -224,9 +226,7 @@ class InAppPayments {
     await _channel.invokeMethod('initializeApplePay', params);
   }
 
-  static Future<bool> get canUseApplePay async {
-    return await _channel.invokeMethod('canUseApplePay');
-  }
+  static Future<bool> get canUseApplePay async => await _channel.invokeMethod('canUseApplePay');
 
   static Future requestApplePayNonce(
       {@required String price,

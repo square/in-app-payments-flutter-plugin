@@ -71,8 +71,7 @@ final public class CardEntryModule {
           // to prevent thread from leaking
           countDownLatch.await(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-          e.printStackTrace();
-          return new CardEntryActivityCommand.ShowError(e.getMessage());
+          throw new RuntimeException(e);
         }
 
         return reference.get();

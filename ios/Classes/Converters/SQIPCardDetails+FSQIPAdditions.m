@@ -20,14 +20,12 @@
 
 @implementation SQIPCardDetails (FSQIPAdditions)
 
-- (NSMutableDictionary *)jsonDictionary
+- (NSDictionary *)jsonDictionary
 {
-    NSMutableDictionary *cardEntryResult = [[NSMutableDictionary alloc] init];
-
-    cardEntryResult[@"nonce"] = self.nonce;
-    cardEntryResult[@"card"] = [self.card jsonDictionary];
-
-    return cardEntryResult;
+    return @{
+        @"nonce" : self.nonce,
+        @"card" : [self.card jsonDictionary],
+    };
 }
 
 @end

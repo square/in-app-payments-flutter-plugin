@@ -28,20 +28,20 @@ NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
 
 + (NSDictionary *)debugErrorObject:(NSString *)debugCode debugMessage:(NSString *)debugMessage
 {
-    NSMutableDictionary *errorObject = [[NSMutableDictionary alloc] init];
-    errorObject[@"debugCode"] = debugCode;
-    errorObject[@"debugMessage"] = debugMessage;
-    return errorObject;
+    return @{
+        @"debugCode" : debugCode,
+        @"debugMessage" : debugMessage,
+    };
 }
 
 + (NSDictionary *)callbackErrorObject:(NSString *)code message:(NSString *)message debugCode:(NSString *)debugCode debugMessage:(NSString *)debugMessage
 {
-    NSMutableDictionary *errorObject = [[NSMutableDictionary alloc] init];
-    errorObject[@"code"] = code;
-    errorObject[@"message"] = message;
-    errorObject[@"debugCode"] = debugCode;
-    errorObject[@"debugMessage"] = debugMessage;
-    return errorObject;
+    return @{
+        @"code" : code,
+        @"message" : message,
+        @"debugCode" : debugCode,
+        @"debugMessage" : debugMessage,
+    };
 }
 
 @end

@@ -46,12 +46,12 @@ final public class GooglePayModule {
   private static final String FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR = "Failed to launch google pay, please make sure you configured google pay correctly.";
   private static final String FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR = "Unknown google pay activity result status.";
 
-  private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
+  private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 4111;
 
   private final Activity currentActivity;
   private final CardDetailsConverter cardDetailsConverter;
 
-  private String merchantId;
+  private String squareLocationId;
   private PaymentsClient googlePayClients;
 
   public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
@@ -65,8 +65,6 @@ final public class GooglePayModule {
           switch (resultCode) {
             case Activity.RESULT_OK:
               PaymentData paymentData = PaymentData.getFromIntent(data);
-              assert paymentData != null;
-              assert paymentData.getPaymentMethodToken() != null;
               String googlePayToken = paymentData.getPaymentMethodToken().getToken();
               GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
                   new Callback<GooglePayNonceResult>() {
@@ -97,12 +95,9 @@ final public class GooglePayModule {
     });
   }
 
-  public void initializeGooglePay(String environment, String merchantId) {
-    this.merchantId = merchantId;
-    int env = WalletConstants.ENVIRONMENT_TEST;
-    if (environment.equals("PROD")) {
-      env = WalletConstants.ENVIRONMENT_PRODUCTION;
-    }
+  public void initializeGooglePay(String squareLocationId, int environment) {
+    this.squareLocationId = squareLocationId;
+    int env = environment;
 
     googlePayClients = Wallet.getPaymentsClient(
         currentActivity,
@@ -128,7 +123,7 @@ final public class GooglePayModule {
     });
   }
 
-  public void requestGooglePayNonce(MethodChannel.Result result, String price, String currencyCode) {
+  public void requestGooglePayNonce(MethodChannel.Result result, String price, String currencyCode, int priceStatus) {
     if (googlePayClients == null) {
       result.error(ErrorHandlerUtils.USAGE_ERROR,
           ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_NOT_INITIALIZED),
@@ -136,17 +131,17 @@ final public class GooglePayModule {
       return;
     }
     AutoResolveHelper.resolveTask(
-        googlePayClients.loadPaymentData(_createPaymentChargeRequest(merchantId, price, currencyCode)),
+        googlePayClients.loadPaymentData(createPaymentChargeRequest(squareLocationId, price, currencyCode, priceStatus)),
         currentActivity,
         LOAD_PAYMENT_DATA_REQUEST_CODE);
     result.success(null);
   }
 
-  private PaymentDataRequest _createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
+  private PaymentDataRequest createPaymentChargeRequest(String squareLocationId, String price, String currencyCode, int priceStatus) {
     TransactionInfo transactionInfo = TransactionInfo.newBuilder()
-        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+        .setTotalPriceStatus(priceStatus)
         .setTotalPrice(price)
         .setCurrencyCode(currencyCode).build();
-    return GooglePay.createPaymentDataRequest(merchantId, transactionInfo);
+    return GooglePay.createPaymentDataRequest(squareLocationId, transactionInfo);
   }
 }
