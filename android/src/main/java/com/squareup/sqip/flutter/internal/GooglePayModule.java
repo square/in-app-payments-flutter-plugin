@@ -46,12 +46,12 @@ final public class GooglePayModule {
   private static final String FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR = "Failed to launch google pay, please make sure you configured google pay correctly.";
   private static final String FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR = "Unknown google pay activity result status.";
 
-  private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
+  private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 4111;
 
   private final Activity currentActivity;
   private final CardDetailsConverter cardDetailsConverter;
 
-  private String merchantId;
+  private String squareLocationId;
   private PaymentsClient googlePayClients;
 
   public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
@@ -97,8 +97,8 @@ final public class GooglePayModule {
     });
   }
 
-  public void initializeGooglePay(String environment, String merchantId) {
-    this.merchantId = merchantId;
+  public void initializeGooglePay(String environment, String squareLocationId) {
+    this.squareLocationId = squareLocationId;
     int env = WalletConstants.ENVIRONMENT_TEST;
     if (environment.equals("PROD")) {
       env = WalletConstants.ENVIRONMENT_PRODUCTION;
@@ -136,17 +136,17 @@ final public class GooglePayModule {
       return;
     }
     AutoResolveHelper.resolveTask(
-        googlePayClients.loadPaymentData(_createPaymentChargeRequest(merchantId, price, currencyCode)),
+        googlePayClients.loadPaymentData(createPaymentChargeRequest(squareLocationId, price, currencyCode)),
         currentActivity,
         LOAD_PAYMENT_DATA_REQUEST_CODE);
     result.success(null);
   }
 
-  private PaymentDataRequest _createPaymentChargeRequest(String merchantId, String price, String currencyCode) {
+  private PaymentDataRequest createPaymentChargeRequest(String squareLocationId, String price, String currencyCode) {
     TransactionInfo transactionInfo = TransactionInfo.newBuilder()
         .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
         .setTotalPrice(price)
         .setCurrencyCode(currencyCode).build();
-    return GooglePay.createPaymentDataRequest(merchantId, transactionInfo);
+    return GooglePay.createPaymentDataRequest(squareLocationId, transactionInfo);
   }
 }

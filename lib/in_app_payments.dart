@@ -161,14 +161,14 @@ class InAppPayments {
   }
 
   static Future initializeGooglePay(
-      String merchantId, GooglePayEnvironment environment) async {
+      String squareLocationId, GooglePayEnvironment environment) async {
     assert(environment != null, 'environment should not be null.');
-    assert(merchantId != null && merchantId.isNotEmpty,
-        'merchantId should not be null or empty.');
+    assert(squareLocationId != null && squareLocationId.isNotEmpty,
+        'squareLocationId should not be null or empty.');
     var params = <String, dynamic>{
       'environment': serializers.serializeWith(
           GooglePayEnvironment.serializer, environment),
-      'merchantId': merchantId,
+      'squareLocationId': squareLocationId,
     };
     await _channel.invokeMethod('initializeGooglePay', params);
   }
