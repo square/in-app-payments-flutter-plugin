@@ -16,14 +16,14 @@
 package com.squareup.sqip.flutter.internal.converter;
 
 import com.squareup.sqip.Card;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class CardConverter {
   private static final Map<Card.Brand, String> brandStringMap;
 
   static {
-    brandStringMap = new HashMap<>();
+    brandStringMap = new LinkedHashMap<>();
     for (Card.Brand brand : Card.Brand.values()) {
       switch(brand) {
         case OTHER_BRAND:
@@ -57,7 +57,7 @@ public final class CardConverter {
   }
 
   public Map<String, Object> toMapObject(Card card) {
-    HashMap<String, Object> mapToReturn = new HashMap<>();
+    Map<String, Object> mapToReturn = new LinkedHashMap<>();
     mapToReturn.put("brand", brandStringMap.get(card.getBrand()));
     mapToReturn.put("lastFourDigits", card.getLastFourDigits());
     mapToReturn.put("expirationMonth", card.getExpirationMonth());

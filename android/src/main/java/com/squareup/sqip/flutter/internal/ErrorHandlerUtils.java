@@ -15,7 +15,7 @@
 */
 package com.squareup.sqip.flutter.internal;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 final class ErrorHandlerUtils {
@@ -26,14 +26,14 @@ final class ErrorHandlerUtils {
   }
 
   public static Map<String, String> getDebugErrorObject(String debugCode, String debugMessage) {
-    Map<String, String> errorData = new HashMap<>();
+    Map<String, String> errorData = new LinkedHashMap<>();
     errorData.put("debugCode", debugCode);
     errorData.put("debugMessage", debugMessage);
     return errorData;
   }
 
   public static Map<String, String> getCallbackErrorObject(String code, String message, String debugCode, String debugMessage) {
-    Map<String, String> errorObject = new HashMap<>();
+    Map<String, String> errorObject = new LinkedHashMap<>();
     errorObject.put("code", code);
     errorObject.put("message", message);
     errorObject.put("debugCode", debugCode);
