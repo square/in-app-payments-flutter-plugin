@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - square_in_app_payments (1.0.0):
+  - square_in_app_payments (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -15,8 +15,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  square_in_app_payments: 6a359558869d45df221847fbefa84165ba4ef5b7
+  square_in_app_payments: 9715dc14e220a83073c3aaf85488e90c9dd20455
 
-PODFILE CHECKSUM: ef23e6c890056509fa6d7df6bd6d024b158808e1
+PODFILE CHECKSUM: db51243593e61fecca3d6ef98eeb723bda3d14be
 
-COCOAPODS: 1.5.2
+COCOAPODS: 1.5.3
