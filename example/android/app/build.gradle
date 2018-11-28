@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.squareup.sqip.flutter.example"
+        applicationId "sqip.flutter.example"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode flutterVersionCode.toInteger()

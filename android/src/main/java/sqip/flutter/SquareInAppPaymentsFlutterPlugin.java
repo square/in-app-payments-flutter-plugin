@@ -13,11 +13,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.squareup.sqip.flutter;
+package sqip.flutter;
 
 import com.squareup.sqip.InAppPaymentsSdk;
-import com.squareup.sqip.flutter.internal.CardEntryModule;
-import com.squareup.sqip.flutter.internal.GooglePayModule;
+import sqip.flutter.internal.CardEntryModule;
+import sqip.flutter.internal.GooglePayModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;

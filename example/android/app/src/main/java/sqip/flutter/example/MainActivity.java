@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.squareup.sqip.flutter.example;
+package sqip.flutter.example;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
