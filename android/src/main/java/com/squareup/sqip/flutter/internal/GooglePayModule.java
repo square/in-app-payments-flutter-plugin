@@ -97,12 +97,11 @@ final public class GooglePayModule {
 
   public void initializeGooglePay(String squareLocationId, int environment) {
     this.squareLocationId = squareLocationId;
-    int env = environment;
 
     googlePayClients = Wallet.getPaymentsClient(
         currentActivity,
         (new Wallet.WalletOptions.Builder())
-            .setEnvironment(env)
+            .setEnvironment(environment)
             .build()
     );
   }

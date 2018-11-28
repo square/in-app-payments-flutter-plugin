@@ -67,8 +67,8 @@ final public class CardEntryModule {
         countDownLatch = new CountDownLatch(1);
         channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
         try {
-          // Allow developer to finish transaction in 120 seconds before timeout
-          // to prevent thread from leaking
+          // completeCardEntry or showCardNonceProcessingError must be called,
+          // otherwise the thread will be leaked.
           countDownLatch.await(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
