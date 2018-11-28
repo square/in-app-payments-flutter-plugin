@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="sqip_flutter_developer_error_message">Something went wrong. Please contact the developer of this application and provide them with this error code: %1$s</string>
+</resources>

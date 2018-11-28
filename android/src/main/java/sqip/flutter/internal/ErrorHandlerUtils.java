@@ -17,12 +17,13 @@ package sqip.flutter.internal;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import sqip.flutter.R;
 
 final class ErrorHandlerUtils {
   public static final String USAGE_ERROR = "USAGE_ERROR";
 
   public static String getPluginErrorMessage(String pluginErrorCode) {
-    return String.format("Something went wrong. Please contact the developer of this application and provide them with this error code: %s", pluginErrorCode);
+    return String.format(String.valueOf(R.string.sqip_flutter_developer_error_message), pluginErrorCode);
   }
 
   public static Map<String, String> getDebugErrorObject(String debugCode, String debugMessage) {
