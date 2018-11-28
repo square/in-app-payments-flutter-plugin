@@ -69,7 +69,7 @@ final public class CardEntryModule {
         try {
           // completeCardEntry or showCardNonceProcessingError must be called,
           // otherwise the thread will be leaked.
-          countDownLatch.await(120, TimeUnit.SECONDS);
+          countDownLatch.await();
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
