@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.squareup.sqip.flutter.internal;
+package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,9 +27,8 @@ import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
-import com.squareup.sqip.flutter.internal.converter.CardConverter;
-import com.squareup.sqip.flutter.internal.converter.CardDetailsConverter;
+import sqip.flutter.internal.converter.CardConverter;
+import sqip.flutter.internal.converter.CardDetailsConverter;
 import com.squareup.sqip.Callback;
 import com.squareup.sqip.GooglePay;
 import com.squareup.sqip.GooglePayNonceResult;
@@ -38,7 +37,7 @@ import io.flutter.plugin.common.PluginRegistry;
 
 final public class GooglePayModule {
 
-  // Android only flutter plugin errors and messages
+  // Android only sqip.flutter plugin errors and messages
   private static final String FL_GOOGLE_PAY_NOT_INITIALIZED = "fl_google_pay_not_initialized";
   private static final String FL_GOOGLE_PAY_RESULT_ERROR = "fl_google_pay_result_error";
   private static final String FL_GOOGLE_PAY_UNKNOWN_ERROR = "fl_google_pay_unknown_error";
@@ -65,6 +64,7 @@ final public class GooglePayModule {
           switch (resultCode) {
             case Activity.RESULT_OK:
               PaymentData paymentData = PaymentData.getFromIntent(data);
+              ErrorHandlerUtils.checkNotNull(paymentData, "paymentData should never be null.");
               String googlePayToken = paymentData.getPaymentMethodToken().getToken();
               GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
                   new Callback<GooglePayNonceResult>() {
@@ -97,12 +97,11 @@ final public class GooglePayModule {
 
   public void initializeGooglePay(String squareLocationId, int environment) {
     this.squareLocationId = squareLocationId;
-    int env = environment;
 
     googlePayClients = Wallet.getPaymentsClient(
         currentActivity,
         (new Wallet.WalletOptions.Builder())
-            .setEnvironment(env)
+            .setEnvironment(environment)
             .build()
     );
   }

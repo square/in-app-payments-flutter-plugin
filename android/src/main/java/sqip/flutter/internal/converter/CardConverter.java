@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.squareup.sqip.flutter.internal.converter;
+package sqip.flutter.internal.converter;
 
 import com.squareup.sqip.Card;
 import java.util.LinkedHashMap;
