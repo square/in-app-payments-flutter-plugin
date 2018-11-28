@@ -65,6 +65,7 @@ final public class GooglePayModule {
           switch (resultCode) {
             case Activity.RESULT_OK:
               PaymentData paymentData = PaymentData.getFromIntent(data);
+              ErrorHandlerUtils.checkNotNull(paymentData, "paymentData should never be null.");
               String googlePayToken = paymentData.getPaymentMethodToken().getToken();
               GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
                   new Callback<GooglePayNonceResult>() {
