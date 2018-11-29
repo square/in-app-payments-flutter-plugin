@@ -378,7 +378,7 @@ Parameter      | Type           | Description
 :-------------- | :-------------- | :-----------
 price          | String         | The payment authorization amount as a string. 
 currencyCode   | String         | The ISO currency code
-priceStatus    | google_pay_constants.totalPriceStatusFinal | TODO: add description
+priceStatus    | google_pay_constants.totalPriceStatusFinal | The status of the total price used
 onGooglePayNonceRequestSuccess | [GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback)| Success callback invoked when a nonce is available.
 onGooglePayNonceRequestFailure | [GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback) |Failure callback invoked when SDK failed to produce a nonce.
 onGooglePayCanceled | [GooglePayCancelCallback](#googlepaycancelcallback) | Cancel callback invoked when user cancels payment authorization.
