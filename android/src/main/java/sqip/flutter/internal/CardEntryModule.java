@@ -13,12 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.squareup.sqip.flutter.internal;
+package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
-import com.squareup.sqip.flutter.internal.converter.CardConverter;
-import com.squareup.sqip.flutter.internal.converter.CardDetailsConverter;
+import sqip.flutter.internal.converter.CardConverter;
+import sqip.flutter.internal.converter.CardDetailsConverter;
 import com.squareup.sqip.Callback;
 import com.squareup.sqip.CardDetails;
 import com.squareup.sqip.CardEntry;
@@ -67,12 +67,11 @@ final public class CardEntryModule {
         countDownLatch = new CountDownLatch(1);
         channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
         try {
-          // Allow developer to finish transaction in 120 seconds before timeout
-          // to prevent thread from leaking
-          countDownLatch.await(120, TimeUnit.SECONDS);
+          // completeCardEntry or showCardNonceProcessingError must be called,
+          // otherwise the thread will be leaked.
+          countDownLatch.await();
         } catch (InterruptedException e) {
-          e.printStackTrace();
-          return new CardEntryActivityCommand.ShowError(e.getMessage());
+          throw new RuntimeException(e);
         }
 
         return reference.get();

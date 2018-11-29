@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 
 void main() => runApp(MyApp());
 
@@ -43,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     var canUseGooglePay = false;
     if (Theme.of(context).platform == TargetPlatform.android) {
       await InAppPayments.initializeGooglePay(
-          '0ZXKWWD1CB2T6', GooglePayEnvironment.test);
+          '0ZXKWWD1CB2T6', google_pay_constants.environmentTest);
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
       await _setIOSCardEntryTheme();
@@ -60,11 +61,12 @@ class _MyAppState extends State<MyApp> {
 
   Future _setIOSCardEntryTheme() async {
     var themeConfiguationBuilder = IOSThemeBuilder();
-    themeConfiguationBuilder.font = FontBuilder()..size = 24.0;
+    themeConfiguationBuilder.font = FontBuilder()..size = 24.0..name="aria";
     themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()
       ..r = 142
       ..g = 11
-      ..b = 123;
+      ..b = 123
+      ..a = 0.8;
     themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
     themeConfiguationBuilder.saveButtonTitle = 'Pay';
 
@@ -93,13 +95,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _onStartCardEntryFlow() async {
-    try {
-      await InAppPayments.startCardEntryFlow(
-          onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
-          onCardEntryCancel: _onCardEntryCancel);
-    } on InAppPaymentsException {
-      print('Failed to startCardEntryFlow.');
-    }
+    await InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCardEntryCancel);
   }
 
   void _onStartGooglePay() async {
@@ -107,6 +105,7 @@ class _MyAppState extends State<MyApp> {
       await InAppPayments.requestGooglePayNonce(
           price: '100',
           currencyCode: 'USD',
+          priceStatus: google_pay_constants.totalPriceStatusFinal,
           onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: _onGooglePayCancel);

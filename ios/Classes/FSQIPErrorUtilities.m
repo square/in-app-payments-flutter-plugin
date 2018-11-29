@@ -23,25 +23,29 @@ NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
 
 + (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode
 {
-    return [NSString stringWithFormat:@"Something went wrong. Please contact the developer of this application and provide them with this error code: %@", pluginErrorCode];
+    NSString *bundlePath = [[NSBundle bundleForClass:FSQIPErrorUtilities.self] pathForResource:@"sqip_flutter_resource" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+    NSString *localizedErrorMessage = NSLocalizedStringWithDefaultValue(@"SQIPUnExpectedErrorMessage", nil, bundle, @"Something went wrong. Please contact the developer of this application and provide them with this error code: %@", @"Error message shown when an unexpected error occurs");
+
+    return [NSString stringWithFormat:localizedErrorMessage, pluginErrorCode];
 }
 
 + (NSDictionary *)debugErrorObject:(NSString *)debugCode debugMessage:(NSString *)debugMessage
 {
-    NSMutableDictionary *errorObject = [[NSMutableDictionary alloc] init];
-    errorObject[@"debugCode"] = debugCode;
-    errorObject[@"debugMessage"] = debugMessage;
-    return errorObject;
+    return @{
+        @"debugCode" : debugCode,
+        @"debugMessage" : debugMessage,
+    };
 }
 
 + (NSDictionary *)callbackErrorObject:(NSString *)code message:(NSString *)message debugCode:(NSString *)debugCode debugMessage:(NSString *)debugMessage
 {
-    NSMutableDictionary *errorObject = [[NSMutableDictionary alloc] init];
-    errorObject[@"code"] = code;
-    errorObject[@"message"] = message;
-    errorObject[@"debugCode"] = debugCode;
-    errorObject[@"debugMessage"] = debugMessage;
-    return errorObject;
+    return @{
+        @"code" : code,
+        @"message" : message,
+        @"debugCode" : debugCode,
+        @"debugMessage" : debugMessage,
+    };
 }
 
 @end

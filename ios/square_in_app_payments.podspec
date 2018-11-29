@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A flutter plugin for suqare in app payments.
                        DESC
-  s.homepage         = 'https://github.com/square/in-app-payments-flutter-plugin
+  s.homepage         = 'https://github.com/square/in-app-payments-flutter-plugin'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Square, Inc.' => 'xiao@squareup.com' }
   s.source           = { :path => '.' }
@@ -18,6 +18,7 @@ A flutter plugin for suqare in app payments.
   s.vendored_framework = 'SquareInAppPaymentsSDK.framework'
   s.xcconfig         = { 'FRAMEWORK_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/square_in_app_payments/ios"' }
   s.ios.deployment_target = '11.0'
+  s.resource_bundle = { "sqip_flutter_resource" => ["Assets/*.lproj/*.strings"] }
   
 end
 

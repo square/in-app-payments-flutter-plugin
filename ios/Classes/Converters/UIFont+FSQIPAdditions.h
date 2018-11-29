@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+
 @interface UIFont (FSQIPAdditions)
 
 - (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;

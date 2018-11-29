@@ -13,31 +13,39 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.squareup.sqip.flutter.internal;
+package sqip.flutter.internal;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import sqip.flutter.R;
 
 final class ErrorHandlerUtils {
   public static final String USAGE_ERROR = "USAGE_ERROR";
 
   public static String getPluginErrorMessage(String pluginErrorCode) {
-    return String.format("Something went wrong. Please contact the developer of this application and provide them with this error code: %s", pluginErrorCode);
+    return String.format(String.valueOf(R.string.sqip_flutter_developer_error_message), pluginErrorCode);
   }
 
   public static Map<String, String> getDebugErrorObject(String debugCode, String debugMessage) {
-    Map<String, String> errorData = new HashMap<>();
+    Map<String, String> errorData = new LinkedHashMap<>();
     errorData.put("debugCode", debugCode);
     errorData.put("debugMessage", debugMessage);
     return errorData;
   }
 
   public static Map<String, String> getCallbackErrorObject(String code, String message, String debugCode, String debugMessage) {
-    Map<String, String> errorObject = new HashMap<>();
+    Map<String, String> errorObject = new LinkedHashMap<>();
     errorObject.put("code", code);
     errorObject.put("message", message);
     errorObject.put("debugCode", debugCode);
     errorObject.put("debugMessage", debugMessage);
     return errorObject;
+  }
+
+  public static <T> T checkNotNull(T reference, String errorMessage) {
+    if (reference == null) {
+      throw new NullPointerException(errorMessage);
+    }
+    return reference;
   }
 }
