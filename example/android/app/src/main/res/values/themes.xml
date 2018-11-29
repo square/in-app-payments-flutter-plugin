@@ -1,0 +1,5 @@
+<resources>
+    <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntry">
+        <item name="sqip_save_button_text">@string/pay_button</item>
+    </style>
+</resources>

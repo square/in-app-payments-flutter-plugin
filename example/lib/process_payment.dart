@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
+import 'package:http/http.dart' as http;
 
 class ProcessPayment {
 
@@ -16,47 +18,60 @@ class ProcessPayment {
   }
 
   Future setIOSCardEntryTheme() async {
-      var themeConfiguationBuilder = IOSThemeBuilder();
-      // themeConfiguationBuilder.font = FontBuilder()..size = 24.0;
-      // themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()..r=142..g=11..b=123;
-      // themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
-      themeConfiguationBuilder.saveButtonTitle = 'Pay';
+    var themeConfiguationBuilder = IOSThemeBuilder();
+    themeConfiguationBuilder.saveButtonTitle = 'Pay';
 
-      await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
-    }
-
-  Future<void> initSquarePayment(context) async {
-      await InAppPayments.setSquareApplicationId('sq0idp-yqrzNS_5RBpkYBdxCT3tIQ');
-      var canUseApplePay = false;
-      var canUseGooglePay = false;
-      if(Theme.of(context).platform == TargetPlatform.android) {
-        await InAppPayments.initializeGooglePay('7270VTEWZABAJ', google_pay_constants.environmentTest);
-        canUseGooglePay = await InAppPayments.canUseGooglePay;
-      } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-        await setIOSCardEntryTheme();
-        await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
-        canUseApplePay = await InAppPayments.canUseApplePay;
-      }
-
-      paymentInitialized = true;
-      applePayEnabled = canUseApplePay;
-      googlePayEnabled = canUseGooglePay;
+    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
   }
 
-  Future<bool> _checkout(CardDetails result) async => true;
+  Future<void> initSquarePayment(context) async {
+    await InAppPayments.setSquareApplicationId('sq0idp-yqrzNS_5RBpkYBdxCT3tIQ');
+    var canUseApplePay = false;
+    var canUseGooglePay = false;
+    if(Theme.of(context).platform == TargetPlatform.android) {
+      await InAppPayments.initializeGooglePay('7270VTEWZABAJ', google_pay_constants.environmentTest);
+      canUseGooglePay = await InAppPayments.canUseGooglePay;
+    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+      await setIOSCardEntryTheme();
+      await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
+      canUseApplePay = await InAppPayments.canUseApplePay;
+    }
+
+    paymentInitialized = true;
+    applePayEnabled = canUseApplePay;
+    googlePayEnabled = canUseGooglePay;
+  }
+
+  Future<void> _checkout(CardDetails result) async {
+    var url = "https://26brjd4ue9.execute-api.us-east-1.amazonaws.com/default/chargeForCookie";
+    var body = jsonEncode({"nonce": result.nonce});
+    await http.post(url, body: body, headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        })
+        .then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
+      } else {
+        InAppPayments.showCardNonceProcessingError('Failed to process payment.');
+      }
+    });
+  }
 
   void onCardEntryComplete() {
     print('entry is closed');
   }
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    print(result);
-    var success = await _checkout(result);
-    if (!success) {
-      await InAppPayments.showCardNonceProcessingError('failed to checkout.');
-    } else {
-      await InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
-    }
+    await _checkout(result);
+    // if (!success) {
+    //   await InAppPayments.showCardNonceProcessingError('failed to checkout.');
+    // } else {
+    //   await InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
+    // }
   }
 
   void onCardEntryCancel() async {
@@ -113,12 +128,12 @@ class ProcessPayment {
 
   void onApplePayNonceRequestSuccess(CardDetails result) async {
     print(result);
-    var success = await _checkout(result);
-    if (success) {
-      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
-    } else {
-      await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
-    }
+    await _checkout(result);
+    // if (success) {
+    //   await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    // } else {
+    //   await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+    // }
   } 
 
   void onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
