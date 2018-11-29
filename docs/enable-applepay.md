@@ -2,7 +2,7 @@
 
 This guide walks you through the process of enabling the Apple Pay digital wallet
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
-for more detailed information about the Apple Pay methods available.
+for more detailed information about the [Apple Pay] methods available.
 
 **Apple Pay** can only be used on iOS devices.
 
@@ -134,7 +134,6 @@ class _MyAppState extends State<MyApp> {
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
-[Mobile Authorization API]: https://docs.connect.squareup.com/payments/readersdk/mobile-authz-guide
 [In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview
 [Square Dashboard]: https://squareup.com/dashboard/
 [update policy for In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview#readersdkupdatepolicy
@@ -146,3 +145,4 @@ class _MyAppState extends State<MyApp> {
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
+[Apple Pay]: https://developer.apple.com/documentation/passkit/apple_pay

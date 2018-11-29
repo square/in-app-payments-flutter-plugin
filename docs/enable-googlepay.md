@@ -4,7 +4,7 @@ This guide walks you through the process of enabling the Google Pay digital wall
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the Google Pay methods available.
 
-**Google Pay** can only be used on native Android devices.
+**[Google Pay]** can only be used on Android devices.
 
 ## Before you start
 
@@ -38,7 +38,7 @@ value of `InAppPayments.canUseGooglePay` in the app `State` object.
         var canUseGooglePay = false;
         if(Theme.of(context).platform == TargetPlatform.android) {
           await InAppPayments.initializeGooglePay(
-            'LOCATION_ID', GooglePayEnvironment.test);
+            'LOCATION_ID', google_pay_constants.environmentTest);
           canUseGooglePay = await InAppPayments.canUseGooglePay;
         }
         setState(() {
@@ -117,7 +117,6 @@ class _MyAppState extends State<MyApp> {
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
-[Mobile Authorization API]: https://docs.connect.squareup.com/payments/readersdk/mobile-authz-guide
 [In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview
 [Square Dashboard]: https://squareup.com/dashboard/
 [update policy for In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview#readersdkupdatepolicy
@@ -129,3 +128,6 @@ class _MyAppState extends State<MyApp> {
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
+[Google Pay]: https://developers.google.com/pay/api/android/overview
+[Google Pay methods]: https://developers.google.com/pay/api/android/reference/client
+[Google Pay objects]: https://developers.google.com/pay/api/android/reference/object 

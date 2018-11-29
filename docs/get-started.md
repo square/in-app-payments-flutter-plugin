@@ -58,44 +58,21 @@ dependencies:
 
 ## Step 4: Initialize the In-App Payments SDK
 
-1. Add code to your flutter project that extends [StatefulWidget](https://docs.flutter.io/flutter/widgets/StatefulWidget-class.html)
-
-  ```dart
-import 'package:square_in_app_payments/models.dart';
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   class MyApp extends StatefulWidget {
-     @override
-     _MyAppState createState() => _MyAppState();
-   }
-  ```
-
 1. Add code that initialize the In-App Payments SDK.
+   ```dart
+   import 'package:square_in_app_payments/models.dart';
+   import 'package:square_in_app_payments/in_app_payments.dart';
 
-  ```dart
-import 'package:square_in_app_payments/models.dart';
-import 'package:square_in_app_payments/in_app_payments.dart';
+   class _MyAppState {
+     ...
+     Future<void> _initSquarePayment() async {
+       await InAppPayments.setSquareApplicationId('APPLICATION_ID');
+     }
+     ...
+   } 
 
-  class _MyAppState extends State<MyApp> {
-    bool _paymentInitialized = false;
+   ```
 
-    @override
-    void initState() {
-      super.initState();
-      _initSquarePayment();
-    }
-
-    Future<void> _initSquarePayment() async {
-      await InAppPayments.setSquareApplicationId('APPLICATION_ID');
-
-      setState(() {
-        _paymentInitialized = true;
-      });
-    }
-    ...
-  } 
-
-  ```
 1. Replace `APPLICATION_ID` with the **application ID** from the application dashboard.
 
 ## Step 5: Implement the Payment flow
@@ -123,8 +100,10 @@ class _MyAppState extends State<MyApp> {
     // accepted
     Response response = await _processNonce(cardDetails.nonce);
     if (response.statusCode != 201) {
+      //Payment card information is incorrect. Keep card entry screen open for correction
       await InAppPayments.showCardNonceProcessingError('failed to checkout.');
     } else {
+      //Close the card entry screen. Payment authorization is complete.
       await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
     }
   }

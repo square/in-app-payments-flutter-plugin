@@ -8,7 +8,9 @@ plugin for In-App Payments SDK. For detailed documentation on In-App Payments SD
 
 * [Methods at a glance](#methods-at-a-glance)
 * [Method details](#method-details)
+* [Type definitions](#type-definitions)
 * [Objects](#objects)
+* [Constants](#constants)
 * [Enumerations](#enumerations)
 * [Errors](#errors)
 
@@ -24,19 +26,15 @@ Method                                                       | Return Object    
 [setSquareApplicationId](#setsquareapplicationid)            | void                              | Sets the Square Application ID.
 [startCardEntryFlow](#startcardentryflow)                    | void                              | Displays a full-screen card entry view.
 [completeCardEntry](#completecardentry)                      | void                              | Closes the card entry form on success.
-[CardEntryNonceRequestSuccessCallback](#CardEntryNonceRequestSuccessCallback) | void             | Callback invoked when card entry is returned successfully with card details.
-[CardEntryDidCancelCallback](#CardEntryDidCancelCallback)    | void                              | Callback invoked when card entry canceled. 
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                              | Shows an error in the card entry form without closing the form.
 
 ### Apple Pay methods
 Method                                                       | Return Object                     | Description
 :-----------------------------------------------------------  | :--------------------------------- | :---
+[setSquareApplicationId](#setsquareapplicationid)            | void                              | Sets the Square Application ID.
 [initializeApplePay](#initializeapplepay)                    | void                              | Initializes the In-App Payments flutter plugin for Apple Pay.
 [canUseApplePay](#canuseapplepay)                            | bool                              | Returns `true` if the device supports Apple Pay and the user has added at least one card that Square supports.
 [requestApplePayNonce](#requestapplepaynonce)                | void                              | Starts the Apple Pay payment authorization and returns a nonce based on the authorized Apple Pay payment token.
-[ApplePayNonceRequestSuccessCallback](#applepaynoncerequestsuccesscallback) | void | Callback invoked when Apple Pay card details are available.
-[ApplePayNonceRequestFailureCallback](#applepaynoncerequestfailurecallback) | void | Callback invoked when a card nonce cannot be generated from Apple Pay payment authorization card input values.
-[ApplePayCompleteCallback](#applepaycompletecallback) | void | Callback invoked when the native iOS Apple Pay payment authorization sheet is closed with success, failure, or cancellation.
 [completeApplePayAuthorization](#completeapplepayauthorization) | void                           | Notifies the native layer to close the Apple Pay sheet with success or failure status.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                              | Sets the customization theme for the card entry view controller in the native layer.
 
@@ -44,12 +42,10 @@ Method                                                       | Return Object    
 ### Google Pay methods
 Method                                                       | Return Object                     | Description
 :-----------------------------------------------------------  | :--------------------------------- | :---
+[setSquareApplicationId](#setsquareapplicationid)            | void                              | Sets the Square Application ID.
 [initalizeGooglePay](#initializegooglepay)                   | void                              | Initializes the flutter plugin for Google Pay.
 [canUseGooglePay](#canusegooglepay)                          | bool                              | Returns `true` if the device supports Google Pay and the user has added at least one card that Square supports.
 [requestGooglePayNonce](#requestgooglepaynonce)              | void                              | Starts the Google Pay payment authorization and returns a nonce based on the authorized Google Pay payment token.
-[GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback) | void | Callback invoked when CardDetails with Google Pay are available. 
-[GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback) | void | Callback invoked when a card nonce was not obtained.
-[GooglePayCancelCallback](#googlepaycancelcallback) | void | Callback invoked when Google Pay payment authorization is canceled.
 
 
 
@@ -75,7 +71,11 @@ applicationId  | String | The Square Application ID otained from the developer p
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
 
-   await InAppPayments.setSquareApplicationId('APPLICATION_ID');
+class _MyAppState extends State<MyApp> {
+  ...
+  await InAppPayments.setSquareApplicationId('APPLICATION_ID');
+  ...
+}  
 ```
 
 
@@ -88,7 +88,7 @@ to the possible results of the request.
 
 Parameter      | Type                                    | Description
 :-------------- | :--------------------------------------- | :-----------
-onCardNonceRequestSuccess | [CardEntryNonceRequestSuccessCallback](#cardentrynoncesucesscallback) | Invoked when card entry is completed and the SDK has processed the payment card information.
+onCardNonceRequestSuccess | [CardEntryNonceRequestSuccessCallback](#cardentrynoncerequestsuccesscallback) | Invoked when card entry is completed and the SDK has processed the payment card information.
 onCardEntryCancel | [CardEntryDidCancelCallback](#cardentrydidcancelcallback) | Invoked when card entry is canceled.
 
 #### Example usage
@@ -97,64 +97,10 @@ onCardEntryCancel | [CardEntryDidCancelCallback](#cardentrydidcancelcallback) | 
 import 'package:square_in_app_payments/in_app_payments.dart';
 
   Future<void> _onStartCardEntryFlow() async {
-    try {
       await InAppPayments.startCardEntryFlow(
-              _onCardNonceRequestSuccess, _onCardEntryCancel);
-    } on PlatformException {
-      print('Failed to startCardEntryFlow.');
-    }
+       onCardNonceRequestSuccess: _onCardNonceRequestSuccess,onCardEntryCancel: _onCardEntryCancel);
   }
 ```
----
-
-### CardEntryNonceRequestSuccessCallback
-
-Callback invoked when card entry is returned successfully with card details.
-
-Parameter      | Type                                    | Description
-:-------------- | :--------------------------------------- | :-----------
-cardDetails | [CardDetails](#carddetails)                | The results of a successful card entry 
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-import 'package:http/http.dart' as http;
-
-   void _onCardNonceRequestSuccess(CardDetails cardDetails) async {
-     print(cardDetails);
-     Response response = await _processNonce(cardDetails.nonce);
-     if (response.statusCode == 201) {
-       await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
-     } else {
-       await InAppPayments.showCardNonceProcessingError('failed to checkout.' + response.body);
-     }
-   }
-
-   Future<Response> _processNonce(String cardNonce) async {
-      final String url = 'https://api.supercookie.com/processnonce';
-      final m = Map<String,String>();
-      m.addAll({'Content-Type':'application/json'});
-      return await http.post(url, headers: m ,body: {'nonce': cardNonce, 'amount':'100'})
-   }
-   
-```
----
-### CardEntryDidCancelCallback
-
-Callback invoked when card entry canceled. 
-
-Do not call [completeCardEntry](#completecardentry) because the operation is complete and the card entry form is closed.
-
-#### Example usage
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   void _onCardEntryCancel() {
-     print('card entry flow is canceled, and form has closed');
-     // handle cancel
-   }
-```
-
 ---
 ### completeCardEntry
 
@@ -180,22 +126,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
    await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
 ```
 
-
----
-
-### CardEntryCompleteCallback
-Callback invoked when card entry is completed and has been closed.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-  void _onCardEntryComplete() {
-
-  }
-
-```
 
 ---
 ### showCardNonceProcessingError
@@ -303,7 +233,7 @@ onApplePayComplete | [ApplePayCompleteCallback](#applepaycompletecallback) | Inv
 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
-
+  try {
      await InAppPayments.requestApplePayNonce(
        price: '100',
        summaryLabel: 'My Checkout',
@@ -312,6 +242,237 @@ import 'package:square_in_app_payments/in_app_payments.dart';
        onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
        onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
        onApplePayComplete: _onApplePayComplete);
+  } on InAppPaymentsException catch (ex) {
+      print('Failed to onStartApplePay. \n ${ex.toString()}');
+  }
+
+```
+
+---
+
+### completeApplePayAuthorization
+**iOS Only**
+
+
+Notifies the native layer to close the Apple Pay sheet with success or failure status.
+
+Parameter                     | Type         | Description
+:---------------------------- | :-------------| :-----------
+isSuccess                    | bool         | Indicates success or failure.
+**Optional**: errorMessage   | String       | The error message that Apple Pay displays in the native layer card entry view controller. 
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+   void _onApplePayNonceRequestSuccess(CardDetails result) async {
+     print(result);
+     var success = await _checkout(result);
+     if (success) {
+       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+     } else {
+       await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+     }
+   }
+```
+---
+
+### setIOSCardEntryTheme
+**iOS Only**
+
+
+Sets the customization theme for the card entry view controller in the native layer.
+
+It is not necessary to call this method before starting Apple Pay. The SDK provides a default 
+theme which can be customized to match the theme of your app. 
+
+Parameter      | Type                                    | Description
+:-------------- | :--------------------------------------- | :-----------
+themeConfiguration | [IOSTheme](#iostheme)               | An object that defines the theme of an iOS card entry view controller.
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+   var themeConfiguationBuilder = IOSThemeBuilder();
+    themeConfiguationBuilder.font = FontBuilder()..size = 24.0..name="aria";
+    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()
+      ..r = 142
+      ..g = 11
+      ..b = 123
+      ..a = 0.8;
+    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
+    themeConfiguationBuilder.saveButtonTitle = 'Pay';
+
+   await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+```
+--- 
+
+### initializeGooglePay
+
+**Android Only**
+
+
+**Optional**: Used to enable Google Pay in an Android app. Initialize flutter plugin for google pay. 
+This is a method called only once when flutter app is being initialized on an Android device. 
+
+---
+Note: The location ID is
+
+---
+
+Parameter      | Type           | Description
+:-------------- | :-------------- | :-----------
+squareLocationId   | String         | The Square Location ID from the developer portal. 
+environment    | Int            | Specifies the Google Pay environment to run Google Pay in: `google_pay_constants.environmentTest`, `google_pay_constants.environmentProduction`
+
+
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+
+   if(Theme.of(context).platform == TargetPlatform.android) {
+      await InAppPayments.initializeGooglePay('LOCATION_ID', google_pay_constants.environmentTest);
+   }
+```
+
+
+---
+
+### canUseGooglePay
+**Android Only**
+
+Returns true if the device supports Google Pay and the user has added at least one 
+card that Square supports. Square doesn't support all the brands apple pay supports.
+
+
+* **Google Pay supported**: returns `true`.
+* **Google Pay not supported**: returns `false`.
+
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+   bool canUseGooglePay = await InAppPayments.canUseGooglePay;
+   if (canUseGooglePay) {
+      // enable google pay button
+   }
+```
+
+
+---
+
+### requestGooglePayNonce
+**Android Only**
+
+Starts the Google Pay payment authorization and returns a nonce based on the authorized Google Pay payment token.
+
+Parameter      | Type           | Description
+:-------------- | :-------------- | :-----------
+price          | String         | The payment authorization amount as a string. 
+currencyCode   | String         | The ISO currency code
+priceStatus    | google_pay_constants.totalPriceStatusFinal | TODO: add description
+onGooglePayNonceRequestSuccess | [GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback)| Success callback invoked when a nonce is available.
+onGooglePayNonceRequestFailure | [GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback) |Failure callback invoked when SDK failed to produce a nonce.
+onGooglePayCanceled | [GooglePayCancelCallback](#googlepaycancelcallback) | Cancel callback invoked when user cancels payment authorization.
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+   await InAppPayments.requestGooglePayNonce(
+     price: '100',
+     currencyCode: 'USD',
+     priceStatus: google_pay_constants.totalPriceStatusFinal,
+     onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+     onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+     onGooglePayCanceled: _onGooglePayCancel);
+
+    void _onGooglePayNonceRequestSuccess(CardDetails result) {
+        print(result);
+    }
+
+    void _onGooglePayCancel() {
+      print('GooglePay is canceled');
+    }
+
+    void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
+      print('GooglePay failed. \n ${errorInfo.toString()}');
+    }
+```
+
+
+---
+
+## Type definitions
+### CardEntryNonceRequestSuccessCallback
+
+Callback invoked when card entry is returned successfully with card details.
+
+Parameter      | Type                                    | Description
+:-------------- | :--------------------------------------- | :-----------
+cardDetails | [CardDetails](#carddetails)                | The results of a successful card entry 
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:http/http.dart' as http;
+
+   void _onCardNonceRequestSuccess(CardDetails cardDetails) async {
+     print(cardDetails);
+     Response response = await _processNonce(cardDetails.nonce);
+     if (response.statusCode == 201) {
+       await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
+     } else {
+       await InAppPayments.showCardNonceProcessingError('failed to checkout.' + response.body);
+     }
+   }
+
+   Future<Response> _processNonce(String cardNonce) async {
+      final String url = 'https://api.supercookie.com/processnonce';
+      final m = Map<String,String>();
+      m.addAll({'Content-Type':'application/json'});
+      return await http.post(url, headers: m ,body: {'nonce': cardNonce, 'amount':'100'})
+   }
+   
+```
+---
+### CardEntryDidCancelCallback
+
+Callback invoked when card entry canceled. 
+
+Do not call [completeCardEntry](#completecardentry) because the operation is complete and the card entry form is closed.
+
+#### Example usage
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+   void _onCardEntryCancel() {
+     print('card entry flow is canceled, and form has closed');
+     // handle cancel
+   }
+```
+---
+
+### CardEntryCompleteCallback
+Callback invoked when card entry is completed and has been closed.
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+  void _onCardEntryComplete() {
+
+  }
 
 ```
 
@@ -385,161 +546,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ```
 
 ---
-
-### completeApplePayAuthorization
-**iOS Only**
-
-
-Notifies the native layer to close the Apple Pay sheet with success or failure status.
-
-Parameter                     | Type         | Description
-:---------------------------- | :-------------| :-----------
-isSuccess                    | bool         | Indicates success or failure.
-**Optional**: errorMessage   | String       | The error message that Apple Pay displays in the native layer card entry view controller. 
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   void _onApplePayNonceRequestSuccess(CardDetails result) async {
-     print(result);
-     var success = await _checkout(result);
-     if (success) {
-       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
-     } else {
-       await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
-     }
-   }
-```
----
-
-### setIOSCardEntryTheme
-**iOS Only**
-
-
-Sets the customization theme for the card entry view controller in the native layer.
-
-It is not necessary to call this method before starting Apple Pay. The SDK provides a default 
-theme which can be customized to match the theme of your app. 
-
-Parameter      | Type                                    | Description
-:-------------- | :--------------------------------------- | :-----------
-themeConfiguration | [IOSTheme](#iostheme)               | An object that defines the theme of an iOS card entry view controller.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   var themeConfiguationBuilder = IOSThemeBuilder();
-   themeConfiguationBuilder.font = FontBuilder()..size = 12.0;
-   themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()..r=142..g=11..b=123;
-
-   await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
-```
---- 
-
-### initializeGooglePay
-
-**Android Only**
-
-
-**Optional**: Used to enable Google Pay in an Android app. Initialize flutter plugin for google pay. 
-This is a method called only once when flutter app is being initialized on an Android device. 
-
----
-Note: The location ID is
-
----
-
-Parameter      | Type           | Description
-:-------------- | :-------------- | :-----------
-merchantId     | String         | The Square Location ID from the developer portal. 
-environment    | String         | Specifies the Google Pay environment to run Google Pay in: `GooglePayEnvironment.test`, `GooglePayEnvironment.prod`
-
-
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-
-   if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay('LOCATION_ID', GooglePayEnvironment.test);
-   }
-```
-
-
----
-
-### canUseGooglePay
-**Android Only**
-
-Returns true if the device supports Google Pay and the user has added at least one 
-card that Square supports. Square doesn't support all the brands apple pay supports.
-
-
-* **Google Pay supported**: returns `true`.
-* **Google Pay not supported**: returns `false`.
-
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   bool canUseGooglePay = await InAppPayments.canUseGooglePay;
-   if (canUseGooglePay) {
-      // enable google pay button
-   }
-```
-
-
----
-
-### requestGooglePayNonce
-**Android Only**
-
-Starts the Google Pay payment authorization and returns a nonce based on the authorized Google Pay payment token.
-
-Parameter      | Type           | Description
-:-------------- | :-------------- | :-----------
-price          | String         | The payment authorization amount as a string. 
-currencyCode   | String         | The ISO currency code
-onGooglePayNonceRequestSuccess | [GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback)| Success callback invoked when a nonce is available.
-onGooglePayNonceRequestFailure | [GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback) |Failure callback invoked when SDK failed to produce a nonce.
-onGooglePayCanceled | GooglePayCancelCallback | Cancel callback invoked when user cancels payment authorization.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-   await InAppPayments.requestGooglePayNonce(
-     price: '100',
-     currencyCode: 'USD',
-     onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
-     onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
-     onGooglePayCanceled: _onGooglePayCancel);
-
-    void _onGooglePayNonceRequestSuccess(CardDetails result) {
-        print(result);
-    }
-
-    void _onGooglePayCancel() {
-      print('GooglePay is canceled');
-    }
-
-    void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-      print('GooglePay failed. \n ${errorInfo.toString()}');
-    }
-```
-
-
----
-
 ### GooglePayNonceRequestSuccessCallback
 **Android Only**
 
@@ -714,6 +720,23 @@ Field            | Type            | Description
 **Optional**: saveButtonTextColor | RGBAColor    | The save button text color when enabled.
 **Optional**: keyboardAppearance | KeyboardAppearance | The appearance of the keyboard.
 
+## Constants
+
+
+### Google Pay Price Status values
+
+Constant            | Type            | Value |Description
+:---------------- | :--------------- | :-----------------| :-----------------
+totalPriceStatusNotCurrentlyKnown | int | 1 |Used for a capability check
+totalPriceStatusEstimated | int | 2 | Total price may adjust based on the details of the response, such as sales tax collected based on a billing address
+totalPriceStatusFinal | int | 3 | Total price will not change from the amount presented to the user
+---
+### Google Pay environment values
+
+Constant            | Type            | Value |Description
+:---------------- | :--------------- | :-----------------| :-----------------
+environmentProduction | int | 1 | Environment to be used when an app is granted access to the Google Pay production environment
+environmentTest | int | 3 | Environment to be used for development and testing an application before approval for production.
 
 ## Enumerations
 
@@ -753,8 +776,7 @@ ErrorCode                                                | Cause                
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
-[Mobile Authorization API]: https://docs.connect.squareup.com/payments/readersdk/mobile-authz-guide
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview
+[In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
 [ISO 4217 format]: https://www.iban.com/currency-codes.html
 [Square Dashboard]: https://squareup.com/dashboard/
 [Transactions API]: https://docs.connect.squareup.com/payments/transactions/overview
