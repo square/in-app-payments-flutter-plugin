@@ -98,7 +98,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
   Future<void> _onStartCardEntryFlow() async {
       await InAppPayments.startCardEntryFlow(
-       onCardNonceRequestSuccess: _onCardNonceRequestSuccess,onCardEntryCancel: _onCardEntryCancel);
+       onCardNonceRequestSuccess: _onCardNonceRequestSuccess,
+       onCardEntryCancel: _onCardEntryCancel);
   }
 ```
 ---
@@ -151,13 +152,17 @@ import 'package:square_in_app_payments/in_app_payments.dart';
       final String url = 'https://api.supercookie.com/processnonce';
       final m = Map<String,String>();
       m.addAll({'Content-Type':'application/json'});
-      return await http.post(url, headers: m ,body: {'nonce': cardNonce, 'amount':'100'})
+      return await http.post(
+        url,
+        headers: m,
+        body: {'nonce': cardNonce, 'amount':'100'})
    }
 
    void _onCardNonceRequestSuccess(CardDetails cardDetails) async {
      Response response = await _processNonce(cardDetails.nonce);
      if (response.statusCode != 201) {
-       await InAppPayments.showCardNonceProcessingError('Payment card was not accepted.');
+       await InAppPayments.showCardNonceProcessingError(
+         'Payment card was not accepted.');
      } 
    }
 ```
@@ -272,7 +277,9 @@ import 'package:square_in_app_payments/in_app_payments.dart';
      if (success) {
        await InAppPayments.completeApplePayAuthorization(isSuccess: true);
      } else {
-       await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+       await InAppPayments.completeApplePayAuthorization(
+         isSuccess: false,
+         errorMessage: "failed to charge amount.");
      }
    }
 ```
@@ -306,7 +313,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
     themeConfiguationBuilder.saveButtonTitle = 'Pay';
 
-   await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+   await InAppPayments.setIOSCardEntryTheme(
+     themeConfiguationBuilder.build());
 ```
 --- 
 
@@ -337,7 +345,9 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 
    if(Theme.of(context).platform == TargetPlatform.android) {
-      await InAppPayments.initializeGooglePay('LOCATION_ID', google_pay_constants.environmentTest);
+      await InAppPayments.initializeGooglePay(
+        'LOCATION_ID', 
+        google_pay_constants.environmentTest);
    }
 ```
 
@@ -378,7 +388,7 @@ Parameter      | Type           | Description
 :-------------- | :-------------- | :-----------
 price          | String         | The payment authorization amount as a string. 
 currencyCode   | String         | The ISO currency code
-priceStatus    | google_pay_constants.totalPriceStatusFinal | The status of the total price used
+priceStatus    | [google_pay_constants](#google-pay-price-status-values).totalPriceStatusFinal | The status of the total price used
 onGooglePayNonceRequestSuccess | [GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback)| Success callback invoked when a nonce is available.
 onGooglePayNonceRequestFailure | [GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback) |Failure callback invoked when SDK failed to produce a nonce.
 onGooglePayCanceled | [GooglePayCancelCallback](#googlepaycancelcallback) | Cancel callback invoked when user cancels payment authorization.
@@ -432,7 +442,8 @@ import 'package:http/http.dart' as http;
      if (response.statusCode == 201) {
        await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
      } else {
-       await InAppPayments.showCardNonceProcessingError('failed to checkout.' + response.body);
+       await InAppPayments.showCardNonceProcessingError(
+         'failed to checkout.' + response.body);
      }
    }
 
@@ -440,7 +451,11 @@ import 'package:http/http.dart' as http;
       final String url = 'https://api.supercookie.com/processnonce';
       final m = Map<String,String>();
       m.addAll({'Content-Type':'application/json'});
-      return await http.post(url, headers: m ,body: {'nonce': cardNonce, 'amount':'100'})
+      return await http.post(
+        url, 
+        headers: m,
+        body: 
+          {'nonce': cardNonce, 'amount':'100'})
    }
    
 ```
@@ -501,7 +516,9 @@ import 'package:square_in_app_payments/in_app_payments.dart';
      if (success) {
        await InAppPayments.completeApplePayAuthorization(isSuccess: true);
      } else {
-       await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
+       await InAppPayments.completeApplePayAuthorization(
+         isSuccess: false,
+          errorMessage: "failed to charge amount.");
      }
    }
 ```
@@ -626,11 +643,7 @@ import 'package:square_in_app_payments/models.dart';
    {
      "nonce": "XXXXXXXXXXXXXXXXXXXXXXXX",
      "card": {
-       "brand": "VISA",
-       "lastFourDigits": "1111",
-       "expirationMonth": 12,
-       "expirationYear": 2019,
-       "postalCode": "98020"
+       ...
      }
    }
    */
@@ -722,21 +735,20 @@ Field            | Type            | Description
 
 ## Constants
 
-
 ### Google Pay Price Status values
 
 Constant            | Type            | Value |Description
 :---------------- | :--------------- | :-----------------| :-----------------
-totalPriceStatusNotCurrentlyKnown | int | 1 |Used for a capability check
-totalPriceStatusEstimated | int | 2 | Total price may adjust based on the details of the response, such as sales tax collected based on a billing address
-totalPriceStatusFinal | int | 3 | Total price will not change from the amount presented to the user
+google_pay_constants.totalPriceStatusNotCurrentlyKnown | int | 1 |Used for a capability check
+google_pay_constants.totalPriceStatusEstimated | int | 2 | Total price may adjust based on the details of the response, such as sales tax collected based on a billing address
+google_pay_constants.totalPriceStatusFinal | int | 3 | Total price will not change from the amount presented to the user
 ---
 ### Google Pay environment values
 
 Constant            | Type            | Value |Description
 :---------------- | :--------------- | :-----------------| :-----------------
-environmentProduction | int | 1 | Environment to be used when an app is granted access to the Google Pay production environment
-environmentTest | int | 3 | Environment to be used for development and testing an application before approval for production.
+google_pay_constants.environmentProduction | int | 1 | Environment to be used when an app is granted access to the Google Pay production environment
+google_pay_constants.environmentTest | int | 3 | Environment to be used for development and testing an application before approval for production.
 
 ## Enumerations
 
