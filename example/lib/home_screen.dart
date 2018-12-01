@@ -14,8 +14,9 @@
  limitations under the License.
  */
 
-import 'buy_screen.dart';
 import 'package:flutter/material.dart';
+import 'buy_screen.dart';
+import 'process_payment.dart';
 
 void main() => runApp(MaterialApp(
    title: 'Super Cookie',
@@ -23,15 +24,28 @@ void main() => runApp(MaterialApp(
  ));
 
 class HomeScreen extends StatefulWidget {
-  _HomeScreen createState() => _HomeScreen();
+  HomeScreen({ Key key }) : super(key: key);
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreen extends State<HomeScreen> {
-
+class HomeScreenState extends State<HomeScreen> {
+ 
   @override
   void initState() {
     super.initState();
-    
+  }
+
+  _navigateToBuyScreen(BuildContext context) async {
+    bool result = await Navigator.of(context).push(PageRouteBuilder(
+                            opaque: false,
+                            pageBuilder: (context, _, __) {
+                                return BuyScreen();
+                            }
+                        ));
+
+    if (result) {
+      ProcessPayment.showSuccess(context);
+    }
   }
 
   Widget build(BuildContext context) => 
@@ -86,12 +100,7 @@ class _HomeScreen extends State<HomeScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                       color: Color(0xFF24988D),
                       onPressed: (){
-                        Navigator.of(context).push(PageRouteBuilder(
-                            opaque: false,
-                            pageBuilder: (context, _, __) {
-                                return BuyScreen();
-                            }
-                        ));
+                        _navigateToBuyScreen(context);
                       },
                   ),
               ),

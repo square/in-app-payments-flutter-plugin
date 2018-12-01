@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'process_payment.dart';
 
 class BuyScreen extends StatefulWidget {
-  _BuyScreen createState() => _BuyScreen();
+  BuyScreenState createState() => BuyScreenState();
 }
 
-class _BuyScreen extends State<BuyScreen> {
+class BuyScreenState extends State<BuyScreen> {
   ProcessPayment processPayment;
   @override
   void initState() {
@@ -13,17 +13,22 @@ class _BuyScreen extends State<BuyScreen> {
     processPayment = ProcessPayment(context);
   }
 
+
   @override
   Widget build(BuildContext context) =>
     MaterialApp(
       theme: ThemeData(
-        canvasColor: Colors.transparent
+        canvasColor: Colors.black.withOpacity(0.5)
       ),
       home: Scaffold(
-        body:Container(
+        body: Column(
+          children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.35,
+          width: MediaQuery.of(context).size.width,
           alignment: Alignment(0.0, 1.0),
-          color: Colors.black.withOpacity(0.5),
-          child:
+          child: GestureDetector(onTap: () {Navigator.pop(context, false);})
+          ),// child:
             Container(
               height: MediaQuery.of(context).size.height * 0.65,
                 decoration: BoxDecoration(
@@ -33,11 +38,7 @@ class _BuyScreen extends State<BuyScreen> {
                               topRight: const  Radius.circular(20.0))
                       ),
                 child:
-                // Container( color: Colors.black, height: 50,child:
                 Column(
-                  // mainAxisAlignment: MainAxisAlignment.end,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 10, top: 10),
@@ -45,12 +46,11 @@ class _BuyScreen extends State<BuyScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          // Padding(padding: EdgeInsets.only(left: 10),),
                           Container(
                             height: 56,
                             width: 56,
                             child:
-                            IconButton(onPressed: (){Navigator.pop(context);},
+                            IconButton(onPressed: (){Navigator.pop(context, false);},
                               icon: Image(
                                 image: AssetImage("assets/btnClose.png"),
                               )
@@ -63,7 +63,6 @@ class _BuyScreen extends State<BuyScreen> {
                               style: TextStyle(fontSize: 18, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.bold),
                             ),
                           ),
-                          // Padding(padding: EdgeInsets.only(bottom: 100),)
                         ],
                       ),
                     ),
@@ -167,7 +166,6 @@ class _BuyScreen extends State<BuyScreen> {
                               child:
                               RaisedButton(
                                 onPressed: (){
-                                  Navigator.pop(context);
                                   processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
                                 },
                                 child: SizedBox(
@@ -194,8 +192,7 @@ class _BuyScreen extends State<BuyScreen> {
                               RaisedButton(
                                 onPressed: (){
                                   processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
-                                  (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay : processPayment.onStartGooglePay
-                                  : null;
+                                  (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
                                 },
                                 child: SizedBox(
                                   height: 64,
@@ -216,7 +213,7 @@ class _BuyScreen extends State<BuyScreen> {
                   ]),
                 ),
             // ),
-        ),
+          ]),
       ),
     );
 }

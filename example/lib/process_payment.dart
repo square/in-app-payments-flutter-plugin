@@ -6,15 +6,17 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 import 'package:http/http.dart' as http;
+import 'home_screen.dart';
 
 class ProcessPayment {
 
   bool paymentInitialized = false;
   bool applePayEnabled = false;
   bool googlePayEnabled = false;
+  BuildContext context;
 
-  ProcessPayment(context) {
-    initSquarePayment(context);
+  ProcessPayment(this.context) {
+    initSquarePayment();
   }
 
   Future setIOSCardEntryTheme() async {
@@ -24,7 +26,7 @@ class ProcessPayment {
     await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
   }
 
-  Future<void> initSquarePayment(context) async {
+  Future<void> initSquarePayment() async {
     await InAppPayments.setSquareApplicationId('sq0idp-yqrzNS_5RBpkYBdxCT3tIQ');
     var canUseApplePay = false;
     var canUseGooglePay = false;
@@ -60,48 +62,50 @@ class ProcessPayment {
   }
 
   void onCardEntryComplete() {
-    print('entry is closed');
+    Navigator.pop(context, true);
   }
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     await _checkout(result);
   }
 
-  void onCardEntryCancel() async {
-    print('card entry flow is canceled.');
-  }
-
   Future<void> onStartCardEntryFlow() async {
     try {
       await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: onCardEntryCardNonceRequestSuccess, onCardEntryCancel: onCardEntryCancel);
     } on PlatformException {
-      print('Failed to startCardEntryFlow.');
+      showError("Failed to start card entry");
     }
+  }
+
+  void onCardEntryCancel() {
+    Navigator.pop(context, false);
   }
 
   void onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
+        priceStatus: 1,
         price: '100',
         currencyCode: 'USD',
         onGooglePayNonceRequestSuccess: onGooglePayNonceRequestSuccess,
         onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
         onGooglePayCanceled: onGooglePayCancel);
     } on PlatformException catch(ex) {
-        print('Failed to onStartGooglePay. \n ${ex.toString()}');
+        showError('Failed to start GooglePay.\n ${ex.toString()}');
     }
   }
+
 
   void onGooglePayNonceRequestSuccess(CardDetails result) async {
       await _checkout(result);
   }
 
   void onGooglePayCancel() {
-    print('GooglePay is canceled');
+    
   }
 
   void onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    print('GooglePay failed. \n ${errorInfo.toString()}');
+    showError('GooglePay failed.\n ${errorInfo.toString()}');
   }
 
   void onStartApplePay() async {
@@ -115,7 +119,7 @@ class ProcessPayment {
         onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,
         onApplePayComplete: onApplePayComplete);
     } on PlatformException catch(ex) {
-        print('Failed to onStartApplePay. \n ${ex.toString()}');
+      showError('Failed to start ApplePay.\n ${ex.toString()}');
     }
   }
 
@@ -124,11 +128,57 @@ class ProcessPayment {
   } 
 
   void onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    print('ApplePay failed. \n ${errorInfo.toString()}');
     await InAppPayments.completeApplePayAuthorization(isSuccess: false);
   }
 
   void onApplePayComplete() {
-    print('ApplePay closed');
+  }
+
+  static Future<void> showSuccess(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Your order was successful'),
+          content: SingleChildScrollView(
+            child:
+                Text("Go to your Square dashbord to see this order reflected in the sales tab."),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showError(String errorMessage) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error occurred'),
+          content: SingleChildScrollView(
+            child:
+                Text(errorMessage),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
