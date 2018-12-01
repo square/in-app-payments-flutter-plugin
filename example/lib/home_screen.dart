@@ -14,25 +14,24 @@
  limitations under the License.
  */
 
+import 'buy_screen.dart';
 import 'package:flutter/material.dart';
-import 'process_payment.dart';
 
 void main() => runApp(MaterialApp(
-    title: 'Navigation Basics',
-    home: HomeScreen(),
-  ));
+   title: 'Super Cookie',
+   home: HomeScreen(),
+ ));
 
 class HomeScreen extends StatefulWidget {
   _HomeScreen createState() => _HomeScreen();
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  ProcessPayment processPayment;
 
   @override
   void initState() {
     super.initState();
-    processPayment = ProcessPayment(context);
+    
   }
 
   Widget build(BuildContext context) => 
@@ -84,52 +83,16 @@ class _HomeScreen extends State<HomeScreen> {
                           fontSize: 18
                         )
                       ),
-                    onPressed: (){
-                      showModalBottomSheet<void>(context: context,
-                        builder: (context) {
-                          return Container(
-                            alignment: Alignment(1.0, 1.0),
-                            color: Colors.transparent,
-                            child:
-                              Container(
-                                  height: 500,
-                                  width: MediaQuery.of(context).size.width,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                                topLeft:  const  Radius.circular(20.0),
-                                                topRight: const  Radius.circular(20.0))
-                                        ),
-                                  child:
-                                    Column(
-                                      // crossAxisAlignment: CrossAxisAlignment.center,
-                                      // mainAxisSize: MainAxisSize.max,
-                                      // mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      RaisedButton(
-                                        onPressed: (){
-                                          processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
-                                        },
-                                        child: Text('Start Checkout'),
-                                      ),
-                                      RaisedButton(
-                                        onPressed: (){
-                                          processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
-                                          (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay : processPayment.onStartGooglePay
-                                          : null;
-                                        },
-                                        child: Text((Theme.of(context).platform == TargetPlatform.iOS) ? 'pay with ApplePay' : 'pay with GooglePay'),
-                                      ),
-                                    ],
-                                  ), 
-                              ),
-                          );
-                      });
-                    },
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                    color: Color(0xFF24988D),
-                    // borderSide: BorderSide(style: BorderStyle.none),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      color: Color(0xFF24988D),
+                      onPressed: (){
+                        Navigator.of(context).push(PageRouteBuilder(
+                            opaque: false,
+                            pageBuilder: (context, _, __) {
+                                return BuyScreen();
+                            }
+                        ));
+                      },
                   ),
               ),
             ],

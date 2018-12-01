@@ -46,12 +46,10 @@ class ProcessPayment {
     var url = "https://26brjd4ue9.execute-api.us-east-1.amazonaws.com/default/chargeForCookie";
     var body = jsonEncode({"nonce": result.nonce});
     await http.post(url, body: body, headers: {
-          "Accept": "application/json",
-          "content-type": "application/json"
-        })
-        .then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+        "Accept": "application/json",
+        "content-type": "application/json"
+      })
+      .then((response) {
 
       if (response.statusCode == 200) {
         InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
@@ -67,11 +65,6 @@ class ProcessPayment {
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     await _checkout(result);
-    // if (!success) {
-    //   await InAppPayments.showCardNonceProcessingError('failed to checkout.');
-    // } else {
-    //   await InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
-    // }
   }
 
   void onCardEntryCancel() async {
@@ -99,8 +92,8 @@ class ProcessPayment {
     }
   }
 
-  void onGooglePayNonceRequestSuccess(CardDetails result) {
-      print(result);
+  void onGooglePayNonceRequestSuccess(CardDetails result) async {
+      await _checkout(result);
   }
 
   void onGooglePayCancel() {
@@ -127,13 +120,7 @@ class ProcessPayment {
   }
 
   void onApplePayNonceRequestSuccess(CardDetails result) async {
-    print(result);
     await _checkout(result);
-    // if (success) {
-    //   await InAppPayments.completeApplePayAuthorization(isSuccess: true);
-    // } else {
-    //   await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: "failed to charge amount.");
-    // }
   } 
 
   void onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
