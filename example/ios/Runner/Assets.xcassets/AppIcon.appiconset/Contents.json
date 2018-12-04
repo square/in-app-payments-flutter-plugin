@@ -33,13 +33,13 @@
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Icon Copy@2x.png",
+      "filename" : "SuperCookieLaunchIcon@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Icon Copy@3x.png",
+      "filename" : "SuperCookieLaunchIcon@3x.png",
       "scale" : "3x"
     },
     {
@@ -75,25 +75,25 @@
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "Icon Copy-iPad.png",
+      "filename" : "SuperCookieLaunchIcon.png",
       "scale" : "1x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "Icon Copy-iPad@2x.png",
+      "filename" : "SuperCookieLaunchIcon-iPad@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "83.5x83.5",
       "idiom" : "ipad",
-      "filename" : "Icon Copy-iPadPro.png",
+      "filename" : "SuperCookieLaunchIcon-iPadPro.png",
       "scale" : "2x"
     },
     {
       "size" : "1024x1024",
       "idiom" : "ios-marketing",
-      "filename" : "Icon Copy1024.png",
+      "filename" : "SuperCookieLaunchIcon1024.png",
       "scale" : "1x"
     }
   ],

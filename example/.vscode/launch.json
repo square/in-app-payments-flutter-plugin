@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Flutter",
-            "program": "lib/home_screen.dart",
+            "program": "lib/main.dart",
             "request": "launch",
             "type": "dart"
         }
