@@ -41,12 +41,12 @@ class ProcessPayment {
         "content-type": "application/json"
       })
       .then((response) {
-
-      if (response.statusCode == 200) {
-        InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
-      } else {
-        InAppPayments.showCardNonceProcessingError('Failed to process payment.');
-      }
+        var body = json.decode(response.body);
+        if (response.statusCode == 200) {
+          InAppPayments.completeCardEntry(onCardEntryComplete: onCardEntryComplete);
+        } else {
+          InAppPayments.showCardNonceProcessingError(body["errorMessage"]);
+        }
     });
   }
 
@@ -121,7 +121,7 @@ class ProcessPayment {
   }
 
   void onApplePayComplete() {
-    Navigator.pop(context, false);
+    Navigator.pop(context, true);
   }
 
   static void showSuccess(BuildContext context) {

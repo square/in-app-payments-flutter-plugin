@@ -33,10 +33,10 @@ class HomeScreen extends StatelessWidget {
 
   void _initSquareInAppPayments() async {
     InAppPayments.setSquareApplicationId('sq0idp-yqrzNS_5RBpkYBdxCT3tIQ');
-    if(Platform.isAndroid == TargetPlatform.android) {
+    if(Platform.isAndroid) {
       await InAppPayments.initializeGooglePay('7270VTEWZABAJ', google_pay_constants.environmentTest);
       // Android's theme is set in /android/app/src/main/res/themes.xml
-    } else if (Platform.isIOS == TargetPlatform.iOS) {
+    } else if (Platform.isIOS) {
       await _setIOSCardEntryTheme();
       await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
     }
@@ -50,11 +50,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   _navigateToBuyScreen(BuildContext context) async {
-    var result = await Navigator.of(context).push(PageRouteBuilder(
+    var result = await Navigator.push(context, PageRouteBuilder(
                             opaque: false,
                             pageBuilder: (context, _, __) => BuyScreen()
                         ));
-
+    print(result);
     if (result) {
       ProcessPayment.showSuccess(context);
     }

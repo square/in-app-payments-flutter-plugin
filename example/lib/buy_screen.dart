@@ -47,7 +47,7 @@ class BuyScreenState extends State<BuyScreen> {
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 10),
-                  child: _Title(),
+                  child: _title(),
                 ),
                 Expanded(
                 child:
@@ -59,7 +59,7 @@ class BuyScreenState extends State<BuyScreen> {
                     _PaymentTotal(),
                     _LineDivider(),
                     _RefundInformation(),
-                    _PayButtons(processPayment),
+                    _payButtons(),
                   ]),
                 ),
               ]),
@@ -68,34 +68,86 @@ class BuyScreenState extends State<BuyScreen> {
         ),
       ),
     );
-}
 
-class _Title extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: <Widget>[
-      FittedBox(
-        child:
-      Container(
-        height: 56,
-        width: 56,
-        child:
-        IconButton(onPressed: (){
-          Navigator.pop(context, false);},
-          icon: Icon(Icons.close),
-          color: Color(0xFFD8D8D8)
-        )
-      ),),
-      Padding(padding: EdgeInsets.only(right: 64)),
-      Expanded(
-        child: Text(
-          "Place your order",
-          style: TextStyle(fontSize: 18, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.bold),
+    Widget _title() => Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        FittedBox(
+          child:
+        Container(
+          height: 56,
+          width: 56,
+          child:
+          IconButton(onPressed: (){
+            Navigator.pop(context, false);},
+            icon: Icon(Icons.close),
+            color: Color(0xFFD8D8D8)
+          )
+        ),),
+        Padding(padding: EdgeInsets.only(right: 64)),
+        Expanded(
+          child: Text(
+            "Place your order",
+            style: TextStyle(fontSize: 18, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
+      ],
+    );
+
+  Widget _payButtons() => FittedBox(child:
+    // Container(
+    // height: 164,
+    // width: MediaQuery.of(context).size.width,
+    Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    // crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Padding(padding: EdgeInsets.only(left: 30)),
+      FittedBox(child:
+      Container(
+        height: 64,
+        width: 170,
+        child:
+        RaisedButton(
+          onPressed: (){
+            processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
+          },
+          child: FittedBox(
+                child:
+                  Text(
+                  'Pay with card',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18
+                  )
+                ),
+              ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          color: Color(0xFF24988D),
+        ),
+      ),),
+      Padding(padding: EdgeInsets.only(left: 14),),
+      FittedBox(child:
+      Container(
+        width: 170,
+        height: 64,
+        child:
+        RaisedButton(
+          onPressed: (){
+            processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
+            (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
+          },
+          child: 
+            Image(
+                image: (Theme.of(context).platform == TargetPlatform.iOS) ? AssetImage("assets/applePayLogo.png") : AssetImage("assets/googlePayLogo.png")
+              ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          color: Colors.black,
+        ),
+      ),),
+      Padding(padding: EdgeInsets.only(right: 30),)
     ],
-  );
+  ));
 }
 
 class _ShippingInformation extends StatelessWidget {
@@ -186,65 +238,4 @@ class _RefundInformation extends StatelessWidget {
       ),
     ],),
   );
-}
-
-class _PayButtons extends StatelessWidget {
-  final ProcessPayment processPayment;
-  _PayButtons(this.processPayment);
-
-  @override
-  Widget build(BuildContext context) => FittedBox(child:
-    // Container(
-    // height: 164,
-    // width: MediaQuery.of(context).size.width,
-    Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    // crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[
-      Padding(padding: EdgeInsets.only(left: 30)),
-      FittedBox(child:
-      Container(
-        height: 64,
-        width: 170,
-        child:
-        RaisedButton(
-          onPressed: (){
-            processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
-          },
-          child: FittedBox(
-                child:
-                  Text(
-                  'Pay with card',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18
-                  )
-                ),
-              ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-          color: Color(0xFF24988D),
-        ),
-      ),),
-      Padding(padding: EdgeInsets.only(left: 14),),
-      FittedBox(child:
-      Container(
-        width: 170,
-        height: 64,
-        child:
-        RaisedButton(
-          onPressed: (){
-            processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
-            (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
-          },
-          child: 
-            Image(
-                image: (Theme.of(context).platform == TargetPlatform.iOS) ? AssetImage("assets/applePayLogo.png") : AssetImage("assets/googlePayLogo.png")
-              ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-          color: Colors.black,
-        ),
-      ),),
-      Padding(padding: EdgeInsets.only(right: 30),)
-    ],
-  ));
 }
