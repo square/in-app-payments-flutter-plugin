@@ -27,11 +27,11 @@ import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
+import sqip.Callback;
+import sqip.GooglePay;
+import sqip.GooglePayNonceResult;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
-import com.squareup.sqip.Callback;
-import com.squareup.sqip.GooglePay;
-import com.squareup.sqip.GooglePayNonceResult;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 

@@ -17,19 +17,18 @@ package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
+import sqip.Callback;
+import sqip.CardDetails;
+import sqip.CardEntry;
+import sqip.CardEntryActivityCommand;
+import sqip.CardEntryActivityResult;
+import sqip.CardNonceBackgroundHandler;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
-import com.squareup.sqip.Callback;
-import com.squareup.sqip.CardDetails;
-import com.squareup.sqip.CardEntry;
-import com.squareup.sqip.CardEntryActivityCommand;
-import com.squareup.sqip.CardEntryActivityResult;
-import com.squareup.sqip.CardNonceBackgroundHandler;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
 
