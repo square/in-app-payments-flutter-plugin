@@ -15,7 +15,7 @@
 */
 package sqip.flutter;
 
-import com.squareup.sqip.InAppPaymentsSdk;
+import sqip.InAppPaymentsSdk;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
 import io.flutter.plugin.common.MethodCall;
