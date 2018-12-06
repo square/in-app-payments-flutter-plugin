@@ -54,7 +54,6 @@ class HomeScreen extends StatelessWidget {
                             opaque: false,
                             pageBuilder: (context, _, __) => BuyScreen()
                         ));
-    print(result);
     if (result) {
       ProcessPayment.showSuccess(context);
     }

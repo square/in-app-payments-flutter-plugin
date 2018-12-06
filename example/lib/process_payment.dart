@@ -7,6 +7,7 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:http/http.dart' as http;
 import 'util.dart';
+import 'buy_screen.dart';
 
 class ProcessPayment {
 
@@ -66,7 +67,7 @@ class ProcessPayment {
     }
   }
 
-  void onCardEntryCancel() {
+  void onCardEntryCancel() async {
     Navigator.pop(context, false);
   }
 
