@@ -19,7 +19,10 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 import 'package:flutter/material.dart';
 import 'buy_screen.dart';
-import 'process_payment.dart';
+import 'util.dart';
+
+const String squareApplicationId = "REPLACE_ME";
+const String squareLocationId = "REPLACE_ME";
 
 void main() => runApp(MaterialApp(
    title: 'Super Cookie',
@@ -32,9 +35,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _initSquareInAppPayments() async {
-    InAppPayments.setSquareApplicationId('sq0idp-yqrzNS_5RBpkYBdxCT3tIQ');
+    InAppPayments.setSquareApplicationId(squareApplicationId);
     if(Platform.isAndroid) {
-      await InAppPayments.initializeGooglePay('7270VTEWZABAJ', google_pay_constants.environmentTest);
+      await InAppPayments.initializeGooglePay(squareLocationId, google_pay_constants.environmentTest);
       // Android's theme is set in /android/app/src/main/res/themes.xml
     } else if (Platform.isIOS) {
       await _setIOSCardEntryTheme();
@@ -54,8 +57,9 @@ class HomeScreen extends StatelessWidget {
                             opaque: false,
                             pageBuilder: (context, _, __) => BuyScreen()
                         ));
+                        
     if (result) {
-      ProcessPayment.showSuccess(context);
+      showSuccess(context);
     }
   }
 

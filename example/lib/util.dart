@@ -22,3 +22,13 @@ Future<void> showAlertDialog(BuildContext context, String title, String descript
         ],
       )
   );
+
+
+  void showSuccess(BuildContext context) {
+    showAlertDialog(context, "Your order was successful", 
+      "Go to your Square dashbord to see this order reflected in the sales tab.");
+  }
+
+   void showError(BuildContext context, String errorMessage) {
+    showAlertDialog(context, "Error occurred", errorMessage);
+  }

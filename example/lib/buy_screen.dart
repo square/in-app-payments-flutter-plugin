@@ -2,21 +2,30 @@ import 'package:flutter/material.dart';
 import 'process_payment.dart';
 
 class BuyScreen extends StatefulWidget {
+  static BuyScreenState of(BuildContext context) => context.ancestorStateOfType(const TypeMatcher<BuyScreenState>());
   BuyScreenState createState() => BuyScreenState();
 }
 
 class BuyScreenState extends State<BuyScreen> {
   ProcessPayment processPayment;
+  bool visible;
+
   @override
   void initState() {
     super.initState();
-    processPayment = ProcessPayment(context);
+    processPayment = ProcessPayment(this);
+    visible = true;
   }
 
+  void setVisible() {
+    setState(() {
+          visible = !visible;
+        });
+  }
 
   @override
   Widget build(BuildContext context) =>
-    MaterialApp(
+    visible ? MaterialApp(
       theme: ThemeData(
         canvasColor: Colors.black.withOpacity(0.5)
       ),
@@ -67,7 +76,7 @@ class BuyScreenState extends State<BuyScreen> {
           ]),
         ),
       ),
-    );
+    ) : Container();
 
     Widget _title() => Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -95,12 +104,8 @@ class BuyScreenState extends State<BuyScreen> {
     );
 
   Widget _payButtons() => FittedBox(child:
-    // Container(
-    // height: 164,
-    // width: MediaQuery.of(context).size.width,
     Row(
     mainAxisAlignment: MainAxisAlignment.center,
-    // crossAxisAlignment: CrossAxisAlignment.stretch,
     children: <Widget>[
       Padding(padding: EdgeInsets.only(left: 30)),
       FittedBox(child:
@@ -110,6 +115,7 @@ class BuyScreenState extends State<BuyScreen> {
         child:
         RaisedButton(
           onPressed: (){
+            setVisible();
             processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
           },
           child: FittedBox(
@@ -134,6 +140,7 @@ class BuyScreenState extends State<BuyScreen> {
         child:
         RaisedButton(
           onPressed: (){
+            Navigator.pop(context, false);
             processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
             (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
           },
