@@ -14,8 +14,9 @@
  limitations under the License.
  */
 import 'package:flutter/material.dart';
-import 'button_widget.dart';
+import 'constants.dart';
 import 'process_payment.dart';
+import 'widgets/button_widget.dart';
 
 class OrderSheet extends StatefulWidget {
   static OrderSheetState of(BuildContext context) => context.ancestorStateOfType(const TypeMatcher<OrderSheetState>());
@@ -23,12 +24,10 @@ class OrderSheet extends StatefulWidget {
 }
 
 class OrderSheetState extends State<OrderSheet> {
-  ProcessPayment processPayment;
 
   @override
   void initState() {
     super.initState();
-    processPayment = ProcessPayment(this);
   }
 
   @override
@@ -78,7 +77,7 @@ class OrderSheetState extends State<OrderSheet> {
           width: 56,
           child:
           IconButton(onPressed: (){
-            Navigator.pop(context, false);},
+            Navigator.pop(context);},
             icon: Icon(Icons.close),
             color: Color(0xFFD8D8D8)
           )
@@ -87,32 +86,27 @@ class OrderSheetState extends State<OrderSheet> {
         Expanded(
           child: Text(
             "Place your order",
-            style: TextStyle(fontSize: 18, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ],
     );
 
-  Widget _payButtons() => FittedBox(child:
-    Row(
+  Widget _payButtons() => Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Padding(padding: EdgeInsets.only(left: 30)),
-      FittedBox(child: createGreenButton("Pay with card", (){
-        Navigator.pop(context);
-        processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
-      })),
+      CookieButton("Pay with card", (){
+        Navigator.pop(context, cardPayment);
+      }),
       Padding(padding: EdgeInsets.only(left: 14),),
-      FittedBox(child:
       Container(
         width: 170,
         height: 64,
         child:
         RaisedButton(
           onPressed: (){
-            Navigator.pop(context, false);
-            processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
-            (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
+            Navigator.pop(context, walletPayment);
           },
           child: 
             Image(
@@ -121,10 +115,10 @@ class OrderSheetState extends State<OrderSheet> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: Colors.black,
         ),
-      ),),
+      ),
       Padding(padding: EdgeInsets.only(right: 30),)
     ],
-  ));
+  );
 }
 
 class _ShippingInformation extends StatelessWidget {
@@ -136,7 +130,7 @@ class _ShippingInformation extends StatelessWidget {
       Padding(padding: EdgeInsets.only(left: 30)),
         Text(
           "Ship to",
-          style: TextStyle(fontSize: 16, fontFamily: 'SF_Pro_Text',color: Color(0xFF24988D)),
+          style: TextStyle(fontSize: 16,color: Color(0xFF24988D)),
         ),
         Padding(padding: EdgeInsets.only(left: 30)),
         Column(
@@ -145,13 +139,13 @@ class _ShippingInformation extends StatelessWidget {
           children: <Widget>[
             Text(
               "Lauren Nobel",
-              style: TextStyle(fontSize: 16, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             Padding(padding: EdgeInsets.only(bottom: 6),),
             Text(
               "1455 Market Street\nSan Francisco, CA, 94103",
-              style: TextStyle(fontSize: 16, fontFamily: 'SF_Pro_Text', color: Color(0xFF7B7B7B)),
+              style: TextStyle(fontSize: 16, color: Color(0xFF7B7B7B)),
             ),
           ]
         ),
@@ -184,12 +178,12 @@ class _PaymentTotal extends StatelessWidget {
       Padding(padding: EdgeInsets.only(left: 30)),
         Text(
           "Total",
-          style: TextStyle(fontSize: 16, fontFamily: 'SF_Pro_Text',color: Color(0xFF24988D)),
+          style: TextStyle(fontSize: 16,color: Color(0xFF24988D)),
         ),
         Padding(padding:EdgeInsets.only(right: 47)),
         Text(
           "\$1.00",
-          style: TextStyle(fontSize: 16, fontFamily: 'SF_Pro_Text', fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
         ),
     ],
@@ -209,7 +203,7 @@ class _RefundInformation extends StatelessWidget {
         child:
           Text(
             "You can refund this transaction through your Square dashboard, go to squareup.com/dashboard.",
-            style: TextStyle(fontSize: 12, fontFamily: 'SF_Pro_Text',color: Color(0xFF7B7B7B)),
+            style: TextStyle(fontSize: 12, color: Color(0xFF7B7B7B)),
             maxLines: 2,
           ),
       ),

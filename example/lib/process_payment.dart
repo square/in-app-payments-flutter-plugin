@@ -21,29 +21,26 @@ import 'package:flutter/services.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:http/http.dart' as http;
-import 'order_sheet.dart';
-import 'dialog_modal.dart';
 
-class MyNotification extends Notification {
-  final bool visible;
+enum STATE {inProgress, paymentComplete, canceled, error}
 
-  const MyNotification({this.visible});
-}
 
 class ProcessPayment {
-
   bool paymentInitialized = false;
   bool applePayEnabled = false;
   bool googlePayEnabled = false;
-  OrderSheetState buyScreenState;
+  String errorMessage;
+  VoidCallback callback;
+  STATE state;
 
-  ProcessPayment(this.buyScreenState) {
+  ProcessPayment(this.callback) {
     initSquarePayment();
   }
 
   Future<void> initSquarePayment() async {
     var canUseApplePay = false;
     var canUseGooglePay = false;
+    state = STATE.inProgress;
     if(Platform.isAndroid) {
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Platform.isIOS) {
@@ -73,7 +70,8 @@ class ProcessPayment {
   }
 
   void onCardEntryComplete() {
-    showSuccess();
+    state = STATE.paymentComplete;
+    callback();
   }
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
@@ -81,11 +79,20 @@ class ProcessPayment {
   }
 
   Future<void> onStartCardEntryFlow() async {
+    state = STATE.inProgress;
+    errorMessage = null;
     try {
-      await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: onCardEntryCardNonceRequestSuccess);
+      await InAppPayments.startCardEntryFlow(onCardNonceRequestSuccess: await onCardEntryCardNonceRequestSuccess, onCardEntryCancel: await onCancelCardEntryFlow);
     } on PlatformException {
-      showError("Failed to start card entry");
+      state = STATE.error;
+      errorMessage = "Failed to start card entry";
+      callback();
     }
+  }
+
+  void onCancelCardEntryFlow() {
+    state = STATE.canceled;
+    callback();
   }
 
   void onStartGooglePay() async {
@@ -95,9 +102,12 @@ class ProcessPayment {
         price: '100',
         currencyCode: 'USD',
         onGooglePayNonceRequestSuccess: onGooglePayNonceRequestSuccess,
-        onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure);
+        onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
+        onGooglePayCanceled: onGooglePayEntryCanceled);
     } on PlatformException catch(ex) {
-        showError('Failed to start GooglePay.\n ${ex.toString()}');
+        state = STATE.error;
+        errorMessage = 'Failed to start GooglePay.\n ${ex.toString()}';
+        callback();
     }
   }
 
@@ -107,7 +117,14 @@ class ProcessPayment {
   }
 
   void onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    showError('GooglePay failed.\n ${errorInfo.toString()}');
+    state = STATE.error;
+    errorMessage = 'Failed to start GooglePay.\n ${errorInfo.toString()}';
+    callback();
+  }
+
+  void onGooglePayEntryCanceled() {
+    state = STATE.canceled;
+    callback();
   }
 
   void onStartApplePay() async {
@@ -118,9 +135,12 @@ class ProcessPayment {
         countryCode: 'US', 
         currencyCode: 'USD', 
         onApplePayNonceRequestSuccess: onApplePayNonceRequestSuccess,
-        onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,);
+        onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,
+        onApplePayComplete: onApplePayEntryComplete);
     } on PlatformException catch(ex) {
-      showError('Failed to start ApplePay.\n ${ex.toString()}');
+      state = STATE.error;
+      errorMessage = 'Failed to start GooglePay.\n ${ex.toString()}';
+      callback();
     }
   }
 
@@ -130,5 +150,10 @@ class ProcessPayment {
 
   void onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     await InAppPayments.completeApplePayAuthorization(isSuccess: false);
+  }
+
+  void onApplePayEntryComplete() {
+    state = STATE.canceled;
+    callback();
   }
 }

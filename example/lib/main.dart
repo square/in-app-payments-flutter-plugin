@@ -19,11 +19,15 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 import 'package:flutter/material.dart';
-import 'button_widget.dart';
+import 'constants.dart';
+import 'dialog_modal.dart';
 import 'order_sheet.dart';
+import 'process_payment.dart';
+import 'widgets/button_widget.dart';
 
+import 'widgets/showModalBottomSheet.dart' as custom_modal_bottom_sheet;
 
-const String squareApplicationId = "REPLACE_ME";
+const String squareApplicationId = "sq0idp-yqrzNS_5RBpkYBdxCT3tIQ";
 const String squareLocationId = "REPLACE_ME";
 const String appleMerchantToken = "REPLACE_ME";
 
@@ -40,33 +44,46 @@ class HomeScreenState extends State<HomeScreen> {
   static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   VoidCallback _showBottomSheetCallback;
+  VoidCallback cardEntryClosedCallback;
+  ProcessPayment processPayment;
 
   @override
   void initState() {
     super.initState();
     _showBottomSheetCallback = _showBottomSheet;
+    cardEntryClosedCallback = cardEntryClosed;
     _initSquareInAppPayments();
+    processPayment = ProcessPayment(cardEntryClosedCallback);
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp
     ]);
   }
 
-  void _showBottomSheet() {
-    setState(() { // disable the button
-      _showBottomSheetCallback = null;
+  void cardEntryClosed() {
+    if (processPayment.state == STATE.canceled) {
+          _showBottomSheet();
+    } else if (processPayment.state == STATE.paymentComplete) {
+      showSuccess(context);
+    } else if (processPayment.state == STATE.error) {
+      showError(context, processPayment.errorMessage);
+    }
+  }
+
+  void _showBottomSheet() async {
+    var selection = await custom_modal_bottom_sheet.showModalBottomSheet<int>(context: scaffoldKey.currentState.context, builder: (context) {
+      return OrderSheet();
     });
 
-    scaffoldKey.currentState.showBottomSheet<bool>((context) {
-      return OrderSheet();
-    })
-    .closed.whenComplete(() {
-      if (mounted) {
-        setState(() { // re-enable the button
-          _showBottomSheetCallback = _showBottomSheet;
-        });
-      }
-    });
+    switch (selection) {
+      case cardPayment:
+        processPayment.paymentInitialized ? await processPayment.onStartCardEntryFlow() : null;
+        break;
+      case walletPayment:
+        processPayment.paymentInitialized && (processPayment.applePayEnabled || processPayment.googlePayEnabled) ? 
+          (Theme.of(context).platform == TargetPlatform.iOS) ? processPayment.onStartApplePay() : processPayment.onStartGooglePay() : null;
+          break;
+    }
   }
 
   void _initSquareInAppPayments() async {
@@ -83,6 +100,11 @@ class HomeScreenState extends State<HomeScreen> {
   Future _setIOSCardEntryTheme() async {
     var themeConfiguationBuilder = IOSThemeBuilder();
     themeConfiguationBuilder.saveButtonTitle = 'Pay';
+    themeConfiguationBuilder.errorColor = RGBAColorBuilder()..r=255..g=0..b=0;
+    themeConfiguationBuilder.tintColor = RGBAColorBuilder()..r=36..g=152..b=141;
+    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+    themeConfiguationBuilder.messageColor = RGBAColorBuilder()..r=114..g=114..b=114;
+    // themeConfiguationBuilder.
 
     await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
   }
@@ -125,7 +147,7 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                 ),
               ),
-              createGreenButton("Buy", _showBottomSheetCallback)
+              CookieButton("Buy", _showBottomSheetCallback)
             ],
           )),
         ),

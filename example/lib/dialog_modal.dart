@@ -40,11 +40,11 @@ Future<void> showAlertDialog(BuildContext context, String title, String descript
   );
 
 
-  void showSuccess() {
-    showAlertDialog(HomeScreenState.scaffoldKey.currentContext, "Your order was successful", 
+  void showSuccess(BuildContext context) {
+    showAlertDialog(context, "Your order was successful", 
       "Go to your Square dashbord to see this order reflected in the sales tab.");
   }
 
-   void showError(String errorMessage) {
-    showAlertDialog(HomeScreenState.scaffoldKey.currentContext, "Error occurred", errorMessage);
+   void showError(BuildContext context, String errorMessage) {
+    showAlertDialog(context, "Error occurred", errorMessage);
   }

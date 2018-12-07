@@ -15,8 +15,14 @@
  */
 import 'package:flutter/material.dart';
 
-Container createGreenButton(String text, Function onPressed) =>
-  Container(
+class CookieButton extends StatelessWidget {
+  String text;
+  Function onPressed;
+  CookieButton(this.text, this.onPressed);
+
+  @override
+    Widget build(BuildContext context) =>
+      Container(
     height: 64,
     width: 170,
     child: RaisedButton(
@@ -32,3 +38,4 @@ Container createGreenButton(String text, Function onPressed) =>
         onPressed: onPressed
     )
   );
+}
