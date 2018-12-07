@@ -1,50 +1,41 @@
+/*
+ Copyright 2018 Square Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 import 'package:flutter/material.dart';
+import 'button_widget.dart';
 import 'process_payment.dart';
 
-class BuyScreen extends StatefulWidget {
-  static BuyScreenState of(BuildContext context) => context.ancestorStateOfType(const TypeMatcher<BuyScreenState>());
-  BuyScreenState createState() => BuyScreenState();
+class OrderSheet extends StatefulWidget {
+  static OrderSheetState of(BuildContext context) => context.ancestorStateOfType(const TypeMatcher<OrderSheetState>());
+  OrderSheetState createState() => OrderSheetState();
 }
 
-class BuyScreenState extends State<BuyScreen> {
+class OrderSheetState extends State<OrderSheet> {
   ProcessPayment processPayment;
-  bool visible;
 
   @override
   void initState() {
     super.initState();
     processPayment = ProcessPayment(this);
-    visible = true;
-  }
-
-  void setVisible() {
-    setState(() {
-          visible = !visible;
-        });
   }
 
   @override
   Widget build(BuildContext context) =>
-    visible ? MaterialApp(
-      theme: ThemeData(
-        canvasColor: Colors.black.withOpacity(0.5)
-      ),
-      home: //LayoutBuilder(
-      // builder: (context, constraints) =>
-      Scaffold(
-        body: Center(child:Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
         Container(
-          height: MediaQuery.of(context).size.height * 0.35,
-          width: MediaQuery.of(context).size.width,
-          child: GestureDetector(onTap: () {Navigator.pop(context, false);})
-        ),
-        FittedBox(child:
-        Container(
+          // alignment: Alignment.bottom,
           height: MediaQuery.of(context).size.height * 0.65,
-          width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -53,6 +44,8 @@ class BuyScreenState extends State<BuyScreen> {
                   ),
             child:
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 10),
@@ -62,6 +55,7 @@ class BuyScreenState extends State<BuyScreen> {
                 child:
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                     _ShippingInformation(),
                     _LineDivider(),
@@ -72,11 +66,7 @@ class BuyScreenState extends State<BuyScreen> {
                   ]),
                 ),
               ]),
-            ),),
-          ]),
-        ),
-      ),
-    ) : Container();
+    );
 
     Widget _title() => Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -108,30 +98,10 @@ class BuyScreenState extends State<BuyScreen> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Padding(padding: EdgeInsets.only(left: 30)),
-      FittedBox(child:
-      Container(
-        height: 64,
-        width: 170,
-        child:
-        RaisedButton(
-          onPressed: (){
-            setVisible();
-            processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
-          },
-          child: FittedBox(
-                child:
-                  Text(
-                  'Pay with card',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18
-                  )
-                ),
-              ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-          color: Color(0xFF24988D),
-        ),
-      ),),
+      FittedBox(child: createGreenButton("Pay with card", (){
+        Navigator.pop(context);
+        processPayment.paymentInitialized ? processPayment.onStartCardEntryFlow() : null;
+      })),
       Padding(padding: EdgeInsets.only(left: 14),),
       FittedBox(child:
       Container(

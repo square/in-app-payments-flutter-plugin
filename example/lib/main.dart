@@ -19,24 +19,54 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 import 'package:flutter/material.dart';
-import 'buy_screen.dart';
-import 'util.dart';
+import 'button_widget.dart';
+import 'order_sheet.dart';
+
 
 const String squareApplicationId = "REPLACE_ME";
 const String squareLocationId = "REPLACE_ME";
+const String appleMerchantToken = "REPLACE_ME";
 
 void main() => runApp(MaterialApp(
    title: 'Super Cookie',
    home: HomeScreen(),
  ));
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen() {
+ class HomeScreen extends StatefulWidget {
+   HomeScreenState createState() => HomeScreenState();
+ }
+
+class HomeScreenState extends State<HomeScreen> {
+  static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  VoidCallback _showBottomSheetCallback;
+
+  @override
+  void initState() {
+    super.initState();
+    _showBottomSheetCallback = _showBottomSheet;
     _initSquareInAppPayments();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp
     ]);
+  }
+
+  void _showBottomSheet() {
+    setState(() { // disable the button
+      _showBottomSheetCallback = null;
+    });
+
+    scaffoldKey.currentState.showBottomSheet<bool>((context) {
+      return OrderSheet();
+    })
+    .closed.whenComplete(() {
+      if (mounted) {
+        setState(() { // re-enable the button
+          _showBottomSheetCallback = _showBottomSheet;
+        });
+      }
+    });
   }
 
   void _initSquareInAppPayments() async {
@@ -46,7 +76,7 @@ class HomeScreen extends StatelessWidget {
       // Android's theme is set in /android/app/src/main/res/themes.xml
     } else if (Platform.isIOS) {
       await _setIOSCardEntryTheme();
-      await InAppPayments.initializeApplePay('merchant.com.mcomm.flutter');
+      await InAppPayments.initializeApplePay(appleMerchantToken);
     }
   }
 
@@ -57,82 +87,45 @@ class HomeScreen extends StatelessWidget {
     await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
   }
 
-  _navigateToBuyScreen(BuildContext context) async {
-    var result = await Navigator.push(context, PageRouteBuilder(
-                            opaque: false,
-                            pageBuilder: (context, _, __) => BuyScreen()
-                        ));
-                        
-    if (result) {
-      showSuccess(context);
-    }
-  }
-
   Widget build(BuildContext context) => 
     MaterialApp(
       theme: ThemeData(
-        canvasColor: Color(0xFF78CCC5)
+        canvasColor: Colors.transparent
       ),
       home: Scaffold(
-        body: Center(
-          child: FittedBox(child:Column(
+        backgroundColor: Color(0xFF78CCC5),
+        key: scaffoldKey,
+        body: Builder(builder: (context) => Center(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 child: Image(image: AssetImage("assets/iconCookie.png")),
               ),
-              FittedBox(
+              Container(
+                height: 50,
                 child:
-                Container(
-                  height: 50,
-                  child:
-                    Text(
-                      'Super Cookie',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                      ),
+                  Text(
+                    'Super Cookie',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
                     ),
-                ),
-              ),
-              FittedBox(
-                child:
-                Container(
-                  height: 70,
-                  child:
-                    Text(
-                      "Instantly gain special powers \nwhen ordering a super cookie",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
                   ),
-                ),
               ),
-              FittedBox(
+              Container(
+                height: 70,
                 child:
-                Container(
-                  height: 64,
-                  width: 170,
-                  child:
-                    RaisedButton(
-                      child: 
-                        Text(
-                          "Buy",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18
-                          )
-                        ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                        color: Color(0xFF24988D),
-                        onPressed: (){
-                          _navigateToBuyScreen(context);
-                        },
+                  Text(
+                    "Instantly gain special powers \nwhen ordering a super cookie",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
                     ),
                 ),
               ),
+              createGreenButton("Buy", _showBottomSheetCallback)
             ],
           )),
         ),
