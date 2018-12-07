@@ -99,25 +99,25 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
                             isSuccess:(Boolean)isSuccess
                          errorMessage:(NSString *__nullable)errorMessage
 {
-    if (self.completionHandler) {
-        if (isSuccess) {
-            PKPaymentAuthorizationResult *authResult =[[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
+    NSAssert(self.completionHandler != nil, @"ApplePay completion handler not set.");
+
+    if (isSuccess) {
+        PKPaymentAuthorizationResult *authResult =[[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
+        self.completionHandler(authResult);
+    } else {
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)};
+        NSError *error = [NSError errorWithDomain:NSGlobalDomain
+                                             code:FSQIPApplePayErrorCode
+                                         userInfo:userInfo];
+        if (@available(iOS 11.0, *)) {
+            PKPaymentAuthorizationResult *authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ error ]];
             self.completionHandler(authResult);
         } else {
-            NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)};
-            NSError *error = [NSError errorWithDomain:NSGlobalDomain
-                                                 code:FSQIPApplePayErrorCode
-                                             userInfo:userInfo];
-            if (@available(iOS 11.0, *)) {
-                PKPaymentAuthorizationResult *authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ error ]];
-                self.completionHandler(authResult);
-            } else {
-                // This should never happen as we require target to be 11.0 or above
-                assert(false);
-            }
+            // This should never happen as we require target to be 11.0 or above
+            assert(false);
         }
-        self.completionHandler = nil;
     }
+    self.completionHandler = nil;
     result(nil);
 }
 
@@ -127,6 +127,7 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
                                    handler:(CompletionHandler)completion API_AVAILABLE(ios(11.0));
 {
     SQIPApplePayNonceRequest *nonceRequest = [[SQIPApplePayNonceRequest alloc] initWithPayment:payment];
+    self.completionHandler = nil;
 
     [nonceRequest performWithCompletionHandler:^(SQIPCardDetails *_Nullable result, NSError *_Nullable error) {
         if (error) {
