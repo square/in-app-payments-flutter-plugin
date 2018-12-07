@@ -1,10 +1,7 @@
 name: square_in_app_payments
-description: A flutter plugin for suqare in-app payments SDK.
+description: An open source Flutter plugin for calling Square’s native In-App Payments SDK to take in-app payments on iOS and Android.
 version: 1.0.0
-authors:
-- Xiao Hu <xiao@squareup.com>
-- John Austin <jaustin@squareup.com>
-- Stephen Josey <sjosey@squareup.com>
+author: Square Flutter Team <flutter-team@squareup.com>
 homepage: https://github.com/square/in-app-payments-flutter-plugin
 
 environment:

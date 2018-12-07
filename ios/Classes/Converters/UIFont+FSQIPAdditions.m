@@ -21,7 +21,7 @@
 
 - (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 {
-    assert(fontDictionary[@"size"]);
+    NSParameterAssert(fontDictionary[@"size"]);
     NSString *fontName = fontDictionary[@"name"] ?: self.fontName;
 
     return [UIFont fontWithName:fontName size:[fontDictionary[@"size"] floatValue]];

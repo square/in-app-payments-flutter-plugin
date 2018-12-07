@@ -16,7 +16,9 @@
 
 #import "FSQIPErrorUtilities.h"
 
-NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
+NSString *const FlutterInAppPaymentsUsageError = @"USAGE_ERROR";
+int const FSQIPCardEntryErrorCode = 0;
+int const FSQIPApplePayErrorCode = 1;
 
 
 @implementation FSQIPErrorUtilities
@@ -25,7 +27,7 @@ NSString *const FlutterMobileCommerceUsageError = @"USAGE_ERROR";
 {
     NSString *bundlePath = [[NSBundle bundleForClass:FSQIPErrorUtilities.self] pathForResource:@"sqip_flutter_resource" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    NSString *localizedErrorMessage = NSLocalizedStringWithDefaultValue(@"SQIPUnExpectedErrorMessage", nil, bundle, @"Something went wrong. Please contact the developer of this application and provide them with this error code: %@", @"Error message shown when an unexpected error occurs");
+    NSString *localizedErrorMessage = NSLocalizedStringWithDefaultValue(@"SQIPUnexpectedErrorMessage", nil, bundle, @"Something went wrong. Please contact the developer of this application and provide them with this error code: %@", @"Error message shown when an unexpected error occurs");
 
     return [NSString stringWithFormat:localizedErrorMessage, pluginErrorCode];
 }

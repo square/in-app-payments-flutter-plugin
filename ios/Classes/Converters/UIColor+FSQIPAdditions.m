@@ -21,9 +21,9 @@
 
 - (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 {
-    assert(fontDictionary[@"r"]);
-    assert(fontDictionary[@"g"]);
-    assert(fontDictionary[@"b"]);
+    NSParameterAssert(fontDictionary[@"r"]);
+    NSParameterAssert(fontDictionary[@"g"]);
+    NSParameterAssert(fontDictionary[@"b"]);
 
     CGFloat red = [fontDictionary[@"r"] floatValue] / 255;
     CGFloat green = [fontDictionary[@"g"] floatValue] / 255;
