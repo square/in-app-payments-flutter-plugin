@@ -105,7 +105,7 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
         PKPaymentAuthorizationResult *authResult =[[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
         self.completionHandler(authResult);
     } else {
-        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)};
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : errorMessage};
         NSError *error = [NSError errorWithDomain:NSGlobalDomain
                                              code:FSQIPApplePayErrorCode
                                          userInfo:userInfo];
@@ -114,7 +114,7 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
             self.completionHandler(authResult);
         } else {
             // This should never happen as we require target to be 11.0 or above
-            assert(false);
+            NSAssert(false, @"No Apple Pay support for iOS 10 or below.");
         }
     }
     self.completionHandler = nil;

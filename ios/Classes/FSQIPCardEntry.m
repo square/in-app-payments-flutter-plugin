@@ -97,7 +97,7 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
 {
     if (self.completionHandler) {
         NSDictionary *userInfo = @{
-            NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)
+            NSLocalizedDescriptionKey : errorMessage
         };
         NSError *error = [NSError errorWithDomain:NSGlobalDomain
                                              code:FSQIPCardEntryErrorCode
