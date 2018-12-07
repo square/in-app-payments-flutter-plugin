@@ -275,10 +275,10 @@ class InAppPayments {
     await _channel.invokeMethod('completeApplePayAuthorization', params);
   }
 
-  static Future setIOSCardEntryTheme(IOSTheme themeConfiguration) async {
+  static Future setIOSCardEntryTheme(IOSTheme theme) async {
     var params = <String, dynamic>{
-      'themeConfiguration': _standardSerializers.serializeWith(
-          IOSTheme.serializer, themeConfiguration),
+      'theme': _standardSerializers.serializeWith(
+          IOSTheme.serializer, theme),
     };
     await _channel.invokeMethod('setFormTheme', params);
   }

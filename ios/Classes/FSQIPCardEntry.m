@@ -100,52 +100,52 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
             NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)
         };
         NSError *error = [NSError errorWithDomain:NSGlobalDomain
-                                             code:-57
+                                             code:FSQIPCardEntryErrorCode
                                          userInfo:userInfo];
         self.completionHandler(error);
     }
     result(nil);
 }
 
-- (void)setTheme:(FlutterResult)result themeConfiguration:(NSDictionary *)themeConfiguration
+- (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme
 {
     // Create a new theme with default value
     self.theme = [[SQIPTheme alloc] init];
-    if (themeConfiguration[@"font"]) {
-        self.theme.font = [self.theme.font fromJsonDictionary:themeConfiguration[@"font"]];
+    if (theme[@"font"]) {
+        self.theme.font = [self.theme.font fromJsonDictionary:theme[@"font"]];
     }
-    if (themeConfiguration[@"emphasisFont"]) {
-        self.theme.emphasisFont = [self.theme.emphasisFont fromJsonDictionary:themeConfiguration[@"emphasisFont"]];
+    if (theme[@"emphasisFont"]) {
+        self.theme.emphasisFont = [self.theme.emphasisFont fromJsonDictionary:theme[@"emphasisFont"]];
     }
-    if (themeConfiguration[@"backgroundColor"]) {
-        self.theme.backgroundColor = [self.theme.backgroundColor fromJsonDictionary:themeConfiguration[@"backgroundColor"]];
+    if (theme[@"backgroundColor"]) {
+        self.theme.backgroundColor = [self.theme.backgroundColor fromJsonDictionary:theme[@"backgroundColor"]];
     }
-    if (themeConfiguration[@"foregroundColor"]) {
-        self.theme.foregroundColor = [self.theme.foregroundColor fromJsonDictionary:themeConfiguration[@"foregroundColor"]];
+    if (theme[@"foregroundColor"]) {
+        self.theme.foregroundColor = [self.theme.foregroundColor fromJsonDictionary:theme[@"foregroundColor"]];
     }
-    if (themeConfiguration[@"textColor"]) {
-        self.theme.textColor = [self.theme.textColor fromJsonDictionary:themeConfiguration[@"textColor"]];
+    if (theme[@"textColor"]) {
+        self.theme.textColor = [self.theme.textColor fromJsonDictionary:theme[@"textColor"]];
     }
-    if (themeConfiguration[@"placeholderTextColor"]) {
-        self.theme.placeholderTextColor = [self.theme.placeholderTextColor fromJsonDictionary:themeConfiguration[@"placeholderTextColor"]];
+    if (theme[@"placeholderTextColor"]) {
+        self.theme.placeholderTextColor = [self.theme.placeholderTextColor fromJsonDictionary:theme[@"placeholderTextColor"]];
     }
-    if (themeConfiguration[@"tintColor"]) {
-        self.theme.tintColor = [self.theme.tintColor fromJsonDictionary:themeConfiguration[@"tintColor"]];
+    if (theme[@"tintColor"]) {
+        self.theme.tintColor = [self.theme.tintColor fromJsonDictionary:theme[@"tintColor"]];
     }
-    if (themeConfiguration[@"messageColor"]) {
-        self.theme.messageColor = [self.theme.messageColor fromJsonDictionary:themeConfiguration[@"messageColor"]];
+    if (theme[@"messageColor"]) {
+        self.theme.messageColor = [self.theme.messageColor fromJsonDictionary:theme[@"messageColor"]];
     }
-    if (themeConfiguration[@"errorColor"]) {
-        self.theme.errorColor = [self.theme.errorColor fromJsonDictionary:themeConfiguration[@"errorColor"]];
+    if (theme[@"errorColor"]) {
+        self.theme.errorColor = [self.theme.errorColor fromJsonDictionary:theme[@"errorColor"]];
     }
-    if (themeConfiguration[@"saveButtonTitle"]) {
-        self.theme.saveButtonTitle = themeConfiguration[@"saveButtonTitle"];
+    if (theme[@"saveButtonTitle"]) {
+        self.theme.saveButtonTitle = theme[@"saveButtonTitle"];
     }
-    if (themeConfiguration[@"saveButtonTextColor"]) {
-        self.theme.saveButtonTextColor = [self.theme.saveButtonTextColor fromJsonDictionary:themeConfiguration[@"saveButtonTextColor"]];
+    if (theme[@"saveButtonTextColor"]) {
+        self.theme.saveButtonTextColor = [self.theme.saveButtonTextColor fromJsonDictionary:theme[@"saveButtonTextColor"]];
     }
-    if (themeConfiguration[@"keyboardAppearance"]) {
-        self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:themeConfiguration[@"keyboardAppearance"]];
+    if (theme[@"keyboardAppearance"]) {
+        self.theme.keyboardAppearance = [self _keyboardAppearanceFromString:theme[@"keyboardAppearance"]];
     }
 
     result(nil);

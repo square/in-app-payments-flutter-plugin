@@ -66,8 +66,8 @@ FlutterMethodChannel *_channel;
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardNonceProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"setFormTheme" isEqualToString:call.method]) {
-        NSDictionary *themeConfiguration = call.arguments[@"themeConfiguration"];
-        [self.cardEntryModule setTheme:result themeConfiguration:themeConfiguration];
+        NSDictionary *theme = call.arguments[@"theme"];
+        [self.cardEntryModule setTheme:result theme:theme];
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
     } else if ([@"canUseApplePay" isEqualToString:call.method]) {
