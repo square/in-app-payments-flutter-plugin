@@ -20,7 +20,7 @@ import 'package:http/http.dart' as http;
 
 Future<String> chargeCard(CardDetails result) async {
   var url =
-      "https://26brjd4ue9.execute-api.us-east-1.amazonaws.com/default/chargeForCookie";
+      "REPLACE_ME";
   var body = jsonEncode({"nonce": result.nonce});
   var response = await http.post(url, body: body, headers: {
     "Accept": "application/json",
