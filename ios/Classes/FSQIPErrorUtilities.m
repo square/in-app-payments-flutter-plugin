@@ -17,8 +17,8 @@
 #import "FSQIPErrorUtilities.h"
 
 NSString *const FlutterInAppPaymentsUsageError = @"USAGE_ERROR";
-int const FSQIPCardEntryErrorCode = 0;
-int const FSQIPApplePayErrorCode = 1;
+NSInteger const FSQIPCardEntryErrorCode = 0;
+NSInteger const FSQIPApplePayErrorCode = 1;
 
 
 @implementation FSQIPErrorUtilities

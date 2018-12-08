@@ -17,8 +17,8 @@
 #import <Flutter/Flutter.h>
 
 extern NSString *const FlutterInAppPaymentsUsageError;
-extern int const FSQIPCardEntryErrorCode;
-extern int const FSQIPApplePayErrorCode;
+extern NSInteger const FSQIPCardEntryErrorCode;
+extern NSInteger const FSQIPApplePayErrorCode;
 
 
 @interface FSQIPErrorUtilities : NSObject
