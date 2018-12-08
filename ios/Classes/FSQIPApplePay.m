@@ -131,7 +131,6 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
 
     [nonceRequest performWithCompletionHandler:^(SQIPCardDetails *_Nullable result, NSError *_Nullable error) {
         if (error) {
-            NSLog(@"%@", error.localizedDescription);
             self.completionHandler = completion;
             NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
             NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
