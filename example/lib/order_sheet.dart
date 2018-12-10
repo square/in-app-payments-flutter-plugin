@@ -25,11 +25,6 @@ class OrderSheet extends StatefulWidget {
 
 class OrderSheetState extends State<OrderSheet> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) => Container(
         height: MediaQuery.of(context).size.height * 0.65,
         width: MediaQuery.of(context).size.width,
