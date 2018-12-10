@@ -97,7 +97,7 @@ class OrderSheetState extends State<OrderSheet> {
             padding: EdgeInsets.only(left: 14),
           ),
           Container(
-            width: 150,
+            width: 170,
             height: 64,
             child: RaisedButton(
               onPressed: () {
