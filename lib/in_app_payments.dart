@@ -18,7 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:meta/meta.dart';
 import 'models.dart';
-import 'serializers.dart';
+import 'src/serializers.dart';
 
 typedef CardEntryDidCancelCallback = void Function();
 typedef CardEntryCompleteCallback = void Function();

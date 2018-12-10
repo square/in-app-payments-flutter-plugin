@@ -131,8 +131,6 @@ abstract class IOSTheme implements Built<IOSTheme, IOSThemeBuilder> {
   @nullable
   Font get font;
   @nullable
-  Font get emphasisFont;
-  @nullable
   RGBAColor get backgroundColor;
   @nullable
   RGBAColor get foregroundColor;
@@ -148,6 +146,8 @@ abstract class IOSTheme implements Built<IOSTheme, IOSThemeBuilder> {
   RGBAColor get errorColor;
   @nullable
   String get saveButtonTitle;
+  @nullable
+  Font get saveButtonFont;
   @nullable
   RGBAColor get saveButtonTextColor;
   @nullable

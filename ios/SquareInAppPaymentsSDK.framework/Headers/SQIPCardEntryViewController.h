@@ -79,24 +79,24 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
  :nodoc:
  `init` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
-- (instancetype)init NS_UNAVAILABLE;
+- (nonnull instancetype)init NS_UNAVAILABLE;
 
 /**
  :nodoc:
  `initWithNibName:bundle:` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
+- (nonnull instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 
 /**
  :nodoc:
  `initWithCoder:` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
-- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 
 /**
  :nodoc:
  `new` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
-+ (instancetype)new NS_UNAVAILABLE;
++ (nonnull instancetype)new NS_UNAVAILABLE;
 
 @end

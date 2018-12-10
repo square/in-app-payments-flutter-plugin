@@ -114,8 +114,8 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
     if (theme[@"font"]) {
         self.theme.font = [self.theme.font fromJsonDictionary:theme[@"font"]];
     }
-    if (theme[@"emphasisFont"]) {
-        self.theme.emphasisFont = [self.theme.emphasisFont fromJsonDictionary:theme[@"emphasisFont"]];
+    if (theme[@"saveButtonFont"]) {
+        self.theme.saveButtonFont = [self.theme.saveButtonFont fromJsonDictionary:theme[@"saveButtonFont"]];
     }
     if (theme[@"backgroundColor"]) {
         self.theme.backgroundColor = [self.theme.backgroundColor fromJsonDictionary:theme[@"backgroundColor"]];
