@@ -1,4 +1,4 @@
-group 'com.squareup.squaremobilecommercesdkflutterplugin'
+group 'com.squareup.sqip.flutter'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -16,6 +16,11 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+         url "https://sdk.squareup.com/public/android"
+        }
+        // TODO: remove this after update to public artifactory
+        mavenLocal()
     }
 }
 
@@ -25,10 +30,19 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
+        targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
     }
+}
+
+dependencies {
+    // TODO: update to public artifactory and the GA version
+    // def inAppPaymentsSdkVersion = '0.2'
+    implementation 'com.squareup.sdk.in-app-payments:card-entry:0.3-SNAPSHOT'
+    implementation 'com.squareup.sdk.in-app-payments:google-pay:0.3-SNAPSHOT'
+    implementation 'com.google.android.gms:play-services-wallet:16.0.1'
 }
