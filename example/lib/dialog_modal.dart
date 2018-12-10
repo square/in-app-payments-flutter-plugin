@@ -15,7 +15,6 @@
  */
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'main.dart';
 
 Future<void> showAlertDialog(
         BuildContext context, String title, String description) =>

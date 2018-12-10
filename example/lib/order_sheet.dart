@@ -15,8 +15,7 @@
  */
 import 'package:flutter/material.dart';
 import 'constants.dart';
-import 'process_payment.dart';
-import 'widgets/button_widget.dart';
+import 'widgets/button.dart';
 
 class OrderSheet extends StatefulWidget {
   static OrderSheetState of(BuildContext context) =>
@@ -32,8 +31,8 @@ class OrderSheetState extends State<OrderSheet> {
 
   @override
   Widget build(BuildContext context) => Container(
-        // alignment: Alignment.bottom,
         height: MediaQuery.of(context).size.height * 0.65,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -87,7 +86,7 @@ class OrderSheetState extends State<OrderSheet> {
         ],
       );
 
-  Widget _payButtons() => Row(
+  Widget _payButtons() => FittedBox(child:Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(left: 30)),
@@ -98,7 +97,7 @@ class OrderSheetState extends State<OrderSheet> {
             padding: EdgeInsets.only(left: 14),
           ),
           Container(
-            width: 170,
+            width: 150,
             height: 64,
             child: RaisedButton(
               onPressed: () {
@@ -117,7 +116,7 @@ class OrderSheetState extends State<OrderSheet> {
             padding: EdgeInsets.only(right: 30),
           )
         ],
-      );
+      ));
 }
 
 class _ShippingInformation extends StatelessWidget {

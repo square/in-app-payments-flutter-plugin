@@ -25,8 +25,8 @@ import 'constants.dart';
 import 'dialog_modal.dart';
 import 'order_sheet.dart';
 import 'process_payment.dart';
-import 'widgets/button_widget.dart';
-import 'widgets/showModalBottomSheet.dart' as custom_modal_bottom_sheet;
+import 'widgets/button.dart';
+import 'widgets/modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
 
 const String squareApplicationId = "REPLACE_ME";
 const String squareLocationId = "REPLACE_ME";
