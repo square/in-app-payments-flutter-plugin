@@ -148,7 +148,7 @@ class HomeScreenState extends State<HomeScreen> {
           onCardNonceRequestSuccess: await onCardEntryCardNonceRequestSuccess,
           onCardEntryCancel: await onCancelCardEntryFlow);
     } on PlatformException {
-      showError(context, "Failed to start card entry");
+      _showBottomSheet();
     }
   }
 
@@ -166,7 +166,7 @@ class HomeScreenState extends State<HomeScreen> {
           onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
     } on PlatformException catch (ex) {
-      showError(context, '${ex.message}Failed to start GooglePay.\n ${ex.toString()}');
+      _showBottomSheet();
     }
   }
 
@@ -199,7 +199,7 @@ class HomeScreenState extends State<HomeScreen> {
           onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,
           onApplePayComplete: onApplePayEntryComplete);
     } on PlatformException catch (ex) {
-      showError(context, 'Failed to start Apple Pay.\n ${ex.toString()}');
+      _showBottomSheet();
     }
   }
 
