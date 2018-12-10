@@ -104,7 +104,7 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
             PKPaymentAuthorizationResult *authResult =[[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
             self.completionHandler(authResult);
         } else {
-            NSDictionary *userInfo = @{NSLocalizedDescriptionKey : errorMessage};
+            NSDictionary *userInfo = errorMessage == nil || errorMessage.length == 0 ? nil : @{NSLocalizedDescriptionKey : errorMessage };
             NSError *error = [NSError errorWithDomain:NSGlobalDomain
                                                  code:FSQIPApplePayErrorCode
                                              userInfo:userInfo];
