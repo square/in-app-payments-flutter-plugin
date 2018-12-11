@@ -78,17 +78,13 @@ class OrderSheet extends StatelessWidget {
   Widget _payButtons(context) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(left: 30),
-            width: MediaQuery.of(context).size.width / 2 - 50,
-            child: CookieButton("Pay with card", () {
+            CookieButton("Pay with card", () {
                 Navigator.pop(context, paymentType.cardPayment);
-              }),
-          ),
+              },
+            ),
             Container(
               height: 64,
-              width: MediaQuery.of(context).size.width / 2 - 50,
-              margin: EdgeInsets.only(right: 30),
+              width: MediaQuery.of(context).size.width * .4,
               child: RaisedButton(
                 onPressed: () {
                   Navigator.pop(context, paymentType.walletPayment);

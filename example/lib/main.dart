@@ -247,8 +247,8 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 32, right: 110, left: 110),
-                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 32),
+                    // width: MediaQuery.of(context).size.width * 0.40,
                     child:
                       CookieButton("Buy", _showBottomSheet),
                   ),
