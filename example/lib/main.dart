@@ -222,40 +222,39 @@ class HomeScreenState extends State<HomeScreen> {
           key: scaffoldKey,
           body: Builder(
             builder: (context) => Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      child: Image(image: AssetImage("assets/iconCookie.png")),
-                    ),
-                    Container(
-                      child: Text(
-                        'Super Cookie',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                        ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Image(image: AssetImage("assets/iconCookie.png")),
+                  ),
+                  Container(
+                    child: Text(
+                      'Super Cookie',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
                       ),
                     ),
-                    Container(
-                      child: Text(
-                        "Instantly gain special powers \nwhen ordering a super cookie",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                  ),
+                  Container(
+                    child: Text(
+                      "Instantly gain special powers \nwhen ordering a super cookie",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 32, right: 110, left: 110),
-                      width: MediaQuery.of(context).size.width,
-                      child:
-                        CookieButton("Buy", _showBottomSheet),
-                    ),
-                  ],
-                )
-              ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 32, right: 110, left: 110),
+                    width: MediaQuery.of(context).size.width,
+                    child:
+                      CookieButton("Buy", _showBottomSheet),
+                  ),
+                ],
+              )
+            ),
           ),
         ),
       );
