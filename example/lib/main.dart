@@ -28,7 +28,7 @@ import 'widgets/dialog_modal.dart';
 // We use a custom modal bottom sheet to override the default height (and remove it).
 import 'widgets/modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
 
-const String squareApplicationId = "sq0idp-yqrzNS_5RBpkYBdxCT3tIQ";
+const String squareApplicationId = "REPLACE_ME";
 const String squareLocationId = "REPLACE_ME";
 const String appleMerchantToken = "REPLACE_ME";
 
