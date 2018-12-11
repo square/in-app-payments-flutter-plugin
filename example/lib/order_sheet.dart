@@ -13,16 +13,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'widgets/cookie_button.dart';
 
-enum paymentType {cardPayment, walletPayment}
+enum paymentType {cardPayment, googlePay, applePay}
+final double cookieAmount = 1;
+
+String getCookieAmount() => cookieAmount.toStringAsFixed(2);
 
 class OrderSheet extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(
-        height: MediaQuery.of(context).size.height * 0.65,
-        width: MediaQuery.of(context).size.width,
+  Widget build(BuildContext context) => 
+      Container(
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -30,27 +33,33 @@ class OrderSheet extends StatelessWidget {
                 topRight: const Radius.circular(20.0))),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 margin: EdgeInsets.only(left: 10, top: 10),
                 child: _title(context),
               ),
-              Expanded(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      _ShippingInformation(),
-                      _LineDivider(),
-                      _PaymentTotal(),
-                      _LineDivider(),
-                      _RefundInformation(),
-                      _payButtons(context),
-                    ]),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width, 
+                  minHeight: 300, 
+                  maxHeight: MediaQuery.of(context).size.height, 
+                  maxWidth: MediaQuery.of(context).size.width),
+                child:
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        _ShippingInformation(),
+                        _LineDivider(),
+                        _PaymentTotal(),
+                        _LineDivider(),
+                        _RefundInformation(),
+                        _payButtons(context),
+                      ]),
               ),
-            ]),
-      );
+        ]),
+    );
 
   Widget _title(context) => Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -78,7 +87,7 @@ class OrderSheet extends StatelessWidget {
   Widget _payButtons(context) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-            CookieButton("Pay with card", () {
+            CookieButton(text: "Pay with card", onPressed: () {
                 Navigator.pop(context, paymentType.cardPayment);
               },
             ),
@@ -87,7 +96,11 @@ class OrderSheet extends StatelessWidget {
               width: MediaQuery.of(context).size.width * .4,
               child: RaisedButton(
                 onPressed: () {
-                  Navigator.pop(context, paymentType.walletPayment);
+                  if (Platform.isAndroid) {
+                    Navigator.pop(context, paymentType.googlePay);
+                  } else if (Platform.isIOS) {
+                    Navigator.pop(context, paymentType.applePay);
+                  }
                 },
                 child: Image(
                     image: (Theme.of(context).platform == TargetPlatform.iOS)
@@ -161,7 +174,7 @@ class _PaymentTotal extends StatelessWidget {
           ),
           Padding(padding: EdgeInsets.only(right: 47)),
           Text(
-            "\$1.00",
+            "\$${getCookieAmount()}",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
@@ -182,7 +195,6 @@ class _RefundInformation extends StatelessWidget {
               child: Text(
                 "You can refund this transaction through your Square dashboard, go to squareup.com/dashboard.",
                 style: TextStyle(fontSize: 12, color: Color(0xFF7B7B7B)),
-                maxLines: 2,
               ),
             ),
           ],

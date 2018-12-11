@@ -45,13 +45,12 @@ class BottomSheet extends StatefulWidget {
   @override
   _BottomSheetState createState() => _BottomSheetState();
 
-  static AnimationController createAnimationController(TickerProvider vsync) {
-    return AnimationController(
+  static AnimationController createAnimationController(TickerProvider vsync) =>
+    AnimationController(
       duration: _kBottomSheetDuration,
       debugLabel: 'BottomSheet',
       vsync: vsync,
     );
-  }
 }
 
 class _BottomSheetState extends State<BottomSheet> {
@@ -74,14 +73,16 @@ class _BottomSheetState extends State<BottomSheet> {
   void _handleDragEnd(DragEndDetails details) {
     if (_dismissUnderway) return;
     if (details.velocity.pixelsPerSecond.dy > _kMinFlingVelocity) {
-      final double flingVelocity =
+      final flingVelocity =
           -details.velocity.pixelsPerSecond.dy / _childHeight;
-      if (widget.animationController.value > 0.0)
+      if (widget.animationController.value > 0.0) {
         widget.animationController.fling(velocity: flingVelocity);
+      }
       if (flingVelocity < 0.0) widget.onClosing();
     } else if (widget.animationController.value < _kCloseProgressThreshold) {
-      if (widget.animationController.value > 0.0)
+      if (widget.animationController.value > 0.0) {
         widget.animationController.fling(velocity: -1.0);
+      }
       widget.onClosing();
     } else {
       widget.animationController.forward();
@@ -111,23 +112,20 @@ class _ModalBottomSheetLayout extends SingleChildLayoutDelegate {
   final double progress;
 
   @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return BoxConstraints(
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+    BoxConstraints(
       minWidth: constraints.maxWidth,
       maxWidth: constraints.maxWidth,
       minHeight: 0.0,
     );
-  }
 
   @override
-  Offset getPositionForChild(Size size, Size childSize) {
-    return Offset(0.0, size.height - childSize.height * progress);
-  }
+  Offset getPositionForChild(Size size, Size childSize) =>
+    Offset(0.0, size.height - childSize.height * progress);
 
   @override
-  bool shouldRelayout(_ModalBottomSheetLayout oldDelegate) {
-    return progress != oldDelegate.progress;
-  }
+  bool shouldRelayout(_ModalBottomSheetLayout oldDelegate) =>
+    progress != oldDelegate.progress;
 }
 
 class _ModalBottomSheet<T> extends StatefulWidget {
@@ -142,8 +140,8 @@ class _ModalBottomSheet<T> extends StatefulWidget {
 class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   @override
   Widget build(BuildContext context) {
-    final MediaQueryData mediaQuery = MediaQuery.of(context);
-    final MaterialLocalizations localizations =
+    final mediaQuery = MediaQuery.of(context);
+    final localizations =
         MaterialLocalizations.of(context);
     String routeLabel;
     switch (defaultTargetPlatform) {
@@ -161,8 +159,8 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         onTap: () => Navigator.pop(context),
         child: AnimatedBuilder(
             animation: widget.route.animation,
-            builder: (BuildContext context, Widget child) {
-              final double animationValue = mediaQuery.accessibleNavigation
+            builder: (context, child) {
+              final animationValue = mediaQuery.accessibleNavigation
                   ? 1.0
                   : widget.route.animation.value;
               return Semantics(

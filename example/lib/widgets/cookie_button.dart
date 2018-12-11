@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 class CookieButton extends StatelessWidget {
   final String text;
   final Function onPressed;
-  CookieButton(this.text, this.onPressed);
+  CookieButton({this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) => Container(
