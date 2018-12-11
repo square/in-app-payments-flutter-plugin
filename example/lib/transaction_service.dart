@@ -18,21 +18,24 @@ import 'dart:convert';
 import 'package:square_in_app_payments/models.dart';
 import 'package:http/http.dart' as http;
 
-Future<String> chargeCard(CardDetails result) async {
-  var url =
-      "REPLACE_ME";
+// Replace this with the AWS Lamda URL you create
+String chargeUrl = "https://REPLACE_ME.com/default/chargeForCookie";
+
+class ChargeException implements Exception {
+  String errorMessage;
+  ChargeException(this.errorMessage);
+}
+
+Future<void> chargeCard(CardDetails result) async {
   var body = jsonEncode({"nonce": result.nonce});
-  var response = await http.post(url, body: body, headers: {
+  var response = await http.post(chargeUrl, body: body, headers: {
     "Accept": "application/json",
     "content-type": "application/json"
   });
   var responseBody = json.decode(response.body);
   if (response.statusCode == 200) {
-    return null;
-    // InAppPayments.completeCardEntry(
-    //     onCardEntryComplete: onCardEntryComplete);
+    return;
   } else {
-    //InAppPayments.showCardNonceProcessingError(responseBody["errorMessage"]);
-    return responseBody["errorMessage"];
+    throw ChargeException(responseBody["errorMessage"]);
   }
 }

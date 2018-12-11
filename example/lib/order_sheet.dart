@@ -14,16 +14,11 @@
  limitations under the License.
  */
 import 'package:flutter/material.dart';
-import 'constants.dart';
-import 'widgets/button.dart';
+import 'widgets/cookie_button.dart';
 
-class OrderSheet extends StatefulWidget {
-  static OrderSheetState of(BuildContext context) =>
-      context.ancestorStateOfType(const TypeMatcher<OrderSheetState>());
-  OrderSheetState createState() => OrderSheetState();
-}
+enum paymentType {cardPayment, walletPayment}
 
-class OrderSheetState extends State<OrderSheet> {
+class OrderSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         height: MediaQuery.of(context).size.height * 0.65,
@@ -39,7 +34,7 @@ class OrderSheetState extends State<OrderSheet> {
             children: [
               Container(
                 margin: EdgeInsets.only(left: 10, top: 10),
-                child: _title(),
+                child: _title(context),
               ),
               Expanded(
                 child: Column(
@@ -51,67 +46,64 @@ class OrderSheetState extends State<OrderSheet> {
                       _PaymentTotal(),
                       _LineDivider(),
                       _RefundInformation(),
-                      _payButtons(),
+                      _payButtons(context),
                     ]),
               ),
             ]),
       );
 
-  Widget _title() => Row(
+  Widget _title(context) => Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          FittedBox(
-            child: Container(
-                height: 56,
-                width: 56,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.close),
-                    color: Color(0xFFD8D8D8))),
-          ),
-          Padding(padding: EdgeInsets.only(right: 64)),
-          Expanded(
-            child: Text(
-              "Place your order",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      );
-
-  Widget _payButtons() => FittedBox(child:Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 30)),
-          CookieButton("Pay with card", () {
-            Navigator.pop(context, cardPayment);
-          }),
-          Padding(
-            padding: EdgeInsets.only(left: 14),
+          Container (
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            icon: Icon(Icons.close),
+            color: Color(0xFFD8D8D8))
           ),
           Container(
-            width: 170,
-            height: 64,
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.pop(context, walletPayment);
-              },
-              child: Image(
-                  image: (Theme.of(context).platform == TargetPlatform.iOS)
-                      ? AssetImage("assets/applePayLogo.png")
-                      : AssetImage("assets/googlePayLogo.png")),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0)),
-              color: Colors.black,
+            child: Expanded(
+              child:Text(
+                "Place your order",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 30),
-          )
+          Padding(padding: EdgeInsets.only(right: 56)),
+        ]);
+
+  Widget _payButtons(context) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(left: 30),
+            width: MediaQuery.of(context).size.width / 2 - 50,
+            child: CookieButton("Pay with card", () {
+                Navigator.pop(context, paymentType.cardPayment);
+              }),
+          ),
+            Container(
+              height: 64,
+              width: MediaQuery.of(context).size.width / 2 - 50,
+              margin: EdgeInsets.only(right: 30),
+              child: RaisedButton(
+                onPressed: () {
+                  Navigator.pop(context, paymentType.walletPayment);
+                },
+                child: Image(
+                    image: (Theme.of(context).platform == TargetPlatform.iOS)
+                        ? AssetImage("assets/applePayLogo.png")
+                        : AssetImage("assets/googlePayLogo.png")),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+                color: Colors.black,
+              ),
+            ),
         ],
-      ));
+      );
 }
 
 class _ShippingInformation extends StatelessWidget {
@@ -149,18 +141,15 @@ class _ShippingInformation extends StatelessWidget {
 
 class _LineDivider extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              color: Color(0xFFD8D8D8),
-              height: 1,
-              margin: const EdgeInsets.only(left: 30.0, right: 30.0),
-            ),
-          )
-        ],
-      );
+  Widget build(BuildContext context) =>
+  Container(
+    margin: EdgeInsets.only(left: 30, right: 30),
+    child:
+      Divider(
+        height: 1,
+        color: Color(0xFFD8D8D8),
+      )
+  );
 }
 
 class _PaymentTotal extends StatelessWidget {

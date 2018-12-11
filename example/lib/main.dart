@@ -21,14 +21,14 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart'
     as google_pay_constants;
-import 'constants.dart';
-import 'dialog_modal.dart';
 import 'order_sheet.dart';
-import 'process_payment.dart';
-import 'widgets/button.dart';
+import 'transaction_service.dart';
+import 'widgets/cookie_button.dart';
+import 'widgets/dialog_modal.dart';
+// We use a custom modal bottom sheet to override the default height (and remove it).
 import 'widgets/modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
 
-const String squareApplicationId = "REPLACE_ME";
+const String squareApplicationId = "sq0idp-yqrzNS_5RBpkYBdxCT3tIQ";
 const String squareLocationId = "REPLACE_ME";
 const String appleMerchantToken = "REPLACE_ME";
 
@@ -52,18 +52,23 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _initSquareInAppPayments();
     _initSquarePayment();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   Future<void> _initSquarePayment() async {
+    InAppPayments.setSquareApplicationId(squareApplicationId);
+
     var canUseApplePay = false;
     var canUseGooglePay = false;
     if (Platform.isAndroid) {
+      await InAppPayments.initializeGooglePay(
+          squareLocationId, google_pay_constants.environmentTest);
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Platform.isIOS) {
+      await _setIOSCardEntryTheme();
+      await InAppPayments.initializeApplePay(appleMerchantToken);
       canUseApplePay = await InAppPayments.canUseApplePay;
     }
 
@@ -73,19 +78,19 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
     void _showBottomSheet() async {
-      var selection = await custom_modal_bottom_sheet.showModalBottomSheet<int>(
+      var selection = await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
           context: scaffoldKey.currentState.context,
           builder: (context) {
             return OrderSheet();
           });
 
       switch (selection) {
-        case cardPayment:
+        case paymentType.cardPayment:
           paymentInitialized
               ? await onStartCardEntryFlow()
               : null;
           break;
-        case walletPayment:
+        case paymentType.walletPayment:
           paymentInitialized &&
                   (applePayEnabled || googlePayEnabled)
               ? (Theme.of(context).platform == TargetPlatform.iOS)
@@ -96,17 +101,7 @@ class HomeScreenState extends State<HomeScreen> {
       }
   }
 
-  void _initSquareInAppPayments() async {
-    InAppPayments.setSquareApplicationId(squareApplicationId);
-    if (Platform.isAndroid) {
-      await InAppPayments.initializeGooglePay(
-          squareLocationId, google_pay_constants.environmentTest);
-      // Android's theme is set in /android/app/src/main/res/themes.xml
-    } else if (Platform.isIOS) {
-      await _setIOSCardEntryTheme();
-      await InAppPayments.initializeApplePay(appleMerchantToken);
-    }
-  }
+ 
 
   Future _setIOSCardEntryTheme() async {
     var themeConfiguationBuilder = IOSThemeBuilder();
@@ -129,16 +124,16 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void onCardEntryComplete() {
-    showSuccess(context);
+    showSuccess(context, "Go to your Square dashbord to see this order reflected in the sales tab.");
   }
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    var errorMessage = await chargeCard(result);
-    if (errorMessage == null) {
+    try {
+      await chargeCard(result);
       InAppPayments.completeCardEntry(
         onCardEntryComplete: onCardEntryComplete);
-    } else {
-      InAppPayments.showCardNonceProcessingError(errorMessage);
+    } on ChargeException catch (e) {
+      InAppPayments.showCardNonceProcessingError(e.errorMessage);
     }
   }
 
@@ -160,7 +155,7 @@ class HomeScreenState extends State<HomeScreen> {
     try {
       await InAppPayments.requestGooglePayNonce(
           priceStatus: 1,
-          price: '100',
+          price: '1',
           currencyCode: 'USD',
           onGooglePayNonceRequestSuccess: onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
@@ -171,12 +166,11 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void onGooglePayNonceRequestSuccess(CardDetails result) async {
-    var errorMessage = await chargeCard(result);
-    if (errorMessage == null) {
-      InAppPayments.completeCardEntry(
-        onCardEntryComplete: onCardEntryComplete);
-    } else {
-      InAppPayments.showCardNonceProcessingError(errorMessage);
+    try {
+      await chargeCard(result);
+      showSuccess(context, "Go to your Square dashbord to see this order reflected in the sales tab.");
+    } on ChargeException catch (e) {
+      showError(context, e.errorMessage);
     }
   }
 
@@ -191,7 +185,7 @@ class HomeScreenState extends State<HomeScreen> {
   void onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
-          price: '100',
+          price: '1',
           summaryLabel: 'My Checkout',
           countryCode: 'US',
           currencyCode: 'USD',
@@ -204,12 +198,12 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void onApplePayNonceRequestSuccess(CardDetails result) async {
-    var errorMessage = await chargeCard(result);
-    if (errorMessage == null) {
-      InAppPayments.completeCardEntry(
-        onCardEntryComplete: onCardEntryComplete);
-    } else {
-      InAppPayments.showCardNonceProcessingError(errorMessage);
+
+    try {
+      await chargeCard(result);
+      showSuccess(context, "Go to your Square dashbord to see this order reflected in the sales tab.");
+    } on ChargeException catch (e) {
+      showError(context, e.errorMessage);
     }
   }
 
@@ -230,13 +224,12 @@ class HomeScreenState extends State<HomeScreen> {
             builder: (context) => Center(
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
                       child: Image(image: AssetImage("assets/iconCookie.png")),
                     ),
                     Container(
-                      height: 50,
                       child: Text(
                         'Super Cookie',
                         style: TextStyle(
@@ -246,7 +239,6 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Container(
-                      height: 70,
                       child: Text(
                         "Instantly gain special powers \nwhen ordering a super cookie",
                         style: TextStyle(
@@ -255,7 +247,12 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    CookieButton("Buy", _showBottomSheet)
+                    Container(
+                      margin: EdgeInsets.only(top: 32, right: 110, left: 110),
+                      width: MediaQuery.of(context).size.width,
+                      child:
+                        CookieButton("Buy", _showBottomSheet),
+                    ),
                   ],
                 )
               ),

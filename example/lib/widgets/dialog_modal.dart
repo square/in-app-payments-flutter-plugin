@@ -22,25 +22,24 @@ Future<void> showAlertDialog(
         context: context,
         barrierDismissible: true,
         builder: (context) => AlertDialog(
-              title: Text(title),
-              content: SingleChildScrollView(
-                child: Text(description),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ));
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Text(description),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ));
 
-void showSuccess(BuildContext context) {
-  showAlertDialog(context, "Your order was successful",
-      "Go to your Square dashbord to see this order reflected in the sales tab.");
+void showSuccess(BuildContext context, String message) {
+  showAlertDialog(context, "Your order was successful", message);
 }
 
-void showError(BuildContext context, String errorMessage) {
-  showAlertDialog(context, "Error occurred", errorMessage);
+void showError(BuildContext context, String message) {
+  showAlertDialog(context, "Error occurred", message);
 }
