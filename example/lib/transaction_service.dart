@@ -18,20 +18,28 @@ import 'dart:convert';
 import 'package:square_in_app_payments/models.dart';
 import 'package:http/http.dart' as http;
 
-// Replace this with the AWS Lamda URL you create
-String chargeUrl = "https://REPLACE_ME.com/default/chargeForCookie";
+// Replace this with the URL you create, if you have your own server running
+String chargeBackendDomain = "REPLACE_ME";
+String chargeUrl = "https://${chargeBackendDomain}/chargeForCookie";
 
 class ChargeException implements Exception {
   String errorMessage;
   ChargeException(this.errorMessage);
 }
 
+class NoDomainException implements Exception {}
+
 Future<void> chargeCard(CardDetails result) async {
   var body = jsonEncode({"nonce": result.nonce});
+  if (chargeBackendDomain == "REPLACE_ME") {
+    throw NoDomainException();
+  }
+
   var response = await http.post(chargeUrl, body: body, headers: {
     "Accept": "application/json",
     "content-type": "application/json"
   });
+
   var responseBody = json.decode(response.body);
   if (response.statusCode == 200) {
     return;

@@ -18,12 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
-import '../order_sheet.dart';
 import '../transaction_service.dart';
 import 'cookie_button.dart';
 import 'dialog_modal.dart';
 // We use a custom modal bottom sheet to override the default height (and remove it).
 import 'modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
+import 'order_sheet.dart';
+
 
 class BuySheet extends StatelessWidget {
     final bool applePayEnabled;
@@ -57,6 +58,9 @@ class BuySheet extends StatelessWidget {
   }
 
   void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
+    if (chargeBackendDomain == "REPLACE_ME") {
+
+    }
     try {
       await chargeCard(result);
       InAppPayments.completeCardEntry(
@@ -89,7 +93,7 @@ class BuySheet extends StatelessWidget {
           onGooglePayNonceRequestSuccess: onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
-    } on PlatformException catch (ex) {
+    } on PlatformException {
       showPlaceOrderSheet();
     }
   }
@@ -121,13 +125,12 @@ class BuySheet extends StatelessWidget {
           onApplePayNonceRequestSuccess: onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,
           onApplePayComplete: onApplePayEntryComplete);
-    } on PlatformException catch (ex) {
+    } on PlatformException {
       showPlaceOrderSheet();
     }
   }
 
   void onApplePayNonceRequestSuccess(CardDetails result) async {
-
     try {
       await chargeCard(result);
       showSuccess(scaffoldKey.currentContext, "Go to your Square dashbord to see this order reflected in the sales tab.");

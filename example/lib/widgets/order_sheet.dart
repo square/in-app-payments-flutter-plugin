@@ -15,7 +15,7 @@
  */
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'widgets/cookie_button.dart';
+import 'cookie_button.dart';
 
 enum paymentType {cardPayment, googlePay, applePay}
 final double cookieAmount = 1;
