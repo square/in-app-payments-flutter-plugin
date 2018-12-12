@@ -21,6 +21,7 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart'
     as google_pay_constants;
+import 'colors.dart';
 import 'widgets/buy_sheet.dart';
 
 const String squareApplicationId = "REPLACE_ME";
@@ -99,7 +100,7 @@ class HomeScreenState extends State<HomeScreen> {
     theme: ThemeData(canvasColor: Colors.white),
         home: Scaffold(
           body: isLoading
-          ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF24988D)),)) 
+          ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainBackgroundColor),)) 
           : BuySheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled)
         )
   );

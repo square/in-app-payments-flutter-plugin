@@ -15,12 +15,13 @@
  */
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import '../colors.dart';
 import 'cookie_button.dart';
 
 enum paymentType {cardPayment, googlePay, applePay}
-final double cookieAmount = 1;
+final int cookieAmount = 100;
 
-String getCookieAmount() => cookieAmount.toStringAsFixed(2);
+String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
 
 class OrderSheet extends StatelessWidget {
   @override
@@ -70,7 +71,7 @@ class OrderSheet extends StatelessWidget {
                 Navigator.pop(context);
               },
             icon: Icon(Icons.close),
-            color: Color(0xFFD8D8D8))
+            color: closeButtonColor)
           ),
           Container(
             child: Expanded(
@@ -124,7 +125,7 @@ class _ShippingInformation extends StatelessWidget {
           Padding(padding: EdgeInsets.only(left: 30)),
           Text(
             "Ship to",
-            style: TextStyle(fontSize: 16, color: Color(0xFF24988D)),
+            style: TextStyle(fontSize: 16, color: mainTextColor),
           ),
           Padding(padding: EdgeInsets.only(left: 30)),
           Column(
@@ -141,7 +142,7 @@ class _ShippingInformation extends StatelessWidget {
                 ),
                 Text(
                   "1455 Market Street\nSan Francisco, CA, 94103",
-                  style: TextStyle(fontSize: 16, color: Color(0xFF7B7B7B)),
+                  style: TextStyle(fontSize: 16, color: subTextColor),
                 ),
               ]),
         ],
@@ -156,7 +157,7 @@ class _LineDivider extends StatelessWidget {
     child:
       Divider(
         height: 1,
-        color: Color(0xFFD8D8D8),
+        color: dividerColor,
       )
   );
 }
@@ -170,7 +171,7 @@ class _PaymentTotal extends StatelessWidget {
           Padding(padding: EdgeInsets.only(left: 30)),
           Text(
             "Total",
-            style: TextStyle(fontSize: 16, color: Color(0xFF24988D)),
+            style: TextStyle(fontSize: 16, color: mainTextColor),
           ),
           Padding(padding: EdgeInsets.only(right: 47)),
           Text(
@@ -194,7 +195,7 @@ class _RefundInformation extends StatelessWidget {
               width: MediaQuery.of(context).size.width - 60,
               child: Text(
                 "You can refund this transaction through your Square dashboard, go to squareup.com/dashboard.",
-                style: TextStyle(fontSize: 12, color: Color(0xFF7B7B7B)),
+                style: TextStyle(fontSize: 12, color: subTextColor),
               ),
             ),
           ],

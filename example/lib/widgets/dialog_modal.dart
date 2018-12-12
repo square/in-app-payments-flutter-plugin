@@ -17,7 +17,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 Future<void> showAlertDialog(
-        BuildContext context, String title, String description) =>
+  {BuildContext context, String title, String description}) =>
     showDialog<void>(
         context: context,
         barrierDismissible: true,
@@ -35,11 +35,3 @@ Future<void> showAlertDialog(
             ),
           ],
         ));
-
-void showSuccess(BuildContext context, String message) {
-  showAlertDialog(context, "Your order was successful", message);
-}
-
-void showError(BuildContext context, String message) {
-  showAlertDialog(context, "Error occurred", message);
-}

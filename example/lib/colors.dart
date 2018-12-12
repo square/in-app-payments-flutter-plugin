@@ -14,22 +14,15 @@
  limitations under the License.
  */
 import 'package:flutter/material.dart';
-import '../colors.dart';
 
-class CookieButton extends StatelessWidget {
-  final String text;
-  final Function onPressed;
-  CookieButton({this.text, this.onPressed});
+Color monteCarlo = Color(0xFF78CCC5);
+Color alto = Color(0xFFD8D8D8);
+Color jungleGreen = Color(0xFF24988D);
+Color boulder = Color(0xFF7B7B7B);
 
-  @override
-  Widget build(BuildContext context) => Container(
-      height: 64,
-      width: MediaQuery.of(context).size.width * .4,
-      child: RaisedButton(
-          child:
-              FittedBox(child:Text(text, style: TextStyle(color: Colors.white, fontSize: 18))),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-          color: mainButtonColor,
-          onPressed: onPressed));
-}
+Color mainBackgroundColor = monteCarlo;
+Color closeButtonColor = alto;
+Color mainButtonColor = jungleGreen;
+Color mainTextColor = jungleGreen;
+Color subTextColor = boulder;
+Color dividerColor = alto;
