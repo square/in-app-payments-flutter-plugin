@@ -86,20 +86,18 @@ Take a payment with the card nonce by executing the Curl command written into th
 of your development environment. The output Curl command is like the following command:
 
 ```
-curl --header "Content-Type: application/json" \
-     --header "Authorization: REPLACE_WITH_YOUR_ACCESS_TOKEN" \
+curl --request POST https://connect.squareup.com/v2/locations/$squareLocationId/transactions
+     --header "Content-Type: application/json" \
+     --header "Authorization: YOUR_ACCESS_TOKEN" \
      --header "Accept: application/json"\
-     --request POST \
      --data '{
-        "idempotency_key": "UUID_SUPPLIED_BY_SAMPLE",
+        "idempotency_key": "$uuid",
         "amount_money": {
-          "amount": CHARGE_AMOUNT_SUPPLIED_BY_SAMPLE,
-          "currency": "CURRENCY_CODE_SUPPLIED_BY_SAMPLE"
+          "amount": $cookieAmount,
+          "currency": "USD"
         },
-        "card_nonce": "CARD_NONCE_SUPPLIED_BY_SAMPLE"
-      }' \
-      https://connect.squareup.com/v2/locations/{LOCATION_ID_SUPPLIED_BY_SAMPLE}/transactions
-
+        "card_nonce": "$nonce"
+      }' 
 ```
 
 1. Get sample app debug output for the following development environments
