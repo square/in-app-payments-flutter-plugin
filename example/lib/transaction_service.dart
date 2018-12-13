@@ -30,19 +30,20 @@ class ChargeException implements Exception {
 
 Future<void> chargeCard(CardDetails result) async {
   var body = jsonEncode({"nonce": result.nonce});
+  http.Response response;
   try {
-    var response = await http.post(chargeUrl, body: body, headers: {
+    response = await http.post(chargeUrl, body: body, headers: {
       "Accept": "application/json",
       "content-type": "application/json"
-    });
-
-    var responseBody = json.decode(response.body);
-    if (response.statusCode == 200) {
-      return;
-    } else {
-      throw ChargeException(responseBody["errorMessage"]);
-    }
+    });    
   } on SocketException catch (e) {
     throw ChargeException(e.message.toString());
+  }
+
+  var responseBody = json.decode(response.body);
+  if (response.statusCode == 200) {
+    return;
+  } else {
+    throw ChargeException(responseBody["errorMessage"]);
   }
 }
