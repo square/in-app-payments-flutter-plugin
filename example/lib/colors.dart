@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 import 'package:flutter/material.dart';
 
 Color monteCarlo = Color(0xFF78CCC5);
