@@ -83,22 +83,8 @@ Google Pay button in the Google Pay test environment, provide a location ID.
 
 ### Step 5: Use the nonce in a Curl payment command
 Take a payment with the card nonce by executing the Curl command written into the debug output.
-of your development environment. The output Curl command is like the following command:
+of your development environment. 
 
-```
-curl --request POST https://connect.squareup.com/v2/locations/$squareLocationId/transactions
-     --header "Content-Type: application/json" \
-     --header "Authorization: YOUR_ACCESS_TOKEN" \
-     --header "Accept: application/json"\
-     --data '{
-        "idempotency_key": "$uuid",
-        "amount_money": {
-          "amount": $cookieAmount,
-          "currency": "USD"
-        },
-        "card_nonce": "$nonce"
-      }' 
-```
 
 1. Get sample app debug output for the following development environments
    * **VSCode:** Open the Debug Console
