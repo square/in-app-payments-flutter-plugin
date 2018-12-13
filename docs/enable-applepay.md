@@ -13,11 +13,12 @@ set up a Flutter project .
 
 ## Process overview
 
-* [Step 1: Initialize Apple Pay](#step-1-initialize-apple-pay)
-* [Step 2: Implement the Apple Pay flow](#step-2-implement-the-apple-pay-flow)
+* [Step 1: Initialize Apple Pay and verify Apple Pay support](#step-1-initialize-apple-pay-and-verify-apple-pay-support)
+* [Step 2: Authorize payment with Apple Pay](#step-2-authorize-payment-with-apple-pay)
+* [Step 3: Get payment authorization result](#step-3-get-payment-authorization-result)
+* [Step 4: Respond to Apple Pay payment authorization complete](#step-4-respond-to-apple-pay-payment-authorization-complete)
 
-
-## Step 1: Initialize Apple Pay
+## Step 1: Initialize Apple Pay and verify Apple Pay support
 
 
 Add code to initialize Apple Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Apple Pay in the `_initSquarePayment` method and then save the return
@@ -36,7 +37,6 @@ class _MyAppState extends State<MyApp> {
     ...
     var canUseApplePay = false;
     if (Theme.of(context).platform == TargetPlatform.iOS) {
-      await _setIOSCardEntryTheme();
       await InAppPayments.initializeApplePay('supercookie.com.flutter');
       canUseApplePay = await InAppPayments.canUseApplePay;
     }
@@ -51,84 +51,61 @@ class _MyAppState extends State<MyApp> {
 
 ```
 
-## Step 2: Implement the Apple Pay flow
-
-Add code to the `_MyAppState_` class that starts the payment flow and handles
-the response. 
-
-**Note**: You cannot start the Apple Pay flow from a modal screen. To start
-Apple Pay, you must close the modal screen before calling `requestApplePayNonce`.
+## Step 2: Authorize payment with Apple Pay
+Open the Apple Pay sheet and request the user's authorization of the payment. On authorization, a
+payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
 ```dart
-import 'package:square_in_app_payments/models.dart';
-import 'package:square_in_app_payments/in_app_payments.dart';
-class _MyAppState extends State<MyApp> {
- ...
-  Future _setIOSCardEntryTheme() async {
-    var themeConfiguationBuilder = IOSThemeBuilder();
-    themeConfiguationBuilder.font = FontBuilder()..size = 24.0;
-    themeConfiguationBuilder.backgroundColor = RGBAColorBuilder()
-      ..r = 142
-      ..g = 11
-      ..b = 123;
-    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.dark;
-    themeConfiguationBuilder.saveButtonTitle = 'Pay';
-
-    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
-  }
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
-          price: '100',
-          summaryLabel: 'My Checkout',
+          price: getCookieAmount(),
+          summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
-          onApplePayComplete: _onApplePayComplete);
-    } on InAppPaymentsException catch(ex) {
-      if (ex.code == ErrorCode.usageError) {
-        print('Usage error: Please review payment card information and retry.\n ${ex.toString()}');
-      } else {
-        print('Network error: Please retry request.\n ${ex.toString()}');
-      }
+          onApplePayComplete: _onApplePayEntryComplete);
+    } on PlatformException {
+      _showOrderSheet();
     }
   }
+```
+## Step 3: Get payment authorization result
 
+```dart
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
-    print(result);
-    Response response = await _processNonce(cardDetails.nonce);
-    if (response.statusCode == 201) {
-      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
-    } else {
-      await InAppPayments.completeApplePayAuthorization(
-          isSuccess: false, errorMessage: "failed to charge amount.");
+    if (!_chargeBackendDomainReplaced) {
+      showUrlNotSetAndPrintCurlCommand(result.nonce);
+      return;
+    }
+    try {
+      await chargeCard(result);
+      showAlertDialog(context: scaffoldKey.currentContext, 
+      title: "Your order was successful",
+      description: "Go to your Square dashbord to see this order reflected in the sales tab.");
+    } on ChargeException catch (e) {
+      showAlertDialog(context: scaffoldKey.currentContext,
+      title: "Error processing ApplePay payment",
+      description: e.errorMessage);
     }
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    print('ApplePay failed. \n ${errorInfo.toString()}');
     await InAppPayments.completeApplePayAuthorization(isSuccess: false);
   }
 
-  void _onApplePayComplete() {
-    print('ApplePay closed');
-  }
-
-  //Supercookie app sends the nonce to it's backend for 
-  //processing. Returns a response to be fullfilled in the future
-  Future<Response> _processNonce(String cardNonce) async {
-    final String url = 'https://api.supercookie.com/processnonce';
-    final headersMap = Map<String,String>();
-    headersMap.addAll({'Content-Type':'application/json'});
-    return await http.post(url, headers: headersMap ,body: {'nonce': cardNonce, 'amount':'100'})
-  }
-  ...
-}
 ```
----
-**Note:** the `_processNonce` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [Square Mobile Backend Quickstart](https://github.com/square/in-app-payments-server-quickstart) to learn about building an app that processes payment nonces on a server.
 
+## Step 4: Respond to Apple Pay payment authorization complete
+The following callback is invoked when the Apple Pay payment authorization sheet is closed. 
+The sample app uses this callback to return the user to the cookie order sheet.
+```dart
+  void _onApplePayEntryComplete() {
+    _showOrderSheet();
+  }
+
+```
 ---
 
 
