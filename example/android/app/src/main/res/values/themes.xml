@@ -1,0 +1,16 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="buttonStyle">@style/CustomButton</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="editTextStyle">@style/CustomEditText</item>
+    </style>
+
+    <style name="sqip.Theme.CardEntry" parent="AppTheme">
+        <item name="sqip_save_button_text">@string/pay_button</item>
+        <item name="buttonStyle">@style/CardEntryButton</item>
+        <item name="android:windowBackground">@color/colorCardEntryBackground</item>
+        <item name="android:textColorHint">@color/alto</item>
+    </style>
+</resources>

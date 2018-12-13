@@ -13,14 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-#import <Flutter/Flutter.h>
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+import 'package:flutter/material.dart';
 
-int main(int argc, char *argv[])
-{
-    @autoreleasepool
-    {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
-}
+Color monteCarlo = Color(0xFF78CCC5);
+Color alto = Color(0xFFD8D8D8);
+Color jungleGreen = Color(0xFF24988D);
+Color boulder = Color(0xFF7B7B7B);
+
+Color mainBackgroundColor = monteCarlo;
+Color closeButtonColor = alto;
+Color mainButtonColor = jungleGreen;
+Color mainTextColor = jungleGreen;
+Color subTextColor = boulder;
+Color dividerColor = alto;

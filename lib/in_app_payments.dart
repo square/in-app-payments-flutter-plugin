@@ -195,8 +195,7 @@ class InAppPayments {
         'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty,
         'currencyCode should not be null or empty.');
-    assert(priceStatus != null,
-        'priceStatus should not be null.');
+    assert(priceStatus != null, 'priceStatus should not be null.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -226,7 +225,8 @@ class InAppPayments {
     await _channel.invokeMethod('initializeApplePay', params);
   }
 
-  static Future<bool> get canUseApplePay async => await _channel.invokeMethod('canUseApplePay');
+  static Future<bool> get canUseApplePay async =>
+      await _channel.invokeMethod('canUseApplePay');
 
   static Future requestApplePayNonce(
       {@required String price,
