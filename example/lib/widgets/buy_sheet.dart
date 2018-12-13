@@ -36,7 +36,7 @@ class BuySheet extends StatelessWidget {
 
   BuySheet({this.applePayEnabled, this.googlePayEnabled, this.squareLocationId});
 
-  void _showPlaceOrderSheet() async {
+  void _showOrderSheet() async {
     var selection = await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
         context: scaffoldKey.currentState.context,
         builder: (context) => OrderSheet()
@@ -55,22 +55,21 @@ class BuySheet extends StatelessWidget {
     }
   }
 
-  bool get _chargeBackendDomainReplaced {
-    return chargeBackendDomain != "REPLACE_ME";
-  }
+  bool get _chargeBackendDomainReplaced =>
+    chargeBackendDomain != "REPLACE_ME";
 
   void printCurlCommand(String nonce) {
    var uuid = Uuid().v4();
-   print('curl --request POST https://connect.squareup.com/v2/locations/${squareLocationId}/transactions \\' +
-    '--header \"Content-Type: application/json\" \\' +
-    '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\' +
-    '--header \"Accept: application/json\" \\' +
-    '--data \'{' +
-        '\"idempotency_key\": \"$uuid\",' +
-        '\"amount_money\": {' +
-        '\"amount\": $cookieAmount,' +
-        '\"currency\": \"USD\"},' +
-        '\"card_nonce\": \"$nonce\"' +
+   print('curl --request POST https://connect.squareup.com/v2/locations/$squareLocationId/transactions \\'
+    '--header \"Content-Type: application/json\" \\'
+    '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
+    '--header \"Accept: application/json\" \\'
+    '--data \'{'
+        '\"idempotency_key\": \"$uuid\",'
+        '\"amount_money\": {'
+        '\"amount\": $cookieAmount,'
+        '\"currency\": \"USD\"},'
+        '\"card_nonce\": \"$nonce\"'
       '}\'');
   }
 
@@ -101,12 +100,12 @@ class BuySheet extends StatelessWidget {
 
   Future<void> _onStartCardEntryFlow() async {
     await InAppPayments.startCardEntryFlow(
-        onCardNonceRequestSuccess: await _onCardEntryCardNonceRequestSuccess,
-        onCardEntryCancel: await _onCancelCardEntryFlow);
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCancelCardEntryFlow);
   }
 
   void _onCancelCardEntryFlow() {
-    _showPlaceOrderSheet();
+    _showOrderSheet();
   }
 
   void _onStartGooglePay() async {
@@ -119,7 +118,7 @@ class BuySheet extends StatelessWidget {
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
     } on PlatformException {
-      _showPlaceOrderSheet();
+      _showOrderSheet();
     }
   }
 
@@ -147,7 +146,7 @@ class BuySheet extends StatelessWidget {
   }
 
   void onGooglePayEntryCanceled() {
-    _showPlaceOrderSheet();
+    _showOrderSheet();
   }
 
   void _onStartApplePay() async {
@@ -161,7 +160,7 @@ class BuySheet extends StatelessWidget {
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
     } on PlatformException {
-      _showPlaceOrderSheet();
+      _showOrderSheet();
     }
   }
 
@@ -194,7 +193,7 @@ class BuySheet extends StatelessWidget {
   }
 
   void _onApplePayEntryComplete() {
-    _showPlaceOrderSheet();
+    _showOrderSheet();
   }
 
   Widget build(BuildContext context) => MaterialApp(
@@ -231,7 +230,7 @@ class BuySheet extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 32),
                 child:
-                  CookieButton(text: "Buy", onPressed: _showPlaceOrderSheet),
+                  CookieButton(text: "Buy", onPressed: _showOrderSheet),
               ),
             ],
           )
