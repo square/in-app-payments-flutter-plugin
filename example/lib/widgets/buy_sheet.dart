@@ -14,14 +14,12 @@
  limitations under the License.
  */
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 import '../colors.dart';
-import '../main.dart';
 import '../transaction_service.dart';
 import 'cookie_button.dart';
 import 'dialog_modal.dart';
@@ -30,15 +28,15 @@ import 'modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
 import 'order_sheet.dart';
 
 class BuySheet extends StatelessWidget {
-  String nonce;
   final bool applePayEnabled;
   final bool googlePayEnabled;
+  final String squareLocationId;
   static final GlobalKey<ScaffoldState> scaffoldKey =
     GlobalKey<ScaffoldState>();
 
-  BuySheet({this.applePayEnabled, this.googlePayEnabled});
+  BuySheet({this.applePayEnabled, this.googlePayEnabled, this.squareLocationId});
 
-  void showPlaceOrderSheet() async {
+  void _showPlaceOrderSheet() async {
     var selection = await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
         context: scaffoldKey.currentState.context,
         builder: (context) => OrderSheet()
@@ -57,11 +55,11 @@ class BuySheet extends StatelessWidget {
     }
   }
 
-  bool get chargeBackendDomainReplaced {
+  bool get _chargeBackendDomainReplaced {
     return chargeBackendDomain != "REPLACE_ME";
   }
 
-  void printCurlCommand() {
+  void printCurlCommand(String nonce) {
    var uuid = Uuid().v4();
    print('curl --request POST https://connect.squareup.com/v2/locations/${squareLocationId}/transactions \\' +
     '--header \"Content-Type: application/json\" \\' +
@@ -77,23 +75,20 @@ class BuySheet extends StatelessWidget {
   }
 
   void _onCardEntryComplete() {
-    if (chargeBackendDomainReplaced) {
+    if (_chargeBackendDomainReplaced) {
       showAlertDialog(context: scaffoldKey.currentContext, 
       title: "Your order was successful",
       description: "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } else {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Nonce generated, but URL not set",
-      description: "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
-      printCurlCommand();
     }
   }
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    if (!chargeBackendDomainReplaced) {
-      nonce = result.nonce;
+    if (!_chargeBackendDomainReplaced) {
       InAppPayments.completeCardEntry(
         onCardEntryComplete: _onCardEntryComplete);
+
+      showUrlNotSetAndPrintCurlCommand(result.nonce);
+      return;
     }
     try {
       await chargeCard(result);
@@ -111,7 +106,7 @@ class BuySheet extends StatelessWidget {
   }
 
   void _onCancelCardEntryFlow() {
-    showPlaceOrderSheet();
+    _showPlaceOrderSheet();
   }
 
   void _onStartGooglePay() async {
@@ -124,17 +119,13 @@ class BuySheet extends StatelessWidget {
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
     } on PlatformException {
-      showPlaceOrderSheet();
+      _showPlaceOrderSheet();
     }
   }
 
   void _onGooglePayNonceRequestSuccess(CardDetails result) async {
-    if (!chargeBackendDomainReplaced) {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Nonce generated, but URL not set",
-      description: "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
-      nonce = result.nonce;
-      printCurlCommand();
+    if (!_chargeBackendDomainReplaced) {
+      showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
     try {
@@ -146,10 +137,6 @@ class BuySheet extends StatelessWidget {
       showAlertDialog(context: scaffoldKey.currentContext,
       title: "Error processing GooglePay payment",
       description: e.errorMessage);
-    } on SocketException {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Unable to contact host",
-      description: "Could not contact host domain. Please try again later.");
     }
   }
 
@@ -160,7 +147,7 @@ class BuySheet extends StatelessWidget {
   }
 
   void onGooglePayEntryCanceled() {
-    showPlaceOrderSheet();
+    _showPlaceOrderSheet();
   }
 
   void _onStartApplePay() async {
@@ -174,17 +161,13 @@ class BuySheet extends StatelessWidget {
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
     } on PlatformException {
-      showPlaceOrderSheet();
+      _showPlaceOrderSheet();
     }
   }
 
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
-    if (!chargeBackendDomainReplaced) {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Nonce generated, but URL not set",
-      description: "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
-      nonce = result.nonce;
-      printCurlCommand();
+    if (!_chargeBackendDomainReplaced) {
+      showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
     try {
@@ -196,11 +179,14 @@ class BuySheet extends StatelessWidget {
       showAlertDialog(context: scaffoldKey.currentContext,
       title: "Error processing ApplePay payment",
       description: e.errorMessage);
-    } on SocketException {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Unable to contact host",
-      description: "Could not contact host domain. Please try again later.");
     }
+  }
+
+  void showUrlNotSetAndPrintCurlCommand(String nonce) {
+    showAlertDialog(context: scaffoldKey.currentContext, 
+    title: "Nonce generated, but URL not set",
+    description: "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
+    printCurlCommand(nonce);
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
@@ -208,7 +194,7 @@ class BuySheet extends StatelessWidget {
   }
 
   void _onApplePayEntryComplete() {
-    showPlaceOrderSheet();
+    _showPlaceOrderSheet();
   }
 
   Widget build(BuildContext context) => MaterialApp(
@@ -245,7 +231,7 @@ class BuySheet extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 32),
                 child:
-                  CookieButton(text: "Buy", onPressed: showPlaceOrderSheet),
+                  CookieButton(text: "Buy", onPressed: _showPlaceOrderSheet),
               ),
             ],
           )

@@ -42,7 +42,7 @@ Future<void> chargeCard(CardDetails result) async {
     } else {
       throw ChargeException(responseBody["errorMessage"]);
     }
-  } on SocketException {
-    throw ChargeException("Could not contact host domain. Please try again later.");
+  } on SocketException catch (e) {
+    throw ChargeException(e.message.toString());
   }
 }
