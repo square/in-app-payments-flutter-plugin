@@ -446,12 +446,6 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
         ..add(serializers.serialize(object.font,
             specifiedType: const FullType(Font)));
     }
-    if (object.emphasisFont != null) {
-      result
-        ..add('emphasisFont')
-        ..add(serializers.serialize(object.emphasisFont,
-            specifiedType: const FullType(Font)));
-    }
     if (object.backgroundColor != null) {
       result
         ..add('backgroundColor')
@@ -500,6 +494,12 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
         ..add(serializers.serialize(object.saveButtonTitle,
             specifiedType: const FullType(String)));
     }
+    if (object.saveButtonFont != null) {
+      result
+        ..add('saveButtonFont')
+        ..add(serializers.serialize(object.saveButtonFont,
+            specifiedType: const FullType(Font)));
+    }
     if (object.saveButtonTextColor != null) {
       result
         ..add('saveButtonTextColor')
@@ -529,10 +529,6 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
       switch (key) {
         case 'font':
           result.font.replace(serializers.deserialize(value,
-              specifiedType: const FullType(Font)) as Font);
-          break;
-        case 'emphasisFont':
-          result.emphasisFont.replace(serializers.deserialize(value,
               specifiedType: const FullType(Font)) as Font);
           break;
         case 'backgroundColor':
@@ -566,6 +562,10 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
         case 'saveButtonTitle':
           result.saveButtonTitle = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'saveButtonFont':
+          result.saveButtonFont.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Font)) as Font);
           break;
         case 'saveButtonTextColor':
           result.saveButtonTextColor.replace(serializers.deserialize(value,
@@ -1089,8 +1089,6 @@ class _$IOSTheme extends IOSTheme {
   @override
   final Font font;
   @override
-  final Font emphasisFont;
-  @override
   final RGBAColor backgroundColor;
   @override
   final RGBAColor foregroundColor;
@@ -1107,6 +1105,8 @@ class _$IOSTheme extends IOSTheme {
   @override
   final String saveButtonTitle;
   @override
+  final Font saveButtonFont;
+  @override
   final RGBAColor saveButtonTextColor;
   @override
   final KeyboardAppearance keyboardAppearance;
@@ -1116,7 +1116,6 @@ class _$IOSTheme extends IOSTheme {
 
   _$IOSTheme._(
       {this.font,
-      this.emphasisFont,
       this.backgroundColor,
       this.foregroundColor,
       this.textColor,
@@ -1125,6 +1124,7 @@ class _$IOSTheme extends IOSTheme {
       this.messageColor,
       this.errorColor,
       this.saveButtonTitle,
+      this.saveButtonFont,
       this.saveButtonTextColor,
       this.keyboardAppearance})
       : super._();
@@ -1141,7 +1141,6 @@ class _$IOSTheme extends IOSTheme {
     if (identical(other, this)) return true;
     return other is IOSTheme &&
         font == other.font &&
-        emphasisFont == other.emphasisFont &&
         backgroundColor == other.backgroundColor &&
         foregroundColor == other.foregroundColor &&
         textColor == other.textColor &&
@@ -1150,6 +1149,7 @@ class _$IOSTheme extends IOSTheme {
         messageColor == other.messageColor &&
         errorColor == other.errorColor &&
         saveButtonTitle == other.saveButtonTitle &&
+        saveButtonFont == other.saveButtonFont &&
         saveButtonTextColor == other.saveButtonTextColor &&
         keyboardAppearance == other.keyboardAppearance;
   }
@@ -1167,15 +1167,15 @@ class _$IOSTheme extends IOSTheme {
                                     $jc(
                                         $jc(
                                             $jc($jc(0, font.hashCode),
-                                                emphasisFont.hashCode),
-                                            backgroundColor.hashCode),
-                                        foregroundColor.hashCode),
-                                    textColor.hashCode),
-                                placeholderTextColor.hashCode),
-                            tintColor.hashCode),
-                        messageColor.hashCode),
-                    errorColor.hashCode),
-                saveButtonTitle.hashCode),
+                                                backgroundColor.hashCode),
+                                            foregroundColor.hashCode),
+                                        textColor.hashCode),
+                                    placeholderTextColor.hashCode),
+                                tintColor.hashCode),
+                            messageColor.hashCode),
+                        errorColor.hashCode),
+                    saveButtonTitle.hashCode),
+                saveButtonFont.hashCode),
             saveButtonTextColor.hashCode),
         keyboardAppearance.hashCode));
   }
@@ -1184,7 +1184,6 @@ class _$IOSTheme extends IOSTheme {
   String toString() {
     return (newBuiltValueToStringHelper('IOSTheme')
           ..add('font', font)
-          ..add('emphasisFont', emphasisFont)
           ..add('backgroundColor', backgroundColor)
           ..add('foregroundColor', foregroundColor)
           ..add('textColor', textColor)
@@ -1193,6 +1192,7 @@ class _$IOSTheme extends IOSTheme {
           ..add('messageColor', messageColor)
           ..add('errorColor', errorColor)
           ..add('saveButtonTitle', saveButtonTitle)
+          ..add('saveButtonFont', saveButtonFont)
           ..add('saveButtonTextColor', saveButtonTextColor)
           ..add('keyboardAppearance', keyboardAppearance))
         .toString();
@@ -1205,11 +1205,6 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
   FontBuilder _font;
   FontBuilder get font => _$this._font ??= new FontBuilder();
   set font(FontBuilder font) => _$this._font = font;
-
-  FontBuilder _emphasisFont;
-  FontBuilder get emphasisFont => _$this._emphasisFont ??= new FontBuilder();
-  set emphasisFont(FontBuilder emphasisFont) =>
-      _$this._emphasisFont = emphasisFont;
 
   RGBAColorBuilder _backgroundColor;
   RGBAColorBuilder get backgroundColor =>
@@ -1256,6 +1251,12 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
   set saveButtonTitle(String saveButtonTitle) =>
       _$this._saveButtonTitle = saveButtonTitle;
 
+  FontBuilder _saveButtonFont;
+  FontBuilder get saveButtonFont =>
+      _$this._saveButtonFont ??= new FontBuilder();
+  set saveButtonFont(FontBuilder saveButtonFont) =>
+      _$this._saveButtonFont = saveButtonFont;
+
   RGBAColorBuilder _saveButtonTextColor;
   RGBAColorBuilder get saveButtonTextColor =>
       _$this._saveButtonTextColor ??= new RGBAColorBuilder();
@@ -1272,7 +1273,6 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
   IOSThemeBuilder get _$this {
     if (_$v != null) {
       _font = _$v.font?.toBuilder();
-      _emphasisFont = _$v.emphasisFont?.toBuilder();
       _backgroundColor = _$v.backgroundColor?.toBuilder();
       _foregroundColor = _$v.foregroundColor?.toBuilder();
       _textColor = _$v.textColor?.toBuilder();
@@ -1281,6 +1281,7 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
       _messageColor = _$v.messageColor?.toBuilder();
       _errorColor = _$v.errorColor?.toBuilder();
       _saveButtonTitle = _$v.saveButtonTitle;
+      _saveButtonFont = _$v.saveButtonFont?.toBuilder();
       _saveButtonTextColor = _$v.saveButtonTextColor?.toBuilder();
       _keyboardAppearance = _$v.keyboardAppearance;
       _$v = null;
@@ -1308,7 +1309,6 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
       _$result = _$v ??
           new _$IOSTheme._(
               font: _font?.build(),
-              emphasisFont: _emphasisFont?.build(),
               backgroundColor: _backgroundColor?.build(),
               foregroundColor: _foregroundColor?.build(),
               textColor: _textColor?.build(),
@@ -1317,6 +1317,7 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
               messageColor: _messageColor?.build(),
               errorColor: _errorColor?.build(),
               saveButtonTitle: saveButtonTitle,
+              saveButtonFont: _saveButtonFont?.build(),
               saveButtonTextColor: _saveButtonTextColor?.build(),
               keyboardAppearance: keyboardAppearance);
     } catch (_) {
@@ -1324,8 +1325,6 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
       try {
         _$failedField = 'font';
         _font?.build();
-        _$failedField = 'emphasisFont';
-        _emphasisFont?.build();
         _$failedField = 'backgroundColor';
         _backgroundColor?.build();
         _$failedField = 'foregroundColor';
@@ -1341,6 +1340,8 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
         _$failedField = 'errorColor';
         _errorColor?.build();
 
+        _$failedField = 'saveButtonFont';
+        _saveButtonFont?.build();
         _$failedField = 'saveButtonTextColor';
         _saveButtonTextColor?.build();
       } catch (e) {

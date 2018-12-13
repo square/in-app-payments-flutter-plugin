@@ -22,14 +22,9 @@
 @interface SQIPTheme : NSObject
 
 /**
- The text field font.
+ The font used for text fields and informational messages.
  */
 @property (nonatomic, strong, nonnull) UIFont *font;
-
-/**
- The save button font.
- */
-@property (nonatomic, strong, nonnull) UIFont *emphasisFont;
 
 /**
  The background color of the card entry view controller.
@@ -54,17 +49,18 @@
 /**
  The tint color reflected in:
  * the text field cursor
- * the save button background color when enabled.
+ * the save button background color when enabled
+ * the loading indicator
  */
 @property (nonatomic, strong, nonnull) UIColor *tintColor;
 
 /**
- The text color used to display informational messages.
+ The text color used to display informational messages (e.g. "CVV is the three-digit code on the back of your card").
  */
 @property (nonatomic, strong, nonnull) UIColor *messageColor;
 
 /**
- The text color when the text is invalid.
+ The text color used to display errors.
  */
 @property (nonatomic, strong, nonnull) UIColor *errorColor;
 
@@ -74,13 +70,25 @@
 @property (nonatomic, strong, nonnull) NSString *saveButtonTitle;
 
 /**
+ The save button font.
+ */
+@property (nonatomic, strong, nonnull) UIFont *saveButtonFont;
+
+/**
  The text color of the save button when enabled.
  */
 @property (nonatomic, strong, nonnull) UIColor *saveButtonTextColor;
 
 /**
- The appearance of the keyboard.
+ The keyboard appearance.
  */
 @property (nonatomic) UIKeyboardAppearance keyboardAppearance;
+
+/**
+ Sets an optional custom cancel button used to dismiss the view controller.
+ This property is nil by default, indicating that the default cancel button should be used
+ */
+
+@property (nonatomic, strong, nullable) UIBarButtonItem *cancelButton;
 
 @end

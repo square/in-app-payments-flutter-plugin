@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
@@ -24,6 +24,6 @@
 - (void)startCardEntryFlow:(FlutterResult)result;
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
-- (void)setTheme:(FlutterResult)result themeConfiguration:(NSDictionary *)themeConfiguration;
+- (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
 
 @end

@@ -15,9 +15,9 @@
 */
 package sqip.flutter.internal.converter;
 
-import com.squareup.sqip.CardDetails;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import sqip.CardDetails;
 
 public final class CardDetailsConverter {
 

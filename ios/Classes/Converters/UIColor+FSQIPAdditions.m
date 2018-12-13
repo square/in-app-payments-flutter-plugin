@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #import "UIColor+FSQIPAdditions.h"
 
@@ -21,9 +21,9 @@
 
 - (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 {
-    assert(fontDictionary[@"r"]);
-    assert(fontDictionary[@"g"]);
-    assert(fontDictionary[@"b"]);
+    NSParameterAssert(fontDictionary[@"r"]);
+    NSParameterAssert(fontDictionary[@"g"]);
+    NSParameterAssert(fontDictionary[@"b"]);
 
     CGFloat red = [fontDictionary[@"r"] floatValue] / 255;
     CGFloat green = [fontDictionary[@"g"] floatValue] / 255;

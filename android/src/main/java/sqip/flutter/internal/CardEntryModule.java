@@ -17,43 +17,62 @@ package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.animation.Animation;
+import sqip.Callback;
+import sqip.CardDetails;
+import sqip.CardEntry;
+import sqip.CardEntryActivityCommand;
+import sqip.CardEntryActivityResult;
+import sqip.CardNonceBackgroundHandler;
+import sqip.flutter.R;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
-import com.squareup.sqip.Callback;
-import com.squareup.sqip.CardDetails;
-import com.squareup.sqip.CardEntry;
-import com.squareup.sqip.CardEntryActivityCommand;
-import com.squareup.sqip.CardEntryActivityResult;
-import com.squareup.sqip.CardNonceBackgroundHandler;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
+
+import static android.view.animation.AnimationUtils.loadAnimation;
 
 final public class CardEntryModule {
 
   private final Activity currentActivity;
   private final CardDetailsConverter cardDetailsConverter;
   private final AtomicReference<CardEntryActivityCommand> reference;
+  private final Handler handler;
   private volatile CountDownLatch countDownLatch;
 
   public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
     currentActivity = registrar.activity();
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
     reference = new AtomicReference<>();
+    handler = new Handler(Looper.getMainLooper());
 
     registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
       @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
-          @Override public void onResult(CardEntryActivityResult cardEntryActivityResult) {
-            if (cardEntryActivityResult.isCanceled()) {
-              channel.invokeMethod("cardEntryDidCancel", null);
-            } else if (cardEntryActivityResult.isSuccess()) {
-              channel.invokeMethod("cardEntryComplete", null);
-            }
+          @Override public void onResult(final CardEntryActivityResult cardEntryActivityResult) {
+            // flutter UI doesn't know the context of fade_out animation
+            // so that the next action from flutter can be triggered too soon before
+            // card entry activity is closed completely.
+            // So this is a workaround to delay the callback until animation finished.
+            long delayDurationMs = readCardEntryCloseExitAnimationDurationMs();
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                if (cardEntryActivityResult.isCanceled()) {
+                  channel.invokeMethod("cardEntryDidCancel", null);
+                } else if (cardEntryActivityResult.isSuccess()) {
+                  channel.invokeMethod("cardEntryComplete", null);
+                }
+              }
+            }, delayDurationMs);
           }
         });
         return false;
@@ -94,5 +113,24 @@ final public class CardEntryModule {
     reference.set(new CardEntryActivityCommand.ShowError(errorMessage));
     countDownLatch.countDown();
     result.success(null);
+  }
+
+  private long readCardEntryCloseExitAnimationDurationMs() {
+    long delayDurationMs = 0;
+    Resources.Theme theme = currentActivity.getResources().newTheme();
+    theme.applyStyle(R.style.sqip_Theme_CardEntry, true);
+    int[] attrs = { android.R.attr.activityCloseExitAnimation };
+    TypedArray typedArray = theme.obtainStyledAttributes(null, attrs, android.R.attr.windowAnimationStyle, 0);
+    int resId = typedArray.getResourceId(0, -1);
+    if (resId != -1) {
+      try {
+        Animation animation = loadAnimation(currentActivity, resId);
+        delayDurationMs = animation.getDuration();
+      } catch (Resources.NotFoundException ignored) {
+      }
+    }
+
+    typedArray.recycle();
+    return delayDurationMs;
   }
 }

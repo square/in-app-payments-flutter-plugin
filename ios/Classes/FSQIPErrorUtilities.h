@@ -12,11 +12,13 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #import <Flutter/Flutter.h>
 
-extern NSString *const FlutterMobileCommerceUsageError;
+extern NSString *const FlutterInAppPaymentsUsageError;
+extern NSInteger const FSQIPCardEntryErrorCode;
+extern NSInteger const FSQIPApplePayErrorCode;
 
 
 @interface FSQIPErrorUtilities : NSObject

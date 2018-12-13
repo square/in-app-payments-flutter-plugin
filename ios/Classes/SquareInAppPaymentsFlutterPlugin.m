@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #import "SquareInAppPaymentsFlutterPlugin.h"
 #import "FSQIPCardEntry.h"
@@ -66,8 +66,8 @@ FlutterMethodChannel *_channel;
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardNonceProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"setFormTheme" isEqualToString:call.method]) {
-        NSDictionary *themeConfiguration = call.arguments[@"themeConfiguration"];
-        [self.cardEntryModule setTheme:result themeConfiguration:themeConfiguration];
+        NSDictionary *theme = call.arguments[@"theme"];
+        [self.cardEntryModule setTheme:result theme:theme];
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
     } else if ([@"canUseApplePay" isEqualToString:call.method]) {

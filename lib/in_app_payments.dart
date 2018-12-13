@@ -12,13 +12,13 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:meta/meta.dart';
 import 'models.dart';
-import 'serializers.dart';
+import 'src/serializers.dart';
 
 typedef CardEntryDidCancelCallback = void Function();
 typedef CardEntryCompleteCallback = void Function();
@@ -195,8 +195,7 @@ class InAppPayments {
         'price should not be null or empty.');
     assert(currencyCode != null && currencyCode.isNotEmpty,
         'currencyCode should not be null or empty.');
-    assert(priceStatus != null,
-        'priceStatus should not be null.');
+    assert(priceStatus != null, 'priceStatus should not be null.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -226,7 +225,8 @@ class InAppPayments {
     await _channel.invokeMethod('initializeApplePay', params);
   }
 
-  static Future<bool> get canUseApplePay async => await _channel.invokeMethod('canUseApplePay');
+  static Future<bool> get canUseApplePay async =>
+      await _channel.invokeMethod('canUseApplePay');
 
   static Future requestApplePayNonce(
       {@required String price,
@@ -275,10 +275,9 @@ class InAppPayments {
     await _channel.invokeMethod('completeApplePayAuthorization', params);
   }
 
-  static Future setIOSCardEntryTheme(IOSTheme themeConfiguration) async {
+  static Future setIOSCardEntryTheme(IOSTheme theme) async {
     var params = <String, dynamic>{
-      'themeConfiguration': _standardSerializers.serializeWith(
-          IOSTheme.serializer, themeConfiguration),
+      'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),
     };
     await _channel.invokeMethod('setFormTheme', params);
   }

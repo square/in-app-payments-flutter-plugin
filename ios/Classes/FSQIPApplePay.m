@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
@@ -28,7 +28,6 @@ API_AVAILABLE(ios(11.0))
 @property (strong, readwrite) FlutterMethodChannel *channel;
 @property (strong, readwrite) NSString *applePayMerchantId;
 @property (strong, readwrite) CompletionHandler completionHandler;
-@property (strong, readwrite) PKPaymentAuthorizationResult *authorizationResult;
 
 @end
 
@@ -38,7 +37,7 @@ static NSString *const FSQIPApplePayNotSupport = @"fl_apple_pay_not_support";
 
 // flutter plugin debug messages
 static NSString *const FSQIPMessageApplePayNotInitialized = @"Please initialize apple pay before you can call other methods.";
-static NSString *const FSQIPMessageApplePayNotSupport = @"Apple pay is not supported on this device. Please check the apple pay availability on the device before use apply pay.";
+static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not have any supported Apple Pay cards. Please check `canUseApplePay` prior to requesting a nonce.";
 
 
 @implementation FSQIPApplePay
@@ -66,13 +65,13 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"Apple pay is not suppo
                        price:(NSString *)price
 {
     if (!self.applePayMerchantId) {
-        result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
+        result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
                                    message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotInitialized]
                                    details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotInitialized debugMessage:FSQIPMessageApplePayNotInitialized]]);
         return;
     }
     if (!SQIPInAppPaymentsSDK.canUseApplePay) {
-        result([FlutterError errorWithCode:FlutterMobileCommerceUsageError
+        result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
                                    message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotSupport]
                                    details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotSupport debugMessage:FSQIPMessageApplePayNotSupport]]);
         return;
@@ -100,24 +99,26 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"Apple pay is not suppo
                             isSuccess:(Boolean)isSuccess
                          errorMessage:(NSString *__nullable)errorMessage
 {
-    if (self.completionHandler) {
-        if (isSuccess || [errorMessage isEqual:@""]) {
-            self.completionHandler(self.authorizationResult);
+    if (self.completionHandler != nil) {
+        if (isSuccess) {
+            PKPaymentAuthorizationResult *authResult =[[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
+            self.completionHandler(authResult);
         } else {
-            NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(errorMessage, nil)};
+            NSDictionary *userInfo = errorMessage == nil || errorMessage.length == 0 ? nil : @{NSLocalizedDescriptionKey : errorMessage };
             NSError *error = [NSError errorWithDomain:NSGlobalDomain
-                                                 code:-57
+                                                 code:FSQIPApplePayErrorCode
                                              userInfo:userInfo];
             if (@available(iOS 11.0, *)) {
                 PKPaymentAuthorizationResult *authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ error ]];
                 self.completionHandler(authResult);
             } else {
                 // This should never happen as we require target to be 11.0 or above
-                assert(false);
+                NSAssert(false, @"No Apple Pay support for iOS 10 or below.");
             }
         }
         self.completionHandler = nil;
     }
+
     result(nil);
 }
 
@@ -127,23 +128,19 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"Apple pay is not suppo
                                    handler:(CompletionHandler)completion API_AVAILABLE(ios(11.0));
 {
     SQIPApplePayNonceRequest *nonceRequest = [[SQIPApplePayNonceRequest alloc] initWithPayment:payment];
+    self.completionHandler = completion;
 
     [nonceRequest performWithCompletionHandler:^(SQIPCardDetails *_Nullable result, NSError *_Nullable error) {
         if (error) {
-            NSLog(@"%@", error.localizedDescription);
-            self.completionHandler = completion;
-            self.authorizationResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ error ]];
             NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
             NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
             [self.channel invokeMethod:@"onApplePayNonceRequestFailure"
-                             arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterMobileCommerceUsageError
+                             arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
                                                                         message:error.localizedDescription
                                                                       debugCode:debugCode
                                                                    debugMessage:debugMessage]];
         } else {
             // if error is not nil, result must be valid
-            self.completionHandler = completion;
-            self.authorizationResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
             [self.channel invokeMethod:@"onApplePayNonceRequestSuccess" arguments:[result jsonDictionary]];
         }
     }];

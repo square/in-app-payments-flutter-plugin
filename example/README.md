@@ -1,8 +1,23 @@
-# Flutter Plugin for In-App Payments SDK Quick Start
+#  In-App Payments Quick Start Sample Flutter Application
 
-Demonstrates how to use the square_in_app_payments plugin.
+Follow the In-App Payments [Quick Start Guide](https://docs.connect.squareup.com/payments/readersdk/quickstart) to start taking credit card payments with Square.
 
-## Assumptions and prerequisites
+## License
+Copyright 2017 Square, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+## Assumptions
 
 This quick start guide makes the following assumptions:
 
