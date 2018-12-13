@@ -3,16 +3,20 @@
 This repo contains a Flutter plugin for Square [In-App Payments SDK]. In-App Payments SDK for
 Flutter supports the following native In-App Payments SDK versions:
 
-  * iOS: version 1.0.0
+  * iOS: 1.0.0
   * Android: 1.0.0
 
-## In this repo
+## Additional documentation
 
-In addition to the standard Flutter directories, this repo includes:
+In addition to this README, the following is available in the [flutter plugin GitHub repo]:
 
-* [`docs`] - Documentation for the Flutter plugin, including a
-  [getting started guide], [Enable Apple Pay guide], [Enable Google Pay guide], [technical reference], and [troubleshooting guide].
-* [`example`] - A Flutter sample app with walkthrough.
+* [Getting started guide]
+* [Enable Apple Pay guide]
+* [Enable Google Pay guide]
+* [Technical reference]
+* [Troubleshooting guide]
+* [`docs`] - Root directory for all documentation.
+* [`example`] - Root directory of the Flutter sample app (with walkthrough).
 
 ## Build requirements
 
@@ -69,8 +73,9 @@ limitations under the License.
 [Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
 [`docs`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs
 [`example`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/example
-[getting started guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/get-started.md
+[Getting started guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/get-started.md
 [Enable Apple Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-applepay.md
 [Enable Google Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-googlepay.md
-[technical reference]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/reference.md
-[troubleshooting guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/troubleshooting.md
+[Technical reference]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/reference.md
+[Troubleshooting guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/troubleshooting.md
+[flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master

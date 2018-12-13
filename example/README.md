@@ -4,6 +4,17 @@ Demonstrates how to use the square_in_app_payments plugin.
 
 ## Assumptions and prerequisites
 
+This quick start guide makes the following assumptions:
+
+* You have read the [In-App Payments SDK Overview]. This quick start focuses on getting
+  the sample app installed and running to demonstrate how the Flutter
+  plugin works.
+* You have a Square account enabled for payment processing. If you have not
+  enabled payment processing on your account (or you are not sure), visit
+  [squareup.com/activate].
+* You are familiar with basic Flutter development.
+
+
 ## Before you start
 
 * Follow the **Install** instructions in the [Flutter Getting Started] guide to
@@ -16,22 +27,9 @@ Demonstrates how to use the square_in_app_payments plugin.
   enabled payment processing on your account (or you are not sure), visit
   [squareup.com/activate].
 
-* For help on editing plugin code, read about implementing packages in the [Flutter documentation](https://flutter.io/developing-packages/#edit-plugin-package).
-
-## Getting Started with the In-App Payments SDK flutter plugin 
-
-Read the [getting started guide] to learn how to set up a Flutter project for the In-App Payments SDK. Read 
-the [Enable Apple Pay guide] and [Enable Google Pay guide] to learnhow to integrate digital wallet services 
-into your Flutter project.
-
-
-
-Please check the [`example`] app come with the the plugin project folder.
-
-
 ### Step 1: Run the sample app for iOS
 
-1. Change to the iOS folder (`ios`) at the root of your Flutter project.
+1. Change to the `ios` folder under `example`.
 1. Download and configure the latest version of `SquareInAppPaymentsSDK.framework` in
    the `ios` folder.
 

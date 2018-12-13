@@ -127,21 +127,16 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 ---
-**Note:** the `_processNonce` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+**Note:** the `_processNonce` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [Square Mobile Backend Quickstart](https://github.com/square/in-app-payments-server-quickstart) to learn about building an app that processes payment nonces on a server.
 
 ---
 
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview
-[Square Dashboard]: https://squareup.com/dashboard/
-[update policy for In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview#readersdkupdatepolicy
-[Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
-[squareup.com/activate]: https://squareup.com/activate
-[Square Application Dashboard]: https://connect.squareup.com/apps/
-[In-App Payments SDK Android Setup Guide]: https://docs.connect.squareup.com/payments/readersdk/setup-android
-[In-App Payments SDK iOS Setup Guide]: https://docs.connect.squareup.com/payments/readersdk/setup-ios
+[In-App Payments SDK]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/overview
+[In-App Payments SDK Android Setup Guide]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/setup-android
+[In-App Payments SDK iOS Setup Guide]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/setup-ios
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
