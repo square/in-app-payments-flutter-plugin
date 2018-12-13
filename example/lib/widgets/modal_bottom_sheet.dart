@@ -24,7 +24,6 @@ const Duration _kBottomSheetDuration = Duration(milliseconds: 200);
 const double _kMinFlingVelocity = 700.0;
 const double _kCloseProgressThreshold = 0.5;
 
-
 class BottomSheet extends StatefulWidget {
   const BottomSheet(
       {Key key,
@@ -46,11 +45,11 @@ class BottomSheet extends StatefulWidget {
   _BottomSheetState createState() => _BottomSheetState();
 
   static AnimationController createAnimationController(TickerProvider vsync) =>
-    AnimationController(
-      duration: _kBottomSheetDuration,
-      debugLabel: 'BottomSheet',
-      vsync: vsync,
-    );
+      AnimationController(
+        duration: _kBottomSheetDuration,
+        debugLabel: 'BottomSheet',
+        vsync: vsync,
+      );
 }
 
 class _BottomSheetState extends State<BottomSheet> {
@@ -73,8 +72,7 @@ class _BottomSheetState extends State<BottomSheet> {
   void _handleDragEnd(DragEndDetails details) {
     if (_dismissUnderway) return;
     if (details.velocity.pixelsPerSecond.dy > _kMinFlingVelocity) {
-      final flingVelocity =
-          -details.velocity.pixelsPerSecond.dy / _childHeight;
+      final flingVelocity = -details.velocity.pixelsPerSecond.dy / _childHeight;
       if (widget.animationController.value > 0.0) {
         widget.animationController.fling(velocity: flingVelocity);
       }
@@ -113,19 +111,19 @@ class _ModalBottomSheetLayout extends SingleChildLayoutDelegate {
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
-    BoxConstraints(
-      minWidth: constraints.maxWidth,
-      maxWidth: constraints.maxWidth,
-      minHeight: 0.0,
-    );
+      BoxConstraints(
+        minWidth: constraints.maxWidth,
+        maxWidth: constraints.maxWidth,
+        minHeight: 0.0,
+      );
 
   @override
   Offset getPositionForChild(Size size, Size childSize) =>
-    Offset(0.0, size.height - childSize.height * progress);
+      Offset(0.0, size.height - childSize.height * progress);
 
   @override
   bool shouldRelayout(_ModalBottomSheetLayout oldDelegate) =>
-    progress != oldDelegate.progress;
+      progress != oldDelegate.progress;
 }
 
 class _ModalBottomSheet<T> extends StatefulWidget {
@@ -141,8 +139,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final localizations =
-        MaterialLocalizations.of(context);
+    final localizations = MaterialLocalizations.of(context);
     String routeLabel;
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:

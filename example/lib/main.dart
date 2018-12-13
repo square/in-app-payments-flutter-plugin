@@ -96,13 +96,16 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) => MaterialApp(
-    theme: ThemeData(canvasColor: Colors.white),
-        home: Scaffold(
+      theme: ThemeData(canvasColor: Colors.white),
+      home: Scaffold(
           body: isLoading
-          ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainBackgroundColor),)) 
-          : BuySheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled, squareLocationId: squareLocationId)
-        )
-  );
+              ? Center(
+                  child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(mainBackgroundColor),
+                ))
+              : BuySheet(
+                  applePayEnabled: applePayEnabled,
+                  googlePayEnabled: googlePayEnabled,
+                  squareLocationId: squareLocationId)));
 }
-
-  

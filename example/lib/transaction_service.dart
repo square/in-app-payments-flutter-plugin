@@ -35,7 +35,7 @@ Future<void> chargeCard(CardDetails result) async {
     response = await http.post(chargeUrl, body: body, headers: {
       "Accept": "application/json",
       "content-type": "application/json"
-    });    
+    });
   } on SocketException catch (e) {
     throw ChargeException(e.message.toString());
   }
