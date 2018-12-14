@@ -71,17 +71,20 @@ applicationId  | String  | The Square Application ID otained from the developer 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
 
-class _MyAppState extends State<MyApp> {
-  ...
-  Future<void> _initSquarePayment() async {
-    InAppPayments.setSquareApplicationId(squareApplicationId);
-   ...
-    setState(() {
-          isLoading = false;
-    });
-  }
-  ...
-}  
+  class _MyAppState extends State<MyApp> {
+    ...
+    @override
+    void initState() {
+      super.initState();
+      _initSquarePayment();
+    }
+
+    Future<void> _initSquarePayment() async {
+      await InAppPayments.setSquareApplicationId(squareApplicationId);
+    ...
+    }
+    ...
+  }  
 ```
 
 
@@ -102,14 +105,18 @@ onCardEntryCancel | [CardEntryDidCancelCallback](#cardentrydidcancelcallback) | 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
 
-  Future<void> onStartCardEntryFlow() async {
-    try {
-      await InAppPayments.startCardEntryFlow(
-          onCardNonceRequestSuccess: await onCardEntryCardNonceRequestSuccess,
-          onCardEntryCancel: await onCancelCardEntryFlow);
-    } on PlatformException {
-      showPlaceOrderSheet();
-    }
+  Future<void> _onStartCardEntryFlow() async {
+    await InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCancelCardEntryFlow);
+  }
+
+  void _onCancelCardEntryFlow() {
+    // Handle the cancel callback
+  }
+
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
+    // process card nonce details
   }
 ```
 ---
@@ -134,19 +141,24 @@ call `completeCardEntry` after getting the card nonce from the `onCardNonceReque
 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     try {
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
 
-      //chargeCard is an example of an asynchronous method that uses a card
-      //nonce to take a payment by making a call on the Square Connect v2 
-      //Charge endpoint. The call is awaited for results and then the 
-      //card entry form is closed on success or left open for the user to 
-      //update payment card information and resubmit.
-      await chargeCard(result);
+      // payment finished successfully
+      // you must call this method to close card entry
       InAppPayments.completeCardEntry(
-        onCardEntryComplete: onCardEntryComplete);
-    } on Exception catch (e) {
-      InAppPayments.showCardNonceProcessingError(e.errorMessage);
+          onCardEntryComplete: _onCardEntryComplete);
+    } on Exception catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      InAppPayments.showCardNonceProcessingError(ex.message);
     }
+  }
 ```
 
 
@@ -170,23 +182,24 @@ errorMessage    | String     | The error message to be shown in the card entry f
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
 
-   Future<Response> _processNonce(String cardNonce) async {
-      final String url = 'https://api.supercookie.com/processnonce';
-      final m = Map<String,String>();
-      m.addAll({'Content-Type':'application/json'});
-      return await http.post(
-        url,
-        headers: m,
-        body: {'nonce': cardNonce, 'amount':'100'})
-   }
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
+    try {
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
 
-   void _onCardNonceRequestSuccess(CardDetails cardDetails) async {
-     Response response = await _processNonce(cardDetails.nonce);
-     if (response.statusCode != 201) {
-       await InAppPayments.showCardNonceProcessingError(
-         'Payment card was not accepted.');
-     } 
-   }
+      // payment finished successfully
+      // you must call this method to close card entry
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    } on Exception catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      InAppPayments.showCardNonceProcessingError(ex.message);
+    }
+  }
 ```
 ---
 
@@ -206,13 +219,26 @@ applePayMerchantId | String        | Registered Apple Pay merchant ID
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
 import 'dart:io' show Platform;
+import 'package:square_in_app_payments/in_app_payments.dart';
 
-  if (Platform.isIOS) {
-      await _setIOSCardEntryTheme();
-      await InAppPayments.initializeApplePay(appleMerchantId);
-      canUseApplePay = await InAppPayments.canUseApplePay;
+  class _MyAppState extends State<MyApp> {
+    ...
+    @override
+    void initState() {
+      super.initState();
+      _initSquarePayment();
+    }
+
+    Future<void> _initSquarePayment() async {
+      ...
+      if (Platform.isIOS) {
+        await InAppPayments.initializeApplePay(appleMerchantId);
+        ...
+      }
+    ...
+    }
+    ...
   }
 ```
 
@@ -229,11 +255,27 @@ Not all brands supported by Apple Pay are supported by Square.
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
 import 'dart:io' show Platform;
+import 'package:square_in_app_payments/in_app_payments.dart';
 
-  if (Platform.isIOS) {
-      canUseApplePay = await InAppPayments.canUseApplePay;
+  class _MyAppState extends State<MyApp> {
+    ...
+    @override
+    void initState() {
+      super.initState();
+      _initSquarePayment();
+    }
+
+    Future<void> _initSquarePayment() async {
+      ...
+      if (Platform.isIOS) {
+        ...
+        canUseApplePay = await InAppPayments.canUseApplePay;
+        ...
+      }
+    ...
+    }
+    ...
   }
 ```
 
@@ -263,19 +305,32 @@ Throws [InAppPaymentsException](#inapppaymentsexception)
 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
-  void onStartApplePay() async {
+
+  void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
-          price: getCookieAmount(),
+          price: '1.00',
           summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
-          onApplePayNonceRequestSuccess: onApplePayNonceRequestSuccess,
-          onApplePayNonceRequestFailure: onApplePayNonceRequestFailure,
-          onApplePayComplete: onApplePayEntryComplete);
-    } on PlatformException {
-      showPlaceOrderSheet();
+          onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
+          onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
+          onApplePayComplete: _onApplePayEntryComplete);
+    } on PlatformException catch (ex) {
+      // handle the failure of starting apple pay
     }
+  }
+
+  void _onApplePayNonceRequestSuccess(CardDetails result) async {
+    // process card nonce before close apple pay sheet
+  }
+
+  void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
+    // handle this error before close apple pay sheet
+  }
+
+  void _onApplePayEntryComplete() {
+    // handle the apple pay sheet closed event
   }
 ```
 
@@ -296,21 +351,42 @@ isSuccess                     | bool         | Indicates success or failure.
 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
-
-  void onApplePayNonceRequestSuccess(CardDetails result) async {
+  ...
+  /**
+  * Callback when successfully get the card nonce details for processig
+  * apple pay sheet is still open and waiting for processing card nonce details
+  */
+  void _onApplePayNonceRequestSuccess(CardDetails result) async {
     try {
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
 
-      //chargeCard is an example of an asynchronous method that uses a card
-      //nonce to take a payment by making a call on the Square Connect v2 
-      //Charge endpoint. The call is awaited for results and then the 
-      //card entry form is closed on success or left open for the user to 
-      //update payment card information and resubmit.
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } on Exception catch (ex) {
+      // handle card nonce processing failure
 
-      await chargeCard(result);
-      showAlertDialog(scaffoldKey.currentContext, "Your order was successful", "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
-      showAlertDialog(scaffoldKey.currentContext, "Error occurred", e.errorMessage);
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false,
+        errorMessage: ex.message);
     }
+  }
+
+  /**
+  * Callback when failed to get the card nonce
+  * apple pay sheet is still open and waiting for processing error information
+  */
+  void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
+    // handle this error before close the apple pay sheet
+
+    // you must call completeApplePayAuthorization to close apple pay sheet
+    await InAppPayments.completeApplePayAuthorization(
+      isSuccess: false,
+      errorMessage: errorInfo.message);
   }
 ```
 ---
@@ -333,25 +409,23 @@ themeConfiguration | [IOSTheme](#iostheme)                   | An object that de
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
 
-  Future _setIOSCardEntryTheme() async {
-    var themeConfiguationBuilder = IOSThemeBuilder();
-    themeConfiguationBuilder.saveButtonTitle = 'Pay';
-    themeConfiguationBuilder.errorColor = RGBAColorBuilder()
-      ..r = 255
-      ..g = 0
-      ..b = 0;
-    themeConfiguationBuilder.tintColor = RGBAColorBuilder()
-      ..r = 36
-      ..g = 152
-      ..b = 141;
-    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
-    themeConfiguationBuilder.messageColor = RGBAColorBuilder()
-      ..r = 114
-      ..g = 114
-      ..b = 114;
+  var themeConfiguationBuilder = IOSThemeBuilder();
+  themeConfiguationBuilder.saveButtonTitle = 'Pay';
+  themeConfiguationBuilder.errorColor = RGBAColorBuilder()
+    ..r = 255
+    ..g = 0
+    ..b = 0;
+  themeConfiguationBuilder.tintColor = RGBAColorBuilder()
+    ..r = 36
+    ..g = 152
+    ..b = 141;
+  themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+  themeConfiguationBuilder.messageColor = RGBAColorBuilder()
+    ..r = 114
+    ..g = 114
+    ..b = 114;
 
-    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
-  }
+  await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
 ```
 --- 
 
@@ -378,13 +452,30 @@ environment        | Int             | Specifies the Google Pay environment to r
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
 import 'dart:io' show Platform;
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart'
+    as google_pay_constants;
 
-    if (Platform.isAndroid) {
-      await InAppPayments.initializeGooglePay(
-          squareLocationId, google_pay_constants.environmentTest);
+  class _MyAppState extends State<MyApp> {
+    ...
+    @override
+    void initState() {
+      super.initState();
+      _initSquarePayment();
     }
+
+    Future<void> _initSquarePayment() async {
+      ...
+      if (Platform.isAndroid) {
+        await InAppPayments.initializeGooglePay(
+            squareLocationId, google_pay_constants.environmentTest);
+        ...
+      }
+    ...
+    }
+    ...
+  }
 ```
 
 
@@ -405,12 +496,28 @@ Throws [InAppPaymentsException](#inapppaymentsexception)
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
 import 'dart:io' show Platform;
+import 'package:square_in_app_payments/in_app_payments.dart';
 
-    if (Platform.isAndroid) {
-      canUseGooglePay = await InAppPayments.canUseGooglePay;
+  class _MyAppState extends State<MyApp> {
+    ...
+    @override
+    void initState() {
+      super.initState();
+      _initSquarePayment();
     }
+
+    Future<void> _initSquarePayment() async {
+      ...
+      if (Platform.isAndroid) {
+        ...
+        canUseGooglePay = await InAppPayments.canUseGooglePay;
+        ...
+      }
+    ...
+    }
+    ...
+  }
 ```
 
 
@@ -436,12 +543,14 @@ Throws [InAppPaymentsException](#inapppaymentsexception)
 
 ```dart
 import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart'
+    as google_pay_constants;
 
   void onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-          priceStatus: 1,
-          price: getCookieAmount(),
+          priceStatus: google_pay_constants.totalPriceStatusFinal,
+          price: '1.00',
           currencyCode: 'USD',
           onGooglePayNonceRequestSuccess: onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: onGooglePayNonceRequestFailure,
@@ -449,6 +558,18 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     } on PlatformException {
       showPlaceOrderSheet();
     }
+  }
+
+  void _onGooglePayNonceRequestSuccess(CardDetails result) async {
+    // process google pay card nonce details
+  }
+
+  void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
+    // handle google pay failure
+  }
+
+  void onGooglePayEntryCanceled() {
+    // handle google pay canceled
   }
 ```
 
@@ -466,59 +587,43 @@ cardDetails     | [CardDetails](#carddetails)              | The results of a su
 #### Example usage
 
 ```dart
+import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
-import 'package:http/http.dart' as http;
 
-  void onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    if (chargeBackendDomain == "REPLACE_ME") {
-
-    }
+  /**
+  * Callback when successfully get the card nonce details for processig
+  * card entry is still open and waiting for processing card nonce details
+  */
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     try {
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
 
-      //chargeCard is an example of an asynchronous method that uses a card
-      //nonce to take a payment by making a call on the Square Connect v2 
-      //Charge endpoint. The call is awaited for results and then the 
-      //card entry form is closed on success or left open for the user to 
-      //update payment card information and resubmit.
-      await chargeCard(result);
+      // payment finished successfully
+      // you must call this method to close card entry
       InAppPayments.completeCardEntry(
-        onCardEntryComplete: onCardEntryComplete);
-    } on ChargeException catch (e) {
-      InAppPayments.showCardNonceProcessingError(e.errorMessage);
+          onCardEntryComplete: _onCardEntryComplete);
+    } on Exception catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      InAppPayments.showCardNonceProcessingError(ex.message);
     }
   }
-   
 ```
 ---
 ### CardEntryDidCancelCallback
 
-Callback invoked when card entry canceled. 
+Callback invoked when card entry canceled and has been closed. 
 
 Do not call [completeCardEntry](#completecardentry) because the operation is complete and the card entry form is closed.
 
-#### Example usage
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-  void onCancelCardEntryFlow() {
-    //Return to calling activity
-  }
-```
 ---
 
 ### CardEntryCompleteCallback
 Callback invoked when card entry is completed and has been closed.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-  void onCardEntryComplete() {
-    showAlertDialog(scaffoldKey.currentContext, "Your order was successful", "Go to your Square dashbord to see this order reflected in the sales tab.");
-  }
-
-```
 
 ---
 ### ApplePayNonceRequestSuccessCallback
@@ -538,13 +643,23 @@ cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onApplePayNonceRequestSuccess(CardDetails result) async {
+  void _onApplePayNonceRequestSuccess(CardDetails result) async {
     try {
-      await chargeCard(result);
-      showAlertDialog(scaffoldKey.currentContext, "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
-      showAlertDialog(scaffoldKey.currentContext, e.errorMessage);
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
+
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } on Exception catch (ex) {
+      // handle card nonce processing failure
+
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false,
+        errorMessage: ex.message);
     }
   }
 ```
@@ -565,9 +680,13 @@ errorInfo       | [ErrorInfo](#errorinfo)  | Information about the error conditi
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    await InAppPayments.completeApplePayAuthorization(isSuccess: false);
+  void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
+    // handle this error before close the apple pay sheet
+
+    // you must call completeApplePayAuthorization to close apple pay sheet
+    await InAppPayments.completeApplePayAuthorization(
+      isSuccess: false,
+      errorMessage: errorInfo.message);
   }
 ```
 ---
@@ -577,15 +696,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 Callback invoked when the native iOS Apple Pay payment authorization sheet is closed with success, failure, or cancellation.
 
 This callback notifies caller widget when it should switch to other views.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onApplePayEntryComplete() {
-    //Return to calling activity
-  }
-```
 
 ---
 ### GooglePayNonceRequestSuccessCallback
@@ -601,13 +711,17 @@ cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of
 #### Example usage
 
 ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onGooglePayNonceRequestSuccess(CardDetails result) async {
+import 'package:square_in_app_payments/models.dart';
+
+  void _onGooglePayNonceRequestSuccess(CardDetails result) async {
     try {
-      await chargeCard(result);
-      showAlertDialog(scaffoldKey.currentContext, "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
-      showAlertDialog(scaffoldKey.currentContext, e.errorMessage);
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
+    } on Exception catch (ex) {
+      // handle card nonce processing failure
     }
   }
 ```
@@ -622,30 +736,11 @@ Parameter       | Type                     | Description
 :-------------- | :----------------------- | :-----------
 errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the error. 
 
-
- #### Example usage
-
- ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    showAlertDialog(scaffoldKey.currentContext, 'Failed to start GooglePay.\n ${errorInfo.toString()}');
-  }
- ```
-
 ---
  ### GooglePayCancelCallback
 **Android Only**
  
  Callback invoked when Google Pay payment authorization is canceled.
-
- #### Example usage
-
- ```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-  void onGooglePayEntryCanceled() {
-    //return to calling activity
-  }
- ```
 
 ---
 ## Classes
@@ -668,25 +763,6 @@ debugMessage      | String                    | A description of the error state
 
 **toString()**
 Returns the **InAppPaymentsException** with properties as a string.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/models.dart';
-
-  try {
-    await InAppPayments.requestGooglePayNonce(
-      price: '100',
-      currencyCode: 'USD',
-      priceStatus: google_pay_constants.totalPriceStatusFinal,
-      onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
-      onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
-      onGooglePayCanceled: _onGooglePayCancel);
-  } on InAppPaymentsException catch (ex) {
-    print('Failed to onStartGooglePay. \n ${ex.toString()}');
-  }
-```
-
 
 ---
 ## Objects
@@ -718,8 +794,6 @@ import 'package:square_in_app_payments/models.dart';
    }
    */
 ```
-
-
 
 ---
 ### Card 
@@ -775,9 +849,9 @@ import 'package:square_in_app_payments/models.dart';
    /* toString() output:
    {
      "code": "USAGE_ERROR",
-     "message": "",
-     "debugCode": "",
-     "debugMessage": ""
+     "message": "...",
+     "debugCode": "...",
+     "debugMessage": "..."
    }
    */
 ```

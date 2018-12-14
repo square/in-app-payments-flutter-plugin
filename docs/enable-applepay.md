@@ -25,6 +25,7 @@ Add code to initialize Apple Pay in your application State class. If you followe
 value of `InAppPayments.canUseApplePay` in the app `State` object.
 
 ```dart
+import 'dart:io' show Platform;
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 
@@ -36,8 +37,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initSquarePayment() async {
     ...
     var canUseApplePay = false;
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
-      await InAppPayments.initializeApplePay('supercookie.com.flutter');
+    if (Platform.isIOS) {
+      // initialize the apple pay with apple pay merchant id
+      await InAppPayments.initializeApplePay('APPLE_PAY_MERCHANT_ID');
+      // always check if apple pay supported on that device
+      // before enable apple pay
       canUseApplePay = await InAppPayments.canUseApplePay;
     }
     setState(() {
@@ -51,61 +55,89 @@ class _MyAppState extends State<MyApp> {
 
 ```
 
+* Replace `APPLE_PAY_MERCHANT_ID` in this example with a valid apple pay merchant ID.
+
 ## Step 2: Authorize payment with Apple Pay
 Open the Apple Pay sheet and request the user's authorization of the payment. On authorization, a
 payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
 ```dart
+  /** 
+  * An event listner to start apple pay flow
+  */
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
-          price: getCookieAmount(),
+          price: '1.00',
           summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
-    } on PlatformException {
-      _showOrderSheet();
+    } on PlatformException catch (ex) {
+      // handle the failure of starting apple pay
     }
   }
 ```
 ## Step 3: Get payment authorization result
 
 ```dart
+  /**
+  * Callback when successfully get the card nonce details for processig
+  * apple pay sheet is still open and waiting for processing card nonce details
+  */
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
-    if (!_chargeBackendDomainReplaced) {
-      showUrlNotSetAndPrintCurlCommand(result.nonce);
-      return;
-    }
     try {
-      await chargeCard(result);
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Your order was successful",
-      description: "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
-      showAlertDialog(context: scaffoldKey.currentContext,
-      title: "Error processing ApplePay payment",
-      description: e.errorMessage);
+      // take payment with the card nonce details
+      // you can take a charge or save card
+      // await chargeCard(result);
+      // or
+      // await saveCard(result);
+
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } on Exception catch (ex) {
+      // handle card nonce processing failure
+
+      // you must call completeApplePayAuthorization to close apple pay sheet
+      await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false,
+        errorMessage: ex.message);
     }
   }
 
+  /**
+  * Callback when failed to get the card nonce
+  * apple pay sheet is still open and waiting for processing error information
+  */
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    await InAppPayments.completeApplePayAuthorization(isSuccess: false);
-  }
+    // handle this error before close the apple pay sheet
 
+    // you must call completeApplePayAuthorization to close apple pay sheet
+    await InAppPayments.completeApplePayAuthorization(
+      isSuccess: false,
+      errorMessage: errorInfo.message);
+  }
 ```
 
 ## Step 4: Respond to Apple Pay payment authorization complete
 The following callback is invoked when the Apple Pay payment authorization sheet is closed. 
-The sample app uses this callback to return the user to the cookie order sheet.
+
 ```dart
+  /**
+  * Callback when the apple pay sheet is closed after
+  * call completeApplePayAuthorization
+  */
   void _onApplePayEntryComplete() {
-    _showOrderSheet();
+    // handle the apple pay sheet closed event
   }
 
 ```
+
+---
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+
 ---
 
 
