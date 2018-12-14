@@ -96,8 +96,8 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) => MaterialApp(
-    theme: ThemeData(canvasColor: Colors.white),
-        home: Scaffold(
+      theme: ThemeData(canvasColor: Colors.white),
+      home: Scaffold(
           body: isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -108,5 +108,3 @@ class HomeScreenState extends State<HomeScreen> {
                      appleMerchantId: appleMerchantId, 
                      squareLocationId: squareLocationId)));
 }
-
-  

@@ -18,15 +18,14 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import 'cookie_button.dart';
 
-enum paymentType {cardPayment, googlePay, applePay}
+enum paymentType { cardPayment, googlePay, applePay }
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
 
 class OrderSheet extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => 
-      Container(
+  Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -42,76 +41,75 @@ class OrderSheet extends StatelessWidget {
               ),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  minWidth: MediaQuery.of(context).size.width, 
-                  minHeight: 300, 
-                  maxHeight: MediaQuery.of(context).size.height, 
-                  maxWidth: MediaQuery.of(context).size.width),
-                child:
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        _ShippingInformation(),
-                        _LineDivider(),
-                        _PaymentTotal(),
-                        _LineDivider(),
-                        _RefundInformation(),
-                        _payButtons(context),
-                      ]),
+                    minWidth: MediaQuery.of(context).size.width,
+                    minHeight: 300,
+                    maxHeight: MediaQuery.of(context).size.height,
+                    maxWidth: MediaQuery.of(context).size.width),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _ShippingInformation(),
+                      _LineDivider(),
+                      _PaymentTotal(),
+                      _LineDivider(),
+                      _RefundInformation(),
+                      _payButtons(context),
+                    ]),
               ),
-        ]),
-    );
+            ]),
+      );
 
-  Widget _title(context) => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Container (
+  Widget _title(context) =>
+      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        Container(
             child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            icon: Icon(Icons.close),
-            color: closeButtonColor)
-          ),
-          Container(
-            child: Expanded(
-              child:Text(
-                "Place your order",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.close),
+                color: closeButtonColor)),
+        Container(
+          child: Expanded(
+            child: Text(
+              "Place your order",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
           ),
-          Padding(padding: EdgeInsets.only(right: 56)),
-        ]);
+        ),
+        Padding(padding: EdgeInsets.only(right: 56)),
+      ]);
 
   Widget _payButtons(context) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-            CookieButton(text: "Pay with card", onPressed: () {
-                Navigator.pop(context, paymentType.cardPayment);
+          CookieButton(
+            text: "Pay with card",
+            onPressed: () {
+              Navigator.pop(context, paymentType.cardPayment);
+            },
+          ),
+          Container(
+            height: 64,
+            width: MediaQuery.of(context).size.width * .4,
+            child: RaisedButton(
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  Navigator.pop(context, paymentType.googlePay);
+                } else if (Platform.isIOS) {
+                  Navigator.pop(context, paymentType.applePay);
+                }
               },
+              child: Image(
+                  image: (Theme.of(context).platform == TargetPlatform.iOS)
+                      ? AssetImage("assets/applePayLogo.png")
+                      : AssetImage("assets/googlePayLogo.png")),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0)),
+              color: Colors.black,
             ),
-            Container(
-              height: 64,
-              width: MediaQuery.of(context).size.width * .4,
-              child: RaisedButton(
-                onPressed: () {
-                  if (Platform.isAndroid) {
-                    Navigator.pop(context, paymentType.googlePay);
-                  } else if (Platform.isIOS) {
-                    Navigator.pop(context, paymentType.applePay);
-                  }
-                },
-                child: Image(
-                    image: (Theme.of(context).platform == TargetPlatform.iOS)
-                        ? AssetImage("assets/applePayLogo.png")
-                        : AssetImage("assets/googlePayLogo.png")),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                color: Colors.black,
-              ),
-            ),
+          ),
         ],
       );
 }
@@ -151,15 +149,12 @@ class _ShippingInformation extends StatelessWidget {
 
 class _LineDivider extends StatelessWidget {
   @override
-  Widget build(BuildContext context) =>
-  Container(
-    margin: EdgeInsets.only(left: 30, right: 30),
-    child:
-      Divider(
+  Widget build(BuildContext context) => Container(
+      margin: EdgeInsets.only(left: 30, right: 30),
+      child: Divider(
         height: 1,
         color: dividerColor,
-      )
-  );
+      ));
 }
 
 class _PaymentTotal extends StatelessWidget {

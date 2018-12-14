@@ -1,118 +1,52 @@
-# square_in_app_payments
+# Flutter plugin for In-App Payments SDK
 
-A flutter plugin for Square Mobile Commerce SDK.
+This repo contains a Flutter plugin for Square [In-App Payments SDK]. In-App Payments SDK for
+Flutter supports the following native In-App Payments SDK versions:
 
-## Before you start
-* You will need a Square account enabled for payment processing. If you have not
-  enabled payment processing on your account (or you are not sure), visit
-  [squareup.com/activate].
+  * iOS: 1.0.0
+  * Android: 1.0.0
 
-* As an Alpha user, you need register your application ID with square to be able to take paymeent.
-  Please contact us you haven't got one registered.
+## Additional documentation
 
-* For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+In addition to this README, the following is available in the [flutter plugin GitHub repo]:
 
-* For help on editing plugin code, view the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
+* [Getting started guide]
+* [Enable Apple Pay guide]
+* [Enable Google Pay guide]
+* [Technical reference]
+* [Troubleshooting guide]
+* [`docs`] - Root directory for all documentation.
+* [`example`] - Root directory of the Flutter sample app (with walkthrough).
 
-## Getting Started mComm SDK flutter plugin 
+## Build requirements
 
-### Step 1: Create a Flutter project
+### Android
 
-The basic command is:
+* Android SDK platform: API 27 (Oreo, 8.1).
+* Android SDK build tools: 26.0.3
+* Android Gradle Plugin: 3.0.0 or greater.
+* Support library: 26.0.2
+* Google Play Services: 12.0.1
+* Google APIs Intel x86 Atom_64 System Image
 
-```bash
-flutter create square_mcomm_sdk_example
-```
+### iOS
 
-### Step 2: Install mComm SDK plugin
+* Xcode version: 9.1 or greater.
+* iOS Base SDK: 11.1 or greater.
+* Deployment target: iOS 11.0 or greater.
 
-Put the *square_in_app_payments* project folder in `flutter` folder. Edit the `pubspec.yaml` in *square_reader_sdk_example* to include :
-```yaml
-dependencies:
-    ...
-    square_in_app_payments:
-        path: ../square_in_app_payments
-```
 
-### Step 3: Configure mComm SDK for Android
+## In-App Payments SDK requirements and limitations
 
-1. Update the Android build target version:
-```
-android {
-    compileSdkVersion 27
+* In-App Payments SDK is only available for accounts based in the United States.
+  Authorization requests for accounts based outside the United States return an
+  error.
+* In-App Payments SDK cannot issue refunds. Refunds can be issued programmatically using
+  the Transactions API or manually in the [Square Dashboard].
+* In-App Payments SDK is not supported in the Square sandbox. See [Testing Mobile Apps]
+  for testing recommendations.
 
-    ...
 
-    defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "mcomm.flutter.example"
-        minSdkVersion 21
-        targetSdkVersion 27
-        ...
-    }
-
-    ...
-}
-```
-
-### Step 4: Install mComm SDK for iOS
-
-To use the Flutter plugin on iOS devices, you need to install mComm
-SDK for iOS so it is available to the flutter plugin as a resource.
-The key installation steps are outlined below. 
-
-1. Change to the iOS folder (`ios`) at the root of your Flutter project.
-1. Download and configure the latest version of `SquareMobileCommerceSDK.framework` in
-   the `ios` folder.
-1. Add mComm SDK to your Xcode project:
-   * Open the **General** tab for your app target in Xcode.
-   * Drag the newly downloaded `SquareMobileCommerceSDK.framework` into the
-     **Embedded Binaries** section and click "Finish" in the modal that appears.
-1. Add a mComm SDK build phase:
-   1. Open the Xcode workspace or project for your application.
-   1. In the **Build Phases** tab for your application target, click the **+**
-      button (at the top of the pane).
-   1. Select **New Run Script Phase**.
-   1. Paste the following into the editor panel of the new run script:
-      ```
-      FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-      "${FRAMEWORKS}/SquareMobileCommerceSDK.framework/setup"
-      ```
-1. In Xcode, open the **General** tab for your app target and make sure the
-   **Deployment Target** is set to **11.0+**.
-1. In Xcode, open the **Build Settings** tab for your app target and add **$(PROJECT_DIR)**
-   to **Framework Search Paths**.
-
-### Step 5: Using SDK from your app
-
-Please check the **example** app come with the the plugin project folder.
-
-## Quick start example setup 
-
-### Step 1: Run the sample app for iOS
-
-1. Change to the iOS folder (`ios`) at the root of your Flutter project.
-1. Download and configure the latest version of `SquareMobileCommerceSDK.framework` in
-   the `ios` folder.
-
-3. Launch iOS emulator, run the example project from the `example` project folder: 
-    ```bash
-    cd /PATH/TO/LOCAL/example
-    flutter run
-    ```
-
-### Step 2: Run the sample app for Android
-
-1. Launch Android emulator, run the flutter example project from the `example` project folder:
-    ```bash
-    cd /PATH/TO/LOCAL/example
-    flutter run
-    ```
-
-## Enable ApplePay / GooglePay
-
-Please reference to native mCommerce Alpha documents.
 
 ## License
 
@@ -134,3 +68,14 @@ limitations under the License.
 
 [//]: # "Link anchor definitions"
 [squareup.com/activate]: https://squareup.com/activate
+[In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
+[Square Dashboard]: https://squareup.com/dashboard/
+[Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
+[`docs`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs
+[`example`]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/example
+[Getting started guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/get-started.md
+[Enable Apple Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-applepay.md
+[Enable Google Pay guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/enable-googlepay.md
+[Technical reference]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/reference.md
+[Troubleshooting guide]: https://git.sqcorp.co/users/xiao/repos/in-app-payments-flutter-plugin/browse/docs/troubleshooting.md
+[flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master

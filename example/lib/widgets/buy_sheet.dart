@@ -33,9 +33,11 @@ class BuySheet extends StatelessWidget {
   final String squareLocationId;
   final String appleMerchantId;
   static final GlobalKey<ScaffoldState> scaffoldKey =
-    GlobalKey<ScaffoldState>();
+      GlobalKey<ScaffoldState>();
 
-  BuySheet({this.applePayEnabled, this.googlePayEnabled, this.appleMerchantId, this.squareLocationId});
+
+  BuySheet(
+    {this.applePayEnabled, this.googlePayEnabled, this.appleMerchantId, this.squareLocationId});
 
   bool get _chargeServerHostReplaced =>
     chargeServerHost != "REPLACE_ME";
@@ -46,11 +48,13 @@ class BuySheet extends StatelessWidget {
   bool get _appleMerchantIdSet =>
     appleMerchantId != "REPLACE_ME";
 
+  ErrorInfo _applePayError;
+
   void _showOrderSheet() async {
-    var selection = await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
-        context: scaffoldKey.currentState.context,
-        builder: (context) => OrderSheet()
-    );
+    var selection =
+        await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
+            context: scaffoldKey.currentState.context,
+            builder: (context) => OrderSheet());
 
     switch (selection) {
       case paymentType.cardPayment:
@@ -85,21 +89,31 @@ class BuySheet extends StatelessWidget {
         '\"amount\": $cookieAmount,'
         '\"currency\": \"USD\"},'
         '\"card_nonce\": \"$nonce\"'
-      '}\'');
+        '}\'');
+  }
+
+  void _showUrlNotSetAndPrintCurlCommand(String nonce) {
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Nonce generated, but URL not set",
+        description:
+            "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
+    printCurlCommand(nonce);
   }
 
   void _onCardEntryComplete() {
     if (_chargeServerHostReplaced) {
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Your order was successful",
-      description: "Go to your Square dashbord to see this order reflected in the sales tab.");
+      showAlertDialog(
+          context: scaffoldKey.currentContext, 
+          title: "Your order was successful",
+          description: "Go to your Square dashbord to see this order reflected in the sales tab.");
     }
   }
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
       InAppPayments.completeCardEntry(
-        onCardEntryComplete: _onCardEntryComplete);
+          onCardEntryComplete: _onCardEntryComplete);
 
       _showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
@@ -107,7 +121,7 @@ class BuySheet extends StatelessWidget {
     try {
       await chargeCard(result);
       InAppPayments.completeCardEntry(
-        onCardEntryComplete: _onCardEntryComplete);
+          onCardEntryComplete: _onCardEntryComplete);
     } on ChargeException catch (e) {
       InAppPayments.showCardNonceProcessingError(e.errorMessage);
     }
@@ -144,20 +158,24 @@ class BuySheet extends StatelessWidget {
     }
     try {
       await chargeCard(result);
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Your order was successful",
-      description: "Go to your Square dashbord to see this order reflected in the sales tab.");
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Your order was successful",
+          description:
+              "Go to your Square dashbord to see this order reflected in the sales tab.");
     } on ChargeException catch (e) {
-      showAlertDialog(context: scaffoldKey.currentContext,
-      title: "Error processing GooglePay payment",
-      description: e.errorMessage);
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Error processing GooglePay payment",
+          description: e.errorMessage);
     }
   }
 
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    showAlertDialog(context: scaffoldKey.currentContext,
-    title: "Failed to start GooglePay",
-    description: errorInfo.toString());
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Failed to start GooglePay",
+        description: errorInfo.toString());
   }
 
   void onGooglePayEntryCanceled() {
@@ -186,13 +204,16 @@ class BuySheet extends StatelessWidget {
     }
     try {
       await chargeCard(result);
-      showAlertDialog(context: scaffoldKey.currentContext, 
-      title: "Your order was successful",
-      description: "Go to your Square dashbord to see this order reflected in the sales tab.");
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Your order was successful",
+          description:
+              "Go to your Square dashbord to see this order reflected in the sales tab.");
     } on ChargeException catch (e) {
-      showAlertDialog(context: scaffoldKey.currentContext,
-      title: "Error processing ApplePay payment",
-      description: e.errorMessage);
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Error processing ApplePay payment",
+          description: e.errorMessage);
     }
   }
 
@@ -216,53 +237,63 @@ class BuySheet extends StatelessWidget {
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    await InAppPayments.completeApplePayAuthorization(isSuccess: false);
+    _applePayError = errorInfo;
+    await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: errorInfo.message);
   }
 
   void _onApplePayEntryComplete() {
-    _showOrderSheet();
+    if (_applePayError != null) {
+      // apply pay failed
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Error processing ApplePay payment",
+          description: _applePayError.message);
+      _applePayError = null;
+    } else {
+      // apple pay cancelled
+      _showOrderSheet();
+    }
   }
 
   Widget build(BuildContext context) => MaterialApp(
-    theme: ThemeData(canvasColor: Colors.transparent),
-    home: Scaffold(
-      backgroundColor: mainBackgroundColor,
-      key: scaffoldKey,
-      body: Builder(
-        builder: (context) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                child: Image(image: AssetImage("assets/iconCookie.png")),
-              ),
-              Container(
-                child: Text(
-                  'Super Cookie',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                  ),
-                ),
-              ),
-              Container(
-                child: Text(
-                  "Instantly gain special powers \nwhen ordering a super cookie",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 32),
-                child:
-                  CookieButton(text: "Buy", onPressed: _showOrderSheet),
-              ),
-            ],
-          )
+        theme: ThemeData(canvasColor: Colors.transparent),
+        home: Scaffold(
+          backgroundColor: mainBackgroundColor,
+          key: scaffoldKey,
+          body: Builder(
+            builder: (context) => Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Image(image: AssetImage("assets/iconCookie.png")),
+                    ),
+                    Container(
+                      child: Text(
+                        'Super Cookie',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        "Instantly gain special powers \nwhen ordering a super cookie",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 32),
+                      child:
+                          CookieButton(text: "Buy", onPressed: _showOrderSheet),
+                    ),
+                  ],
+                )),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }

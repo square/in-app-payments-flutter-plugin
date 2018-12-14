@@ -277,8 +277,7 @@ class InAppPayments {
 
   static Future setIOSCardEntryTheme(IOSTheme theme) async {
     var params = <String, dynamic>{
-      'theme': _standardSerializers.serializeWith(
-          IOSTheme.serializer, theme),
+      'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),
     };
     await _channel.invokeMethod('setFormTheme', params);
   }

@@ -10,11 +10,6 @@ android/.classpath
 android/.project
 android/.settings/org.eclipse.buildship.core.prefs
 android/bin
-example/android/.project
-example/android/.settings/org.eclipse.buildship.core.prefs
-example/android/app/.project
-example/android/app/.classpath
-example/android/app/.settings/org.eclipse.buildship.core.prefs
 .vscode/settings.json
 .vscode/launch.json
 .clang-format

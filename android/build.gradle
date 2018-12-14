@@ -17,10 +17,8 @@ rootProject.allprojects {
         google()
         jcenter()
         maven {
-         url "https://sdk.squareup.com/public/android"
+         url "https://sdk.squareupstaging.com/public/android"
         }
-        // TODO: remove this after update to public artifactory
-        mavenLocal()
     }
 }
 
