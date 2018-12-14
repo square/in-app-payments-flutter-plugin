@@ -100,7 +100,8 @@ class HomeScreenState extends State<HomeScreen> {
         home: Scaffold(
           body: isLoading
           ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainBackgroundColor),)) 
-          : BuySheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled, squareLocationId: squareLocationId)
+          : BuySheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled, 
+                     appleMerchantId: appleMerchantId, squareLocationId: squareLocationId)
         )
   );
 }

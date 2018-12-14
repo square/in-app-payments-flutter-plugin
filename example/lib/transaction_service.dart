@@ -20,8 +20,8 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:http/http.dart' as http;
 
 // Replace this with the URL you create, if you have your own server running
-String chargeBackendDomain = "REPLACE_ME";
-String chargeUrl = "https://$chargeBackendDomain/chargeForCookie";
+String chargeServerHost = "REPLACE_ME";
+String chargeUrl = "https://$chargeServerHost/chargeForCookie";
 
 class ChargeException implements Exception {
   String errorMessage;
