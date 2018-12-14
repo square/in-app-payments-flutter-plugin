@@ -21,7 +21,7 @@ import 'package:http/http.dart' as http;
 
 // Replace this with the URL you create, if you have your own server running
 String chargeServerHost = "REPLACE_ME";
-String chargeUrl = "https://$chargeServerHost/chargeForCookie";
+String chargeUrl = "$chargeServerHost/chargeForCookie";
 
 class ChargeException implements Exception {
   String errorMessage;

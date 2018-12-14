@@ -35,18 +35,17 @@ class BuySheet extends StatelessWidget {
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-
   BuySheet(
-    {this.applePayEnabled, this.googlePayEnabled, this.appleMerchantId, this.squareLocationId});
+      {this.applePayEnabled,
+      this.googlePayEnabled,
+      this.appleMerchantId,
+      this.squareLocationId});
 
-  bool get _chargeServerHostReplaced =>
-    chargeServerHost != "REPLACE_ME";
+  bool get _chargeServerHostReplaced => chargeServerHost != "REPLACE_ME";
 
-  bool get _squareLocationSet =>
-    squareLocationId != "REPLACE_ME";
+  bool get _squareLocationSet => squareLocationId != "REPLACE_ME";
 
-  bool get _appleMerchantIdSet =>
-    appleMerchantId != "REPLACE_ME";
+  bool get _appleMerchantIdSet => appleMerchantId != "REPLACE_ME";
 
   ErrorInfo _applePayError;
 
@@ -78,12 +77,13 @@ class BuySheet extends StatelessWidget {
   }
 
   void printCurlCommand(String nonce) {
-   var uuid = Uuid().v4();
-   print('curl --request POST https://connect.squareup.com/v2/locations/SQUARE_LOCATION_ID/transactions \\'
-    '--header \"Content-Type: application/json\" \\'
-    '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
-    '--header \"Accept: application/json\" \\'
-    '--data \'{'
+    var uuid = Uuid().v4();
+    print(
+        'curl --request POST https://connect.squareup.com/v2/locations/SQUARE_LOCATION_ID/transactions \\'
+        '--header \"Content-Type: application/json\" \\'
+        '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
+        '--header \"Accept: application/json\" \\'
+        '--data \'{'
         '\"idempotency_key\": \"$uuid\",'
         '\"amount_money\": {'
         '\"amount\": $cookieAmount,'
@@ -92,21 +92,13 @@ class BuySheet extends StatelessWidget {
         '}\'');
   }
 
-  void _showUrlNotSetAndPrintCurlCommand(String nonce) {
-    showAlertDialog(
-        context: scaffoldKey.currentContext,
-        title: "Nonce generated, but URL not set",
-        description:
-            "You have not replaced your domain URL. Please check your log for a CURL command to charge the card.");
-    printCurlCommand(nonce);
-  }
-
   void _onCardEntryComplete() {
     if (_chargeServerHostReplaced) {
       showAlertDialog(
-          context: scaffoldKey.currentContext, 
+          context: scaffoldKey.currentContext,
           title: "Your order was successful",
-          description: "Go to your Square dashbord to see this order reflected in the sales tab.");
+          description:
+              "Go to your Square dashbord to see this order reflected in the sales tab.");
     }
   }
 
@@ -218,27 +210,34 @@ class BuySheet extends StatelessWidget {
   }
 
   void _showUrlNotSetAndPrintCurlCommand(String nonce) {
-    showAlertDialog(context: scaffoldKey.currentContext, 
-    title: "Nonce generated but not charged",
-    description: "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Nonce generated but not charged",
+        description:
+            "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
     printCurlCommand(nonce);
   }
 
   void _showSquareLocationIdNotSet() {
-    showAlertDialog(context: scaffoldKey.currentContext, 
-    title: "Missing Square Location ID",
-    description: "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Missing Square Location ID",
+        description:
+            "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
   }
 
   void _showAppleMerchantIdNotSet() {
-    showAlertDialog(context: scaffoldKey.currentContext, 
-    title: "Missing Apple Merchant ID",
-    description: "To request an Apple Pay nonce, replace appleMerchantId in main.dart with an Apple Merchant ID.");
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Missing Apple Merchant ID",
+        description:
+            "To request an Apple Pay nonce, replace appleMerchantId in main.dart with an Apple Merchant ID.");
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     _applePayError = errorInfo;
-    await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: errorInfo.message);
+    await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false, errorMessage: errorInfo.message);
   }
 
   void _onApplePayEntryComplete() {
