@@ -1,30 +1,35 @@
 # Taking a payment with a Backend service
 
 The In-App Payments Quick Start Sample flutter application generates a nonce and 
-outputs a Curl command that posts the nonce to a Square server to take the payment.
+outputs a Curl command that posts the nonce to the Square Charge endpoint.
 
-This article shows you how to modify the quick start to use a Square backend quick
-start server app or your own localhost app.
+This article shows you how to modify the Flutter sample app to use a Square backend quick
+start server app or your own app on Localhost.
 
 
-## Modify the project sample to use the nonce in a payment
-The sample project creates a card nonce when you enter a payment card and complete 
-a cookie purchase. However, it does not actually use the nonce to charge a payment
-card. If you want use the nonce to create a 1 dollar charge to be credited to your Square developer
+## Modify the sample
+To use the nonce to create a 1 dollar charge to be credited to your Square developer
 account, complete the next steps:
 
 ### Step 1: Get a backend payment processing URL   
-To take a payment with a card nonce, you need access to a backend service that accepts
-the nonce from the sample app and then sends a POST request to the Square Connect v2
-charge endpoint. You can use a localhost process or a pre-built Square mobile backend quickstart.
+You need access to a backend service that accepts the nonce from the sample app and 
+then sends a POST request to the Square Charge endpoint.
 
-#### Use your existing localhost process
+#### Option 1: Use a localhost URL
 If you already have a localhost process that uses the charge endpoint, then you can 
-add logic to accept a nonce posted from this sample. 
+add logic to accept a nonce posted from this sample by following these steps: 
 1. Copy your Square developer account personal access token or sandbox token.
-1. Read the dart code in the `chargeCard` method in the `lib/transaction_service.dart` file to see the format of the POST method the sample makes.
-1. Add a POST method to an endpoint in your localhost service.
-1. Add logic to your POST method like the following [PHP example] that uses the Square Connect v2 PHP SDK:
+1. Add a POST method that accepts requests with the following parameters:
+
+   * Header - "Accept" : "application/json" 
+   * Header -  "content-type" : "application/json"
+   * Request body -  `{"nonce": nonce}`
+   * Return value -  200 if charge is successful.
+
+  >**Note:** The `chargeCard` method in the [transaction_service.dart](./lib/transaction_service.dart) file shows the 
+  POST request by the client.
+
+3. Take a payment with the nonce in your POST method using the following PHP example:
   ```php
 
 # The access token to use in all Connect API requests. Use your *sandbox* access
@@ -50,7 +55,7 @@ $location_id =  $_ENV["SANDBOX_LOCATION_ID"];
   );
   ```
 
-#### Use the Square Mobile Backend Quickstart
+#### Option 2: Use the Square Mobile Backend Quickstart URL
 You can submit the card nonce to a secure heroku service app that takes the payment and 
 credits it to your Square developer account. 
 1. Follow the instructions in the Quickstart [README] to deploy the **Mobile Backend Quickstart** to Heroku. 
@@ -58,17 +63,16 @@ credits it to your Square developer account.
 
 ### Step 2: Update sample process payments logic with a payment processing URL
 
-1. Open the `transaction_service.dart` file.
-1. On line 22, replace `REPLACE_ME` with the URL of your localhost instance or the
-deployed mobile backend quickstart URL .
+1. Open the [transaction_service.dart](./lib/transaction_service.dart) file.
+1. On line 25, replace `chargeServerHost` with the domain of the
+deployed mobile backend quickstart app.
 
 
 ### Step 3: Run the sample app for iOS
 
-1. Change to the `ios` folder under `example`.
 1. Launch iOS emulator, run the example project from the `example` project folder: 
     ```bash
-    cd /PATH/TO/LOCAL/example
+    cd <YOUR_PROJECT_DIRECTORY>/example
     flutter run
     ```
 
@@ -76,6 +80,6 @@ deployed mobile backend quickstart URL .
 
 1. Launch Android emulator, run the flutter example project from the `example` project folder:
     ```bash
-    cd /PATH/TO/LOCAL/example
+    cd <YOUR_PROJECT_DIRECTORY>/example
     flutter run
     ```
