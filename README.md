@@ -17,6 +17,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * [Troubleshooting guide]
 * [`docs`] - Root directory for all documentation.
 * [`example`] - Root directory of the Flutter sample app (with walkthrough).
+* [Getting started with the example app]
 
 ## Build requirements
 
@@ -79,3 +80,4 @@ limitations under the License.
 [Technical reference]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/reference.md
 [Troubleshooting guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/troubleshooting.md
 [flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master
+[Getting started with the example app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example/README.md

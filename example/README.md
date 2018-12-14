@@ -40,14 +40,7 @@ This quick start guide makes the following assumptions:
 1. Change to the `lib` folder under `example`.
 1. Open the `main.dart` file
 1. On line 26, replace `REPLACE_ME` with the application ID from **Step 1**
-1. On line 27 for Google Pay: Replace `REPLACE_ME` with the location ID from **Step 1**
-1. On line 28, for Apple Pay: If you have an iOS App ID that is enabled for Apple Pay payment processing, replace `REPLACE_ME` with your Apple merchant ID. 
-
->Note: The sample includes code that can enable the Apple Pay and Google Pay buttons. 
-To enable the Apple Pay button and authorize a payment, you need to have an active Apple Pay
-developer account and a registered app with the Apple Pay capability. To enable the
-Google Pay button in the Google Pay test environment, provide a location ID. 
-
+1. On line 27, Replace `REPLACE_ME` with the location ID from **Step 1**
 
 ### Step 3: Run the sample app for iOS
 
