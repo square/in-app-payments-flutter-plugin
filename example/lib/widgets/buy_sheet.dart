@@ -53,7 +53,7 @@ class BuySheet extends StatelessWidget {
     var selection =
         await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
             context: scaffoldKey.currentState.context,
-            builder: (context) => OrderSheet());
+            builder: (context) => OrderSheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled,));
 
     switch (selection) {
       case paymentType.cardPayment:
