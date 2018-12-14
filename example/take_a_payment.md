@@ -63,14 +63,13 @@ credits it to your Square developer account.
 
 ### Step 2: Update sample process payments logic with a payment processing URL
 
-1. Open the `transaction_service.dart` file.
-1. On line 24, replace `$chargeBackendDomain` with the domain of the
+1. Open the [transaction_service.dart](./lib/transaction_service.dart) file.
+1. On line 25, replace `chargeServerHost` with the domain of the
 deployed mobile backend quickstart app.
 
 
 ### Step 3: Run the sample app for iOS
 
-1. Change to the `ios` folder under `example`.
 1. Launch iOS emulator, run the example project from the `example` project folder: 
     ```bash
     cd /PATH/TO/LOCAL/example

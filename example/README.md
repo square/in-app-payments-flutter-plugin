@@ -35,14 +35,12 @@ This quick start guide makes the following assumptions:
 
 
 ### Step 2: Configure the sample app
-1. Change to the `lib` folder under `example`.
-1. Open the `main.dart` file
-1. On line 26, replace `REPLACE_ME` with the Application ID from **Step 1**
+1. Open `<YOUR_PROJECT_DIRECTORY>/example/lib/main.dart`
+1. On line 27, replace `REPLACE_ME` with the Application ID from **Step 1**
 
 ### Step 3: Run the sample app for iOS
 
-1. Change to the `ios` folder under `example`.
-1. Launch iOS emulator, run the example project from the `example` project folder: 
+1. Launch iOS emulator, run the flutter example from the `example` project folder: 
     ```bash
     cd /PATH/TO/LOCAL/example
     flutter run
