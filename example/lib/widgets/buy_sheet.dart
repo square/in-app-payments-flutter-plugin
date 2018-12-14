@@ -31,21 +31,21 @@ class BuySheet extends StatelessWidget {
   final bool applePayEnabled;
   final bool googlePayEnabled;
   final String squareLocationId;
-  final String appleMerchantId;
+  final String applePayMerchantId;
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
   BuySheet(
       {this.applePayEnabled,
       this.googlePayEnabled,
-      this.appleMerchantId,
+      this.applePayMerchantId,
       this.squareLocationId});
 
   bool get _chargeServerHostReplaced => chargeServerHost != "REPLACE_ME";
 
   bool get _squareLocationSet => squareLocationId != "REPLACE_ME";
 
-  bool get _appleMerchantIdSet => appleMerchantId != "REPLACE_ME";
+  bool get _applePayMerchantIdSet => applePayMerchantId != "REPLACE_ME";
 
   ErrorInfo _applePayError;
 
@@ -60,17 +60,17 @@ class BuySheet extends StatelessWidget {
         await _onStartCardEntryFlow();
         break;
       case paymentType.googlePay:
-        if (_squareLocationSet) {
-          googlePayEnabled ? _onStartGooglePay() : null;
+        if (_squareLocationSet && googlePayEnabled) {
+          _onStartGooglePay();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
       case paymentType.applePay:
-        if (_appleMerchantIdSet) {
-          applePayEnabled ? _onStartApplePay() : null;
+        if (_applePayMerchantIdSet && applePayEnabled) {
+          _onStartApplePay();
         } else {
-          _showAppleMerchantIdNotSet();
+          _showapplePayMerchantIdNotSet();
         }
         break;
     }
@@ -226,12 +226,12 @@ class BuySheet extends StatelessWidget {
             "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
   }
 
-  void _showAppleMerchantIdNotSet() {
+  void _showapplePayMerchantIdNotSet() {
     showAlertDialog(
         context: scaffoldKey.currentContext,
         title: "Missing Apple Merchant ID",
         description:
-            "To request an Apple Pay nonce, replace appleMerchantId in main.dart with an Apple Merchant ID.");
+            "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.");
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {

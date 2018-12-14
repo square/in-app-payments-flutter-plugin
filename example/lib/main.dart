@@ -26,7 +26,7 @@ import 'widgets/buy_sheet.dart';
 
 const String squareApplicationId = "REPLACE_ME";
 const String squareLocationId = "REPLACE_ME";
-const String appleMerchantId = "REPLACE_ME";
+const String applePayMerchantId = "REPLACE_ME";
 
 void main() => runApp(MaterialApp(
       title: 'Super Cookie',
@@ -64,7 +64,7 @@ class HomeScreenState extends State<HomeScreen> {
       canUseGooglePay = await InAppPayments.canUseGooglePay;
     } else if (Platform.isIOS) {
       await _setIOSCardEntryTheme();
-      await InAppPayments.initializeApplePay(appleMerchantId);
+      await InAppPayments.initializeApplePay(applePayMerchantId);
       canUseApplePay = await InAppPayments.canUseApplePay;
     }
 
@@ -107,6 +107,6 @@ class HomeScreenState extends State<HomeScreen> {
               : BuySheet(
                   applePayEnabled: applePayEnabled,
                   googlePayEnabled: googlePayEnabled,
-                  appleMerchantId: appleMerchantId,
+                  applePayMerchantId: applePayMerchantId,
                   squareLocationId: squareLocationId)));
 }
