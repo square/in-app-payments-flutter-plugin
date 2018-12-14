@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart'
+    as google_pay_constants;
 import '../colors.dart';
 import '../transaction_service.dart';
 import 'cookie_button.dart';
@@ -33,8 +35,6 @@ class BuySheet extends StatelessWidget {
   final String squareLocationId;
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
-
-  ErrorInfo _applePayError;
 
   BuySheet(
       {this.applePayEnabled, this.googlePayEnabled, this.squareLocationId});
@@ -107,8 +107,8 @@ class BuySheet extends StatelessWidget {
       await chargeCard(result);
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
-    } on ChargeException catch (e) {
-      InAppPayments.showCardNonceProcessingError(e.errorMessage);
+    } on ChargeException catch (ex) {
+      InAppPayments.showCardNonceProcessingError(ex.errorMessage);
     }
   }
 
@@ -125,14 +125,17 @@ class BuySheet extends StatelessWidget {
   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-          priceStatus: 1,
+          priceStatus: google_pay_constants.totalPriceStatusFinal,
           price: getCookieAmount(),
           currencyCode: 'USD',
           onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
-    } on PlatformException {
-      _showOrderSheet();
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Failed to start GooglePay",
+          description: ex.toString());
     }
   }
 
@@ -148,18 +151,18 @@ class BuySheet extends StatelessWidget {
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
+    } on ChargeException catch (ex) {
       showAlertDialog(
           context: scaffoldKey.currentContext,
           title: "Error processing GooglePay payment",
-          description: e.errorMessage);
+          description: ex.errorMessage);
     }
   }
 
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
     showAlertDialog(
         context: scaffoldKey.currentContext,
-        title: "Failed to start GooglePay",
+        title: "Failed to request GooglePay nonce",
         description: errorInfo.toString());
   }
 
@@ -177,8 +180,11 @@ class BuySheet extends StatelessWidget {
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
-    } on PlatformException {
-      _showOrderSheet();
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Failed to start ApplePay",
+          description: ex.toString());
     }
   }
 
@@ -189,36 +195,28 @@ class BuySheet extends StatelessWidget {
     }
     try {
       await chargeCard(result);
-      showAlertDialog(
-          context: scaffoldKey.currentContext,
-          title: "Your order was successful",
-          description:
-              "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } on ChargeException catch (ex) {
       showAlertDialog(
           context: scaffoldKey.currentContext,
           title: "Error processing ApplePay payment",
-          description: e.errorMessage);
+          description: ex.errorMessage);
+      await InAppPayments.completeApplePayAuthorization(
+          isSuccess: false, errorMessage: ex.errorMessage);
     }
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    _applePayError = errorInfo;
-    await InAppPayments.completeApplePayAuthorization(isSuccess: false, errorMessage: errorInfo.message);
+    showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Error request ApplePay nonce",
+          description: errorInfo.toString());
+    await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false, errorMessage: errorInfo.message);
   }
 
   void _onApplePayEntryComplete() {
-    if (_applePayError != null) {
-      // apply pay failed
-      showAlertDialog(
-          context: scaffoldKey.currentContext,
-          title: "Error processing ApplePay payment",
-          description: _applePayError.message);
-      _applePayError = null;
-    } else {
-      // apple pay cancelled
-      _showOrderSheet();
-    }
+    // handle apple pay sheet closed
   }
 
   Widget build(BuildContext context) => MaterialApp(

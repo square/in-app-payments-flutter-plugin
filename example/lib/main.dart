@@ -54,7 +54,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initSquarePayment() async {
-    InAppPayments.setSquareApplicationId(squareApplicationId);
+    await InAppPayments.setSquareApplicationId(squareApplicationId);
 
     var canUseApplePay = false;
     var canUseGooglePay = false;

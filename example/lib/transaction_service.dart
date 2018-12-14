@@ -36,8 +36,8 @@ Future<void> chargeCard(CardDetails result) async {
       "Accept": "application/json",
       "content-type": "application/json"
     });
-  } on SocketException catch (e) {
-    throw ChargeException(e.message.toString());
+  } on SocketException catch (ex) {
+    throw ChargeException(ex.message);
   }
 
   var responseBody = json.decode(response.body);
