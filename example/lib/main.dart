@@ -99,11 +99,14 @@ class HomeScreenState extends State<HomeScreen> {
     theme: ThemeData(canvasColor: Colors.white),
         home: Scaffold(
           body: isLoading
-          ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainBackgroundColor),)) 
-          : BuySheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled, 
-                     appleMerchantId: appleMerchantId, squareLocationId: squareLocationId)
-        )
-  );
+          ? Center(
+              child: CircularProgressIndicator(
+              valueColor: 
+                AlwaysStoppedAnimation<Color>(mainBackgroundColor),)) 
+          : BuySheet(applePayEnabled: applePayEnabled,
+                     googlePayEnabled: googlePayEnabled, 
+                     appleMerchantId: appleMerchantId, 
+                     squareLocationId: squareLocationId)));
 }
 
   
