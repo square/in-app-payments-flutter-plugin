@@ -24,6 +24,10 @@ final int cookieAmount = 100;
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
 
 class OrderSheet extends StatelessWidget {
+  final bool googlePayEnabled;
+  final bool applePayEnabled;
+  OrderSheet({this.googlePayEnabled, this.applePayEnabled});
+
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
@@ -94,13 +98,13 @@ class OrderSheet extends StatelessWidget {
             height: 64,
             width: MediaQuery.of(context).size.width * .4,
             child: RaisedButton(
-              onPressed: () {
+               onPressed: googlePayEnabled || applePayEnabled ? () {
                 if (Platform.isAndroid) {
                   Navigator.pop(context, paymentType.googlePay);
                 } else if (Platform.isIOS) {
                   Navigator.pop(context, paymentType.applePay);
                 }
-              },
+              } : null,
               child: Image(
                   image: (Theme.of(context).platform == TargetPlatform.iOS)
                       ? AssetImage("assets/applePayLogo.png")
