@@ -42,7 +42,7 @@ This quick start guide makes the following assumptions:
 
 1. Launch iOS emulator, run the flutter example from the `example` project folder: 
     ```bash
-    cd /PATH/TO/LOCAL/example
+    cd <YOUR_PROJECT_DIRECTORY>/example
     flutter run
     ```
 
@@ -50,7 +50,7 @@ This quick start guide makes the following assumptions:
 
 1. Launch Android emulator, run the flutter example project from the `example` project folder:
     ```bash
-    cd /PATH/TO/LOCAL/example
+    cd <YOUR_PROJECT_DIRECTORY>/example
     flutter run
     ```
 
