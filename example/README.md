@@ -13,7 +13,6 @@ This quick start guide makes the following assumptions:
   enabled payment processing on your account (or you are not sure), visit
   [squareup.com/activate].
 * You are familiar with basic Flutter development.
-* You have downloaded the [Serverless Charge Backend] quick start sample and installed the charge function as an AWS lambda function.
 
 ## Before you run the In-App Payments Quick Start
 
@@ -22,9 +21,7 @@ This quick start guide makes the following assumptions:
 * Confirm your environment meets the In-App Payments SDK build requirements listed in the [root README] for this repo.
 * Clone this repo (if you have not already):
   `git clone https://github.com/square/in-app-payments-plugin.git`
-* You will need a Square account enabled for payment processing. If you have not
-  enabled payment processing on your account (or you are not sure), visit
-  [squareup.com/activate].
+
 
 ### Step 1: Get a Square Application ID and location ID 
 
@@ -33,14 +30,14 @@ This quick start guide makes the following assumptions:
 1. Give your application a name and then click the **Create Application** button.
 1. On the **Credentials** page of the application control panel, copy the
    **Application ID**.
-1. On the **Locations** page, copy a **Location ID** from one of your locations. If you created a new Square account, choose **My Business**.
+1. On the **Locations** page of the application control panel, copy the
+   **Locationi ID** of one of your locations.
 
 
 ### Step 2: Configure the sample app
 1. Change to the `lib` folder under `example`.
 1. Open the `main.dart` file
 1. On line 26, replace `REPLACE_ME` with the application ID from **Step 1**
-1. On line 27, Replace `REPLACE_ME` with the location ID from **Step 1**
 
 ### Step 3: Run the sample app for iOS
 
@@ -63,9 +60,18 @@ This quick start guide makes the following assumptions:
 Take a payment with the card nonce by executing the Curl command written into the debug output.
 of your development environment. 
 
-Read about [taking a payment with a backend service] to learn how to modify this quick start to make a backend service call.
+Update the Curl command by completing the following steps:
 
-For help getting started with Flutter, view our online [documentation](https://flutter.io/).
+1. Replace the Location ID placeholder in the Curl query string with the 
+location ID that you copied in **Step 1**.
+1. Replace the access token placeholder with your access token. 
+1. Run the Curl command to take a payment in your Square account.
+>**Note:** We provide a Curl command in the debug output that you can use to easily test the payment with our  Transactions API. Your production app should use a secure backend service to make calls to the Transactions API and should never expose your access token in the client.
+
+Square provides a backend service in our sample app to get your started. follow the 
+steps in the [backend service setup guide] to configure the backend sample.
+
+For help getting started with Flutter, view [documentation](https://flutter.io/) online.
 
 [//]: # "Link anchor definitions"
 [In-App Payments SDK Overview]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/what-it-does
@@ -74,4 +80,4 @@ For help getting started with Flutter, view our online [documentation](https://f
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [root README]: ../README.md
 [transaction details in Square Dashboard]: https://squareup.com/dashboard/sales/transactions
-[taking a payment with a backend service]: take_a_payment.md
+[backend service setup guide]: take_a_payment.md
