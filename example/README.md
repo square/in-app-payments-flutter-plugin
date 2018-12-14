@@ -23,7 +23,7 @@ This quick start guide makes the following assumptions:
   `git clone https://github.com/square/in-app-payments-plugin.git`
 
 
-### Step 1: Get a Square Application ID and location ID 
+### Step 1: Get a Square Application ID and Location ID 
 
 1. Sign in to your [Application Dashboard](https://connect.squareup.com/apps).
 1. Click the **New Application** button on the **Applications** page
@@ -31,13 +31,13 @@ This quick start guide makes the following assumptions:
 1. On the **Credentials** page of the application control panel, copy the
    **Application ID**.
 1. On the **Locations** page of the application control panel, copy the
-   **Locationi ID** of one of your locations.
+   **Location ID** of one of your locations.
 
 
 ### Step 2: Configure the sample app
 1. Change to the `lib` folder under `example`.
 1. Open the `main.dart` file
-1. On line 26, replace `REPLACE_ME` with the application ID from **Step 1**
+1. On line 26, replace `REPLACE_ME` with the Application ID from **Step 1**
 
 ### Step 3: Run the sample app for iOS
 
