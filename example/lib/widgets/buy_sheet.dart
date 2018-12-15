@@ -227,6 +227,11 @@ class BuySheet extends StatelessWidget {
     }
     try {
       await chargeCard(result);
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Your order was successful",
+          description:
+              "Go to your Square dashbord to see this order reflected in the sales tab.");
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
     } on ChargeException catch (ex) {
       showAlertDialog(
