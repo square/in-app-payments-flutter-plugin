@@ -17,16 +17,16 @@
 #import <Foundation/Foundation.h>
 
 /**
- The `NSError` `userInfo` key used to retrieve the debug code string for the error that occurred.
+ The `NSError` `userInfo` key used to retrieve a detailed debug code string for the error that occurred.
  */
 extern NSString *_Nonnull const SQIPErrorDebugCodeKey;
 
 /**
- The `NSError` `userInfo` key used to retrieve a detailed description of the error that occurred.
- Debug messages can be helpful when debugging, but are not suitable for displaying to users.
+ The `NSError` `userInfo` key used to to retrieve a human-readable message containing additional debug information related to the possible cause of the error.
+ Debug messages should not be displayed to customers.
  */
 extern NSString *_Nonnull const SQIPErrorDebugMessageKey;
 
-#define sqip_ERROR_ENUM(_domain, _name)   \
-typedef enum _name : NSInteger _name; \
-enum __attribute__((ns_error_domain(_domain))) _name : NSInteger
+#define SQIP_ERROR_ENUM(_domain, _name)   \
+    typedef enum _name : NSInteger _name; \
+    enum __attribute__((ns_error_domain(_domain))) _name : NSInteger

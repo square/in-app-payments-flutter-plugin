@@ -20,8 +20,16 @@
 @class SQIPCardEntryViewController;
 @class SQIPTheme;
 
+
+/**
+ Indicates the result of card entry.
+ */
 typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
+
+    /** Card entry was canceled by the customer. */
     SQIPCardEntryCompletionStatusCanceled = 0,
+
+    /** Card entry was completed successfully. */
     SQIPCardEntryCompletionStatusSuccess,
 };
 
@@ -31,11 +39,11 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
 @protocol SQIPCardEntryViewControllerDelegate
 
 /**
- This method is called after the user has saved their card information. Your implementation should send the provided card details to your server to perform any additional work (for example, charging the card). After you are finished processing the card, you need to notify the card entry view controller of the result.
+ Invoked after the customer has submitted their card information. Your implementation should send the provided card details to your server to perform any additional work (for example, charging the card). After you are finished processing the card, notify the card entry view controller of the result so it can be displayed to the customer.
  
- If your server handled the card successfully, call the completion block with `nil` as the only argument. A success animation will be displayed to the user, and `cardEntryViewController:didCompleteWithStatus:` will be called, at which point you should dismiss the card entry view controller.
+ If your server successfully processed the card, call the completion handler with `nil` as the only argument. A success animation will be displayed to the customer, and `cardEntryViewController:didCompleteWithStatus:` will be called, at which point you should dismiss the card entry view controller.
  
- If your application encountered an error while processing the card, call the completion block with the error. Its `localizedDescription` will be displayed to the user in the card entry view controller. The user will have an opportunity to edit their card information and re-submit the form.
+ If your application encountered an error while processing the card, call the completion handler with the error. Its `localizedDescription` will be displayed to the customer in the card entry view controller. The customer will have an opportunity to edit their card information and re-submit.
  
  @param cardEntryViewController The SQIPCardEntryViewController instance.
  @param cardDetails Details about the entered card, including the nonce.
@@ -46,12 +54,12 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
               completionHandler:(void (^_Nonnull)(NSError *_Nullable))completionHandler;
 
 /**
- Indicates that the card form has been completed successfully or was canceled.
+ Invoked when the card entry form has been completed. The `status` parameter indicates whether card entry succeeded or was cancelled.
+ Use this method to dismiss the card entry view controller and update any other app state.
  
  @param cardEntryViewController The SQIPCardEntryViewController instance.
- @param status The completion status of the card entry view controller.
+ @param status The card entry completion status.
 
- Use this method to dismiss the card entry view controller and update any other app state.
  */
 - (void)cardEntryViewController:(nonnull SQIPCardEntryViewController *)cardEntryViewController
           didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status;
@@ -59,14 +67,14 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
 @end
 
 /**
- Displays a form that lets the user enter their card information. When the user saves their card information, a card nonce is requested and provided to the `delegate`.
+ Lets the application collect card information from the customer. If the card information entered is valid, a card nonce will be provided to the `delegate`.
  */
 @interface SQIPCardEntryViewController : UIViewController
 
 /**
  Creates a new card entry view controller.
  
- @param theme The theme instance used to style the form.
+ @param theme The theme instance used to style the card entry view controller.
  */
 - (nonnull instancetype)initWithTheme:(nonnull SQIPTheme *)theme;
 
@@ -97,6 +105,6 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
  :nodoc:
  `new` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
-+ (nonnull instancetype)new NS_UNAVAILABLE;
++ (nonnull instancetype) new NS_UNAVAILABLE;
 
 @end

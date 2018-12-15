@@ -19,17 +19,17 @@
 @class SQIPCard;
 
 /**
- Contains details about a card, including the nonce.
+ Represents the result of a successful operation to process card payment information.
  */
 @interface SQIPCardDetails : NSObject
 
 /**
- A unique encrypted payment token.
+ A one-time-use payment token that is used with the Transactions API to [charge the card](https://docs.connect.squareup.com/api/connect/v2#endpoint-charge) or the Customers API to [store the Card on File](https://docs.connect.squareup.com/api/connect/v2#endpoint-createcustomercard).
  */
 @property (nonatomic, strong, readonly, nonnull) NSString *nonce;
 
 /**
- Details about the entered card, such as the brand and last four digits of the card number.
+ The payment card.
  */
 @property (nonatomic, strong, readonly, nonnull) SQIPCard *card;
 
@@ -43,6 +43,6 @@
  :nodoc:
  `new` is unavailable.
  */
-+ (instancetype)new NS_UNAVAILABLE;
++ (instancetype) new NS_UNAVAILABLE;
 
 @end

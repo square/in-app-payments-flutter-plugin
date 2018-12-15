@@ -1,3 +1,5 @@
-## 0.0.1
+## Changelog
 
-* TODO: Describe initial release.
+### v1.0.0
+
+* initial release.

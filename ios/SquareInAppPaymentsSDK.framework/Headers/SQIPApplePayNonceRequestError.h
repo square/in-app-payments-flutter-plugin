@@ -19,20 +19,25 @@
 
 
 /**
- The domain for errors that occur when requesting a nonce using Apple Pay.
+ The domain for errors that occur when requesting a card nonce using Apple Pay.
  */
 extern NSString *_Nonnull const SQIPApplePayNonceRequestErrorDomain;
 
 /**
- The types of errors that can occur when requesting a nonce using Apple Pay.
+ Possible error codes that can be returned as a result of attempting to create a card nonce.
  */
-sqip_ERROR_ENUM(SQIPApplePayNonceRequestErrorDomain, SQIPApplePayNonceRequestError){
-    
+SQIP_ERROR_ENUM(SQIPApplePayNonceRequestErrorDomain, SQIPApplePayNonceRequestError){
+
     /**
      Square In-App Payments SDK could not connect to the network.
      */
     SQIPApplePayNonceRequestErrorNoNetwork = 1,
-    
+
+    /**
+     The version of the Square In-App Payments SDK used by this application is no longer supported.
+     */
+    SQIPApplePayNonceRequestErrorUnsupportedSDKVersion,
+
     /**
      `SQIPApplePayNonceRequest` was used in an unexpected or unsupported way.
      See `userInfo[SQIPErrorDebugCodeKey]` and `userInfo[SQIPErrorDebugMessageKey]` for more information.

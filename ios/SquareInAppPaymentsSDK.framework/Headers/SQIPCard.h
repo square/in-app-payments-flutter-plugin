@@ -19,7 +19,7 @@
 #import <SquareInAppPaymentsSDK/SQIPCardBrand.h>
 
 /**
- Represents the non-confidential details of a payment card.
+ Represents a payment card.
  */
 @interface SQIPCard : NSObject <NSCopying>
 
@@ -29,22 +29,22 @@
 @property (nonatomic, assign, readonly) SQIPCardBrand brand;
 
 /**
- The last four digits of the card number.
+ The last 4 digits of the card number.
  */
 @property (nonatomic, strong, readonly, nonnull) NSString *lastFourDigits;
 
 /**
- The month of the card's expiration date. This value is always between 1 and 12, inclusive.
+ The expiration month of the card. Ranges between 1 and 12.
  */
 @property (nonatomic, assign, readonly) NSUInteger expirationMonth;
 
 /**
- The four-digit year of the card's expiration date.
+ The 4-digit expiration year of the card.
  */
 @property (nonatomic, assign, readonly) NSUInteger expirationYear;
 
 /**
- The billing postal code, if available.
+ The billing postal code associated with the card, if available.
  */
 @property (nonatomic, strong, readonly, nullable) NSString *postalCode;
 
@@ -58,6 +58,6 @@
  :nodoc:
  `new` is unavailable.
  */
-+ (instancetype)new NS_UNAVAILABLE;
++ (instancetype) new NS_UNAVAILABLE;
 
 @end

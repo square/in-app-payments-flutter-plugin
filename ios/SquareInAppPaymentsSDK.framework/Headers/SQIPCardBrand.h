@@ -1,3 +1,5 @@
+#pragma Formatter Exempt
+
 //
 //    Copyright (c) 2018-present, Square, Inc. All rights reserved.
 //
@@ -18,38 +20,40 @@
 
 /** Indicates a card's brand, such as Visa. */
 typedef NS_ENUM(NSUInteger, SQIPCardBrand) {
-    
-    /** An unidentified brand. */
+
+    /** An unidentified brand */
     SQIPCardBrandOtherBrand = 0,
-    
+
     /** Visa */
     SQIPCardBrandVisa,
-    
+
     /** Mastercard */
     SQIPCardBrandMastercard,
-    
+
     /** American Express */
     SQIPCardBrandAmericanExpress,
-    
+
     /** Discover */
     SQIPCardBrandDiscover,
-    
+
     /** Diners Club International */
     SQIPCardBrandDiscoverDiners,
-    
-   /** JCB */
+
+    /** JCB */
     SQIPCardBrandJCB,
-    
+
     /** China UnionPay */
     SQIPCardBrandChinaUnionPay,
 };
 
 /**
- Creates an SQIPCardBrand from a string. i.e. "VISA" -> SQIPCardBrandVisa
+ Creates an SQIPCardBrand from a string. i.e. "VISA" -> SQIPCardBrandVisa.
+ :nodoc:
  */
-extern SQIPCardBrand SQIPCardBrandFromString(NSString * _Nonnull cardBrand) CF_SWIFT_NAME(SQIPCardBrand.init(_:));
+extern SQIPCardBrand SQIPCardBrandFromString(NSString *_Nonnull cardBrand) CF_SWIFT_NAME(SQIPCardBrand.init(_:));
 
 /**
- Creates a string from an SQIPCardBrand. i.e. SQIPCardBrandVisa -> "VISA"
+ Creates a string from an SQIPCardBrand. i.e. SQIPCardBrandVisa -> "VISA".
+ :nodoc:
  */
-extern NSString * _Nonnull NSStringFromSQIPCardBrand(SQIPCardBrand cardBrand) CF_SWIFT_NAME(getter:SQIPCardBrand.description(self:));
+extern NSString *_Nonnull NSStringFromSQIPCardBrand(SQIPCardBrand cardBrand) CF_SWIFT_NAME(getter:SQIPCardBrand.description(self:));

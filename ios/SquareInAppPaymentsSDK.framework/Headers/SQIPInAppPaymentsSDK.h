@@ -18,18 +18,17 @@
 
 /**
  Manages configuration of the Square In-App Payments SDK.
- @warning You must set a Square application ID before attempting any other SDK operation.
  */
 @interface SQIPInAppPaymentsSDK : NSObject
 
 /**
- Sets your Square application ID.
+ The Square application ID used to obtain a card nonce.
  @warning You must set a Square application ID before attempting any other SDK operation, or your app will crash.
  */
 @property (class, nonatomic, strong, nullable) NSString *squareApplicationID;
 
 /**
- Returns `true` if the device supports Apple Pay and the user has added a compatible card; otherwise, `false`.
+ `true` if the device supports Apple Pay and the customer's wallet contains a card supported by Square; `false` otherwise.
  */
 @property (class, nonatomic, readonly) BOOL canUseApplePay;
 
@@ -43,6 +42,6 @@
  :nodoc:
  `new` is unavailable.
  */
-+ (instancetype)new NS_UNAVAILABLE;
++ (instancetype) new NS_UNAVAILABLE;
 
 @end

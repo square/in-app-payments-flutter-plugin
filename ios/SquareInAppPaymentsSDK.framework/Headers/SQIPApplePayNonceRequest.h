@@ -22,7 +22,9 @@
 /**
  A completion handler that handles the result of an Apple Pay nonce request.
  @param cardDetails Contains details about the card, including the nonce. `nil` when the request fails.
- @param error An error with domain `SQIPApplePayNonceRequestErrorDomain` when the nonce request fails; otherwise, `nil`. See `SQIPApplePayNonceRequestError` for possible error types.
+ @param error An error with domain `SQIPApplePayNonceRequestErrorDomain` when the nonce request fails; otherwise, `nil`.
+ 
+ @see `SQIPApplePayNonceRequestError` for possible error types.
  */
 typedef void (^SQIPApplePayNonceRequestCompletionHandler)(SQIPCardDetails *_Nullable cardDetails, NSError *_Nullable error);
 
@@ -56,6 +58,6 @@ typedef void (^SQIPApplePayNonceRequestCompletionHandler)(SQIPCardDetails *_Null
  :nodoc:
  `new` is unavailable. Use `-[SQIPApplePayNonceRequest initWithPayment:]` instead.
  */
-+ (instancetype)new NS_UNAVAILABLE;
++ (instancetype) new NS_UNAVAILABLE;
 
 @end
