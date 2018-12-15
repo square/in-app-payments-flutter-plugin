@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import 'cookie_button.dart';
 
-enum paymentType { cardPayment, googlePay, applePay }
+enum PaymentType { cardPayment, googlePay, applePay }
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
@@ -91,7 +91,7 @@ class OrderSheet extends StatelessWidget {
           CookieButton(
             text: "Pay with card",
             onPressed: () {
-              Navigator.pop(context, paymentType.cardPayment);
+              Navigator.pop(context, PaymentType.cardPayment);
             },
           ),
           Container(
@@ -100,9 +100,9 @@ class OrderSheet extends StatelessWidget {
             child: RaisedButton(
                onPressed: googlePayEnabled || applePayEnabled ? () {
                 if (Platform.isAndroid) {
-                  Navigator.pop(context, paymentType.googlePay);
+                  Navigator.pop(context, PaymentType.googlePay);
                 } else if (Platform.isIOS) {
-                  Navigator.pop(context, paymentType.applePay);
+                  Navigator.pop(context, PaymentType.applePay);
                 }
               } : null,
               child: Image(
