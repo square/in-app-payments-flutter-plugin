@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart'
+    as google_pay_constants;
 import '../colors.dart';
 import '../transaction_service.dart';
 import 'cookie_button.dart';
@@ -27,7 +29,9 @@ import 'dialog_modal.dart';
 import 'modal_bottom_sheet.dart' as custom_modal_bottom_sheet;
 import 'order_sheet.dart';
 
-class BuySheet extends StatelessWidget {
+enum ApplePayStatus { success, fail, unknown }
+
+class BuySheet extends StatefulWidget {
   final bool applePayEnabled;
   final bool googlePayEnabled;
   final String squareLocationId;
@@ -35,39 +39,47 @@ class BuySheet extends StatelessWidget {
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
+
   BuySheet(
       {this.applePayEnabled,
       this.googlePayEnabled,
       this.applePayMerchantId,
       this.squareLocationId});
 
+  @override
+  BuySheetState createState() {
+    return BuySheetState();
+  }
+}
+
+class BuySheetState extends State<BuySheet> {
+  ApplePayStatus _applePayStatus = ApplePayStatus.unknown;
+
   bool get _chargeServerHostReplaced => chargeServerHost != "REPLACE_ME";
 
-  bool get _squareLocationSet => squareLocationId != "REPLACE_ME";
+  bool get _squareLocationSet => widget.squareLocationId != "REPLACE_ME";
 
-  bool get _applePayMerchantIdSet => applePayMerchantId != "REPLACE_ME";
-
-  ErrorInfo _applePayError;
+  bool get _applePayMerchantIdSet => widget.applePayMerchantId != "REPLACE_ME";
 
   void _showOrderSheet() async {
     var selection =
-        await custom_modal_bottom_sheet.showModalBottomSheet<paymentType>(
-            context: scaffoldKey.currentState.context,
-            builder: (context) => OrderSheet(applePayEnabled: applePayEnabled, googlePayEnabled: googlePayEnabled,));
+        await custom_modal_bottom_sheet.showModalBottomSheet<PaymentType>(
+            context: BuySheet.scaffoldKey.currentState.context,
+            builder: (context) => OrderSheet(applePayEnabled: widget.applePayEnabled, googlePayEnabled: widget.googlePayEnabled,));
 
     switch (selection) {
-      case paymentType.cardPayment:
+      case PaymentType.cardPayment:
         await _onStartCardEntryFlow();
         break;
-      case paymentType.googlePay:
-        if (_squareLocationSet && googlePayEnabled) {
+      case PaymentType.googlePay:
+        if (_squareLocationSet && widget.googlePayEnabled) {
           _onStartGooglePay();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
-      case paymentType.applePay:
-        if (_applePayMerchantIdSet && applePayEnabled) {
+      case PaymentType.applePay:
+        if (_applePayMerchantIdSet && widget.applePayEnabled) {
           _onStartApplePay();
         } else {
           _showapplePayMerchantIdNotSet();
@@ -92,10 +104,35 @@ class BuySheet extends StatelessWidget {
         '}\'');
   }
 
+  void _showUrlNotSetAndPrintCurlCommand(String nonce) {
+    showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Nonce generated but not charged",
+        description:
+            "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
+    printCurlCommand(nonce);
+  }
+
+  void _showSquareLocationIdNotSet() {
+    showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Missing Square Location ID",
+        description:
+            "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
+  }
+
+  void _showapplePayMerchantIdNotSet() {
+    showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Missing Apple Merchant ID",
+        description:
+            "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.");
+  }
+
   void _onCardEntryComplete() {
     if (_chargeServerHostReplaced) {
       showAlertDialog(
-          context: scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext,
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
@@ -114,8 +151,8 @@ class BuySheet extends StatelessWidget {
       await chargeCard(result);
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
-    } on ChargeException catch (e) {
-      InAppPayments.showCardNonceProcessingError(e.errorMessage);
+    } on ChargeException catch (ex) {
+      InAppPayments.showCardNonceProcessingError(ex.errorMessage);
     }
   }
 
@@ -132,14 +169,17 @@ class BuySheet extends StatelessWidget {
   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-          priceStatus: 1,
+          priceStatus: google_pay_constants.totalPriceStatusFinal,
           price: getCookieAmount(),
           currencyCode: 'USD',
           onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
           onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
           onGooglePayCanceled: onGooglePayEntryCanceled);
-    } on PlatformException {
-      _showOrderSheet();
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Failed to start GooglePay",
+          description: ex.toString());
     }
   }
 
@@ -151,22 +191,22 @@ class BuySheet extends StatelessWidget {
     try {
       await chargeCard(result);
       showAlertDialog(
-          context: scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext,
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
+    } on ChargeException catch (ex) {
       showAlertDialog(
-          context: scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext,
           title: "Error processing GooglePay payment",
-          description: e.errorMessage);
+          description: ex.errorMessage);
     }
   }
 
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
     showAlertDialog(
-        context: scaffoldKey.currentContext,
-        title: "Failed to start GooglePay",
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Failed to request GooglePay nonce",
         description: errorInfo.toString());
   }
 
@@ -184,8 +224,11 @@ class BuySheet extends StatelessWidget {
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
-    } on PlatformException {
-      _showOrderSheet();
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Failed to start ApplePay",
+          description: ex.toString());
     }
   }
 
@@ -196,60 +239,37 @@ class BuySheet extends StatelessWidget {
     }
     try {
       await chargeCard(result);
+      _applePayStatus = ApplePayStatus.success;
       showAlertDialog(
-          context: scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext,
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
-    } on ChargeException catch (e) {
+      await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    } on ChargeException catch (ex) {
       showAlertDialog(
-          context: scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext,
           title: "Error processing ApplePay payment",
-          description: e.errorMessage);
+          description: ex.errorMessage);
+      _applePayStatus = ApplePayStatus.fail;
+      await InAppPayments.completeApplePayAuthorization(
+          isSuccess: false, errorMessage: ex.errorMessage);
     }
   }
 
-  void _showUrlNotSetAndPrintCurlCommand(String nonce) {
-    showAlertDialog(
-        context: scaffoldKey.currentContext,
-        title: "Nonce generated but not charged",
-        description:
-            "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
-    printCurlCommand(nonce);
-  }
-
-  void _showSquareLocationIdNotSet() {
-    showAlertDialog(
-        context: scaffoldKey.currentContext,
-        title: "Missing Square Location ID",
-        description:
-            "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
-  }
-
-  void _showapplePayMerchantIdNotSet() {
-    showAlertDialog(
-        context: scaffoldKey.currentContext,
-        title: "Missing Apple Merchant ID",
-        description:
-            "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.");
-  }
-
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
-    _applePayError = errorInfo;
+    _applePayStatus = ApplePayStatus.fail;
+    showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error request ApplePay nonce",
+          description: errorInfo.toString());
     await InAppPayments.completeApplePayAuthorization(
         isSuccess: false, errorMessage: errorInfo.message);
   }
 
   void _onApplePayEntryComplete() {
-    if (_applePayError != null) {
-      // apply pay failed
-      showAlertDialog(
-          context: scaffoldKey.currentContext,
-          title: "Error processing ApplePay payment",
-          description: _applePayError.message);
-      _applePayError = null;
-    } else {
-      // apple pay cancelled
+    if (_applePayStatus == ApplePayStatus.unknown) {
+      // the apple pay is canceled
       _showOrderSheet();
     }
   }
@@ -258,7 +278,7 @@ class BuySheet extends StatelessWidget {
         theme: ThemeData(canvasColor: Colors.transparent),
         home: Scaffold(
           backgroundColor: mainBackgroundColor,
-          key: scaffoldKey,
+          key: BuySheet.scaffoldKey,
           body: Builder(
             builder: (context) => Center(
                     child: Column(
