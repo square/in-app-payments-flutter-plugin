@@ -44,7 +44,8 @@ dependencies:
 
   ...
 
-  square_in_app_payments: ^1.0.0
+  square_in_app_payments:
+    git: https://github.com/square/in-app-payments-flutter-plugin.git
 ```
 
 ## Step 3: Get Square Application ID
