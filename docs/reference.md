@@ -144,10 +144,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // payment finished successfully
       // you must call this method to close card entry
@@ -185,10 +183,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge or
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // payment finished successfully
       // you must call this method to close card entry
@@ -359,10 +355,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // you must call completeApplePayAuthorization to close apple pay sheet
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
@@ -597,10 +591,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // payment finished successfully
       // you must call this method to close card entry
@@ -646,10 +638,8 @@ cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // you must call completeApplePayAuthorization to close apple pay sheet
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
@@ -716,10 +706,8 @@ import 'package:square_in_app_payments/models.dart';
   void _onGooglePayNonceRequestSuccess(CardDetails result) async {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
     } on Exception catch (ex) {
       // handle card nonce processing failure
     }

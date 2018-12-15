@@ -111,10 +111,8 @@ class _MyAppState extends State<MyApp> {
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // payment finished successfully
       // you must call this method to close card entry
@@ -137,7 +135,7 @@ class _MyAppState extends State<MyApp> {
 }  
 ```
 ---
-**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
 
@@ -155,3 +153,4 @@ class _MyAppState extends State<MyApp> {
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
+[BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart

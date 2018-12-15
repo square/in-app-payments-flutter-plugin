@@ -90,10 +90,8 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     try {
       // take payment with the card nonce details
-      // you can take a charge or save card
+      // you can take a charge
       // await chargeCard(result);
-      // or
-      // await saveCard(result);
 
       // you must call completeApplePayAuthorization to close apple pay sheet
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
@@ -136,7 +134,7 @@ The following callback is invoked when the Apple Pay payment authorization sheet
 ```
 
 ---
-**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
 
@@ -150,3 +148,4 @@ The following callback is invoked when the Apple Pay payment authorization sheet
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [Apple Pay]: https://developer.apple.com/documentation/passkit/apple_pay
+[BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
