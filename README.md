@@ -33,7 +33,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 * Xcode version: 9.1 or greater.
 * iOS Base SDK: 11.1 or greater.
-* Deployment target: iOS 10.0 or greater.
+* Deployment target: iOS 11.0 or greater.
 
 
 ## In-App Payments SDK requirements and limitations
@@ -46,7 +46,9 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * In-App Payments SDK is not supported in the Square sandbox. See [Testing Mobile Apps]
   for testing recommendations.
 
-
+## Sample applications
+* **Quick start flutter app:** You can learn how the In-App-Payments Flutter plugin is used by [getting started with the example app], a quick-start Flutter app that lets you take a payment after completing 5 simple set up steps. 
+* **Quick start backend app:** The [In-App Payments Server Quickstart](https://github.com/square/in-app-payments-server-quickstart) takes the nonce created by the flutter app and uses it to create a payment credited to your Square account. Use this backend sample to quickly create a complete payment flow.
 
 ## License
 
