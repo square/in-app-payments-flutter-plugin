@@ -88,58 +88,54 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
-
-  //The card entry form is closed
-  void _onCardEntryComplete() {
-    // Update UI to notify user that the payment flow is finished
-  }
-
-  //The SDK completed the request to produce a nonce
-  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    // Update UI to notify user that payment card is 
-    // accepted
-    Response response = await _processNonce(cardDetails.nonce);
-    if (response.statusCode != 201) {
-      //Payment card information is incorrect. Keep card entry screen open for correction
-      await InAppPayments.showCardNonceProcessingError('failed to checkout.');
-    } else {
-      //Close the card entry screen. Payment authorization is complete.
-      await InAppPayments.completeCardEntry(onCardEntryComplete: _onCardEntryComplete);
-    }
-  }
-
-  //the user canceled payment card entry
-  void _onCardEntryCancel() async {
-    //User knows that they canceled the payment.
-    //This callback can be used to clean up app state
-    //related to the payment flow
-  }
-
-  //The user clicked a payment button on the UI to start the
-  //payment flow
+  /** 
+  * An event listner to start card entry flow
+  */
   Future<void> _onStartCardEntryFlow() async {
+    await InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCancelCardEntryFlow);
+  }
+
+  /**
+  * Callback when card entry is cancelled and UI is closed
+  */
+  void _onCancelCardEntryFlow() {
+    // Handle the cancel callback
+  }
+
+  /**
+  * Callback when successfully get the card nonce details for processig
+  * card entry is still open and waiting for processing card nonce details
+  */
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     try {
-      await InAppPayments.startCardEntryFlow(
-        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess, 
-        onCardEntryCancel: _onCardEntryCancel);
-    } on PlatformException {
-      print('Failed to startCardEntryFlow.');
+      // take payment with the card nonce details
+      // you can take a charge
+      // await chargeCard(result);
+
+      // payment finished successfully
+      // you must call this method to close card entry
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    } on Exception catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      InAppPayments.showCardNonceProcessingError(ex.message);
     }
   }
 
-  //Supercookie app sends the nonce to it's backend for 
-  //processing. Returns a response to be fullfilled in the future
-  Future<Response> _processNonce(String cardNonce) async {
-    final String url = 'https://api.supercookie.com/processnonce';
-    final headersMap = Map<String,String>();
-    headersMap.addAll({'Content-Type':'application/json'});
-    return await http.post(url, headers: headersMap ,body: {'nonce': cardNonce, 'amount':'100'})
+  /**
+  * Callback when the card entry is closed after call 'completeCardEntry'
+  */
+  void _onCardEntryComplete() {
+    // Update UI to notify user that the payment flow is finished successfully
   }
   ...
 }  
 ```
 ---
-**Note:** the `_processNonce` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
 
@@ -157,3 +153,4 @@ class _MyAppState extends State<MyApp> {
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
+[BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart

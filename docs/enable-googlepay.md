@@ -25,8 +25,10 @@ set up a Flutter project .
 value of `InAppPayments.canUseGooglePay` in the app `State` object.
 
   ```dart
+  import 'dart:io' show Platform;
   import 'package:square_in_app_payments/models.dart';
   import 'package:square_in_app_payments/in_app_payments.dart';
+  import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 
     class _MyAppState extends State<MyApp> {
       bool _googlePayEnabled = false;
@@ -36,9 +38,13 @@ value of `InAppPayments.canUseGooglePay` in the app `State` object.
       Future<void> _initSquarePayment() async {
         ...
         var canUseGooglePay = false;
-        if(Theme.of(context).platform == TargetPlatform.android) {
+        if(Platform.isAndroid) {
+          // initialize the google pay with square location id
+          // use test environment first to quick start
           await InAppPayments.initializeGooglePay(
             'LOCATION_ID', google_pay_constants.environmentTest);
+          // always check if google pay supported on that device
+          // before enable google pay
           canUseGooglePay = await InAppPayments.canUseGooglePay;
         }
         setState(() {
@@ -50,7 +56,7 @@ value of `InAppPayments.canUseGooglePay` in the app `State` object.
       ...
     } 
   ```
-1. Replace `LOCATION_ID` in this example with a valid location ID for the associated Square account.
+  * Replace `LOCATION_ID` in this example with a valid location ID for the associated Square account.
 
 ## Step 2: Implement the Google Pay flow
 
@@ -65,53 +71,57 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
+  /** 
+  * An event listner to start google pay flow
+  */
   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-        price: '100',
+        price: '1.00',
         currencyCode: 'USD',
         onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
         onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
         onGooglePayCanceled: _onGooglePayCancel);
     } on InAppPaymentsException catch(ex) {
-      if (ex.code == ErrorCode.usageError) {
-        print('Usage error: Please review payment card information and retry.\n ${ex.toString()}');
-      } else {
-        print('Network error: Please retry request.\n ${ex.toString()}');
-      }
+      // handle the failure of starting apple pay
     }
   }
 
-  void _onGooglePayNonceRequestSuccess(CardDetails result) {
-    Response response = await _processNonce(cardDetails.nonce);
-    if (response.statusCode != 201) {
-      print('Failed to complete payment with Google Pay');
-    } else {
-      print('Payment complete');
+  /**
+  * Callback when successfully get the card nonce details for processig
+  * google pay sheet has been closed when this callback is invoked
+  */
+  void _onGooglePayNonceRequestSuccess(CardDetails result) async {
+    try {
+      // take payment with the card nonce details
+      // you can take a charge
+      // await chargeCard(result);
+
+    } on Exception catch (ex) {
+      // handle card nonce processing failure
     }
   }
 
+  /**
+  * Callback when google pay is canceled
+  * google pay sheet has been closed when this callback is invoked
+  */
   void _onGooglePayCancel() {
-    print('GooglePay is canceled');
+    // handle google pay canceled
   }
 
+  /**
+  * Callback when failed to get the card nonce
+  * google pay sheet has been closed when this callback is invoked
+  */
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    print('GooglePay failed. \n ${errorInfo.toString()}');
-  }
-
-  //Supercookie app sends the nonce to it's backend for 
-  //processing. Returns a response to be fullfilled in the future
-  Future<Response> _processNonce(String cardNonce) async {
-    final String url = 'https://api.supercookie.com/processnonce';
-    final headersMap = Map<String,String>();
-    headersMap.addAll({'Content-Type':'application/json'});
-    return await http.post(url, headers: headersMap ,body: {'nonce': cardNonce, 'amount':'100'})
+    // handle google pay failure
   }
   ...
 }
 ```
 ---
-**Note:** the `_processNonce` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample]() to learn about building an app that processes payment nonces on a server.
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
 
@@ -131,3 +141,4 @@ class _MyAppState extends State<MyApp> {
 [Google Pay]: https://developers.google.com/pay/api/android/overview
 [Google Pay methods]: https://developers.google.com/pay/api/android/reference/client
 [Google Pay objects]: https://developers.google.com/pay/api/android/reference/object 
+[BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
