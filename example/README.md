@@ -6,9 +6,6 @@
 
 This quick start guide makes the following assumptions:
 
-* You have read the [In-App Payments SDK Overview]. This quick start focuses on getting
-  the sample app installed and running to demonstrate how the Flutter
-  plugin works.
 * You have a Square account enabled for payment processing. If you have not
   enabled payment processing on your account (or you are not sure), visit
   [squareup.com/activate].

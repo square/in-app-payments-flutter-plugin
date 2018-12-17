@@ -13,12 +13,25 @@ set up a Flutter project .
 
 ## Process overview
 
-* [Step 1: Initialize Apple Pay and verify Apple Pay support](#step-1-initialize-apple-pay-and-verify-apple-pay-support)
-* [Step 2: Authorize payment with Apple Pay](#step-2-authorize-payment-with-apple-pay)
-* [Step 3: Get payment authorization result](#step-3-get-payment-authorization-result)
-* [Step 4: Respond to Apple Pay payment authorization complete](#step-4-respond-to-apple-pay-payment-authorization-complete)
+* [Step 1: Get an Apple Pay certificate from the Apple Developer Portal](#step-1-get-an-apple-pay-certificate-from-the-apple-developer-portal)
+* [Step 2: Initialize Apple Pay and verify Apple Pay support](#step-2-initialize-apple-pay-and-verify-apple-pay-support)
+* [Step 3: Authorize payment with Apple Pay](#step-3-authorize-payment-with-apple-pay)
+* [Step 4: Get payment authorization result](#step-4-get-payment-authorization-result)
+* [Step 5: Respond to Apple Pay payment authorization complete](#step-5-respond-to-apple-pay-payment-authorization-complete)
 
-## Step 1: Initialize Apple Pay and verify Apple Pay support
+## Step 1: Get an Apple Pay certificate from the Apple Developer Portal
+Before enabling **Apple Pay** in this sample, you need to get an Apple Pay certificate
+and then upload it to the [Square Developer Application Dashboard]. This involves
+getting a certificate signing request (CSR) from Square and using it to generate
+an Apple Pay certificate in the **Apple Developer Center**. 
+
+1. In your **Square Developer Application Dashboard**, select the application that you
+registered to run this quick start sample.
+1. Click the **Apple Pay** tab.
+1. Click **Add Certifcate** and follow the instructions to acquire a certificate from Apple.
+
+
+## Step 2: Initialize Apple Pay and verify Apple Pay support
 
 
 Add code to initialize Apple Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Apple Pay in the `_initSquarePayment` method and then save the return
@@ -51,7 +64,7 @@ class _MyAppState extends State<MyApp> {
 
 ```
 
-## Step 2: Authorize payment with Apple Pay
+## Step 3: Authorize payment with Apple Pay
 Open the Apple Pay sheet and request the user's authorization of the payment. On authorization, a
 payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
@@ -71,7 +84,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
     }
   }
 ```
-## Step 3: Get payment authorization result
+## Step 4: Get payment authorization result
 
 ```dart
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
@@ -97,7 +110,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
 ```
 
-## Step 4: Respond to Apple Pay payment authorization complete
+## Step 5: Respond to Apple Pay payment authorization complete
 The following callback is invoked when the Apple Pay payment authorization sheet is closed. 
 The sample app uses this callback to return the user to the cookie order sheet.
 ```dart
@@ -118,3 +131,4 @@ The sample app uses this callback to return the user to the cookie order sheet.
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [Apple Pay]: https://developer.apple.com/documentation/passkit/apple_pay
+[Square Developer Application Dashboard]: https://connect.squareup.com/apps

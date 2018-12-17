@@ -1,6 +1,6 @@
 # Flutter plugin for In-App Payments SDK
 
-This repo contains a Flutter plugin for Square [In-App Payments SDK]. In-App Payments SDK for
+This repo contains a Flutter plugin for Square **In-App Payments SDK**. In-App Payments SDK for
 Flutter supports the following native In-App Payments SDK versions:
 
   * iOS: 1.0.0
@@ -70,7 +70,6 @@ limitations under the License.
 
 [//]: # "Link anchor definitions"
 [squareup.com/activate]: https://squareup.com/activate
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
 [Square Dashboard]: https://squareup.com/dashboard/
 [Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
 [`docs`]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/docs
