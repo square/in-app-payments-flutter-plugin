@@ -21,8 +21,6 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ## Build requirements
 
-### Android
-
 * Android minSdkVersion is API 21 (Lollipop, 5.0) or higher. 
 * Android Target SDK version: API 27 (Oreo, 8.1).
 * Android SDK build tools: 26.0.3
@@ -48,7 +46,9 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * In-App Payments SDK is not supported in the Square sandbox. See [Testing Mobile Apps]
   for testing recommendations.
 
-
+## Sample applications
+* **[Quick start flutter app]:** You can learn how the In-App-Payments Flutter plugin is used by [getting started with the example app], a quick-start Flutter app that lets you take a payment after completing 5 simple set up steps. 
+* **Quick start backend app:** The [In-App Payments Server Quickstart](https://github.com/square/in-app-payments-server-quickstart) takes the nonce created by the flutter app and uses it to create a payment credited to your Square account. Use this backend sample to quickly create a complete payment flow.
 
 ## License
 
@@ -81,3 +81,4 @@ limitations under the License.
 [Troubleshooting guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/troubleshooting.md
 [flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master
 [Getting started with the example app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example/README.md
+[Quick start flutter app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example

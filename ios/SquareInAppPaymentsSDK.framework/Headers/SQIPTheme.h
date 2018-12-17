@@ -55,7 +55,7 @@
 @property (nonatomic, strong, nonnull) UIColor *tintColor;
 
 /**
- The text color used to display informational messages (e.g. "CVV is the three-digit code on the back of your card").
+ The text color used to display informational messages (e.g. "Enter the three digit CVV number").
  */
 @property (nonatomic, strong, nonnull) UIColor *messageColor;
 
@@ -65,7 +65,8 @@
 @property (nonatomic, strong, nonnull) UIColor *errorColor;
 
 /**
- The title of the save button
+ The title of the save button.
+ 
  */
 @property (nonatomic, strong, nonnull) NSString *saveButtonTitle;
 
@@ -86,7 +87,7 @@
 
 /**
  Sets an optional custom cancel button used to dismiss the view controller.
- This property is nil by default, indicating that the default cancel button should be used
+ This property is nil by default, indicating that the default cancel button should be used.
  */
 
 @property (nonatomic, strong, nullable) UIBarButtonItem *cancelButton;
