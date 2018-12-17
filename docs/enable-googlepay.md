@@ -14,35 +14,58 @@ set up a Flutter project .
 
 ## Process overview
 
-* [Step 1: Initialize Google Pay](#step-1-initialize-google-pay)
-* [Step 2: Implement the Google Pay flow](#step-2-implement-the-google-pay-flow)
+* [Step 1: Set up Google Pay on your device](#step-1-set-up-google-pay-on-your-device)
+* [Step 2: Get a Square Location ID](#step-2-get-a-square-location-id)
+* [Step 3: Initialize Google Pay](#step-3-initialize-google-pay)
+* [Step 4: Implement the Google Pay flow](#step-4-implement-the-google-pay-flow)
+
+## Step 1: Set up Google Pay on your device
+
+1. Verify that your device has Google Play services version 16.0.0 or greater installed.
+1. Install the Google Pay app on your device and [add a payment method]
+
+## Step 2: Get a Square Location ID
+
+1. Open the [Square Application Dashboard].
+1. Click the application that you are using for this quick start.
+1. You will need the **Location ID** from the
+   **Locations** page to configure Google Pay in the next steps.
+
+## Step 3: Initialize Google Pay
 
 
-## Step 1: Initialize Google Pay
-
-
-1. Add code to initialize Google Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Google Pay in the `_initSquarePayment` method and then save the return
-value of `InAppPayments.canUseGooglePay` in the app `State` object.
+1. Add the Google Pay code marked by `Google Pay:` in your application State class. 
+If you followed the [Getting Started Guide](get-started.md), then initialize Google Pay in the `_initSquarePayment` method and then save the return value of `InAppPayments.canUseGooglePay` in the app `State` object.
+1. Replace the `"REPLACE_ME"` string with your **Location ID**.
 
   ```dart
   import 'package:square_in_app_payments/models.dart';
   import 'package:square_in_app_payments/in_app_payments.dart';
+  import 'dart:io' show Platform;
+
 
     class _MyAppState extends State<MyApp> {
+
+      //Google Pay: Declare Google Pay enabled flag
       bool _googlePayEnabled = false;
 
       ...
 
       Future<void> _initSquarePayment() async {
         ...
+
+        //Google Pay: Initialize Google Pay
         var canUseGooglePay = false;
-        if(Theme.of(context).platform == TargetPlatform.android) {
+        if (Platform.isAndroid) {
           await InAppPayments.initializeGooglePay(
-            'LOCATION_ID', google_pay_constants.environmentTest);
+              "REPLACE_ME", google_pay_constants.environmentTest);
           canUseGooglePay = await InAppPayments.canUseGooglePay;
         }
+        //Google Pay:
+
         setState(() {
           ...
+          //Google Pay: Save the enabled state of Google Pay
           _googlePayEnabled = canUseGooglePay;
           ...
         });
@@ -52,51 +75,68 @@ value of `InAppPayments.canUseGooglePay` in the app `State` object.
   ```
 1. Replace `LOCATION_ID` in this example with a valid location ID for the associated Square account.
 
-## Step 2: Implement the Google Pay flow
+## Step 4: Implement the Google Pay flow
 
 Add code to the `_MyAppState_` class that starts the payment flow and handles
 the response. 
-
-**Note**: You cannot start the Google Pay flow from a modal screen. To start
-Google Pay, you must close the modal screen before calling `requestGooglePayNonce`.
 
 ```dart
 import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
-  void _onStartGooglePay() async {
+
+   /**
+   * An event listener to start Google Pay flow
+   */ 
+   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
-        price: '100',
-        currencyCode: 'USD',
-        onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
-        onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
-        onGooglePayCanceled: _onGooglePayCancel);
-    } on InAppPaymentsException catch(ex) {
-      if (ex.code == ErrorCode.usageError) {
-        print('Usage error: Please review payment card information and retry.\n ${ex.toString()}');
-      } else {
-        print('Network error: Please retry request.\n ${ex.toString()}');
-      }
+          priceStatus: 1,
+          price: getCookieAmount(),
+          currencyCode: 'USD',
+          onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+          onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+          onGooglePayCanceled: onGooglePayEntryCanceled);
+    } on PlatformException {
+      _showOrderSheet();
     }
   }
 
-  void _onGooglePayNonceRequestSuccess(CardDetails result) {
-    Response response = await _processNonce(cardDetails.nonce);
-    if (response.statusCode != 201) {
-      print('Failed to complete payment with Google Pay');
-    } else {
-      print('Payment complete');
+   /**
+   * Callback invoked when succeeded in getting card nonce details for
+   * processing. Google Pay sheet is still open and waiting for results
+   * of card processing
+   */
+   void _onGooglePayNonceRequestSuccess(CardDetails result) async {
+    try {
+
+      // take a payment with card nonce details
+      // you can take a charge
+      //await chargeCard(result);
+      
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Your order was successful",
+          description:
+              "Go to your Square dashbord to see this order reflected in the sales tab.");
+    } on ChargeException catch (e) {
+      showAlertDialog(
+          context: scaffoldKey.currentContext,
+          title: "Error processing GooglePay payment",
+          description: e.errorMessage);
     }
   }
 
-  void _onGooglePayCancel() {
-    print('GooglePay is canceled');
+  void onGooglePayEntryCanceled() {
+    _showOrderSheet();
   }
 
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
-    print('GooglePay failed. \n ${errorInfo.toString()}');
+    showAlertDialog(
+        context: scaffoldKey.currentContext,
+        title: "Failed to start GooglePay",
+        description: errorInfo.toString());
   }
 
   //Supercookie app sends the nonce to it's backend for 
@@ -131,3 +171,4 @@ class _MyAppState extends State<MyApp> {
 [Google Pay]: https://developers.google.com/pay/api/android/overview
 [Google Pay methods]: https://developers.google.com/pay/api/android/reference/client
 [Google Pay objects]: https://developers.google.com/pay/api/android/reference/object 
+[add a payment method]: https://support.google.com/pay/answer/7625139?visit_id=636806718230188560-201650730&rd=1
