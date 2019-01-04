@@ -22,7 +22,7 @@
 extern NSString *_Nonnull const SQIPErrorDebugCodeKey;
 
 /**
- The `NSError` `userInfo` key used to to retrieve a human-readable message containing additional debug information related to the possible cause of the error.
+ The `NSError` `userInfo` key used to retrieve a human-readable message containing additional debug information related to the possible cause of the error.
  Debug messages should not be displayed to customers.
  */
 extern NSString *_Nonnull const SQIPErrorDebugMessageKey;
