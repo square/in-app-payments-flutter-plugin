@@ -1,7 +1,7 @@
 # Taking a payment with a Backend service
 
 The In-App Payments Quick Start Sample flutter application generates a nonce and 
-outputs a Curl command that posts the nonce to the Square Charge endpoint.
+outputs a cURL command that posts the nonce to the Square Charge endpoint.
 
 This article shows you how to modify the Flutter sample app to use a Square backend quick
 start server app or your own app on Localhost.

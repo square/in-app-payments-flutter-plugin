@@ -1,5 +1,6 @@
 #  In-App Payments Quick Start Sample Flutter Application
 
+<img src="https://docs.connect.squareup.com/images/github/in-app-payments-sample-triscreen.png">
 
 
 ## Assumptions and prerequisites
@@ -54,17 +55,17 @@ This quick start guide makes the following assumptions:
     flutter run
     ```
 
-### Step 5: Use the nonce in a Curl payment command
-Take a payment with the card nonce by executing the Curl command written into the debug output.
+### Step 5: Use the nonce in a cURL payment command
+Take a payment with the card nonce by executing the cURL command written into the debug output.
 of your development environment. 
 
-Update the Curl command by completing the following steps:
+Update the cURL command by completing the following steps:
 
-1. Replace the Location ID placeholder in the Curl query string with the 
+1. Replace the Location ID placeholder in the cURL query string with the 
 location ID that you copied in **Step 1**.
 1. Replace the access token placeholder with your access token. 
-1. Run the Curl command to take a payment in your Square account.
->**Note:** We provide a Curl command in the debug output that you can use to easily test the payment with our  Transactions API. Your production app should use a secure backend service to make calls to the Transactions API and should never expose your access token in the client.
+1. Run the cURL command to take a payment in your Square account.
+>**Note:** We provide a cURL command in the debug output that you can use to easily test the payment with our  Transactions API. Your production app should use a secure backend service to make calls to the Transactions API and should never expose your access token in the client.
 
 Square provides a backend service in our sample app to get your started. follow the 
 steps in the [backend service setup guide] to configure the backend sample.

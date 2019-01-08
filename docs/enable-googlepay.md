@@ -4,7 +4,8 @@ This guide walks you through the process of enabling the Google Pay digital wall
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the Google Pay methods available.
 
-**[Google Pay]** can only be used on Android devices.
+**[Google Pay]** can only be used on Android devices. You must [add a card or payment account]  
+before using **Google Pay**.
 
 ## Before you start
 
@@ -142,3 +143,4 @@ class _MyAppState extends State<MyApp> {
 [Google Pay methods]: https://developers.google.com/pay/api/android/reference/client
 [Google Pay objects]: https://developers.google.com/pay/api/android/reference/object 
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
+[add a card or payment account]: https://support.google.com/pay/answer/7625139?visit_id=636775920124642581-1648826871&rd=1
