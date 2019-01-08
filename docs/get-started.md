@@ -77,7 +77,47 @@ dependencies:
 
 1. Replace `APPLICATION_ID` with the **application ID** from the application dashboard.
 
-## Step 5: Customize iOS card entry theme
+## Step 5: Customize card entry appearance
+The Android and iOS platforms allow customization of the card entry screen but provide
+different customization mechanisms.
+
+### Android
+You can customize the payment form `UI` by overriding the `sqip.Theme.CardEntry`
+theme resource. The SDK honors customization of system style attributes and provides 3 custom style
+attributes. 
+
+Change the appearance of the save button and the card information form to match
+the styles in the app's theme. This will entirely override the style for these
+elements, giving the application full control over their appearance.
+1. Open `example/android/app/src/main/res/values/themes.xml`
+2. Add an item with the `name="editTextStyle" `and the value set to your desired
+   style.
+```xml {"id": "inapppayments-customizeform-step 2.1", "copy_code": true}
+  <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntryAppTheme">
+    …
+     <item name="editTextStyle">@style/CustomEditText</item>
+  </style>
+
+  <style name="CustomEditText" parent="@style/Widget.AppCompat.EditText">
+    <item name="android:textColor">@color/blue</item>
+  </style>
+```
+3. Add an item with the `name="buttonStyle"` and the value set to your desired
+   style.
+
+```xml {"id": "inapppayments-customizeform-step 2.2", "copy_code": true}
+  <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntryAppTheme">
+    …
+     <item name="buttonStyle">@style/CustomButton</item>
+  </style>
+
+  <style name="CustomButton" parent="Widget.AppCompat.Button.Colored">
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textSize">18sp</item>
+  </style>
+```
+
+### iOS
 For iOS devices, set the card entry error text and background color, keyboard appearance and message color.
 
 1. Add code that creates a card entry theme and sets it in the plugin.

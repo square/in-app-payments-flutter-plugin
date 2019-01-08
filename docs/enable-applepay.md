@@ -4,7 +4,7 @@ This guide walks you through the process of enabling the Apple Pay digital walle
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the [Apple Pay] methods available.
 
-**Apple Pay** can only be used on iOS devices.
+**Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the example `ios/Runner` project before using Apple Pay in this app. 
 
 ## Before you start
 
@@ -164,3 +164,5 @@ The following callback is invoked when the Apple Pay payment authorization sheet
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
 [add an Apple Pay payment processing certificate]: https://help.apple.com/developer-account/#/devb2e62b839?sub=devf31990e3f
 [Square Application Dashboard]: https://connect.squareup.com/apps/
+[set up Apple Pay requirements]: https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay_requirements
+[enable Apple Pay]: https://help.apple.com/xcode/mac/9.3/#/deva43983eb7?sub=dev44ce8ef13
