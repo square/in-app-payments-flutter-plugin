@@ -1,5 +1,6 @@
 #  In-App Payments Quick Start Sample Flutter Application
 
+<img src="https://docs.connect.squareup.com/images/github/in-app-payments-sample-triscreen.png">
 
 
 ## Assumptions and prerequisites
