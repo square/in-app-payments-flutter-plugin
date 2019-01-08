@@ -85,6 +85,32 @@ different customization mechanisms.
 You can customize the payment form `UI` by overriding the `sqip.Theme.CardEntry`
 theme resource. The SDK honors customization of system style attributes and provides 3 custom style
 attributes. 
+<table>
+  <tr>
+   <th>Custom Style attribute
+   </th>
+   <th>Styled UI element
+   </th>
+  </tr>
+  <tr>
+   <td><code>sqipErrorColor </code>
+   </td>
+   <td>The color of invalid text input
+   </td>
+  </tr>
+  <tr>
+   <td><code> sqipSaveButtonText</code>
+   </td>
+   <td>The text of the button the customer clicks to submit their card information
+   </td>
+  </tr>
+  <tr>
+   <td><code>sqipActivityTitle</code>
+   </td>
+   <td>The title of the payment form displayed in the action bar.
+   </td>
+  </tr>
+</table>
 
 Change the appearance of the save button and the card information form to match
 the styles in the app's theme. This will entirely override the style for these
