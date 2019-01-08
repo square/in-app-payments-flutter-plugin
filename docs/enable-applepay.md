@@ -4,7 +4,7 @@ This guide walks you through the process of enabling the Apple Pay digital walle
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the [Apple Pay] methods available.
 
-**Apple Pay** can only be used on iOS devices.
+**Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the `ios/Runner` Flutter project before using Apple Pay in this app. 
 
 ## Before you start
 
@@ -13,12 +13,25 @@ set up a Flutter project .
 
 ## Process overview
 
-* [Step 1: Initialize Apple Pay and verify Apple Pay support](#step-1-initialize-apple-pay-and-verify-apple-pay-support)
-* [Step 2: Authorize payment with Apple Pay](#step-2-authorize-payment-with-apple-pay)
-* [Step 3: Get payment authorization result](#step-3-get-payment-authorization-result)
-* [Step 4: Respond to Apple Pay payment authorization complete](#step-4-respond-to-apple-pay-payment-authorization-complete)
+* [Step 1: Upload an Apple Pay certificate to the Square Developer Portal](#step-1-upload-an-apple-pay-certificate-to-the-square-developer-portal)
+* [Step 2: Initialize Apple Pay and verify Apple Pay support](#step-2-initialize-apple-pay-and-verify-apple-pay-support)
+* [Step 3: Authorize payment with Apple Pay](#step-3-authorize-payment-with-apple-pay)
+* [Step 4: Get payment authorization result](#step-4-get-payment-authorization-result)
+* [Step 5: Respond to Apple Pay payment authorization complete](#step-5-respond-to-apple-pay-payment-authorization-complete)
 
-## Step 1: Initialize Apple Pay and verify Apple Pay support
+## Step 1: Upload an Apple Pay certificate to the Square Developer Portal
+
+To [add an Apple Pay payment processing certificate] in the **Apple Developer Portal**, 
+you must first obtain a Certificate Signing
+Request (CSR) from Square. The [Square Application Dashboard]
+provides a CSR file that can be submitted to Apple:
+
+1. Select the application you created for your Flutter project.
+1. Click the **Apple Pay** tab.
+1. Click **Add Certificate** and follow the instructions to generate an Apple
+   Pay certificate from Apple and upload it to your Square account.
+
+## Step 2: Initialize Apple Pay and verify Apple Pay support
 
 
 Add code to initialize Apple Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Apple Pay in the `_initSquarePayment` method and then save the return
@@ -57,7 +70,7 @@ class _MyAppState extends State<MyApp> {
 
 * Replace `APPLE_PAY_MERCHANT_ID` in this example with a valid apple pay merchant ID.
 
-## Step 2: Authorize payment with Apple Pay
+## Step 3: Authorize payment with Apple Pay
 Open the Apple Pay sheet and request the user's authorization of the payment. On authorization, a
 payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
@@ -80,7 +93,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
     }
   }
 ```
-## Step 3: Get payment authorization result
+## Step 4: Get payment authorization result
 
 ```dart
   /**
@@ -119,7 +132,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
   }
 ```
 
-## Step 4: Respond to Apple Pay payment authorization complete
+## Step 5: Respond to Apple Pay payment authorization complete
 The following callback is invoked when the Apple Pay payment authorization sheet is closed. 
 
 ```dart
@@ -149,3 +162,7 @@ The following callback is invoked when the Apple Pay payment authorization sheet
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [Apple Pay]: https://developer.apple.com/documentation/passkit/apple_pay
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
+[add an Apple Pay payment processing certificate]: https://help.apple.com/developer-account/#/devb2e62b839?sub=devf31990e3f
+[Square Application Dashboard]: https://connect.squareup.com/apps/
+[set up Apple Pay requirements]: https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay_requirements
+[enable Apple Pay]: https://help.apple.com/xcode/mac/9.3/#/deva43983eb7?sub=dev44ce8ef13

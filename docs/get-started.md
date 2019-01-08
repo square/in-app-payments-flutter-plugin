@@ -21,7 +21,8 @@ for more detailed information about the methods available.
 * [Step 2: Configure the In-App Payments SDK dependency](#step-2-configure-the-in-app-payments-sdk-dependency)
 * [Step 3: Get Square Application ID](#step-3-get-square-application-id)
 * [Step 4: Initialize the In-App Payments SDK](#step-4-initialize-the-in-app-payments-sdk)
-* [Step 5: Implement the Payment flow](#step-5-implement-the-payment-flow)
+* [Step 5: Customize card entry appearance](#step-5-customize-card-entry-appearance)
+* [Step 6: Implement the Payment flow](#step-6-implement-the-payment-flow)
 
 ## Step 1: Create a Flutter project
 
@@ -76,7 +77,107 @@ dependencies:
 
 1. Replace `APPLICATION_ID` with the **application ID** from the application dashboard.
 
-## Step 5: Implement the Payment flow
+## Step 5: Customize card entry appearance
+The Android and iOS platforms allow customization of the card entry screen but provide
+different customization mechanisms. For more information, read about [customizing the payment entry form] in the Square developer documentation.
+
+### Android
+You can customize the payment form `UI` by overriding the `sqip.Theme.CardEntry`
+theme resource. The SDK honors customization of system style attributes and provides 3 custom style
+attributes. 
+<table>
+  <tr>
+   <th>Custom Style attribute
+   </th>
+   <th>Styled UI element
+   </th>
+  </tr>
+  <tr>
+   <td><code>sqipErrorColor </code>
+   </td>
+   <td>The color of invalid text input
+   </td>
+  </tr>
+  <tr>
+   <td><code> sqipSaveButtonText</code>
+   </td>
+   <td>The text of the button the customer clicks to submit their card information
+   </td>
+  </tr>
+  <tr>
+   <td><code>sqipActivityTitle</code>
+   </td>
+   <td>The title of the payment form displayed in the action bar.
+   </td>
+  </tr>
+</table>
+
+Change the appearance of the save button and the card information form to match
+the styles in the app's theme. This will entirely override the style for these
+elements, giving the application full control over their appearance.
+1. Open `{YOUR_PROJECT}/android/app/src/main/res/values/themes.xml`
+2. Add an item with the `name="editTextStyle" `and the value set to your desired
+   style.
+```xml {"id": "inapppayments-customizeform-step 2.1", "copy_code": true}
+  <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntryAppTheme">
+    …
+     <item name="editTextStyle">@style/CustomEditText</item>
+  </style>
+
+  <style name="CustomEditText" parent="@style/Widget.AppCompat.EditText">
+    <item name="android:textColor">@color/blue</item>
+  </style>
+```
+3. Add an item with the `name="buttonStyle"` and the value set to your desired
+   style.
+
+```xml {"id": "inapppayments-customizeform-step 2.2", "copy_code": true}
+  <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntryAppTheme">
+    …
+     <item name="buttonStyle">@style/CustomButton</item>
+  </style>
+
+  <style name="CustomButton" parent="Widget.AppCompat.Button.Colored">
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textSize">18sp</item>
+  </style>
+```
+
+### iOS
+For iOS devices, set the card entry error text and background color, keyboard appearance and message color.
+
+1. Add code that creates a card entry theme and sets it in the plugin.
+   ```dart
+   Future _setIOSCardEntryTheme() async {
+     var themeConfiguationBuilder = IOSThemeBuilder();
+     themeConfiguationBuilder.saveButtonTitle = 'Pay';
+     themeConfiguationBuilder.errorColor = RGBAColorBuilder()
+       ..r = 255
+       ..g = 0
+       ..b = 0;
+     themeConfiguationBuilder.tintColor = RGBAColorBuilder()
+       ..r = 36
+       ..g = 152
+       ..b = 141;
+     themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+     themeConfiguationBuilder.messageColor = RGBAColorBuilder()
+       ..r = 114
+       ..g = 114
+       ..b = 114;
+
+     await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+   }
+   ```
+
+1. Call the `_setIOSCardEntryTheme` method.
+
+   ```dart
+   if (Platform.isIOS) {
+      await _setIOSCardEntryTheme();
+   }
+   ```
+
+## Step 6: Implement the Payment flow
 
 Add code to the `_MyAppState_` class that starts the payment flow and handles
 the response. 
@@ -155,3 +256,4 @@ class _MyAppState extends State<MyApp> {
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
+[customizing the payment entry form]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/cookbook/customize-payment-form
