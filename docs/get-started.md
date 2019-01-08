@@ -79,7 +79,7 @@ dependencies:
 
 ## Step 5: Customize card entry appearance
 The Android and iOS platforms allow customization of the card entry screen but provide
-different customization mechanisms.
+different customization mechanisms. For more information, read about [customizing the payment entry form] in the Square developer documentation.
 
 ### Android
 You can customize the payment form `UI` by overriding the `sqip.Theme.CardEntry`
@@ -256,3 +256,4 @@ class _MyAppState extends State<MyApp> {
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
+[customizing the payment entry form]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/cookbook/customize-payment-form
