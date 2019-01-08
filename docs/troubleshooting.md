@@ -2,27 +2,31 @@
 
 Likely causes and solutions for common problems.
 
-## I get Xcode compile errors when building In-App Payments SDK
+## I get iOS build error "While building module 'SquareInAppPaymentsSDK' imported from ..."
 
 ### The problem
 
-You are building your Flutter project with Xcode instead of the Flutter
-command line interface (CLI) and using Xcode 10. Xcode 10 builds projects
-differently than earlier versions.
+By default, the flutter project template is not configured to support importing framework.
+The plugin import iOS In-App Payments SDK as framework dependency, so that building the plugin may fail.
 
 ### Likely cause
 
-You recently downloaded or updated Xcode.
+You created a flutter project from template without configuration of framwork support.
 
 ### Solution
 
-There are 2 ways to address the issue:
+Add `use_frameworks!` to the `{YOUR_PROJECT}/ios/Podfile`
 
-1. Build with the Flutter CLI instead of Xcode.
+```yaml
+...
 
-**OR**
+target 'Runner' do
+  # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
+  # referring to absolute paths on developers' machines.
+  use_frameworks! # <--- add line here
+  system('rm -rf .symlinks')
+  system('mkdir -p .symlinks/plugins')
 
-2. Configure Xcode to use the legacy build system:
-    1. Open `File > Project Settings... > Per-User Project Settings`
-    2. Choose `Legacy Build System`
-    3. Run `flutter clean` from the command line.
+  ...
+end
+```
