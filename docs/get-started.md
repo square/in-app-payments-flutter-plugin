@@ -115,7 +115,7 @@ attributes.
 Change the appearance of the save button and the card information form to match
 the styles in the app's theme. This will entirely override the style for these
 elements, giving the application full control over their appearance.
-1. Open `example/android/app/src/main/res/values/themes.xml`
+1. Open `{YOUR_PROJECT}/android/app/src/main/res/values/themes.xml`
 2. Add an item with the `name="editTextStyle" `and the value set to your desired
    style.
 ```xml {"id": "inapppayments-customizeform-step 2.1", "copy_code": true}
