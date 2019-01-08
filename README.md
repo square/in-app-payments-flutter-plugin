@@ -15,7 +15,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * [Enable Google Pay guide]
 * [Technical reference]
 * [Troubleshooting guide]
-* [`docs`] - Root directory for all documentation.
+* [`doc`] - Root directory for all documentation.
 * [`example`] - Root directory of the Flutter sample app (with walkthrough).
 * [Getting started with the example app]
 
@@ -70,13 +70,13 @@ limitations under the License.
 [In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
 [Square Dashboard]: https://squareup.com/dashboard/
 [Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
-[`docs`]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/docs
+[`doc`]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/doc
 [`example`]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example
-[Getting started guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/get-started.md
-[Enable Apple Pay guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/enable-applepay.md
-[Enable Google Pay guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/enable-googlepay.md
-[Technical reference]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/reference.md
-[Troubleshooting guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/docs/troubleshooting.md
+[Getting started guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/get-started.md
+[Enable Apple Pay guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/enable-applepay.md
+[Enable Google Pay guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/enable-googlepay.md
+[Technical reference]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/reference.md
+[Troubleshooting guide]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/troubleshooting.md
 [flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master
 [Getting started with the example app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example/README.md
 [Quick start flutter app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example
