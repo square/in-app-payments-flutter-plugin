@@ -1,7 +1,7 @@
 # Flutter plugin for In-App Payments SDK
 
-This repo contains a Flutter plugin for Square [In-App Payments SDK]. In-App Payments SDK for
-Flutter supports the following native In-App Payments SDK versions:
+The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
+supports the following native In-App Payments SDK versions:
 
   * iOS: 1.0.1
   * Android: 1.0.3
@@ -35,20 +35,17 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * iOS Base SDK: 11.1 or greater.
 * Deployment target: iOS 11.0 or greater.
 
-
 ## In-App Payments SDK requirements and limitations
 
-* In-App Payments SDK is only available for accounts based in the United States.
-  Authorization requests for accounts based outside the United States return an
-  error.
 * In-App Payments SDK cannot issue refunds. Refunds can be issued programmatically using
   the Transactions API or manually in the [Square Dashboard].
 * In-App Payments SDK is not supported in the Square sandbox. See [Testing Mobile Apps]
   for testing recommendations.
 
 ## Sample applications
-* **[Quick start flutter app]:** You can learn how the In-App-Payments Flutter plugin is used by [getting started with the example app], a quick-start Flutter app that lets you take a payment after completing 5 simple set up steps. 
-* **Quick start backend app:** The [In-App Payments Server Quickstart](https://github.com/square/in-app-payments-server-quickstart) takes the nonce created by the flutter app and uses it to create a payment credited to your Square account. Use this backend sample to quickly create a complete payment flow.
+* **[Quick start flutter app]:** You can learn how the In-App-Payments Flutter plugin is used by [getting started with the example app], a quick-start Flutter app that lets you take a payment after completing 6 set up steps. 
+* **Quick start backend app:** The [In-App Payments Server Quickstart](https://github.com/square/in-app-payments-server-quickstart) 
+takes the nonce created by the flutter app and uses it to create a payment credited to your Square account. Use this backend sample to quickly create a complete payment flow.
 
 ## License
 

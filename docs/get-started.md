@@ -21,7 +21,7 @@ for more detailed information about the methods available.
 * [Step 2: Configure the In-App Payments SDK dependency](#step-2-configure-the-in-app-payments-sdk-dependency)
 * [Step 3: Get Square Application ID](#step-3-get-square-application-id)
 * [Step 4: Initialize the In-App Payments SDK](#step-4-initialize-the-in-app-payments-sdk)
-* [Step 5: Customize iOS card entry theme](#step-5-customize-ios-card-entry-theme)
+* [Step 5: Customize card entry appearance](#step-5-customize-card-entry-appearance)
 * [Step 6: Implement the Payment flow](#step-6-implement-the-payment-flow)
 
 ## Step 1: Create a Flutter project

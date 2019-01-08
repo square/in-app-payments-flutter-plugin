@@ -4,7 +4,7 @@ This guide walks you through the process of enabling the Apple Pay digital walle
 for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the [Apple Pay] methods available.
 
-**Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the example `ios/Runner` project before using Apple Pay in this app. 
+**Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the `ios/Runner` Flutter project before using Apple Pay in this app. 
 
 ## Before you start
 
