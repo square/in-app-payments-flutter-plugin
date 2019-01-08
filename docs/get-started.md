@@ -21,7 +21,8 @@ for more detailed information about the methods available.
 * [Step 2: Configure the In-App Payments SDK dependency](#step-2-configure-the-in-app-payments-sdk-dependency)
 * [Step 3: Get Square Application ID](#step-3-get-square-application-id)
 * [Step 4: Initialize the In-App Payments SDK](#step-4-initialize-the-in-app-payments-sdk)
-* [Step 5: Implement the Payment flow](#step-5-implement-the-payment-flow)
+* [Step 5: Customize iOS card entry theme](#step-5-customize-ios-card-entry-theme)
+* [Step 6: Implement the Payment flow](#step-6-implement-the-payment-flow)
 
 ## Step 1: Create a Flutter project
 
@@ -76,7 +77,41 @@ dependencies:
 
 1. Replace `APPLICATION_ID` with the **application ID** from the application dashboard.
 
-## Step 5: Implement the Payment flow
+## Step 5: Customize iOS card entry theme
+For iOS devices, set the card entry error text and background color, keyboard appearance and message color.
+
+1. Add code that creates a card entry theme and sets it in the plugin.
+   ```dart
+   Future _setIOSCardEntryTheme() async {
+     var themeConfiguationBuilder = IOSThemeBuilder();
+     themeConfiguationBuilder.saveButtonTitle = 'Pay';
+     themeConfiguationBuilder.errorColor = RGBAColorBuilder()
+       ..r = 255
+       ..g = 0
+       ..b = 0;
+     themeConfiguationBuilder.tintColor = RGBAColorBuilder()
+       ..r = 36
+       ..g = 152
+       ..b = 141;
+     themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+     themeConfiguationBuilder.messageColor = RGBAColorBuilder()
+       ..r = 114
+       ..g = 114
+       ..b = 114;
+
+     await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+   }
+   ```
+
+1. Call the `_setIOSCardEntryTheme` method.
+
+   ```dart
+   if (Platform.isIOS) {
+      await _setIOSCardEntryTheme();
+   }
+   ```
+
+## Step 6: Implement the Payment flow
 
 Add code to the `_MyAppState_` class that starts the payment flow and handles
 the response. 
