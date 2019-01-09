@@ -1,6 +1,6 @@
 name: square_in_app_payments
 description: An open source Flutter plugin for calling Square’s native In-App Payments SDK to take in-app payments on iOS and Android.
-version: 1.0.0
+version: 1.0.1
 author: Square Flutter Team <flutter-team@squareup.com>
 homepage: https://github.com/square/in-app-payments-flutter-plugin
 
@@ -10,7 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  built_value: "^6.1.5"
+  built_value: ^6.1.5
+  built_collection: ^4.0.0
+  meta: ^1.1.6
 
 dev_dependencies:
   build:
