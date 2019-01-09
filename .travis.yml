@@ -1,0 +1,48 @@
+matrix:
+  include:
+    - language: android
+      sudo: false
+      jdk: oraclejdk8
+      os:
+        - linux
+      licenses:
+        - 'android-sdk-preview-license-.+'
+        - 'android-sdk-license-.+'
+        - 'google-gdk-license-.+'
+      android:
+        components:
+          - tools
+          - platform-tools
+          - tools
+          - build-tools-27.0.3
+          - android-27
+          - extra-google-google_play_services
+      addons:
+        apt:
+          # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
+          sources:
+            - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
+          packages:
+            - libstdc++6
+            - fonts-droid
+      before_install:
+        - cd example
+        - yes | sdkmanager "platforms;android-28"
+      install:
+        - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+        - ./flutter/bin/flutter doctor
+      script:
+        - ./flutter/bin/flutter -v build apk
+
+    - language: objective-c
+      os: osx
+      osx_image: xcode10.1
+      cache:
+        directories:
+          - $HOME/.pub-cache
+      before_install:
+        - cd example
+        - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+        - ./flutter/bin/flutter doctor
+      script:
+        - ./flutter/bin/flutter -v build ios --no-codesign
