@@ -29,7 +29,7 @@ matrix:
         - cd example
         - yes | sdkmanager "platforms;android-28"
       install:
-        - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - ./flutter/bin/flutter doctor
       script:
         - ./flutter/bin/flutter -v build apk
@@ -42,7 +42,7 @@ matrix:
           - $HOME/.pub-cache
       before_install:
         - cd example
-        - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - ./flutter/bin/flutter doctor
       script:
         - ./flutter/bin/flutter -v build ios --no-codesign
