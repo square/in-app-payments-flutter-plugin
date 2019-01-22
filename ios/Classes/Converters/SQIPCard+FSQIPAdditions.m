@@ -26,7 +26,7 @@
         @"lastFourDigits" : self.lastFourDigits,
         @"expirationMonth" : @(self.expirationMonth),
         @"expirationYear" : @(self.expirationYear),
-        @"postalCode" : self.postalCode,
+        @"postalCode" : self.postalCode ?: [NSNull null],
     };
 }
 
