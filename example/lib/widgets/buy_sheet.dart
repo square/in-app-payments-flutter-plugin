@@ -234,6 +234,7 @@ class BuySheetState extends State<BuySheet> {
 
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
+      await InAppPayments.completeApplePayAuthorization(isSuccess: false);
       _showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
@@ -247,24 +248,24 @@ class BuySheetState extends State<BuySheet> {
               "Go to your Square dashbord to see this order reflected in the sales tab.");
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
     } on ChargeException catch (ex) {
+      await InAppPayments.completeApplePayAuthorization(
+          isSuccess: false, errorMessage: ex.errorMessage);
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext,
           title: "Error processing ApplePay payment",
           description: ex.errorMessage);
       _applePayStatus = ApplePayStatus.fail;
-      await InAppPayments.completeApplePayAuthorization(
-          isSuccess: false, errorMessage: ex.errorMessage);
     }
   }
 
   void _onApplePayNonceRequestFailure(ErrorInfo errorInfo) async {
     _applePayStatus = ApplePayStatus.fail;
+    await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false, errorMessage: errorInfo.message);
     showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext,
           title: "Error request ApplePay nonce",
           description: errorInfo.toString());
-    await InAppPayments.completeApplePayAuthorization(
-        isSuccess: false, errorMessage: errorInfo.message);
   }
 
   void _onApplePayEntryComplete() {
