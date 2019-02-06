@@ -854,7 +854,6 @@ Encapsulates options used to style the iOS native card entry view controller.
 Field                              | Type               | Description
 :--------------------------------- | :----------------- | :-----------------
 **Optional**: font                 | Font               | The text field font.
-**Optional**: emphasisFont         | Font               | The save button font.
 **Optional**: backgroundColor      | RGBAColor          | The background color of the card entry view controller.
 **Optional**: foregroundColor      | RGBAColor          | The fill color for text fields.
 **Optional**: textColor            | RGBAColor          | The text field text color.
@@ -863,6 +862,7 @@ Field                              | Type               | Description
 **Optional**: messageColor         | RGBAColor          | The text color used to display informational messages.
 **Optional**: errorColor           | RGBAColor          | The text color when the text is invalid.
 **Optional**: saveButtonTitle      | String             | The text of the entry completion button
+**Optional**: saveButtonFont       | Font               | The save button font.
 **Optional**: saveButtonTextColor  | RGBAColor          | The save button text color when enabled.
 **Optional**: keyboardAppearance   | KeyboardAppearance | The appearance of the keyboard.
 
