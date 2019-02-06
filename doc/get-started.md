@@ -51,8 +51,13 @@ to make it an available resource for the Flutter library.
     1. Select **New Run Script Phase**.
     1. Paste the following into the editor panel of the new run script:
         ```
+        if [ "$DEVELOPMENT_TEAM" != "" ]
+        then
         FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
         "${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
+        else
+        echo "Skip signing frameworks"
+        fi
         ```
 
 
