@@ -41,8 +41,7 @@ started guide for more detailed instructions.
 To use the In-App Payments plugin on iOS devices, install **In-App Payments SDK for iOS** 
 to make it an available resource for the Flutter library. 
 
-1. Open your iOS project `Runner.xcodeproj` with **Xcode** and complete 
-[Build on iOS: Add the In-App Payments SDK to your project (Manual installation)].
+1. Open your iOS project `Runner.xcodeproj` with **Xcode**.
 1. Set the `iOS Deployment Target` to 11.0 or above
 1. Add an In-App Payments SDK build phase:
     1. Open the **Xcode** project for your application.
