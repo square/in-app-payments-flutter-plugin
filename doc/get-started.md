@@ -36,7 +36,7 @@ flutter create in_app_payments_flutter_app
 See the **Create the app** step of the [Test Drive] section in Flutter's getting
 started guide for more detailed instructions.
 
-## Step 2: Add the In-App Payments SDK to your iOS project
+## Step 2: Update your iOS project
 
 To use the In-App Payments plugin on iOS devices, install **In-App Payments SDK for iOS** 
 to make it an available resource for the Flutter library. 
