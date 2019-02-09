@@ -1,7 +1,8 @@
 # Enable Apple Pay with the Flutter Plugin for In-App Payments SDK
 
 This guide walks you through the process of enabling the Apple Pay digital wallet
-for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
+for an app that uses the **Flutter plugin for the Square [In-App Payments SDK]**. 
+See the [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the [Apple Pay] methods available.
 
 **Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the `ios/Runner` Flutter project before using Apple Pay in this app. 
@@ -34,7 +35,9 @@ provides a CSR file that can be submitted to Apple:
 ## Step 2: Initialize Apple Pay and verify Apple Pay support
 
 
-Add code to initialize Apple Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Apple Pay in the `_initSquarePayment` method and then save the return
+Add code to initialize Apple Pay in your application State class. If you followed 
+the [Getting Started Guide](get-started.md), then initialize Apple Pay in the 
+`_initSquarePayment` method and then save the return
 value of `InAppPayments.canUseApplePay` in the app `State` object.
 
 ```dart
