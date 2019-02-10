@@ -21,7 +21,7 @@ This quick start guide makes the following assumptions:
   setup your Flutter development environment.
 * Confirm your environment meets the In-App Payments SDK build requirements listed in the [root README] for this repo.
 * Clone this repo (if you have not already):
-  `git clone https://github.com/square/in-app-payments-plugin.git`
+  `git clone https://github.com/square/in-app-payments-flutter-plugin.git`
 
 
 ### Step 1: Get a Square Application ID and Location ID 
