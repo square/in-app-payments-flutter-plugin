@@ -2,7 +2,7 @@
 
 This guide walks you through the process of enabling the Apple Pay digital wallet
 for an app that uses the **Flutter plugin for the Square [In-App Payments SDK]**. 
-See the [Flutter In-App Payments SDK Technical Reference](reference.md)
+See the [Flutter In-App Payments Plugin Technical Reference](reference.md)
 for more detailed information about the [Apple Pay] methods available.
 
 **Apple Pay** can only be used on iOS devices. You must [set up Apple Pay requirements] and [enable Apple Pay] in the `ios/Runner` Flutter project before using Apple Pay in this app. 

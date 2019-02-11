@@ -1,7 +1,8 @@
 # Enable Google Pay with the Flutter Plugin for In-App Payments SDK
 
 This guide walks you through the process of enabling the Google Pay digital wallet
-for an app that uses the **Flutter plugin for the Square [In-App Payments SDK]**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
+for an app that uses the **Flutter plugin for the Square [In-App Payments SDK]**. 
+See the [Flutter In-App Payments Plugin Technical Reference](reference.md)
 for more detailed information about the Google Pay methods available.
 
 **[Google Pay]** can only be used on Android devices. You must [add a card or payment account]  
