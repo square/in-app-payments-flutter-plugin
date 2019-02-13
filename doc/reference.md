@@ -901,10 +901,8 @@ flow.
 * `AMERICAN_EXPRESS` - American Express Company credit card.
 * `DISCOVER` - Discover Financial Services credit card.
 * `DISCOVER_DINERS` - Diners Club International credit card.
-* `INTERAC` - Canadian Interbank Network debit card.
 * `JCB` - Japan Credit Bureau credit card.
 * `CHINA_UNION_PAY` - China UnionPay credit card.
-* `SQUARE_GIFT_CARD` - [Square-issued gift card].
 * `OTHER_BRAND` - An unexpected card type.
 
 
