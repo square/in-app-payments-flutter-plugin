@@ -1,7 +1,8 @@
 # Enable Google Pay with the Flutter Plugin for In-App Payments SDK
 
 This guide walks you through the process of enabling the Google Pay digital wallet
-for an app that uses the **Flutter In-App Payments SDK**. See the [Flutter In-App Payments SDK Technical Reference](reference.md)
+for an app that uses the **Flutter plugin for the Square [In-App Payments SDK]**. 
+See the [Flutter In-App Payments Plugin Technical Reference](reference.md)
 for more detailed information about the Google Pay methods available.
 
 **[Google Pay]** can only be used on Android devices. You must [add a card or payment account]  
@@ -15,11 +16,28 @@ set up a Flutter project .
 
 ## Process overview
 
-* [Step 1: Initialize Google Pay](#step-1-initialize-google-pay)
-* [Step 2: Implement the Google Pay flow](#step-2-implement-the-google-pay-flow)
+* [Step 1: Update AndroidManifest.xml for Google Pay](#step-1-update-androidmanifest.xml-for-google-pay)
+* [Step 2: Initialize Google Pay](#step-2-initialize-google-pay)
+* [Step 3: Implement the Google Pay flow](#step-3-implement-the-google-pay-flow)
 
+## Step 1: Update AndroidManifest.xml for Google Pay
 
-## Step 1: Initialize Google Pay
+Update your `AndroidManifest.xml` file to include the following `<meta-data/>` element
+
+```xml
+<application
+  ...
+  android:theme="@style/AppTheme">
+...
+  <meta-data
+    android:name="com.google.android.gms.wallet.api.enabled"
+    android:value="true" />
+...
+</application>
+
+```
+
+## Step 2: Initialize Google Pay
 
 
 1. Add code to initialize Google Pay in your application State class. If you followed the [Getting Started Guide](get-started.md), then initialize Google Pay in the `_initSquarePayment` method and then save the return
@@ -59,7 +77,7 @@ value of `InAppPayments.canUseGooglePay` in the app `State` object.
   ```
   * Replace `LOCATION_ID` in this example with a valid location ID for the associated Square account.
 
-## Step 2: Implement the Google Pay flow
+## Step 3: Implement the Google Pay flow
 
 Add code to the `_MyAppState_` class that starts the payment flow and handles
 the response. 

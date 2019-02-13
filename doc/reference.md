@@ -27,6 +27,7 @@ Method                                                       | Return Object    
 [startCardEntryFlow](#startcardentryflow)                    | void                      | Displays a full-screen card entry view.
 [completeCardEntry](#completecardentry)                      | void                      | Closes the card entry form on success.
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
+[setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
 
 ### Apple Pay methods
 Method                                                          | Return Object             | Description
@@ -36,7 +37,7 @@ Method                                                          | Return Object 
 [canUseApplePay](#canuseapplepay)                               | bool                      | Returns `true` if the device supports Apple Pay and the user has added at least one card that Square supports.
 [requestApplePayNonce](#requestapplepaynonce)                   | void                      | Starts the Apple Pay payment authorization and returns a nonce based on the authorized Apple Pay payment token.
 [completeApplePayAuthorization](#completeapplepayauthorization) | void                      | Notifies the native layer to close the Apple Pay sheet with success or failure status.
-[setIOSCardEntryTheme](#setioscardentrytheme)                   | void                      | Sets the customization theme for the card entry view controller in the native layer.
+
 
 
 ### Google Pay methods
@@ -198,6 +199,43 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   }
 ```
 ---
+### setIOSCardEntryTheme
+**iOS Only**
+
+
+Sets the customization theme for the card entry view controller in the native layer.
+
+It is not necessary to call this method before starting Apple Pay. The SDK provides a default 
+theme which can be customized to match the theme of your app. 
+
+Parameter          | Type                                    | Description
+:----------------- |:--------------------------------------- |:-----------
+themeConfiguration | [IOSTheme](#iostheme)                   | An object that defines the theme of an iOS card entry view controller.
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+  var themeConfiguationBuilder = IOSThemeBuilder();
+  themeConfiguationBuilder.saveButtonTitle = 'Pay';
+  themeConfiguationBuilder.errorColor = RGBAColorBuilder()
+    ..r = 255
+    ..g = 0
+    ..b = 0;
+  themeConfiguationBuilder.tintColor = RGBAColorBuilder()
+    ..r = 36
+    ..g = 152
+    ..b = 141;
+  themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+  themeConfiguationBuilder.messageColor = RGBAColorBuilder()
+    ..r = 114
+    ..g = 114
+    ..b = 114;
+
+  await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+```
+--- 
 
 ### initializeApplePay
 
@@ -385,43 +423,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ```
 ---
 
-### setIOSCardEntryTheme
-**iOS Only**
-
-
-Sets the customization theme for the card entry view controller in the native layer.
-
-It is not necessary to call this method before starting Apple Pay. The SDK provides a default 
-theme which can be customized to match the theme of your app. 
-
-Parameter          | Type                                    | Description
-:----------------- |:--------------------------------------- |:-----------
-themeConfiguration | [IOSTheme](#iostheme)                   | An object that defines the theme of an iOS card entry view controller.
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-  var themeConfiguationBuilder = IOSThemeBuilder();
-  themeConfiguationBuilder.saveButtonTitle = 'Pay';
-  themeConfiguationBuilder.errorColor = RGBAColorBuilder()
-    ..r = 255
-    ..g = 0
-    ..b = 0;
-  themeConfiguationBuilder.tintColor = RGBAColorBuilder()
-    ..r = 36
-    ..g = 152
-    ..b = 141;
-  themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
-  themeConfiguationBuilder.messageColor = RGBAColorBuilder()
-    ..r = 114
-    ..g = 114
-    ..b = 114;
-
-  await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
-```
---- 
 
 ### initializeGooglePay
 
@@ -854,7 +855,6 @@ Encapsulates options used to style the iOS native card entry view controller.
 Field                              | Type               | Description
 :--------------------------------- | :----------------- | :-----------------
 **Optional**: font                 | Font               | The text field font.
-**Optional**: emphasisFont         | Font               | The save button font.
 **Optional**: backgroundColor      | RGBAColor          | The background color of the card entry view controller.
 **Optional**: foregroundColor      | RGBAColor          | The fill color for text fields.
 **Optional**: textColor            | RGBAColor          | The text field text color.
@@ -863,6 +863,7 @@ Field                              | Type               | Description
 **Optional**: messageColor         | RGBAColor          | The text color used to display informational messages.
 **Optional**: errorColor           | RGBAColor          | The text color when the text is invalid.
 **Optional**: saveButtonTitle      | String             | The text of the entry completion button
+**Optional**: saveButtonFont       | Font               | The save button font.
 **Optional**: saveButtonTextColor  | RGBAColor          | The save button text color when enabled.
 **Optional**: keyboardAppearance   | KeyboardAppearance | The appearance of the keyboard.
 
@@ -897,13 +898,11 @@ flow.
 
 * `VISA` - Visa Inc. credit or debit card.
 * `MASTERCARD` - Mastercard Incorporated credit or debit card.
-* `AMERICAN_EXPRESS` - merican Express Company credit card.
+* `AMERICAN_EXPRESS` - American Express Company credit card.
 * `DISCOVER` - Discover Financial Services credit card.
 * `DISCOVER_DINERS` - Diners Club International credit card.
-* `INTERAC` - Canadian Interbank Network debit card.
 * `JCB` - Japan Credit Bureau credit card.
-* `CHINA_UNIONPAY` - China UnionPay credit card.
-* `SQUARE_GIFT_CARD` - [Square-issued gift card].
+* `CHINA_UNION_PAY` - China UnionPay credit card.
 * `OTHER_BRAND` - An unexpected card type.
 
 
