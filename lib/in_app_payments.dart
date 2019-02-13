@@ -65,7 +65,7 @@ class InAppPayments {
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
       switch (call.method) {
-        case 'cardEntryDidCancel':
+        case 'cardEntryCancel':
           if (_cardEntryDidCancelCallback != null) {
             _cardEntryDidCancelCallback();
           }

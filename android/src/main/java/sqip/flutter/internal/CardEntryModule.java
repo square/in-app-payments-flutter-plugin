@@ -67,7 +67,7 @@ final public class CardEntryModule {
               @Override
               public void run() {
                 if (cardEntryActivityResult.isCanceled()) {
-                  channel.invokeMethod("cardEntryDidCancel", null);
+                  channel.invokeMethod("cardEntryCancel", null);
                 } else if (cardEntryActivityResult.isSuccess()) {
                   channel.invokeMethod("cardEntryComplete", null);
                 }

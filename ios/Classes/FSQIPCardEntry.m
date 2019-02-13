@@ -31,6 +31,9 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
 
 @end
 
+static NSString *const FSQIPCardEntryCancelEventName = @"cardEntryCancel";
+static NSString *const FSQIPCardEntryCompleteEventName = @"cardEntryComplete";
+static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntryDidObtainCardDetails";
 
 @implementation FSQIPCardEntry
 
@@ -58,7 +61,7 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
     self.completionHandler = completionHandler;
-    [self.channel invokeMethod:@"cardEntryDidObtainCardDetails" arguments:[cardDetails jsonDictionary]];
+    [self.channel invokeMethod:FSQIPCardEntryDidObtainCardDetailsEventName arguments:[cardDetails jsonDictionary]];
 }
 
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status
@@ -67,18 +70,18 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [rootViewController.navigationController popViewControllerAnimated:YES];
         if (status == SQIPCardEntryCompletionStatusCanceled) {
-            [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
+            [self.channel invokeMethod:FSQIPCardEntryCancelEventName arguments:nil];
         } else {
-            [self.channel invokeMethod:@"cardEntryComplete" arguments:nil];
+            [self.channel invokeMethod:FSQIPCardEntryCompleteEventName arguments:nil];
         }
     } else {
         if (status == SQIPCardEntryCompletionStatusCanceled) {
             [rootViewController dismissViewControllerAnimated:YES completion:^{
-                [self.channel invokeMethod:@"cardEntryDidCancel" arguments:nil];
+                [self.channel invokeMethod:FSQIPCardEntryCancelEventName arguments:nil];
             }];
         } else {
             [rootViewController dismissViewControllerAnimated:YES completion:^{
-                [self.channel invokeMethod:@"cardEntryComplete" arguments:nil];
+                [self.channel invokeMethod:FSQIPCardEntryCompleteEventName arguments:nil];
             }];
         }
     }
