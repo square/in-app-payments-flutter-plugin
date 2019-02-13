@@ -2,6 +2,7 @@
 
 ### v1.0.3 Feb 14, 2019
 
+* Compatible to AndroidX migration
 * Some updates to improve error messages.
 * Minor code style improvements.
 
