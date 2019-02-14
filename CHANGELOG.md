@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.0.3 Feb 14, 2019
+
+* Compatible to AndroidX migration.
+* `CardEntryDidCancelCallback` is renamed to `CardEntryCancelCallback`.
+* Some updates to improve error messages.
+* Minor code style improvements.
+
 ### v1.0.2 Jan 22, 2019
 
 * Fix Apple Pay issue [#18](https://github.com/square/in-app-payments-flutter-plugin/issues/18#issue-401770301).

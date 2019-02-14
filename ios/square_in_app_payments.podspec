@@ -4,9 +4,9 @@
 Pod::Spec.new do |s|
   s.name             = 'square_in_app_payments'
   s.version          = '1.0.0'
-  s.summary          = 'A flutter plugin for suqare in-app payments.'
+  s.summary          = 'A flutter plugin for Square In-App Payments SDK.'
   s.description      = <<-DESC
-A flutter plugin for suqare in-app payments.
+An open source Flutter plugin for calling Square's native In-App Payments SDK to take in-app payments.
                        DESC
   s.homepage         = 'https://github.com/square/in-app-payments-flutter-plugin'
   s.license          = { :file => '../LICENSE' }

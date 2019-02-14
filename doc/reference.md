@@ -99,7 +99,7 @@ to the possible results of the request.
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 onCardNonceRequestSuccess | [CardEntryNonceRequestSuccessCallback](#cardentrynoncerequestsuccesscallback) | Invoked when card entry is completed and the SDK has processed the payment card information.
-onCardEntryCancel | [CardEntryDidCancelCallback](#cardentrydidcancelcallback) | Invoked when card entry is canceled.
+onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
 
 #### Example usage
 
@@ -607,7 +607,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   }
 ```
 ---
-### CardEntryDidCancelCallback
+### CardEntryCancelCallback
 
 Callback invoked when card entry canceled and has been closed. 
 

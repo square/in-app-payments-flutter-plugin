@@ -33,11 +33,11 @@ API_AVAILABLE(ios(11.0))
 
 // flutter plugin debug error codes
 static NSString *const FSQIPApplePayNotInitialized = @"fl_apple_pay_not_initialized";
-static NSString *const FSQIPApplePayNotSupport = @"fl_apple_pay_not_support";
+static NSString *const FSQIPApplePayNotSupported = @"fl_apple_pay_not_supported";
 
 // flutter plugin debug messages
-static NSString *const FSQIPMessageApplePayNotInitialized = @"Please initialize apple pay before you can call other methods.";
-static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not have any supported Apple Pay cards. Please check `canUseApplePay` prior to requesting a nonce.";
+static NSString *const FSQIPMessageApplePayNotInitialized = @"Apple Pay must be initialized with an Apple merchant ID.";
+static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not have any supported Apple Pay cards. Please check `canUseApplePay` prior to requesting a nonce.";
 
 
 @implementation FSQIPApplePay
@@ -72,8 +72,8 @@ static NSString *const FSQIPMessageApplePayNotSupport = @"This device does not h
     }
     if (!SQIPInAppPaymentsSDK.canUseApplePay) {
         result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
-                                   message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotSupport]
-                                   details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotSupport debugMessage:FSQIPMessageApplePayNotSupport]]);
+                                   message:[FSQIPErrorUtilities pluginErrorMessageFromErrorCode:FSQIPApplePayNotSupported]
+                                   details:[FSQIPErrorUtilities debugErrorObject:FSQIPApplePayNotSupported debugMessage:FSQIPMessageApplePayNotSupported]]);
         return;
     }
     PKPaymentRequest *paymentRequest =

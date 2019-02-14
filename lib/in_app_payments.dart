@@ -20,7 +20,7 @@ import 'package:meta/meta.dart';
 import 'models.dart';
 import 'src/serializers.dart';
 
-typedef CardEntryDidCancelCallback = void Function();
+typedef CardEntryCancelCallback = void Function();
 typedef CardEntryCompleteCallback = void Function();
 typedef CardEntryCardNonceRequestSuccessCallback = void Function(
     CardDetails result);
@@ -45,7 +45,7 @@ class InAppPayments {
   static final _standardSerializers =
       (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
 
-  static CardEntryDidCancelCallback _cardEntryDidCancelCallback;
+  static CardEntryCancelCallback _cardEntryCancelCallback;
   static CardEntryCardNonceRequestSuccessCallback
       _cardEntryCardNonceRequestSuccessCallback;
   static CardEntryCompleteCallback _cardEntryCompleteCallback;
@@ -65,9 +65,9 @@ class InAppPayments {
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
       switch (call.method) {
-        case 'cardEntryDidCancel':
-          if (_cardEntryDidCancelCallback != null) {
-            _cardEntryDidCancelCallback();
+        case 'cardEntryCancel':
+          if (_cardEntryCancelCallback != null) {
+            _cardEntryCancelCallback();
           }
           break;
         case 'cardEntryDidObtainCardDetails':
@@ -141,8 +141,8 @@ class InAppPayments {
 
   static Future startCardEntryFlow(
       {CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
-      CardEntryDidCancelCallback onCardEntryCancel}) async {
-    _cardEntryDidCancelCallback = onCardEntryCancel;
+      CardEntryCancelCallback onCardEntryCancel}) async {
+    _cardEntryCancelCallback = onCardEntryCancel;
     _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     await _channel.invokeMethod('startCardEntryFlow');
   }

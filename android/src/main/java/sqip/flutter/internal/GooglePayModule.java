@@ -17,7 +17,6 @@ package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
@@ -116,7 +115,7 @@ final public class GooglePayModule {
     IsReadyToPayRequest isReadyToPayRequest = GooglePay.createIsReadyToPayRequest();
     googlePayClients.isReadyToPay(isReadyToPayRequest).addOnCompleteListener(new OnCompleteListener<Boolean>() {
       @Override
-      public void onComplete(@NonNull Task<Boolean> task) {
+      public void onComplete(Task<Boolean> task) {
         result.success(task.isSuccessful());
       }
     });
