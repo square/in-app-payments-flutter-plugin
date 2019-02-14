@@ -2,7 +2,8 @@
 
 ### v1.0.3 Feb 14, 2019
 
-* Compatible to AndroidX migration
+* Compatible to AndroidX migration.
+* `CardEntryDidCancelCallback` is renamed to `CardEntryCancelCallback`.
 * Some updates to improve error messages.
 * Minor code style improvements.
 
