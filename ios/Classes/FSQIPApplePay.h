@@ -33,7 +33,7 @@
                        price:(NSString *)price;
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
-                            isSuccess:(Boolean)isSuccess
+                            isSuccess:(BOOL)isSuccess
                          errorMessage:(NSString *__nullable)errorMessage;
 
 @end

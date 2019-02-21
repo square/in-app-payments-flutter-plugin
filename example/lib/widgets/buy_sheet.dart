@@ -47,9 +47,7 @@ class BuySheet extends StatefulWidget {
       this.squareLocationId});
 
   @override
-  BuySheetState createState() {
-    return BuySheetState();
-  }
+  BuySheetState createState() => BuySheetState();
 }
 
 class BuySheetState extends State<BuySheet> {
@@ -159,7 +157,8 @@ class BuySheetState extends State<BuySheet> {
   Future<void> _onStartCardEntryFlow() async {
     await InAppPayments.startCardEntryFlow(
         onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
-        onCardEntryCancel: _onCancelCardEntryFlow);
+        onCardEntryCancel: _onCancelCardEntryFlow,
+        collectPostalCode: true);
   }
 
   void _onCancelCardEntryFlow() {

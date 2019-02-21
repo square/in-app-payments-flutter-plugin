@@ -15,10 +15,10 @@ dependencies:
   meta: ^1.1.6
 
 dev_dependencies:
-  build:
-  build_runner:
-  source_gen:
-  built_value_generator:
+  build: ^1.1.0
+  build_runner: ^1.2.3
+  source_gen:  ^0.9.4+1
+  built_value_generator: ^6.3.0
 
 # The following section is specific to Flutter.
 flutter:

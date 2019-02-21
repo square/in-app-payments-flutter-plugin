@@ -21,7 +21,7 @@
 @interface FSQIPCardEntry : NSObject <SQIPCardEntryViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
-- (void)startCardEntryFlow:(FlutterResult)result;
+- (void)startCardEntryFlow:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode;
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
