@@ -99,7 +99,7 @@ final public class CardEntryModule {
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
-    CardEntry.startCardEntryActivity(currentActivity);
+    CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
 
