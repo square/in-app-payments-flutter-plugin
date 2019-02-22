@@ -32,7 +32,7 @@ const Brand _$mastercard = const Brand._('mastercard');
 const Brand _$americanExpress = const Brand._('americanExpress');
 const Brand _$discover = const Brand._('discover');
 const Brand _$discoverDiners = const Brand._('discoverDiners');
-const Brand _$jCB = const Brand._('jCB');
+const Brand _$jCB = const Brand._('jcb');
 const Brand _$chinaUnionPay = const Brand._('chinaUnionPay');
 
 Brand _$brandValueOf(String name) {
@@ -49,7 +49,7 @@ Brand _$brandValueOf(String name) {
       return _$discover;
     case 'discoverDiners':
       return _$discoverDiners;
-    case 'jCB':
+    case 'jcb':
       return _$jCB;
     case 'chinaUnionPay':
       return _$chinaUnionPay;
@@ -185,7 +185,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'americanExpress': 'AMERICAN_EXPRESS',
     'discover': 'DISCOVER',
     'discoverDiners': 'DISCOVER_DINERS',
-    'jCB': 'JCB',
+    'jcb': 'JCB',
     'chinaUnionPay': 'CHINA_UNION_PAY',
   };
   static const Map<String, String> _fromWire = const <String, String>{
@@ -195,7 +195,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'AMERICAN_EXPRESS': 'americanExpress',
     'DISCOVER': 'discover',
     'DISCOVER_DINERS': 'discoverDiners',
-    'JCB': 'jCB',
+    'JCB': 'jcb',
     'CHINA_UNION_PAY': 'chinaUnionPay',
   };
 

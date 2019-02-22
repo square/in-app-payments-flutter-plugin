@@ -49,7 +49,7 @@ class Brand extends EnumClass {
   @BuiltValueEnumConst(wireName: 'DISCOVER_DINERS')
   static const Brand discoverDiners = _$discoverDiners;
   @BuiltValueEnumConst(wireName: 'JCB')
-  static const Brand jCB = _$jCB;
+  static const Brand jcb = _$jCB;
   @BuiltValueEnumConst(wireName: 'CHINA_UNION_PAY')
   static const Brand chinaUnionPay = _$chinaUnionPay;
 

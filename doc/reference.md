@@ -905,7 +905,7 @@ flow.
 * `americanExpress` - American Express Company credit card.
 * `discover` - Discover Financial Services credit card.
 * `discoverDiners` - Diners Club International credit card.
-* `jCB` - Japan Credit Bureau credit card.
+* `jcb` - Japan Credit Bureau credit card.
 * `chinaUnionPay` - China UnionPay credit card.
 * `otherBrand` - An unexpected card type.
 ---
