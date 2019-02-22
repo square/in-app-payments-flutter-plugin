@@ -100,7 +100,7 @@ Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 onCardNonceRequestSuccess | [CardEntryNonceRequestSuccessCallback](#cardentrynoncerequestsuccesscallback) | Invoked when card entry is completed and the SDK has processed the payment card information.
 onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
-collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br>**Notes**: Postal code collection is required for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
+collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br/>**Notes**: A Postal code must be collected for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
 
 #### Example usage
 
@@ -797,8 +797,8 @@ lastFourDigits  | String            | The last 4 digits of this card's number.
 expirationMonth | int               | The expiration month of the card. Ranges between 1 and 12, with 1 corresponding to January and 12 to December.
 expirationYear  | int               | The four-digit expiration year of the card.
 postalCode      | @nullable String  | The billing postal code associated with the card.
-type            | [CardType](#cardtype) | The type of card (for example, Credit or Debit). Note: This property is experimental and will always return `CardType.unknown`.
-prepaidType     | [CardPrepaidType](#cardprepaidType) | The prepaid type of the credit card (for example, a Prepaid Gift Card). Note: This property is experimental and will always return `CardPrepaidType.unknown`.
+type            | [CardType](#cardtype) | The type of card (for example, Credit or Debit). <br/>**Note**: This property is experimental and will always return `CardType.unknown`.
+prepaidType     | [CardPrepaidType](#cardprepaidType) | The prepaid type of the credit card (for example, a Prepaid Gift Card). <br/>**Note**: This property is experimental and will always return `CardPrepaidType.unknown`.
 
 #### Example output
 
@@ -913,7 +913,7 @@ flow.
 
 ### CardType
 
-The type of card (for example, Credit or Debit). Note: This property is experimental and will always return `CardType.unknown`.
+The type of card (for example, Credit or Debit). **Note**: This property is experimental and will always return `CardType.unknown`.
 
 * `debit` - Debit card.
 * `credit` - Credit card.
@@ -923,7 +923,7 @@ The type of card (for example, Credit or Debit). Note: This property is experime
 
 ### CardPrepaidType
 
-The prepaid type of the credit card (for example, a Prepaid Gift Card). Note: This property is experimental and will always return `CardPrepaidType.unknown`
+The prepaid type of the credit card (for example, a Prepaid Gift Card). **Note**: This property is experimental and will always return `CardPrepaidType.unknown`
 
 * `prepaid` - Prepaid card.
 * `notPrepaid` - Card that is not prepaid.
