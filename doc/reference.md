@@ -100,6 +100,7 @@ Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 onCardNonceRequestSuccess | [CardEntryNonceRequestSuccessCallback](#cardentrynoncerequestsuccesscallback) | Invoked when card entry is completed and the SDK has processed the payment card information.
 onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
+collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br>**Notes**: Postal code collection is required for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
 
 #### Example usage
 
@@ -109,7 +110,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   Future<void> _onStartCardEntryFlow() async {
     await InAppPayments.startCardEntryFlow(
         onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
-        onCardEntryCancel: _onCancelCardEntryFlow);
+        onCardEntryCancel: _onCancelCardEntryFlow,
+        /* optional */collectPostalCode: false);
   }
 
   void _onCancelCardEntryFlow() {
@@ -128,7 +130,6 @@ Called in the `onCardNonceRequestSuccess` callback. Closes the card entry form.
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 cardEntryCompleteCallback | [CardEntryCompleteCallback](#cardentrycompletecallback)| The callback invoked when card entry is completed and is closed. 
-
 
 `completeCardEntry` should be called after all other callback logic is executed. 
 If callback logic makes a server call to process the supplied nonce, 
@@ -796,6 +797,8 @@ lastFourDigits  | String            | The last 4 digits of this card's number.
 expirationMonth | int               | The expiration month of the card. Ranges between 1 and 12, with 1 corresponding to January and 12 to December.
 expirationYear  | int               | The four-digit expiration year of the card.
 postalCode      | @nullable String  | The billing postal code associated with the card.
+type            | [CardType](#cardtype) | The type of card (for example, Credit or Debit). Note: This property is experimental and will always return `CardType.unknown`.
+prepaidType     | [CardPrepaidType](#cardprepaidType) | The prepaid type of the credit card (for example, a Prepaid Gift Card). Note: This property is experimental and will always return `CardPrepaidType.unknown`.
 
 #### Example output
 
@@ -815,7 +818,6 @@ import 'package:square_in_app_payments/models.dart';
 ```
 
 ---
-
 
 
 ### ErrorInfo
@@ -877,12 +879,14 @@ google_pay_constants.totalPriceStatusNotCurrentlyKnown | int              | 1   
 google_pay_constants.totalPriceStatusEstimated         | int              | 2      | Total price may adjust based on the details of the response, such as sales tax collected based on a billing address
 google_pay_constants.totalPriceStatusFinal             | int              | 3      | Total price will not change from the amount presented to the user
 ---
+
 ### Google Pay environment values
 
 Constant                                   | Type      | Value | Description
 :----------------------------------------- | :-------- | :-----| :-----------------
 google_pay_constants.environmentProduction | int       | 1     | Environment to be used when an app is granted access to the Google Pay production environment
 google_pay_constants.environmentTest       | int       | 3     | Environment to be used for development and testing an application before approval for production.
+---
 
 ## Enumerations
 
@@ -896,19 +900,35 @@ constants.
 Supported brands for `card` payments accepted during the In-App Payments SDK checkout
 flow.
 
-* `VISA` - Visa Inc. credit or debit card.
-* `MASTERCARD` - Mastercard Incorporated credit or debit card.
-* `AMERICAN_EXPRESS` - American Express Company credit card.
-* `DISCOVER` - Discover Financial Services credit card.
-* `DISCOVER_DINERS` - Diners Club International credit card.
-* `JCB` - Japan Credit Bureau credit card.
-* `CHINA_UNION_PAY` - China UnionPay credit card.
-* `OTHER_BRAND` - An unexpected card type.
-
-
+* `visa` - Visa Inc. credit or debit card.
+* `mastercard` - Mastercard Incorporated credit or debit card.
+* `americanExpress` - American Express Company credit card.
+* `discover` - Discover Financial Services credit card.
+* `discoverDiners` - Diners Club International credit card.
+* `jCB` - Japan Credit Bureau credit card.
+* `chinaUnionPay` - China UnionPay credit card.
+* `otherBrand` - An unexpected card type.
 ---
 
 
+### CardType
+
+The type of card (for example, Credit or Debit). Note: This property is experimental and will always return `CardType.unknown`.
+
+* `debit` - Debit card.
+* `credit` - Credit card.
+* `unknown` - Unable to determine type of the card.
+---
+
+
+### CardPrepaidType
+
+The prepaid type of the credit card (for example, a Prepaid Gift Card). Note: This property is experimental and will always return `CardPrepaidType.unknown`
+
+* `prepaid` - Prepaid card.
+* `notPrepaid` - Card that is not prepaid.
+* `unknown` - Unable to determine whether the card is prepaid or not.
+---
 
 ## ErrorCode
 
