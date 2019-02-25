@@ -50,6 +50,14 @@ android {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+    maven {
+        url 'https://sdk.squareup.com/public/android'
+    }
+}
+
 flutter {
     source '../..'
 }
