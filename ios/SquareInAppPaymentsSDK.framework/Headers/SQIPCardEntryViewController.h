@@ -84,6 +84,15 @@ typedef NS_ENUM(NSUInteger, SQIPCardEntryCompletionStatus) {
 @property (nonatomic, weak, nullable) id<SQIPCardEntryViewControllerDelegate> delegate;
 
 /**
+ Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed.
+ 
+ Defaults to `true`.
+ 
+ @note Postal code collection is required for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
+ */
+@property (nonatomic, assign) BOOL collectPostalCode;
+
+/**
  :nodoc:
  `init` is unavailable. Use `-[SQIPCardEntryViewController initWithTheme:]` instead.
  */
