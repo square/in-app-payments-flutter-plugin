@@ -59,7 +59,6 @@ class Brand extends EnumClass {
   static Brand valueOf(String name) => _$brandValueOf(name);
 }
 
-
 class CardType extends EnumClass {
   static Serializer<CardType> get serializer => _$cardTypeSerializer;
 
@@ -77,7 +76,8 @@ class CardType extends EnumClass {
 }
 
 class CardPrepaidType extends EnumClass {
-  static Serializer<CardPrepaidType> get serializer => _$cardPrepaidTypeSerializer;
+  static Serializer<CardPrepaidType> get serializer =>
+      _$cardPrepaidTypeSerializer;
 
   @BuiltValueEnumConst(wireName: 'PREPAID')
   static const CardPrepaidType prepaid = _$prepaid;
