@@ -6,19 +6,6 @@ part of 'models.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line
-// ignore_for_file: annotate_overrides
-// ignore_for_file: avoid_annotating_with_dynamic
-// ignore_for_file: avoid_catches_without_on_clauses
-// ignore_for_file: avoid_returning_this
-// ignore_for_file: lines_longer_than_80_chars
-// ignore_for_file: omit_local_variable_types
-// ignore_for_file: prefer_expression_function_bodies
-// ignore_for_file: sort_constructors_first
-// ignore_for_file: unnecessary_const
-// ignore_for_file: unnecessary_new
-// ignore_for_file: test_types_in_equals
-
 const ErrorCode _$usageError = const ErrorCode._('usageError');
 const ErrorCode _$noNetwork = const ErrorCode._('noNetwork');
 
@@ -45,7 +32,7 @@ const Brand _$mastercard = const Brand._('mastercard');
 const Brand _$americanExpress = const Brand._('americanExpress');
 const Brand _$discover = const Brand._('discover');
 const Brand _$discoverDiners = const Brand._('discoverDiners');
-const Brand _$jCB = const Brand._('jCB');
+const Brand _$jCB = const Brand._('jcb');
 const Brand _$chinaUnionPay = const Brand._('chinaUnionPay');
 
 Brand _$brandValueOf(String name) {
@@ -62,7 +49,7 @@ Brand _$brandValueOf(String name) {
       return _$discover;
     case 'discoverDiners':
       return _$discoverDiners;
-    case 'jCB':
+    case 'jcb':
       return _$jCB;
     case 'chinaUnionPay':
       return _$chinaUnionPay;
@@ -80,6 +67,54 @@ final BuiltSet<Brand> _$brandValues = new BuiltSet<Brand>(const <Brand>[
   _$discoverDiners,
   _$jCB,
   _$chinaUnionPay,
+]);
+
+const CardType _$debit = const CardType._('debit');
+const CardType _$credit = const CardType._('credit');
+const CardType _$unknownCardType = const CardType._('unknown');
+
+CardType _$cardTypeValueOf(String name) {
+  switch (name) {
+    case 'debit':
+      return _$debit;
+    case 'credit':
+      return _$credit;
+    case 'unknown':
+      return _$unknownCardType;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<CardType> _$cardTypeValues =
+    new BuiltSet<CardType>(const <CardType>[
+  _$debit,
+  _$credit,
+  _$unknownCardType,
+]);
+
+const CardPrepaidType _$prepaid = const CardPrepaidType._('prepaid');
+const CardPrepaidType _$notPrepaid = const CardPrepaidType._('notPrepaid');
+const CardPrepaidType _$unknownPrepaidType = const CardPrepaidType._('unknown');
+
+CardPrepaidType _$cardPrepaidTypeValueOf(String name) {
+  switch (name) {
+    case 'prepaid':
+      return _$prepaid;
+    case 'notPrepaid':
+      return _$notPrepaid;
+    case 'unknown':
+      return _$unknownPrepaidType;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<CardPrepaidType> _$cardPrepaidTypeValues =
+    new BuiltSet<CardPrepaidType>(const <CardPrepaidType>[
+  _$prepaid,
+  _$notPrepaid,
+  _$unknownPrepaidType,
 ]);
 
 const KeyboardAppearance _$dark = const KeyboardAppearance._('dark');
@@ -104,6 +139,9 @@ final BuiltSet<KeyboardAppearance> _$keyboardAppearanceValues =
 
 Serializer<ErrorCode> _$errorCodeSerializer = new _$ErrorCodeSerializer();
 Serializer<Brand> _$brandSerializer = new _$BrandSerializer();
+Serializer<CardType> _$cardTypeSerializer = new _$CardTypeSerializer();
+Serializer<CardPrepaidType> _$cardPrepaidTypeSerializer =
+    new _$CardPrepaidTypeSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<RGBAColor> _$rGBAColorSerializer = new _$RGBAColorSerializer();
@@ -147,7 +185,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'americanExpress': 'AMERICAN_EXPRESS',
     'discover': 'DISCOVER',
     'discoverDiners': 'DISCOVER_DINERS',
-    'jCB': 'JCB',
+    'jcb': 'JCB',
     'chinaUnionPay': 'CHINA_UNION_PAY',
   };
   static const Map<String, String> _fromWire = const <String, String>{
@@ -157,7 +195,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'AMERICAN_EXPRESS': 'americanExpress',
     'DISCOVER': 'discover',
     'DISCOVER_DINERS': 'discoverDiners',
-    'JCB': 'jCB',
+    'JCB': 'jcb',
     'CHINA_UNION_PAY': 'chinaUnionPay',
   };
 
@@ -175,6 +213,63 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
   Brand deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
       Brand.valueOf(_fromWire[serialized] ?? serialized as String);
+}
+
+class _$CardTypeSerializer implements PrimitiveSerializer<CardType> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'debit': 'DEBIT',
+    'credit': 'CREDIT',
+    'unknown': 'UNKNOWN',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'DEBIT': 'debit',
+    'CREDIT': 'credit',
+    'UNKNOWN': 'unknown',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[CardType];
+  @override
+  final String wireName = 'CardType';
+
+  @override
+  Object serialize(Serializers serializers, CardType object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      _toWire[object.name] ?? object.name;
+
+  @override
+  CardType deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      CardType.valueOf(_fromWire[serialized] ?? serialized as String);
+}
+
+class _$CardPrepaidTypeSerializer
+    implements PrimitiveSerializer<CardPrepaidType> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'prepaid': 'PREPAID',
+    'notPrepaid': 'NOT_PREPAID',
+    'unknown': 'UNKNOWN',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'PREPAID': 'prepaid',
+    'NOT_PREPAID': 'notPrepaid',
+    'UNKNOWN': 'unknown',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[CardPrepaidType];
+  @override
+  final String wireName = 'CardPrepaidType';
+
+  @override
+  Object serialize(Serializers serializers, CardPrepaidType object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      _toWire[object.name] ?? object.name;
+
+  @override
+  CardPrepaidType deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      CardPrepaidType.valueOf(_fromWire[serialized] ?? serialized as String);
 }
 
 class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
@@ -244,6 +339,12 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       'expirationYear',
       serializers.serialize(object.expirationYear,
           specifiedType: const FullType(int)),
+      'type',
+      serializers.serialize(object.type,
+          specifiedType: const FullType(CardType)),
+      'prepaidType',
+      serializers.serialize(object.prepaidType,
+          specifiedType: const FullType(CardPrepaidType)),
     ];
     if (object.postalCode != null) {
       result
@@ -281,6 +382,15 @@ class _$CardSerializer implements StructuredSerializer<Card> {
         case 'expirationYear':
           result.expirationYear = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'type':
+          result.type = serializers.deserialize(value,
+              specifiedType: const FullType(CardType)) as CardType;
+          break;
+        case 'prepaidType':
+          result.prepaidType = serializers.deserialize(value,
+                  specifiedType: const FullType(CardPrepaidType))
+              as CardPrepaidType;
           break;
         case 'postalCode':
           result.postalCode = serializers.deserialize(value,
@@ -755,6 +865,10 @@ class _$Card extends Card {
   @override
   final int expirationYear;
   @override
+  final CardType type;
+  @override
+  final CardPrepaidType prepaidType;
+  @override
   final String postalCode;
 
   factory _$Card([void updates(CardBuilder b)]) =>
@@ -765,6 +879,8 @@ class _$Card extends Card {
       this.lastFourDigits,
       this.expirationMonth,
       this.expirationYear,
+      this.type,
+      this.prepaidType,
       this.postalCode})
       : super._() {
     if (brand == null) {
@@ -778,6 +894,12 @@ class _$Card extends Card {
     }
     if (expirationYear == null) {
       throw new BuiltValueNullFieldError('Card', 'expirationYear');
+    }
+    if (type == null) {
+      throw new BuiltValueNullFieldError('Card', 'type');
+    }
+    if (prepaidType == null) {
+      throw new BuiltValueNullFieldError('Card', 'prepaidType');
     }
   }
 
@@ -796,6 +918,8 @@ class _$Card extends Card {
         lastFourDigits == other.lastFourDigits &&
         expirationMonth == other.expirationMonth &&
         expirationYear == other.expirationYear &&
+        type == other.type &&
+        prepaidType == other.prepaidType &&
         postalCode == other.postalCode;
   }
 
@@ -803,9 +927,13 @@ class _$Card extends Card {
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, brand.hashCode), lastFourDigits.hashCode),
-                expirationMonth.hashCode),
-            expirationYear.hashCode),
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, brand.hashCode), lastFourDigits.hashCode),
+                        expirationMonth.hashCode),
+                    expirationYear.hashCode),
+                type.hashCode),
+            prepaidType.hashCode),
         postalCode.hashCode));
   }
 
@@ -816,6 +944,8 @@ class _$Card extends Card {
           ..add('lastFourDigits', lastFourDigits)
           ..add('expirationMonth', expirationMonth)
           ..add('expirationYear', expirationYear)
+          ..add('type', type)
+          ..add('prepaidType', prepaidType)
           ..add('postalCode', postalCode))
         .toString();
   }
@@ -843,6 +973,15 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   set expirationYear(int expirationYear) =>
       _$this._expirationYear = expirationYear;
 
+  CardType _type;
+  CardType get type => _$this._type;
+  set type(CardType type) => _$this._type = type;
+
+  CardPrepaidType _prepaidType;
+  CardPrepaidType get prepaidType => _$this._prepaidType;
+  set prepaidType(CardPrepaidType prepaidType) =>
+      _$this._prepaidType = prepaidType;
+
   String _postalCode;
   String get postalCode => _$this._postalCode;
   set postalCode(String postalCode) => _$this._postalCode = postalCode;
@@ -855,6 +994,8 @@ class CardBuilder implements Builder<Card, CardBuilder> {
       _lastFourDigits = _$v.lastFourDigits;
       _expirationMonth = _$v.expirationMonth;
       _expirationYear = _$v.expirationYear;
+      _type = _$v.type;
+      _prepaidType = _$v.prepaidType;
       _postalCode = _$v.postalCode;
       _$v = null;
     }
@@ -882,6 +1023,8 @@ class CardBuilder implements Builder<Card, CardBuilder> {
             lastFourDigits: lastFourDigits,
             expirationMonth: expirationMonth,
             expirationYear: expirationYear,
+            type: type,
+            prepaidType: prepaidType,
             postalCode: postalCode);
     replace(_$result);
     return _$result;
@@ -1476,3 +1619,5 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
     return _$result;
   }
 }
+
+// ignore_for_file: always_put_control_body_on_new_line,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

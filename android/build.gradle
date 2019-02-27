@@ -1,5 +1,5 @@
 group 'com.squareup.sqip.flutter'
-version '1.0-SNAPSHOT'
+version '1.1.0'
 
 buildscript {
     repositories {
@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.squareup.sdk.in-app-payments:card-entry:1.0.3'
-    implementation 'com.squareup.sdk.in-app-payments:google-pay:1.0.3'
+    implementation 'com.squareup.sdk.in-app-payments:card-entry:1.1.0'
+    implementation 'com.squareup.sdk.in-app-payments:google-pay:1.1.0'
     implementation 'com.google.android.gms:play-services-wallet:16.0.1'
 }

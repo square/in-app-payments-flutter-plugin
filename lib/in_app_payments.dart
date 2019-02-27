@@ -141,10 +141,14 @@ class InAppPayments {
 
   static Future startCardEntryFlow(
       {CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
-      CardEntryCancelCallback onCardEntryCancel}) async {
+      CardEntryCancelCallback onCardEntryCancel,
+      bool collectPostalCode = true}) async {
     _cardEntryCancelCallback = onCardEntryCancel;
     _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
-    await _channel.invokeMethod('startCardEntryFlow');
+    var params = <String, dynamic>{
+      'collectPostalCode': collectPostalCode,
+    };
+    await _channel.invokeMethod('startCardEntryFlow', params);
   }
 
   static Future completeCardEntry(

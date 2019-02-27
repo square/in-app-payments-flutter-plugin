@@ -69,7 +69,7 @@ dependencies:
 
   ...
 
-  square_in_app_payments: ^1.0.2
+  square_in_app_payments: ^1.1.0
 ```
 
 ## Step 4: Get Square Application ID
@@ -214,7 +214,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
   /** 
-  * An event listner to start card entry flow
+  * An event listener to start card entry flow
   */
   Future<void> _onStartCardEntryFlow() async {
     await InAppPayments.startCardEntryFlow(

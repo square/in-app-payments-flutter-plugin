@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'square_in_app_payments'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'A flutter plugin for Square In-App Payments SDK.'
   s.description      = <<-DESC
 An open source Flutter plugin for calling Square's native In-App Payments SDK to take in-app payments.

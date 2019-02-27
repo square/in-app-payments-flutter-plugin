@@ -96,7 +96,7 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
 }
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
-                            isSuccess:(Boolean)isSuccess
+                            isSuccess:(BOOL)isSuccess
                          errorMessage:(NSString *__nullable)errorMessage
 {
     if (self.completionHandler != nil) {

@@ -21,6 +21,8 @@
 #import <SquareInAppPaymentsSDK/SQIPCardBrand.h>
 #import <SquareInAppPaymentsSDK/SQIPCardDetails.h>
 #import <SquareInAppPaymentsSDK/SQIPCardEntryViewController.h>
+#import <SquareInAppPaymentsSDK/SQIPCardPrepaidType.h>
+#import <SquareInAppPaymentsSDK/SQIPCardType.h>
 #import <SquareInAppPaymentsSDK/SQIPErrorConstants.h>
 #import <SquareInAppPaymentsSDK/SQIPInAppPaymentsSDK.h>
 #import <SquareInAppPaymentsSDK/SQIPTheme.h>

@@ -22,6 +22,8 @@ part 'serializers.g.dart';
 @SerializersFor(const [
   ErrorCode,
   Brand,
+  CardType,
+  CardPrepaidType,
   CardDetails,
   Card,
   RGBAColor,
