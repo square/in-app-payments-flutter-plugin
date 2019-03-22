@@ -91,7 +91,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
   /** 
-  * An event listner to start google pay flow
+  * An event listener to start google pay flow
   */
   void _onStartGooglePay() async {
     try {

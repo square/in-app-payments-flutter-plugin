@@ -43,9 +43,10 @@ static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntry
     self.theme = [[SQIPTheme alloc] init];
 }
 
-- (void)startCardEntryFlow:(FlutterResult)result
+- (void)startCardEntryFlow:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode
 {
     SQIPCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
+    cardEntryForm.collectPostalCode = collectPostalCode;
     cardEntryForm.delegate = self;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;

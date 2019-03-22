@@ -48,7 +48,8 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
       result.success(null);
     } else if (call.method.equals("startCardEntryFlow")) {
-      cardEntryModule.startCardEntryFlow(result);
+      boolean collectPostalCode = call.argument("collectPostalCode");
+      cardEntryModule.startCardEntryFlow(result, collectPostalCode);
     } else if (call.method.equals("completeCardEntry")) {
       cardEntryModule.completeCardEntry(result);
     } else if (call.method.equals("showCardNonceProcessingError")) {

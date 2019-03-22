@@ -79,7 +79,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
 
 ```dart
   /** 
-  * An event listner to start apple pay flow
+  * An event listener to start apple pay flow
   */
   void _onStartApplePay() async {
     try {

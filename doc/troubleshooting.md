@@ -6,7 +6,7 @@ Likely causes and solutions for common problems.
 
 ### The problem
 
-By default, the flutter project template is not configured to support importing framework.
+In earlier flutter version, the flutter project template is not configured to support importing framework.
 The plugin import iOS In-App Payments SDK as framework dependency, so that building the plugin may fail.
 
 ### Likely cause

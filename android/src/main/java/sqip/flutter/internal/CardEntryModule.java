@@ -98,8 +98,8 @@ final public class CardEntryModule {
     });
   }
 
-  public void startCardEntryFlow(MethodChannel.Result result) {
-    CardEntry.startCardEntryActivity(currentActivity);
+  public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
+    CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
 

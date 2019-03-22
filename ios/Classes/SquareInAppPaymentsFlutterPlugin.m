@@ -60,7 +60,8 @@ FlutterMethodChannel *_channel;
         SQIPInAppPaymentsSDK.squareApplicationID = applicationId;
         result(nil);
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
-        [self.cardEntryModule startCardEntryFlow:result];
+        BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
+        [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
@@ -83,7 +84,7 @@ FlutterMethodChannel *_channel;
                                      summaryLabel:summaryLabel
                                             price:price];
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
-        Boolean isSuccess = [call.arguments[@"isSuccess"] boolValue];
+        BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
         [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
     } else {

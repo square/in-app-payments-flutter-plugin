@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, SQIPCardBrand) {
 };
 
 /**
- Creates an SQIPCardBrand from a string. i.e. "VISA" -> SQIPCardBrandVisa.
+ Creates a SQIPCardBrand from a string. i.e. "VISA" -> SQIPCardBrandVisa.
  :nodoc:
  */
 extern SQIPCardBrand SQIPCardBrandFromString(NSString *_Nonnull cardBrand) CF_SWIFT_NAME(SQIPCardBrand.init(_:));

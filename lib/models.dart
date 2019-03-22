@@ -49,7 +49,7 @@ class Brand extends EnumClass {
   @BuiltValueEnumConst(wireName: 'DISCOVER_DINERS')
   static const Brand discoverDiners = _$discoverDiners;
   @BuiltValueEnumConst(wireName: 'JCB')
-  static const Brand jCB = _$jCB;
+  static const Brand jcb = _$jCB;
   @BuiltValueEnumConst(wireName: 'CHINA_UNION_PAY')
   static const Brand chinaUnionPay = _$chinaUnionPay;
 
@@ -57,6 +57,39 @@ class Brand extends EnumClass {
 
   static BuiltSet<Brand> get values => _$brandValues;
   static Brand valueOf(String name) => _$brandValueOf(name);
+}
+
+
+class CardType extends EnumClass {
+  static Serializer<CardType> get serializer => _$cardTypeSerializer;
+
+  @BuiltValueEnumConst(wireName: 'DEBIT')
+  static const CardType debit = _$debit;
+  @BuiltValueEnumConst(wireName: 'CREDIT')
+  static const CardType credit = _$credit;
+  @BuiltValueEnumConst(wireName: 'UNKNOWN')
+  static const CardType unknown = _$unknownCardType;
+
+  const CardType._(String name) : super(name);
+
+  static BuiltSet<CardType> get values => _$cardTypeValues;
+  static CardType valueOf(String name) => _$cardTypeValueOf(name);
+}
+
+class CardPrepaidType extends EnumClass {
+  static Serializer<CardPrepaidType> get serializer => _$cardPrepaidTypeSerializer;
+
+  @BuiltValueEnumConst(wireName: 'PREPAID')
+  static const CardPrepaidType prepaid = _$prepaid;
+  @BuiltValueEnumConst(wireName: 'NOT_PREPAID')
+  static const CardPrepaidType notPrepaid = _$notPrepaid;
+  @BuiltValueEnumConst(wireName: 'UNKNOWN')
+  static const CardPrepaidType unknown = _$unknownPrepaidType;
+
+  const CardPrepaidType._(String name) : super(name);
+
+  static BuiltSet<CardPrepaidType> get values => _$cardPrepaidTypeValues;
+  static CardPrepaidType valueOf(String name) => _$cardPrepaidTypeValueOf(name);
 }
 
 abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
@@ -73,6 +106,8 @@ abstract class Card implements Built<Card, CardBuilder> {
   String get lastFourDigits;
   int get expirationMonth;
   int get expirationYear;
+  CardType get type;
+  CardPrepaidType get prepaidType;
 
   @nullable
   String get postalCode;

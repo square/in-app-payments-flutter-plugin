@@ -27,6 +27,8 @@
         @"expirationMonth" : @(self.expirationMonth),
         @"expirationYear" : @(self.expirationYear),
         @"postalCode" : self.postalCode ?: [NSNull null],
+        @"type" : [self _stringForCardType:self.type],
+        @"prepaidType" : [self _stringForCardPrepaidType:self.prepaidType],
     };
 }
 
@@ -58,6 +60,40 @@
             break;
         case SQIPCardBrandChinaUnionPay:
             result = @"CHINA_UNION_PAY";
+            break;
+    }
+    return result;
+}
+
+- (NSString *)_stringForCardType:(SQIPCardType)cardType
+{
+    NSString *result = nil;
+    switch (cardType) {
+        case SQIPCardTypeDebit:
+            result = @"DEBIT";
+            break;
+        case SQIPCardTypeCredit:
+            result = @"CREDIT";
+            break;
+        case SQIPCardTypeUnknown:
+            result = @"UNKNOWN";
+            break;
+    }
+    return result;
+}
+
+- (NSString *)_stringForCardPrepaidType:(SQIPCardPrepaidType)cardPrepaidType
+{
+    NSString *result = nil;
+    switch (cardPrepaidType) {
+        case SQIPCardPrepaidTypePrepaid:
+            result = @"PREPAID";
+            break;
+        case SQIPCardPrepaidTypeNotPrepaid:
+            result = @"NOT_PREPAID";
+            break;
+        case SQIPCardPrepaidTypeUnknown:
+            result = @"UNKNOWN";
             break;
     }
     return result;
