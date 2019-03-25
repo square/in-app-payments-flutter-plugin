@@ -36,7 +36,6 @@ import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
-import org.jetbrains.annotations.NotNull;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
@@ -80,7 +79,7 @@ final public class CardEntryModule {
     });
 
     CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
-      @NotNull @Override
+      @Override
       public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
         Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
         countDownLatch = new CountDownLatch(1);

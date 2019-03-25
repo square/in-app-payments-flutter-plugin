@@ -3,7 +3,7 @@
 The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
 supports the following native In-App Payments SDK versions:
 
-  * iOS: 1.1.0
+  * iOS: 1.1.1
   * Android: 1.1.0
 
 ## Additional documentation
@@ -18,6 +18,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * [`doc`] - Root directory for all documentation.
 * [`example`] - Root directory of the Flutter sample app (with walkthrough).
 * [Getting started with the example app]
+* [Override the Native In-App Payments SDK Dependency Version]
 
 ## Build requirements
 
@@ -80,3 +81,4 @@ limitations under the License.
 [flutter plugin GitHub repo]: https://github.com/square/in-app-payments-flutter-plugin/tree/master
 [Getting started with the example app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example/README.md
 [Quick start flutter app]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/example
+[Override the Native In-App Payments SDK Dependency Version]: https://github.com/square/in-app-payments-flutter-plugin/blob/master/doc/versioning.md
