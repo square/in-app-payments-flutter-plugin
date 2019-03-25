@@ -58,7 +58,7 @@ $location_id =  $_ENV["SANDBOX_LOCATION_ID"];
 #### Option 2: Use the Square Mobile Backend Quickstart URL
 You can submit the card nonce to a secure heroku service app that takes the payment and 
 credits it to your Square developer account. 
-1. Follow the instructions in the Quickstart [README] to deploy the **Mobile Backend Quickstart** to Heroku. 
+1. Follow the instructions in the Quickstart [README](https://github.com/square/in-app-payments-server-quickstart) to deploy the **Mobile Backend Quickstart** to Heroku. 
 1. Get a payments processing URL by copying the URL of the deployed app.
 
 ### Step 2: Update sample process payments logic with a payment processing URL
