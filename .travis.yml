@@ -44,5 +44,6 @@ matrix:
         - cd example
         - git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - ./flutter/bin/flutter doctor
+        - pod repo update
       script:
         - ./flutter/bin/flutter -v build ios --no-codesign

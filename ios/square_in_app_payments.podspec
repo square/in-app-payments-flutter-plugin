@@ -15,10 +15,15 @@ An open source Flutter plugin for calling Square's native In-App Payments SDK to
   s.source_files     = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.vendored_framework = 'SquareInAppPaymentsSDK.framework'
+  s.framework = 'SquareInAppPaymentsSDK'
   s.xcconfig         = { 'FRAMEWORK_SEARCH_PATHS' => '"${PODS_ROOT}/../.symlinks/plugins/square_in_app_payments/ios"' }
   s.ios.deployment_target = '11.0'
   s.resource_bundle = { "sqip_flutter_resource" => ["Assets/*.lproj/*.strings"] }
-  
+
+  if $sqipVersion
+    s.dependency 'SquareInAppPaymentsSDK', $sqipVersion
+  else
+    s.dependency 'SquareInAppPaymentsSDK', '1.1.1'
+  end
 end
 

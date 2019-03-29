@@ -24,12 +24,18 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
+def MIN_IAP_SDK_VERSION = '1.1.0'
+def COMPILE_SDK_VERSION = 28
+def TARGET_SDK_VERSION = 28
+
 android {
-    compileSdkVersion 28
+    def sqipCompileSdkVersion = rootProject.hasProperty('sqipCompileSdkVersion') ? rootProject.sqipCompileSdkVersion : COMPILE_SDK_VERSION
+    def sqipTargetSdkVersion = rootProject.hasProperty('sqipTargetSdkVersion') ? rootProject.sqipTargetSdkVersion : TARGET_SDK_VERSION
+    compileSdkVersion sqipCompileSdkVersion
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion sqipTargetSdkVersion
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -37,7 +43,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.squareup.sdk.in-app-payments:card-entry:1.1.0'
-    implementation 'com.squareup.sdk.in-app-payments:google-pay:1.1.0'
+    def sqipVersion = rootProject.hasProperty('sqipVersion') ? rootProject.sqipVersion : MIN_IAP_SDK_VERSION
+    implementation "com.squareup.sdk.in-app-payments:card-entry:$sqipVersion"
+    implementation "com.squareup.sdk.in-app-payments:google-pay:$sqipVersion"
     implementation 'com.google.android.gms:play-services-wallet:16.0.1'
 }

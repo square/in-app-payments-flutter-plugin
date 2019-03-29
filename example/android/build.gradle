@@ -16,6 +16,10 @@ allprojects {
     }
 }
 
+ext {
+    sqipVersion = '1.1.0'
+}
+
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
