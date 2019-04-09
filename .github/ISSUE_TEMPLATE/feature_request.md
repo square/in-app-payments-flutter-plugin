@@ -1,6 +1,10 @@
 ---
-name: 🚀 Feature request
+name: "\U0001F680 Feature request"
 about: You have an idea that could make this plugin better
+title: ''
+labels: enhancement
+assignees: ''
+
 ---
 
 ### Describe the functionality you would like to see

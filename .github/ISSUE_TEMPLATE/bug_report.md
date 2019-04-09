@@ -1,6 +1,10 @@
 ---
-name: 🐛 Issue report
+name: "\U0001F41B Issue report"
 about: I hit an error when I tried to use this plugin.
+title: ''
+labels: bug
+assignees: ''
+
 ---
 
 ### Describe the issue

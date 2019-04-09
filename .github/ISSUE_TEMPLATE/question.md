@@ -1,6 +1,10 @@
 ---
-name: 🤔 Questions and Help
+name: "\U0001F914 Questions and Help"
 about: You have a quetion or need help using this plugin.
+title: ''
+labels: question
+assignees: ''
+
 ---
 
 ### Describe your question
