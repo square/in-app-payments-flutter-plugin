@@ -63,6 +63,7 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
+                 paymentType:(NSString *)paymentType
 {
     if (!self.applePayMerchantId) {
         result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
@@ -80,11 +81,19 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
         [PKPaymentRequest squarePaymentRequestWithMerchantIdentifier:self.applePayMerchantId
                                                          countryCode:countryCode
                                                         currencyCode:currencyCode];
-
-    paymentRequest.paymentSummaryItems = @[
-        [PKPaymentSummaryItem summaryItemWithLabel:summaryLabel
-                                            amount:[NSDecimalNumber decimalNumberWithString:price]]
-    ];
+    if ([paymentType isEqual: @"PENDING"]) {
+        paymentRequest.paymentSummaryItems = @[
+           [PKPaymentSummaryItem summaryItemWithLabel:summaryLabel
+                                               amount:[NSDecimalNumber decimalNumberWithString:price]
+                                                 type:PKPaymentSummaryItemTypePending]
+        ];
+    } else {
+        paymentRequest.paymentSummaryItems = @[
+           [PKPaymentSummaryItem summaryItemWithLabel:summaryLabel
+                                               amount:[NSDecimalNumber decimalNumberWithString:price]
+                                                 type:PKPaymentSummaryItemTypeFinal]
+        ];
+    }
 
     PKPaymentAuthorizationViewController *paymentAuthorizationViewController =
         [[PKPaymentAuthorizationViewController alloc] initWithPaymentRequest:paymentRequest];

@@ -117,6 +117,28 @@ final BuiltSet<CardPrepaidType> _$cardPrepaidTypeValues =
   _$unknownPrepaidType,
 ]);
 
+const ApplePayPaymentType _$finalPayment =
+    const ApplePayPaymentType._('finalPayment');
+const ApplePayPaymentType _$pendingPayment =
+    const ApplePayPaymentType._('pendingPayment');
+
+ApplePayPaymentType _$applePayPaymentTypeValueOf(String name) {
+  switch (name) {
+    case 'finalPayment':
+      return _$finalPayment;
+    case 'pendingPayment':
+      return _$pendingPayment;
+    default:
+      throw new ArgumentError(name);
+  }
+}
+
+final BuiltSet<ApplePayPaymentType> _$applePayPaymentTypeValues =
+    new BuiltSet<ApplePayPaymentType>(const <ApplePayPaymentType>[
+  _$finalPayment,
+  _$pendingPayment,
+]);
+
 const KeyboardAppearance _$dark = const KeyboardAppearance._('dark');
 const KeyboardAppearance _$light = const KeyboardAppearance._('light');
 
@@ -142,6 +164,8 @@ Serializer<Brand> _$brandSerializer = new _$BrandSerializer();
 Serializer<CardType> _$cardTypeSerializer = new _$CardTypeSerializer();
 Serializer<CardPrepaidType> _$cardPrepaidTypeSerializer =
     new _$CardPrepaidTypeSerializer();
+Serializer<ApplePayPaymentType> _$applePayPaymentTypeSerializer =
+    new _$ApplePayPaymentTypeSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<RGBAColor> _$rGBAColorSerializer = new _$RGBAColorSerializer();
@@ -270,6 +294,34 @@ class _$CardPrepaidTypeSerializer
   CardPrepaidType deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
       CardPrepaidType.valueOf(_fromWire[serialized] ?? serialized as String);
+}
+
+class _$ApplePayPaymentTypeSerializer
+    implements PrimitiveSerializer<ApplePayPaymentType> {
+  static const Map<String, String> _toWire = const <String, String>{
+    'finalPayment': 'FINAL',
+    'pendingPayment': 'PENDING',
+  };
+  static const Map<String, String> _fromWire = const <String, String>{
+    'FINAL': 'finalPayment',
+    'PENDING': 'pendingPayment',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[ApplePayPaymentType];
+  @override
+  final String wireName = 'ApplePayPaymentType';
+
+  @override
+  Object serialize(Serializers serializers, ApplePayPaymentType object,
+          {FullType specifiedType = FullType.unspecified}) =>
+      _toWire[object.name] ?? object.name;
+
+  @override
+  ApplePayPaymentType deserialize(Serializers serializers, Object serialized,
+          {FullType specifiedType = FullType.unspecified}) =>
+      ApplePayPaymentType.valueOf(
+          _fromWire[serialized] ?? serialized as String);
 }
 
 class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
@@ -760,7 +812,7 @@ class _$CardDetails extends CardDetails {
   @override
   final Card card;
 
-  factory _$CardDetails([void updates(CardDetailsBuilder b)]) =>
+  factory _$CardDetails([void Function(CardDetailsBuilder) updates]) =>
       (new CardDetailsBuilder()..update(updates)).build();
 
   _$CardDetails._({this.nonce, this.card}) : super._() {
@@ -773,7 +825,7 @@ class _$CardDetails extends CardDetails {
   }
 
   @override
-  CardDetails rebuild(void updates(CardDetailsBuilder b)) =>
+  CardDetails rebuild(void Function(CardDetailsBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -830,7 +882,7 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
   }
 
   @override
-  void update(void updates(CardDetailsBuilder b)) {
+  void update(void Function(CardDetailsBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -871,7 +923,7 @@ class _$Card extends Card {
   @override
   final String postalCode;
 
-  factory _$Card([void updates(CardBuilder b)]) =>
+  factory _$Card([void Function(CardBuilder) updates]) =>
       (new CardBuilder()..update(updates)).build();
 
   _$Card._(
@@ -904,7 +956,7 @@ class _$Card extends Card {
   }
 
   @override
-  Card rebuild(void updates(CardBuilder b)) =>
+  Card rebuild(void Function(CardBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -1011,7 +1063,7 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   }
 
   @override
-  void update(void updates(CardBuilder b)) {
+  void update(void Function(CardBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -1041,7 +1093,7 @@ class _$RGBAColor extends RGBAColor {
   @override
   final double a;
 
-  factory _$RGBAColor([void updates(RGBAColorBuilder b)]) =>
+  factory _$RGBAColor([void Function(RGBAColorBuilder) updates]) =>
       (new RGBAColorBuilder()..update(updates)).build();
 
   _$RGBAColor._({this.r, this.g, this.b, this.a}) : super._() {
@@ -1057,7 +1109,7 @@ class _$RGBAColor extends RGBAColor {
   }
 
   @override
-  RGBAColor rebuild(void updates(RGBAColorBuilder b)) =>
+  RGBAColor rebuild(void Function(RGBAColorBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -1131,7 +1183,7 @@ class RGBAColorBuilder implements Builder<RGBAColor, RGBAColorBuilder> {
   }
 
   @override
-  void update(void updates(RGBAColorBuilder b)) {
+  void update(void Function(RGBAColorBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -1149,7 +1201,7 @@ class _$Font extends Font {
   @override
   final String name;
 
-  factory _$Font([void updates(FontBuilder b)]) =>
+  factory _$Font([void Function(FontBuilder) updates]) =>
       (new FontBuilder()..update(updates)).build();
 
   _$Font._({this.size, this.name}) : super._() {
@@ -1159,7 +1211,7 @@ class _$Font extends Font {
   }
 
   @override
-  Font rebuild(void updates(FontBuilder b)) =>
+  Font rebuild(void Function(FontBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -1216,7 +1268,7 @@ class FontBuilder implements Builder<Font, FontBuilder> {
   }
 
   @override
-  void update(void updates(FontBuilder b)) {
+  void update(void Function(FontBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -1254,7 +1306,7 @@ class _$IOSTheme extends IOSTheme {
   @override
   final KeyboardAppearance keyboardAppearance;
 
-  factory _$IOSTheme([void updates(IOSThemeBuilder b)]) =>
+  factory _$IOSTheme([void Function(IOSThemeBuilder) updates]) =>
       (new IOSThemeBuilder()..update(updates)).build();
 
   _$IOSTheme._(
@@ -1273,7 +1325,7 @@ class _$IOSTheme extends IOSTheme {
       : super._();
 
   @override
-  IOSTheme rebuild(void updates(IOSThemeBuilder b)) =>
+  IOSTheme rebuild(void Function(IOSThemeBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -1441,7 +1493,7 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
   }
 
   @override
-  void update(void updates(IOSThemeBuilder b)) {
+  void update(void Function(IOSThemeBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -1508,7 +1560,7 @@ class _$ErrorInfo extends ErrorInfo {
   @override
   final String debugMessage;
 
-  factory _$ErrorInfo([void updates(ErrorInfoBuilder b)]) =>
+  factory _$ErrorInfo([void Function(ErrorInfoBuilder) updates]) =>
       (new ErrorInfoBuilder()..update(updates)).build();
 
   _$ErrorInfo._({this.code, this.message, this.debugCode, this.debugMessage})
@@ -1528,7 +1580,7 @@ class _$ErrorInfo extends ErrorInfo {
   }
 
   @override
-  ErrorInfo rebuild(void updates(ErrorInfoBuilder b)) =>
+  ErrorInfo rebuild(void Function(ErrorInfoBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
@@ -1603,7 +1655,7 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   }
 
   @override
-  void update(void updates(ErrorInfoBuilder b)) {
+  void update(void Function(ErrorInfoBuilder) updates) {
     if (updates != null) updates(this);
   }
 
@@ -1620,4 +1672,4 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   }
 }
 
-// ignore_for_file: always_put_control_body_on_new_line,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
+// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

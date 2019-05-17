@@ -220,6 +220,7 @@ class BuySheetState extends State<BuySheet> {
           summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
+          paymentType: ApplePayPaymentType.finalPayment,
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);

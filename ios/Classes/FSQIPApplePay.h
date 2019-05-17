@@ -30,7 +30,8 @@
                  countryCode:(NSString *)countryCode
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
-                       price:(NSString *)price;
+                       price:(NSString *)price
+                 paymentType:(NSString *)paymentType;
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
                             isSuccess:(BOOL)isSuccess
