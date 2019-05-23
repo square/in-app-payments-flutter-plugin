@@ -237,6 +237,7 @@ class InAppPayments {
       @required String summaryLabel,
       @required String countryCode,
       @required String currencyCode,
+      ApplePayPaymentType paymentType,
       ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
       ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
       ApplePayCompleteCallback onApplePayComplete}) async {
@@ -253,12 +254,15 @@ class InAppPayments {
     _applePayNonceRequestFailureCallback = onApplePayNonceRequestFailure;
     _applePayCompleteCallback = onApplePayComplete;
 
+    String paymtnTypeString = _standardSerializers.serializeWith(
+            ApplePayPaymentType.serializer, paymentType != null ? paymentType : ApplePayPaymentType.finalPayment);
     try {
       var params = <String, dynamic>{
         'price': price,
         'summaryLabel': summaryLabel,
         'countryCode': countryCode,
         'currencyCode': currencyCode,
+        'paymentType': paymtnTypeString,
       };
       await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {

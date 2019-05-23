@@ -88,6 +88,7 @@ payment nonce is returned in `_onApplePayNonceRequestSuccess`.
           summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
+          paymentType: ApplePayPaymentType.finalPayment,
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);

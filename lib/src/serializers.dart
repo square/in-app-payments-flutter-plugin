@@ -24,6 +24,7 @@ part 'serializers.g.dart';
   Brand,
   CardType,
   CardPrepaidType,
+  ApplePayPaymentType,
   CardDetails,
   Card,
   RGBAColor,

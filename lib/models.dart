@@ -92,6 +92,20 @@ class CardPrepaidType extends EnumClass {
   static CardPrepaidType valueOf(String name) => _$cardPrepaidTypeValueOf(name);
 }
 
+class ApplePayPaymentType extends EnumClass {
+  static Serializer<ApplePayPaymentType> get serializer => _$applePayPaymentTypeSerializer;
+
+  @BuiltValueEnumConst(wireName: 'FINAL')
+  static const ApplePayPaymentType finalPayment = _$finalPayment;
+  @BuiltValueEnumConst(wireName: 'PENDING')
+  static const ApplePayPaymentType pendingPayment = _$pendingPayment;
+
+  const ApplePayPaymentType._(String name) : super(name);
+
+  static BuiltSet<ApplePayPaymentType> get values => _$applePayPaymentTypeValues;
+  static ApplePayPaymentType valueOf(String name) => _$applePayPaymentTypeValueOf(name);
+}
+
 abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   String get nonce;
   Card get card;

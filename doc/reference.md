@@ -329,6 +329,7 @@ price           | String                                   | The payment authori
 summaryLabel    | String                                   | A label that displays the checkout summary in the Apple Pay view.
 countryCode     | String                                   | The Apple Pay country code.
 currencyCode    | String                                   | ISO currency code of the payment amount.
+**Optional**: paymentType | [ApplePayPaymentType](#applepaypaymenttype) | Type of the payment summary item, `finalPayment` for default.
 onApplePayNonceRequestSuccess | [ApplePayNonceRequestSuccessCallback](#applepaynoncerequestsuccesscallback) | Invoked before Apple Pay sheet is closed. The success callback carries the generated nonce
 onApplePayNonceRequestFailure| [ApplePayNonceRequestFailureCallback](#applepaynoncerequestfailurecallback) | Invoked before Apple Pay sheet is closed. The failure callback carries information about the failure.
 onApplePayComplete | [ApplePayCompleteCallback](#applepaycompletecallback) | Invoked when Apple Pay sheet is closed after success, failure, or cancellation.
@@ -348,6 +349,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
           summaryLabel: 'Cookie',
           countryCode: 'US',
           currencyCode: 'USD',
+          paymentType: ApplePayPaymentType.finalPayment,
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
           onApplePayComplete: _onApplePayEntryComplete);
@@ -923,11 +925,20 @@ The type of card (for example, Credit or Debit). **Note**: This property is expe
 
 ### CardPrepaidType
 
-The prepaid type of the credit card (for example, a Prepaid Gift Card). **Note**: This property is experimental and will always return `CardPrepaidType.unknown`
+The prepaid type of the credit card (for example, a Prepaid Gift Card). **Note**: This property is experimental and will always return `CardPrepaidType.unknown`.
 
 * `prepaid` - Prepaid card.
 * `notPrepaid` - Card that is not prepaid.
 * `unknown` - Unable to determine whether the card is prepaid or not.
+---
+
+### ApplePayPaymentType
+
+Type of the Apple Pay payment summary item.
+
+* `pendingPayment` - A summary item representing an estimated or unknown cost.
+* `finalPayment` - A summary item representing the known, final cost.
+
 ---
 
 ## ErrorCode
