@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.2.1 June 5, 2019
+
+* Added `paymentType` parameter to support apple pay pending amount configuration.
+
 ### v1.1.1 Mar 29, 2019
 
 * Bump Square In-App Payments iOS SDK dependency to `1.1.1`.
