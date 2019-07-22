@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   built_value: ^6.1.5
   built_collection: ^4.0.0
-  meta: ^1.1.7
+  meta: ^1.1.6
 
 dev_dependencies:
   build: ^1.1.0
