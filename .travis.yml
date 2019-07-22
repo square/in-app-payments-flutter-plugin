@@ -42,7 +42,7 @@ matrix:
           - $HOME/.pub-cache
       before_install:
         - cd example
-        - brew install cocoapods
+        - brew upgrade cocoapods
         - pod setup
         - git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - ./flutter/bin/flutter doctor
