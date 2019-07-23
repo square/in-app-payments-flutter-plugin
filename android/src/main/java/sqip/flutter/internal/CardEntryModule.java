@@ -81,9 +81,16 @@ final public class CardEntryModule {
     CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
       @Override
       public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
-        Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
+        final Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
         countDownLatch = new CountDownLatch(1);
-        channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
+        // must be run on the UI thread to prevent an exception
+        currentActivity.runOnUiThread(
+           new Runnable() {
+            public void run() {
+              channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
+            }
+          }
+        );
         try {
           // completeCardEntry or showCardNonceProcessingError must be called,
           // otherwise the thread will be leaked.
