@@ -255,7 +255,8 @@ class InAppPayments {
     _applePayCompleteCallback = onApplePayComplete;
 
     String paymtnTypeString = _standardSerializers.serializeWith(
-            ApplePayPaymentType.serializer, paymentType != null ? paymentType : ApplePayPaymentType.finalPayment);
+        ApplePayPaymentType.serializer,
+        paymentType != null ? paymentType : ApplePayPaymentType.finalPayment);
     try {
       var params = <String, dynamic>{
         'price': price,

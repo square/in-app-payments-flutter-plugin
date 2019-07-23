@@ -42,6 +42,8 @@ matrix:
           - $HOME/.pub-cache
       before_install:
         - cd example
+        - sudo gem install cocoapods
+        - pod setup
         - git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - ./flutter/bin/flutter doctor
         - pod repo update
