@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.2.2 July 23, 2019
+
+* Fixed an exception introduced in a recent Flutter update.
+
 ### v1.2.1 June 5, 2019
 
 * Added `paymentType` parameter to support apple pay pending amount configuration.
