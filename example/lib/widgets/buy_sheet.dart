@@ -22,6 +22,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart'
     as google_pay_constants;
 import '../colors.dart';
+import '../config.dart';
 import '../transaction_service.dart';
 import 'cookie_button.dart';
 import 'dialog_modal.dart';
@@ -87,9 +88,13 @@ class BuySheetState extends State<BuySheet> {
   }
 
   void printCurlCommand(String nonce) {
+    var hostUrl = 'https://connect.squareup.com';
+    if (squareApplicationId.startsWith('sandbox')) {
+      hostUrl = 'https://connect.squareupsandbox.com';
+    }
     var uuid = Uuid().v4();
     print(
-        'curl --request POST https://connect.squareup.com/v2/locations/SQUARE_LOCATION_ID/transactions \\'
+        'curl --request POST $hostUrl/v2/locations/SQUARE_LOCATION_ID/transactions \\'
         '--header \"Content-Type: application/json\" \\'
         '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
         '--header \"Accept: application/json\" \\'
