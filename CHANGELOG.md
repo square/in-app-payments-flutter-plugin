@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.2.3 September 10, 2019
+
+* Bump Square In-App Payments SDK dependency to `1.2.0`.
+* Add support for Sandbox v2.
+
 ### v1.2.2 July 23, 2019
 
 * Fixed an exception introduced in a recent Flutter update.

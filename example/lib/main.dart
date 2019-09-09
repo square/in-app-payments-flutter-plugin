@@ -22,11 +22,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart'
     as google_pay_constants;
 import 'colors.dart';
+import 'config.dart';
 import 'widgets/buy_sheet.dart';
-
-const String squareApplicationId = "REPLACE_ME";
-const String squareLocationId = "REPLACE_ME";
-const String applePayMerchantId = "REPLACE_ME";
 
 void main() => runApp(MaterialApp(
       title: 'Super Cookie',
