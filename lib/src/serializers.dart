@@ -32,5 +32,6 @@ part 'serializers.g.dart';
   KeyboardAppearance,
   IOSTheme,
   ErrorInfo,
+  Money,
 ])
 final Serializers serializers = _$serializers;

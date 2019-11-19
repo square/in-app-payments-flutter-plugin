@@ -18,6 +18,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Font.serializer)
       ..add(IOSTheme.serializer)
       ..add(KeyboardAppearance.serializer)
+      ..add(Money.serializer)
       ..add(RGBAColor.serializer))
     .build();
 

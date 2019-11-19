@@ -220,3 +220,36 @@ abstract class ErrorInfo implements Built<ErrorInfo, ErrorInfoBuilder> {
   factory ErrorInfo([updates(ErrorInfoBuilder b)]) = _$ErrorInfo;
   static Serializer<ErrorInfo> get serializer => _$errorInfoSerializer;
 }
+
+abstract class Money implements Built<Money, MoneyBuilder> {
+  int get amount;
+  String get currencyCode;
+
+  Money._();
+  factory Money([updates(MoneyBuilder b)]) = _$Money;
+  static Serializer<Money> get serializer => _$moneySerializer;
+}
+
+abstract class Contact implements Built<Contact, ContactBuilder> {
+  @nullable
+  List<String> get addressLines;
+  @nullable
+  String get city;
+  @nullable
+  String get countryCode;
+  @nullable
+  String get email;
+  @nullable
+  String get familyName;
+  String get givenName;
+  @nullable
+  String get phone;
+  @nullable
+  String get postalCode;
+  @nullable
+  String get region;
+
+  Contact._();
+  factory Contact([updates(ContactBuilder b)]) = _$Contact;
+  static Serializer<Contact> get serializer => _$contactSerializer;
+}

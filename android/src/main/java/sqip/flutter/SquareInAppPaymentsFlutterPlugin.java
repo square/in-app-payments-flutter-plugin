@@ -16,8 +16,12 @@
 package sqip.flutter;
 
 import sqip.InAppPaymentsSdk;
+import sqip.Currency;
+import sqip.Country;
+import sqip.SquareIdentifier.LocationToken;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
+import sqip.flutter.internal.BuyerVerificationModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -29,6 +33,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
 
   private final CardEntryModule cardEntryModule;
   private final GooglePayModule googlePayModule;
+  private final BuyerVerificationModule buyerVerificationModule;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -39,6 +44,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
     cardEntryModule = new CardEntryModule(registrar, channel);
     googlePayModule = new GooglePayModule(registrar, channel);
+    buyerVerificationModule = new BuyerVerificationModule(registrar, channel);
   }
 
   @Override
@@ -67,6 +73,49 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String currencyCode = call.argument("currencyCode");
       int priceStatus = call.argument("priceStatus");
       googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
+    } else if (call.method.equals("startBuyerVerificationFlow")) {
+      String paymentSourceId = call.argument("paymentSourceId");
+
+      String buyerActionString = call.argument("buyerAction");
+      HashMap<String, Object> moneyMap = call.argument("money");
+      Money money = new Money(
+        ((Integer)moneyMap.get("amount")).longValue(),
+        sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
+
+      BuyerAction buyerAction;
+      if (buyerActionString.equals("Store")) {
+        buyerAction = new BuyerAction.Store();
+      } else {
+        buyerAction = new BuyerAction.Charge(money);
+      }
+
+      String squareLocationId = call.argument("squareLocationId");
+      SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+
+      String givenName = call.argument("givenName");
+      String familyName = call.argument("familyName");
+      ArrayList<String> addressLines = call.argument("addressLines");
+      String city = call.argument("city");
+      String countryCode = call.argument("countryCode");
+      String email = call.argument("email");
+      String phone = call.argument("phone");
+      String postalCode = call.argument("postalCode");
+      String region = call.argument("region");
+
+      Country country = Country.valueOf(countryCode);
+      Contact contact = new Contact.Builder()
+        .familyName(familyName)
+        .email(email)
+        .addressLines(addressLines)
+        .city(city)
+        .countryCode(country)
+        .postalCode(postalCode)
+        .phone(phone)
+        .region(region)
+        .build(givenName);
+
+      VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
+      buyerVerificationModule.startBuyerVerificationFlow(result, params);
     } else {
       result.notImplemented();
     }

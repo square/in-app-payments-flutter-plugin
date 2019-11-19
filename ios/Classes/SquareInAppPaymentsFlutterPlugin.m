@@ -24,6 +24,7 @@
 
 @property (strong, readwrite) FSQIPCardEntry *cardEntryModule;
 @property (strong, readwrite) FSQIPApplePay *applePayModule;
+@property (strong, readwrite) FSQIPBuyerVerification *buyerVerificationModule;
 @end
 
 FlutterMethodChannel *_channel;
@@ -50,6 +51,8 @@ FlutterMethodChannel *_channel;
     [self.cardEntryModule initWithMethodChannel:_channel];
     self.applePayModule = [[FSQIPApplePay alloc] init];
     [self.applePayModule initWithMethodChannel:_channel];
+    self.buyerVerificationModule = [[FSQIPBuyerVerification alloc] init];
+    [self.buyerVerificationModule initWithMethodChannel:_channel];
     return self;
 }
 
@@ -89,6 +92,51 @@ FlutterMethodChannel *_channel;
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
         [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
+    } else if ([@"setBuyerVerificationTheme" isEqualToString:call.method]) {
+        NSDictionary *theme = call.arguments[@"theme"];
+        [self.buyerVerificationModule setTheme:result theme:theme];
+    } else if ([@"startBuyerVerificationFlow" isEqualToString:call.method]) {
+        NSString *paymentSourceId = call.arguments[@"paymentSourceId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        // XODO: convert currency code
+        SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue] currency:SQRDCurrencyCodeMake(moneyMap[@"currencyCode"])];
+        
+        SQIPBuyerAction *buyerAction;
+        if ([@"Store" isEqualToString:buyerActionString]) {
+            buyerAction = [SQIPBuyerAction storeAction];
+        } else {
+            buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
+        }
+
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+
+        NSString *givenName = call.arguments[@"givenName"];
+        NSString *familyName = call.arguments[@"familyName"];
+        // xodo
+        ArrayList<String> addressLines = call.arguments[@"addressLines"];
+        NSString *city = call.arguments[@"city"];
+        NSString *countryCode = call.arguments[@"countryCode"];
+        NSString *email = call.arguments[@"email"];
+        NSString *phone = call.arguments[@"phone"];
+        NSString *postalCode = call.arguments[@"postalCode"];
+        NSString *region = call.arguments[@"region"];
+
+        SQIPContact *contact = [[SQIPContact alloc] initWithGivenName:givenName
+                                                    familyName:familyName
+                                                    email:email
+                                                    addressLines:addressLines
+                                                    city:city
+                                                    region:region
+                                                    postalCode:postalCode
+                                                    country:countryCode
+                                                    phone:phone];
+
+        SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:paymentSourceId
+                                                    buyerAction:buyerAction
+                                                    locationID:squareLocationId
+                                                    contact:contact];
+        [self.buyerVerificationModule startBuyerVerificationFlow:result parameters:params];
     } else {
         result(FlutterMethodNotImplemented);
     }
