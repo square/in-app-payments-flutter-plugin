@@ -317,7 +317,6 @@ class InAppPayments {
   static Future startCardEntryFlowWithBuyerVerification({
       BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       BuyerVerificationErrorCallback onBuyerVerificationFailure,
-      CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
       CardEntryCancelCallback onCardEntryCancel,
       String buyerAction,
       Money money,
@@ -326,7 +325,6 @@ class InAppPayments {
       bool collectPostalCode = true}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
-    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     _cardEntryCancelCallback = onCardEntryCancel;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
