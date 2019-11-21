@@ -22,8 +22,10 @@ An open source Flutter plugin for calling Square's native In-App Payments SDK to
 
   if $sqipVersion
     s.dependency 'SquareInAppPaymentsSDK', $sqipVersion
+    s.dependency 'SquareBuyerVerificationSDK', $sqipVersion
   else
     s.dependency 'SquareInAppPaymentsSDK', '1.3.0'
+    s.dependency 'SquareBuyerVerificationSDK', '1.3.0'
   end
 end
 

@@ -16,11 +16,11 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
+@import SquareBuyerVerificationSDK;
 
 @interface FSQIPBuyerVerification : NSObject
 
-- (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
-- (void)startBuyerVerificationFlow:(FlutterResult)result parameters:(SQIPVerificationParameters *)parameters;
-- (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
++ (SQIPCurrency)currencyForCurrencyCode:(nonnull NSString *)currencyCode;
++ (SQIPCountry)countryForCountryCode:(nonnull NSString *)countryCode;
 
 @end

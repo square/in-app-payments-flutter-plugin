@@ -16,6 +16,7 @@
 
 #import "SquareInAppPaymentsFlutterPlugin.h"
 #import "FSQIPCardEntry.h"
+#import "FSQIPBuyerVerification.h"
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
 
@@ -24,7 +25,6 @@
 
 @property (strong, readwrite) FSQIPCardEntry *cardEntryModule;
 @property (strong, readwrite) FSQIPApplePay *applePayModule;
-@property (strong, readwrite) FSQIPBuyerVerification *buyerVerificationModule;
 @end
 
 FlutterMethodChannel *_channel;
@@ -51,8 +51,6 @@ FlutterMethodChannel *_channel;
     [self.cardEntryModule initWithMethodChannel:_channel];
     self.applePayModule = [[FSQIPApplePay alloc] init];
     [self.applePayModule initWithMethodChannel:_channel];
-    self.buyerVerificationModule = [[FSQIPBuyerVerification alloc] init];
-    [self.buyerVerificationModule initWithMethodChannel:_channel];
     return self;
 }
 
@@ -65,6 +63,77 @@ FlutterMethodChannel *_channel;
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
         BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
         [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
+    } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
+        BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
+
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue]
+                            currency:[FSQIPBuyerVerification currencyForCurrencyCode:moneyMap[@"currencyCode"]]];
+
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        SQIPBuyerAction *buyerAction = nil;
+        if ([@"Store" isEqualToString:buyerActionString]) {
+            buyerAction = [SQIPBuyerAction storeAction];
+        } else {
+            buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
+        }
+
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+
+        // Contact info
+        NSString *givenName = call.arguments[@"givenName"];
+        NSString *familyName = call.arguments[@"familyName"];
+        NSArray<NSString *> *addressLines = call.arguments[@"addressLines"];
+        NSString *city = call.arguments[@"city"];
+        NSString *countryCode = call.arguments[@"countryCode"];
+        NSString *email = call.arguments[@"email"];
+        NSString *phone = call.arguments[@"phone"];
+        NSString *postalCode = call.arguments[@"postalCode"];
+        NSString *region = call.arguments[@"region"];
+
+        SQIPContact *contact = [[SQIPContact alloc] init];
+        contact.givenName = givenName;
+
+        if (![familyName isEqual:[NSNull null]]) {
+            contact.familyName = familyName;
+        }
+
+        if (![email isEqual:[NSNull null]]) {
+            contact.email = email;
+        }
+
+        if (![addressLines isEqual:[NSNull null]]) {
+            contact.addressLines = addressLines;
+            NSLog(@"%@", addressLines);
+        }
+
+        if (![city isEqual:[NSNull null]]) {
+            contact.city = city;
+        }
+
+        if (![region isEqual:[NSNull null]]) {
+            contact.region = region;
+        }
+
+        if (![postalCode isEqual:[NSNull null]]) {
+            contact.postalCode = postalCode;
+        }
+
+        if (![postalCode isEqual:[NSNull null]]) {
+            contact.postalCode = postalCode;
+        }
+        
+        contact.country = [FSQIPBuyerVerification countryForCountryCode:countryCode];
+
+        if (![phone isEqual:[NSNull null]]) {
+            contact.phone = phone;
+        }
+
+        [self.cardEntryModule startCardEntryFlowWithVerification:result
+            collectPostalCode:collectPostalCode
+            locationId:squareLocationId
+            buyerAction:buyerAction
+            contact:contact];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
@@ -92,51 +161,6 @@ FlutterMethodChannel *_channel;
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
         [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
-    } else if ([@"setBuyerVerificationTheme" isEqualToString:call.method]) {
-        NSDictionary *theme = call.arguments[@"theme"];
-        [self.buyerVerificationModule setTheme:result theme:theme];
-    } else if ([@"startBuyerVerificationFlow" isEqualToString:call.method]) {
-        NSString *paymentSourceId = call.arguments[@"paymentSourceId"];
-        NSString *buyerActionString = call.arguments[@"buyerAction"];
-        NSDictionary *moneyMap = call.arguments[@"money"];
-        // XODO: convert currency code
-        SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue] currency:SQRDCurrencyCodeMake(moneyMap[@"currencyCode"])];
-        
-        SQIPBuyerAction *buyerAction;
-        if ([@"Store" isEqualToString:buyerActionString]) {
-            buyerAction = [SQIPBuyerAction storeAction];
-        } else {
-            buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
-        }
-
-        NSString *squareLocationId = call.arguments[@"squareLocationId"];
-
-        NSString *givenName = call.arguments[@"givenName"];
-        NSString *familyName = call.arguments[@"familyName"];
-        // xodo
-        ArrayList<String> addressLines = call.arguments[@"addressLines"];
-        NSString *city = call.arguments[@"city"];
-        NSString *countryCode = call.arguments[@"countryCode"];
-        NSString *email = call.arguments[@"email"];
-        NSString *phone = call.arguments[@"phone"];
-        NSString *postalCode = call.arguments[@"postalCode"];
-        NSString *region = call.arguments[@"region"];
-
-        SQIPContact *contact = [[SQIPContact alloc] initWithGivenName:givenName
-                                                    familyName:familyName
-                                                    email:email
-                                                    addressLines:addressLines
-                                                    city:city
-                                                    region:region
-                                                    postalCode:postalCode
-                                                    country:countryCode
-                                                    phone:phone];
-
-        SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:paymentSourceId
-                                                    buyerAction:buyerAction
-                                                    locationID:squareLocationId
-                                                    contact:contact];
-        [self.buyerVerificationModule startBuyerVerificationFlow:result parameters:params];
     } else {
         result(FlutterMethodNotImplemented);
     }

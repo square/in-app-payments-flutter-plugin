@@ -16,6 +16,7 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
+@import SquareBuyerVerificationSDK;
 
 
 @interface SquareInAppPaymentsFlutterPlugin : NSObject <FlutterPlugin>

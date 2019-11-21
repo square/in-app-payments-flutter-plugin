@@ -118,6 +118,16 @@ abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   static Serializer<CardDetails> get serializer => _$cardDetailsSerializer;
 }
 
+abstract class BuyerVerificationDetails implements Built<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
+  String get nonce;
+  Card get card;
+  String get token;
+
+  BuyerVerificationDetails._();
+  factory BuyerVerificationDetails([updates(BuyerVerificationDetailsBuilder b)]) = _$BuyerVerificationDetails;
+  static Serializer<BuyerVerificationDetails> get serializer => _$buyerVerificationDetailsSerializer;
+}
+
 abstract class Card implements Built<Card, CardBuilder> {
   Brand get brand;
   String get lastFourDigits;
@@ -231,6 +241,9 @@ abstract class Money implements Built<Money, MoneyBuilder> {
 }
 
 abstract class Contact implements Built<Contact, ContactBuilder> {
+  String get givenName;
+  @nullable
+  String get familyName;
   @nullable
   List<String> get addressLines;
   @nullable
@@ -239,9 +252,6 @@ abstract class Contact implements Built<Contact, ContactBuilder> {
   String get countryCode;
   @nullable
   String get email;
-  @nullable
-  String get familyName;
-  String get givenName;
   @nullable
   String get phone;
   @nullable

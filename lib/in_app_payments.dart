@@ -36,7 +36,7 @@ typedef ApplePayNonceRequestFailureCallback = void Function(
     ErrorInfo errorInfo);
 typedef ApplePayCompleteCallback = void Function();
 
-typedef BuyerVerificationSuccessCallback = void Function(String result);
+typedef BuyerVerificationSuccessCallback = void Function(BuyerVerificationDetails result);
 typedef BuyerVerificationErrorCallback = void Function(
     ErrorInfo errorInfo);
 
@@ -131,7 +131,9 @@ class InAppPayments {
           break;
         case 'onBuyerVerificationSuccess':
           if (_buyerVerificationSuccessCallback != null) {
-            _buyerVerificationSuccessCallback(call.arguments as String);
+            var result = _standardSerializers.deserializeWith(
+                BuyerVerificationDetails.serializer, call.arguments);
+            _buyerVerificationSuccessCallback(result);
           }
           break;
         case 'onBuyerVerificationError':
@@ -305,41 +307,34 @@ class InAppPayments {
     await _channel.invokeMethod('completeApplePayAuthorization', params);
   }
 
-  static Future startBuyerVerificationFlow({
+  static Future startCardEntryFlowWithBuyerVerification({
       BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       BuyerVerificationErrorCallback onBuyerVerificationFailure,
-      String paymentSourceId,
+      CardEntryCancelCallback onCardEntryCancel,
       String buyerAction,
       Money money,
       String squareLocationId,
-      String givenName,
-      String familyName,
-      List<String> addressLines,
-      String city,
-      String countryCode,
-      String email,
-      String phone,
-      String postalCode,
-      String region
-      }) async {
+      Contact contact,
+      bool collectPostalCode = true}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _cardEntryCancelCallback = onCardEntryCancel;
     var params = <String, dynamic>{
-      'paymentSourceId': paymentSourceId,
       'buyerAction': buyerAction,
       'money': _standardSerializers.serializeWith(Money.serializer, money),
       'squareLocationId': squareLocationId,
-      'givenName': givenName,
-      'familyName': familyName,
-      'addressLines': addressLines,
-      'city': city,
-      'countryCode': countryCode,
-      'email': email,
-      'phone': phone,
-      'postalCode': postalCode,
-      'region': region
+      'givenName': contact.givenName,
+      'familyName': contact.familyName,
+      'addressLines': contact.addressLines,
+      'city': contact.city,
+      'countryCode': contact.countryCode,
+      'email': contact.email,
+      'phone': contact.phone,
+      'postalCode': contact.postalCode,
+      'region': contact.region,
+      'collectPostalCode': collectPostalCode,
     };
-    await _channel.invokeMethod('startBuyerVerificationFlow', params);
+    await _channel.invokeMethod('startCardEntryFlowWithBuyerVerification', params);
   }
 
   static Future setIOSCardEntryTheme(IOSTheme theme) async {
@@ -347,13 +342,6 @@ class InAppPayments {
       'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),
     };
     await _channel.invokeMethod('setFormTheme', params);
-  }
-
-  static Future setIOSBuyerVerificationTheme(IOSTheme theme) async {
-    var params = <String, dynamic>{
-      'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),
-    };
-    await _channel.invokeMethod('setBuyerVerificationTheme', params);
   }
 }
 

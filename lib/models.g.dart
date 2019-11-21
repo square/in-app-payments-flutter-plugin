@@ -167,6 +167,8 @@ Serializer<CardPrepaidType> _$cardPrepaidTypeSerializer =
 Serializer<ApplePayPaymentType> _$applePayPaymentTypeSerializer =
     new _$ApplePayPaymentTypeSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
+Serializer<BuyerVerificationDetails> _$buyerVerificationDetailsSerializer =
+    new _$BuyerVerificationDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<RGBAColor> _$rGBAColorSerializer = new _$RGBAColorSerializer();
 Serializer<Font> _$fontSerializer = new _$FontSerializer();
@@ -364,6 +366,65 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
         case 'card':
           result.card.replace(serializers.deserialize(value,
               specifiedType: const FullType(Card)) as Card);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuyerVerificationDetailsSerializer
+    implements StructuredSerializer<BuyerVerificationDetails> {
+  @override
+  final Iterable<Type> types = const [
+    BuyerVerificationDetails,
+    _$BuyerVerificationDetails
+  ];
+  @override
+  final String wireName = 'BuyerVerificationDetails';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuyerVerificationDetails object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'nonce',
+      serializers.serialize(object.nonce,
+          specifiedType: const FullType(String)),
+      'card',
+      serializers.serialize(object.card, specifiedType: const FullType(Card)),
+      'token',
+      serializers.serialize(object.token,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  BuyerVerificationDetails deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuyerVerificationDetailsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'nonce':
+          result.nonce = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'card':
+          result.card.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Card)) as Card);
+          break;
+        case 'token':
+          result.token = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -864,6 +925,12 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
       serializers.serialize(object.givenName,
           specifiedType: const FullType(String)),
     ];
+    if (object.familyName != null) {
+      result
+        ..add('familyName')
+        ..add(serializers.serialize(object.familyName,
+            specifiedType: const FullType(String)));
+    }
     if (object.addressLines != null) {
       result
         ..add('addressLines')
@@ -887,12 +954,6 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
       result
         ..add('email')
         ..add(serializers.serialize(object.email,
-            specifiedType: const FullType(String)));
-    }
-    if (object.familyName != null) {
-      result
-        ..add('familyName')
-        ..add(serializers.serialize(object.familyName,
             specifiedType: const FullType(String)));
     }
     if (object.phone != null) {
@@ -927,6 +988,14 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'givenName':
+          result.givenName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'familyName':
+          result.familyName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'addressLines':
           result.addressLines = serializers.deserialize(value,
                   specifiedType:
@@ -943,14 +1012,6 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
           break;
         case 'email':
           result.email = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'familyName':
-          result.familyName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'givenName':
-          result.givenName = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'phone':
@@ -1065,6 +1126,129 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'CardDetails', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuyerVerificationDetails extends BuyerVerificationDetails {
+  @override
+  final String nonce;
+  @override
+  final Card card;
+  @override
+  final String token;
+
+  factory _$BuyerVerificationDetails(
+          [void Function(BuyerVerificationDetailsBuilder) updates]) =>
+      (new BuyerVerificationDetailsBuilder()..update(updates)).build();
+
+  _$BuyerVerificationDetails._({this.nonce, this.card, this.token})
+      : super._() {
+    if (nonce == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'nonce');
+    }
+    if (card == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'card');
+    }
+    if (token == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'token');
+    }
+  }
+
+  @override
+  BuyerVerificationDetails rebuild(
+          void Function(BuyerVerificationDetailsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuyerVerificationDetailsBuilder toBuilder() =>
+      new BuyerVerificationDetailsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuyerVerificationDetails &&
+        nonce == other.nonce &&
+        card == other.card &&
+        token == other.token;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc($jc(0, nonce.hashCode), card.hashCode), token.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuyerVerificationDetails')
+          ..add('nonce', nonce)
+          ..add('card', card)
+          ..add('token', token))
+        .toString();
+  }
+}
+
+class BuyerVerificationDetailsBuilder
+    implements
+        Builder<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
+  _$BuyerVerificationDetails _$v;
+
+  String _nonce;
+  String get nonce => _$this._nonce;
+  set nonce(String nonce) => _$this._nonce = nonce;
+
+  CardBuilder _card;
+  CardBuilder get card => _$this._card ??= new CardBuilder();
+  set card(CardBuilder card) => _$this._card = card;
+
+  String _token;
+  String get token => _$this._token;
+  set token(String token) => _$this._token = token;
+
+  BuyerVerificationDetailsBuilder();
+
+  BuyerVerificationDetailsBuilder get _$this {
+    if (_$v != null) {
+      _nonce = _$v.nonce;
+      _card = _$v.card?.toBuilder();
+      _token = _$v.token;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuyerVerificationDetails other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuyerVerificationDetails;
+  }
+
+  @override
+  void update(void Function(BuyerVerificationDetailsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuyerVerificationDetails build() {
+    _$BuyerVerificationDetails _$result;
+    try {
+      _$result = _$v ??
+          new _$BuyerVerificationDetails._(
+              nonce: nonce, card: card.build(), token: token);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'card';
+        card.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuyerVerificationDetails', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1931,6 +2115,10 @@ class MoneyBuilder implements Builder<Money, MoneyBuilder> {
 
 class _$Contact extends Contact {
   @override
+  final String givenName;
+  @override
+  final String familyName;
+  @override
   final List<String> addressLines;
   @override
   final String city;
@@ -1938,10 +2126,6 @@ class _$Contact extends Contact {
   final String countryCode;
   @override
   final String email;
-  @override
-  final String familyName;
-  @override
-  final String givenName;
   @override
   final String phone;
   @override
@@ -1953,12 +2137,12 @@ class _$Contact extends Contact {
       (new ContactBuilder()..update(updates)).build();
 
   _$Contact._(
-      {this.addressLines,
+      {this.givenName,
+      this.familyName,
+      this.addressLines,
       this.city,
       this.countryCode,
       this.email,
-      this.familyName,
-      this.givenName,
       this.phone,
       this.postalCode,
       this.region})
@@ -1979,12 +2163,12 @@ class _$Contact extends Contact {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Contact &&
+        givenName == other.givenName &&
+        familyName == other.familyName &&
         addressLines == other.addressLines &&
         city == other.city &&
         countryCode == other.countryCode &&
         email == other.email &&
-        familyName == other.familyName &&
-        givenName == other.givenName &&
         phone == other.phone &&
         postalCode == other.postalCode &&
         region == other.region;
@@ -1999,12 +2183,12 @@ class _$Contact extends Contact {
                     $jc(
                         $jc(
                             $jc(
-                                $jc($jc(0, addressLines.hashCode),
-                                    city.hashCode),
-                                countryCode.hashCode),
-                            email.hashCode),
-                        familyName.hashCode),
-                    givenName.hashCode),
+                                $jc($jc(0, givenName.hashCode),
+                                    familyName.hashCode),
+                                addressLines.hashCode),
+                            city.hashCode),
+                        countryCode.hashCode),
+                    email.hashCode),
                 phone.hashCode),
             postalCode.hashCode),
         region.hashCode));
@@ -2013,12 +2197,12 @@ class _$Contact extends Contact {
   @override
   String toString() {
     return (newBuiltValueToStringHelper('Contact')
+          ..add('givenName', givenName)
+          ..add('familyName', familyName)
           ..add('addressLines', addressLines)
           ..add('city', city)
           ..add('countryCode', countryCode)
           ..add('email', email)
-          ..add('familyName', familyName)
-          ..add('givenName', givenName)
           ..add('phone', phone)
           ..add('postalCode', postalCode)
           ..add('region', region))
@@ -2028,6 +2212,14 @@ class _$Contact extends Contact {
 
 class ContactBuilder implements Builder<Contact, ContactBuilder> {
   _$Contact _$v;
+
+  String _givenName;
+  String get givenName => _$this._givenName;
+  set givenName(String givenName) => _$this._givenName = givenName;
+
+  String _familyName;
+  String get familyName => _$this._familyName;
+  set familyName(String familyName) => _$this._familyName = familyName;
 
   List<String> _addressLines;
   List<String> get addressLines => _$this._addressLines;
@@ -2046,14 +2238,6 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
   String get email => _$this._email;
   set email(String email) => _$this._email = email;
 
-  String _familyName;
-  String get familyName => _$this._familyName;
-  set familyName(String familyName) => _$this._familyName = familyName;
-
-  String _givenName;
-  String get givenName => _$this._givenName;
-  set givenName(String givenName) => _$this._givenName = givenName;
-
   String _phone;
   String get phone => _$this._phone;
   set phone(String phone) => _$this._phone = phone;
@@ -2070,12 +2254,12 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
 
   ContactBuilder get _$this {
     if (_$v != null) {
+      _givenName = _$v.givenName;
+      _familyName = _$v.familyName;
       _addressLines = _$v.addressLines;
       _city = _$v.city;
       _countryCode = _$v.countryCode;
       _email = _$v.email;
-      _familyName = _$v.familyName;
-      _givenName = _$v.givenName;
       _phone = _$v.phone;
       _postalCode = _$v.postalCode;
       _region = _$v.region;
@@ -2101,12 +2285,12 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
   _$Contact build() {
     final _$result = _$v ??
         new _$Contact._(
+            givenName: givenName,
+            familyName: familyName,
             addressLines: addressLines,
             city: city,
             countryCode: countryCode,
             email: email,
-            familyName: familyName,
-            givenName: givenName,
             phone: phone,
             postalCode: postalCode,
             region: region);

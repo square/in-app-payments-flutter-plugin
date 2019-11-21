@@ -280,12 +280,14 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${PODS_ROOT}/../.symlinks/flutter/ios/Flutter.framework",
-				"${PODS_ROOT}/SquareInAppPaymentsSDK/SquareInAppPaymentsSDK.framework",
+				"${PODS_ROOT}/SquareBuyerVerificationSDK/SquareInAppPaymentsSDKs.framework/SquareBuyerVerificationSDK.framework",
+				"${PODS_ROOT}/SquareInAppPaymentsSDK/SquareInAppPaymentsSDKs.framework/SquareInAppPaymentsSDK.framework",
 				"${BUILT_PRODUCTS_DIR}/square_in_app_payments/square_in_app_payments.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SquareBuyerVerificationSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SquareInAppPaymentsSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/square_in_app_payments.framework",
 			);

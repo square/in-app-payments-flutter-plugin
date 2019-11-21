@@ -68,7 +68,11 @@ class BuySheetState extends State<BuySheet> {
 
     switch (selection) {
       case PaymentType.cardPayment:
-        await _onStartCardEntryFlow();
+        if (_squareLocationSet) {
+          await _onStartCardEntryFlowWithBuyerVerification();
+        } else {
+          _showSquareLocationIdNotSet();
+        }
         break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled) {
@@ -163,6 +167,32 @@ class BuySheetState extends State<BuySheet> {
     await InAppPayments.startCardEntryFlow(
         onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
         onCardEntryCancel: _onCancelCardEntryFlow,
+        collectPostalCode: true);
+  }
+
+  Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
+    var money = Money((b) => b
+        ..amount = 100
+        ..currencyCode = 'USD');
+    
+    var contact = Contact((b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = ["London Eye","Riverside Walk"]
+        ..city = "London"
+        ..countryCode = "UK"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7");
+    
+    await InAppPayments.startCardEntryFlowWithBuyerVerification(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onCardEntryCancel: _onCancelCardEntryFlow,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
         collectPostalCode: true);
   }
 
@@ -278,6 +308,39 @@ class BuySheetState extends State<BuySheet> {
       // the apple pay is canceled
       _showOrderSheet();
     }
+  }
+
+  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
+    // xodo: remove print
+    // xodo: print curl command with verification token
+    print("~~~~~~~~~~~~verification success");
+    print(result.nonce);
+    print(result.token);
+    if (!_chargeServerHostReplaced) {
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+
+      _showUrlNotSetAndPrintCurlCommand(result.nonce);
+      return;
+    }
+
+    var cardDetails = CardDetails((b) => b
+        ..nonce = result.nonce
+        ..card = result.card.toBuilder());
+    print(cardDetails.nonce);
+    print(cardDetails.card);
+    try {
+      await chargeCard(cardDetails);
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    } on ChargeException catch (ex) {
+      InAppPayments.showCardNonceProcessingError(ex.errorMessage);
+    }
+  }
+
+  void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
+    print("###verification failure");
+    print(errorInfo.toString());
   }
 
   Widget build(BuildContext context) => MaterialApp(

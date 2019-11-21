@@ -16,6 +16,7 @@
 
 #import "FSQIPCardEntry.h"
 #import "FSQIPErrorUtilities.h"
+#import "Converters/SQIPCard+FSQIPAdditions.h"
 #import "Converters/SQIPCardDetails+FSQIPAdditions.h"
 #import "Converters/UIFont+FSQIPAdditions.h"
 #import "Converters/UIColor+FSQIPAdditions.h"
@@ -28,12 +29,18 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
 @property (strong, readwrite) FlutterMethodChannel *channel;
 @property (strong, readwrite) SQIPTheme *theme;
 @property (strong, readwrite) CompletionHandler completionHandler;
+@property (strong, readwrite) SQIPCardEntryViewController *cardEntryViewController;
+@property (strong, readwrite) NSString *locationId;
+@property (strong, readwrite) SQIPBuyerAction *buyerAction;
+@property (strong, readwrite) SQIPContact *contact;
 
 @end
 
 static NSString *const FSQIPCardEntryCancelEventName = @"cardEntryCancel";
 static NSString *const FSQIPCardEntryCompleteEventName = @"cardEntryComplete";
 static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntryDidObtainCardDetails";
+static NSString *const FSQIPOnBuyerVerificationSuccessEventName = @"onBuyerVerificationSuccess";
+static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerificationError";
 
 @implementation FSQIPCardEntry
 
@@ -48,6 +55,27 @@ static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntry
     SQIPCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
     cardEntryForm.collectPostalCode = collectPostalCode;
     cardEntryForm.delegate = self;
+    self.cardEntryViewController = cardEntryForm;
+
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        [((UINavigationController *)rootViewController) pushViewController:cardEntryForm animated:YES];
+    } else {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cardEntryForm];
+        [rootViewController presentViewController:navigationController animated:YES completion:nil];
+    }
+    result(nil);
+}
+
+- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerAction:(SQIPBuyerAction *)buyerAction contact:(SQIPContact *)contact
+{
+    self.locationId = locationId;
+    self.buyerAction = buyerAction;
+    self.contact = contact;
+    SQIPCardEntryViewController *cardEntryForm = [self _makeCardEntryForm];
+    cardEntryForm.collectPostalCode = collectPostalCode;
+    cardEntryForm.delegate = self;
+    self.cardEntryViewController = cardEntryForm;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
@@ -62,7 +90,44 @@ static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntry
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
     self.completionHandler = completionHandler;
-    [self.channel invokeMethod:FSQIPCardEntryDidObtainCardDetailsEventName arguments:[cardDetails jsonDictionary]];
+
+    if (self.contact) {
+        NSString *paymentSourceId = cardDetails.nonce;
+        SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:paymentSourceId
+                                                buyerAction:self.buyerAction
+                                                locationID:self.locationId
+                                                contact:self.contact];
+
+        [SQIPBuyerVerificationSDK.shared verifyWithParameters:params
+            theme:self.theme
+            viewController:self.cardEntryViewController
+            success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
+                NSLog(@"FSQIPCardEntry.m verifyWithParameters success callback");
+                NSLog([verifiedDetails verificationToken]);
+                NSDictionary *verificationResult =
+                    @{
+                        @"nonce" : cardDetails.nonce,
+                        @"card" : [cardDetails.card jsonDictionary],
+                        @"token" : verifiedDetails.verificationToken
+                    };
+
+                [self.channel invokeMethod:FSQIPOnBuyerVerificationSuccessEventName
+                    arguments:verificationResult];
+            }
+            failure:^(NSError *_Nonnull error) {
+                NSLog(@"FSQIPCardEntry.m verifyWithParameters failure callback");
+                NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
+                NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
+                [self.channel invokeMethod:FSQIPOnBuyerVerificationErrorEventName
+                    arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
+                                    message:error.localizedDescription
+                                    debugCode:debugCode
+                                    debugMessage:debugMessage]];
+            }];
+        self.contact = nil;
+    } else {
+        [self.channel invokeMethod:FSQIPCardEntryDidObtainCardDetailsEventName arguments:[cardDetails jsonDictionary]];
+    }
 }
 
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status

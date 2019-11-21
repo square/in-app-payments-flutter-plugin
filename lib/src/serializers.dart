@@ -33,5 +33,7 @@ part 'serializers.g.dart';
   IOSTheme,
   ErrorInfo,
   Money,
+  Contact,
+  BuyerVerificationDetails,
 ])
 final Serializers serializers = _$serializers;
