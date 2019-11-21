@@ -70,6 +70,7 @@ class BuySheetState extends State<BuySheet> {
       case PaymentType.cardPayment:
         if (_squareLocationSet) {
           await _onStartCardEntryFlowWithBuyerVerification();
+          // await _onStartCardEntryFlow(); Use this flow to skip buyer verification
         } else {
           _showSquareLocationIdNotSet();
         }
@@ -91,13 +92,15 @@ class BuySheetState extends State<BuySheet> {
     }
   }
 
-  void printCurlCommand(String nonce) {
+  void printCurlCommand(String nonce, String verificationToken) {
     var hostUrl = 'https://connect.squareup.com';
     if (squareApplicationId.startsWith('sandbox')) {
       hostUrl = 'https://connect.squareupsandbox.com';
     }
     var uuid = Uuid().v4();
-    print(
+
+    if (verificationToken == null) {
+      print(
         'curl --request POST $hostUrl/v2/locations/SQUARE_LOCATION_ID/transactions \\'
         '--header \"Content-Type: application/json\" \\'
         '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
@@ -109,15 +112,36 @@ class BuySheetState extends State<BuySheet> {
         '\"currency\": \"USD\"},'
         '\"card_nonce\": \"$nonce\"'
         '}\'');
+    } else {
+      print(
+        'curl --request POST $hostUrl/v2/payments \\'
+        '--header \"Content-Type: application/json\" \\'
+        '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
+        '--header \"Accept: application/json\" \\'
+        '--data \'{'
+        '\"idempotency_key\": \"$uuid\",'
+        '\"amount_money\": {'
+        '\"amount\": $cookieAmount,'
+        '\"currency\": \"USD\"},'
+        '\"source_id\": \"$nonce\",'
+        '\"verification_token\": \"$verificationToken\"'
+        '}\'');
+    }
   }
 
-  void _showUrlNotSetAndPrintCurlCommand(String nonce) {
+  void _showUrlNotSetAndPrintCurlCommand(String nonce, {String verificationToken}) {
+    String title;
+    if (verificationToken != null) {
+      title = "Nonce and verification token generated but not charged";
+    } else {
+      title = "Nonce generated but not charged";
+    }
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext,
-        title: "Nonce generated but not charged",
+        title: title,
         description:
             "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
-    printCurlCommand(nonce);
+    printCurlCommand(nonce, verificationToken);
   }
 
   void _showSquareLocationIdNotSet() {
@@ -148,18 +172,21 @@ class BuySheetState extends State<BuySheet> {
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
-      InAppPayments.completeCardEntry(
-          onCardEntryComplete: _onCardEntryComplete);
-
+        InAppPayments.completeCardEntry(
+            onCardEntryComplete: _onCardEntryComplete);
       _showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
     try {
       await chargeCard(result);
-      InAppPayments.completeCardEntry(
-          onCardEntryComplete: _onCardEntryComplete);
+        InAppPayments.completeCardEntry(
+            onCardEntryComplete: _onCardEntryComplete);
     } on ChargeException catch (ex) {
       InAppPayments.showCardNonceProcessingError(ex.errorMessage);
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Failed to chargeCard",
+        description: ex.toString());
     }
   }
 
@@ -180,7 +207,7 @@ class BuySheetState extends State<BuySheet> {
         ..familyName = "Doe"
         ..addressLines = ["London Eye","Riverside Walk"]
         ..city = "London"
-        ..countryCode = "UK"
+        ..countryCode = "GB"
         ..email = "johndoe@example.com"
         ..phone = "8001234567"
         ..postalCode = "SE1 7");
@@ -311,36 +338,33 @@ class BuySheetState extends State<BuySheet> {
   }
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
-    // xodo: remove print
-    // xodo: print curl command with verification token
-    print("~~~~~~~~~~~~verification success");
-    print(result.nonce);
-    print(result.token);
     if (!_chargeServerHostReplaced) {
       InAppPayments.completeCardEntry(
-          onCardEntryComplete: _onCardEntryComplete);
+        onCardEntryComplete: _onCardEntryComplete);
 
-      _showUrlNotSetAndPrintCurlCommand(result.nonce);
+      _showUrlNotSetAndPrintCurlCommand(result.nonce, verificationToken:result.token);
       return;
     }
 
-    var cardDetails = CardDetails((b) => b
-        ..nonce = result.nonce
-        ..card = result.card.toBuilder());
-    print(cardDetails.nonce);
-    print(cardDetails.card);
     try {
-      await chargeCard(cardDetails);
+      await chargeCardAfterBuyerVerification(result);
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
     } on ChargeException catch (ex) {
       InAppPayments.showCardNonceProcessingError(ex.errorMessage);
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Error verifying buyer",
+        description: ex.errorMessage);
     }
   }
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
-    print("###verification failure");
-    print(errorInfo.toString());
+    InAppPayments.showCardNonceProcessingError(errorInfo.message);
+    showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Error verifying buyer",
+        description: errorInfo.toString());
   }
 
   Widget build(BuildContext context) => MaterialApp(

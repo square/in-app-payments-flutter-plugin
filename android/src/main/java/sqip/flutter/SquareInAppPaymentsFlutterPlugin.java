@@ -15,13 +15,19 @@
 */
 package sqip.flutter;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import sqip.InAppPaymentsSdk;
 import sqip.Currency;
 import sqip.Country;
+import sqip.Money;
+import sqip.BuyerAction;
+import sqip.SquareIdentifier;
+import sqip.Contact;
 import sqip.SquareIdentifier.LocationToken;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
-import sqip.flutter.internal.BuyerVerificationModule;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -33,7 +39,6 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
 
   private final CardEntryModule cardEntryModule;
   private final GooglePayModule googlePayModule;
-  private final BuyerVerificationModule buyerVerificationModule;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -44,7 +49,6 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
   private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
     cardEntryModule = new CardEntryModule(registrar, channel);
     googlePayModule = new GooglePayModule(registrar, channel);
-    buyerVerificationModule = new BuyerVerificationModule(registrar, channel);
   }
 
   @Override
@@ -56,11 +60,6 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
     } else if (call.method.equals("startCardEntryFlow")) {
       boolean collectPostalCode = call.argument("collectPostalCode");
       cardEntryModule.startCardEntryFlow(result, collectPostalCode);
-    } else if (call.method.equals("completeCardEntry")) {
-      cardEntryModule.completeCardEntry(result);
-    } else if (call.method.equals("showCardNonceProcessingError")) {
-      String errorMessage = call.argument("errorMessage");
-      cardEntryModule.showCardNonceProcessingError(result, errorMessage);
     } else if (call.method.equals("initializeGooglePay")) {
       String squareLocationId = call.argument("squareLocationId");
       int environment = call.argument("environment");
@@ -73,15 +72,15 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String currencyCode = call.argument("currencyCode");
       int priceStatus = call.argument("priceStatus");
       googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
-    } else if (call.method.equals("startBuyerVerificationFlow")) {
-      String paymentSourceId = call.argument("paymentSourceId");
+    } else if (call.method.equals("startCardEntryFlowWithBuyerVerification")) {
+      boolean collectPostalCode = call.argument("collectPostalCode");
 
-      String buyerActionString = call.argument("buyerAction");
       HashMap<String, Object> moneyMap = call.argument("money");
       Money money = new Money(
-        ((Integer)moneyMap.get("amount")).longValue(),
+        ((Integer)moneyMap.get("amount")).intValue(),
         sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
 
+      String buyerActionString = call.argument("buyerAction");
       BuyerAction buyerAction;
       if (buyerActionString.equals("Store")) {
         buyerAction = new BuyerAction.Store();
@@ -92,6 +91,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String squareLocationId = call.argument("squareLocationId");
       SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
 
+      // Contact info
       String givenName = call.argument("givenName");
       String familyName = call.argument("familyName");
       ArrayList<String> addressLines = call.argument("addressLines");
@@ -101,21 +101,19 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String phone = call.argument("phone");
       String postalCode = call.argument("postalCode");
       String region = call.argument("region");
-
-      Country country = Country.valueOf(countryCode);
+      Country country = Country.valueOf((countryCode != null) ? countryCode : "US");
       Contact contact = new Contact.Builder()
-        .familyName(familyName)
-        .email(email)
-        .addressLines(addressLines)
-        .city(city)
+        .familyName((familyName != null) ? familyName : "")
+        .email((email != null) ? email : "")
+        .addressLines((addressLines != null) ? addressLines : new ArrayList<String>())
+        .city((city != null) ? city : "")
         .countryCode(country)
-        .postalCode(postalCode)
-        .phone(phone)
-        .region(region)
+        .postalCode((postalCode != null) ? postalCode : "")
+        .phone((phone != null) ? phone : "")
+        .region((region != null) ? region : "")
         .build(givenName);
 
-      VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
-      buyerVerificationModule.startBuyerVerificationFlow(result, params);
+      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareIdentifier, buyerAction, contact);
     } else {
       result.notImplemented();
     }

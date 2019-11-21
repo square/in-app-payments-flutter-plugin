@@ -8,6 +8,10 @@ part of 'models.dart';
 
 const ErrorCode _$usageError = const ErrorCode._('usageError');
 const ErrorCode _$noNetwork = const ErrorCode._('noNetwork');
+const ErrorCode _$failed = const ErrorCode._('failed');
+const ErrorCode _$canceled = const ErrorCode._('canceled');
+const ErrorCode _$unsupportedSDKVersion =
+    const ErrorCode._('unsupportedSDKVersion');
 
 ErrorCode _$errorCodeValueOf(String name) {
   switch (name) {
@@ -15,6 +19,12 @@ ErrorCode _$errorCodeValueOf(String name) {
       return _$usageError;
     case 'noNetwork':
       return _$noNetwork;
+    case 'failed':
+      return _$failed;
+    case 'canceled':
+      return _$canceled;
+    case 'unsupportedSDKVersion':
+      return _$unsupportedSDKVersion;
     default:
       throw new ArgumentError(name);
   }
@@ -24,6 +34,9 @@ final BuiltSet<ErrorCode> _$errorCodeValues =
     new BuiltSet<ErrorCode>(const <ErrorCode>[
   _$usageError,
   _$noNetwork,
+  _$failed,
+  _$canceled,
+  _$unsupportedSDKVersion,
 ]);
 
 const Brand _$otherBrand = const Brand._('otherBrand');
@@ -183,10 +196,16 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
   static const Map<String, String> _toWire = const <String, String>{
     'usageError': 'USAGE_ERROR',
     'noNetwork': 'NO_NETWORK',
+    'failed': 'FAILED',
+    'canceled': 'CANCELED',
+    'unsupportedSDKVersion': 'UNSUPPORTED_SDK_VERSION',
   };
   static const Map<String, String> _fromWire = const <String, String>{
     'USAGE_ERROR': 'usageError',
     'NO_NETWORK': 'noNetwork',
+    'FAILED': 'failed',
+    'CANCELED': 'canceled',
+    'UNSUPPORTED_SDK_VERSION': 'unsupportedSDKVersion',
   };
 
   @override

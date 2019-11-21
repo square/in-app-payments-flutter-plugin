@@ -14,6 +14,7 @@
  limitations under the License.
 */
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:meta/meta.dart';
@@ -177,14 +178,20 @@ class InAppPayments {
   static Future completeCardEntry(
       {CardEntryCompleteCallback onCardEntryComplete}) async {
     _cardEntryCompleteCallback = onCardEntryComplete;
-    await _channel.invokeMethod('completeCardEntry');
+    // In the case of Android, by design, buyer verification happens after card entry completes
+    if (Platform.isIOS) {
+      await _channel.invokeMethod('completeCardEntry');
+    }
   }
 
   static Future showCardNonceProcessingError(String errorMessage) async {
     var params = <String, dynamic>{
       'errorMessage': errorMessage,
     };
-    await _channel.invokeMethod('showCardNonceProcessingError', params);
+    // In the case of Android, by design, buyer verification happens after card entry completes
+    if (Platform.isIOS) {
+      await _channel.invokeMethod('showCardNonceProcessingError', params);
+    }
   }
 
   static Future initializeGooglePay(
@@ -310,6 +317,7 @@ class InAppPayments {
   static Future startCardEntryFlowWithBuyerVerification({
       BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
       CardEntryCancelCallback onCardEntryCancel,
       String buyerAction,
       Money money,
@@ -318,6 +326,7 @@ class InAppPayments {
       bool collectPostalCode = true}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     _cardEntryCancelCallback = onCardEntryCancel;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,

@@ -102,8 +102,6 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
             theme:self.theme
             viewController:self.cardEntryViewController
             success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
-                NSLog(@"FSQIPCardEntry.m verifyWithParameters success callback");
-                NSLog([verifiedDetails verificationToken]);
                 NSDictionary *verificationResult =
                     @{
                         @"nonce" : cardDetails.nonce,
@@ -115,7 +113,6 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
                     arguments:verificationResult];
             }
             failure:^(NSError *_Nonnull error) {
-                NSLog(@"FSQIPCardEntry.m verifyWithParameters failure callback");
                 NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
                 NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
                 [self.channel invokeMethod:FSQIPOnBuyerVerificationErrorEventName

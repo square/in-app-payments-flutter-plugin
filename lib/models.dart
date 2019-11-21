@@ -26,6 +26,12 @@ class ErrorCode extends EnumClass {
   static const ErrorCode usageError = _$usageError;
   @BuiltValueEnumConst(wireName: 'NO_NETWORK')
   static const ErrorCode noNetwork = _$noNetwork;
+  @BuiltValueEnumConst(wireName: 'FAILED')
+  static const ErrorCode failed = _$failed;
+  @BuiltValueEnumConst(wireName: 'CANCELED')
+  static const ErrorCode canceled = _$canceled;
+  @BuiltValueEnumConst(wireName: 'UNSUPPORTED_SDK_VERSION')
+  static const ErrorCode unsupportedSDKVersion = _$unsupportedSDKVersion;
 
   const ErrorCode._(String name) : super(name);
 
