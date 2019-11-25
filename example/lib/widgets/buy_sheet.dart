@@ -14,6 +14,7 @@
  limitations under the License.
 */
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
@@ -69,8 +70,8 @@ class BuySheetState extends State<BuySheet> {
     switch (selection) {
       case PaymentType.cardPayment:
         if (_squareLocationSet) {
-          await _onStartCardEntryFlowWithBuyerVerification();
-          // await _onStartCardEntryFlow(); Use this flow to skip buyer verification
+          // await _onStartCardEntryFlowWithBuyerVerification();
+          await _onStartCardEntryFlow(); // Use this flow to skip buyer verification
         } else {
           _showSquareLocationIdNotSet();
         }
@@ -172,21 +173,17 @@ class BuySheetState extends State<BuySheet> {
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
-        InAppPayments.completeCardEntry(
-            onCardEntryComplete: _onCardEntryComplete);
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
       _showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
     try {
       await chargeCard(result);
-        InAppPayments.completeCardEntry(
-            onCardEntryComplete: _onCardEntryComplete);
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
     } on ChargeException catch (ex) {
       InAppPayments.showCardNonceProcessingError(ex.errorMessage);
-      showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
-        title: "Failed to chargeCard",
-        description: ex.toString());
     }
   }
 
@@ -339,8 +336,11 @@ class BuySheetState extends State<BuySheet> {
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
     if (!_chargeServerHostReplaced) {
-      InAppPayments.completeCardEntry(
-        onCardEntryComplete: _onCardEntryComplete);
+      // In the case of Android, by design, buyer verification happens after card entry completes
+      if (Platform.isIOS) {
+        InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+      }
 
       _showUrlNotSetAndPrintCurlCommand(result.nonce, verificationToken:result.token);
       return;
@@ -348,23 +348,34 @@ class BuySheetState extends State<BuySheet> {
 
     try {
       await chargeCardAfterBuyerVerification(result);
-      InAppPayments.completeCardEntry(
+      // In the case of Android, by design, buyer verification happens after card entry completes
+      if (Platform.isIOS) {
+        InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
+      }
     } on ChargeException catch (ex) {
-      InAppPayments.showCardNonceProcessingError(ex.errorMessage);
-      showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
-        title: "Error verifying buyer",
-        description: ex.errorMessage);
+      // In the case of Android, by design, buyer verification happens after card entry completes
+      if (Platform.isIOS) {
+        InAppPayments.showCardNonceProcessingError(ex.errorMessage);
+      } else {
+        showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
+      }
     }
   }
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
-    InAppPayments.showCardNonceProcessingError(errorInfo.message);
-    showAlertDialog(
+    // In the case of Android, by design, buyer verification happens after card entry completes
+    if (Platform.isIOS) {
+      InAppPayments.showCardNonceProcessingError(errorInfo.message);
+    } else {
+      showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext,
         title: "Error verifying buyer",
         description: errorInfo.toString());
+    }
   }
 
   Widget build(BuildContext context) => MaterialApp(

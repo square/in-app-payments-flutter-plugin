@@ -113,10 +113,52 @@ final public class CardEntryModule {
         return false;
       }
     });
+
+    CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
+      @Override
+      public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
+        if (CardEntryModule.this.contact != null) {
+          // If buyer verification needed, finish the card entry activity so we can verify buyer
+          return new CardEntryActivityCommand.Finish();
+        }
+
+        final Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
+        countDownLatch = new CountDownLatch(1);
+        // must be run on the UI thread to prevent an exception
+        currentActivity.runOnUiThread(
+           new Runnable() {
+            public void run() {
+              channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
+            }
+          }
+        );
+        try {
+          // completeCardEntry or showCardNonceProcessingError must be called,
+          // otherwise the thread will be leaked.
+          countDownLatch.await();
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+
+        return reference.get();
+      }
+    });
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
     CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
+    result.success(null);
+  }
+
+  public void completeCardEntry(MethodChannel.Result result) {
+    reference.set(new CardEntryActivityCommand.Finish());
+    countDownLatch.countDown();
+    result.success(null);
+  }
+
+  public void showCardNonceProcessingError(MethodChannel.Result result, String errorMessage) {
+    reference.set(new CardEntryActivityCommand.ShowError(errorMessage));
+    countDownLatch.countDown();
     result.success(null);
   }
 
