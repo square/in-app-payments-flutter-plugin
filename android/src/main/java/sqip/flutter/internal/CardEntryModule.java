@@ -33,6 +33,8 @@ import sqip.BuyerVerificationResult.Error;
 import sqip.SquareIdentifier;
 import sqip.BuyerAction;
 import sqip.Contact;
+import sqip.Country;
+import sqip.Money;
 import sqip.VerificationParameters;
 import sqip.flutter.R;
 import sqip.flutter.internal.converter.CardConverter;
@@ -40,6 +42,8 @@ import sqip.flutter.internal.converter.CardDetailsConverter;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -162,7 +166,42 @@ final public class CardEntryModule {
     result.success(null);
   }
 
-  public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, SquareIdentifier squareIdentifier, BuyerAction buyerAction, Contact contact) {
+  public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
+    SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+
+    Money money = new Money(
+        ((Integer)moneyMap.get("amount")).intValue(),
+        sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
+
+    BuyerAction buyerAction;
+    if (buyerActionString.equals("Store")) {
+      buyerAction = new BuyerAction.Store();
+    } else {
+      buyerAction = new BuyerAction.Charge(money);
+    }
+
+    // Contact info
+    Object givenName = contactMap.get("givenName");
+    Object familyName = contactMap.get("familyName");
+    Object addressLines = contactMap.get("addressLines"); // Arrays.asList((Object[])contactMap.get("addressLines"));
+    Object city = contactMap.get("city");
+    Object countryCode = contactMap.get("countryCode");
+    Object email = contactMap.get("email");
+    Object phone = contactMap.get("phone");
+    Object postalCode = contactMap.get("postalCode");
+    Object region = contactMap.get("region");
+    Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
+    Contact contact = new Contact.Builder()
+      .familyName((familyName != null) ? familyName.toString() : "")
+      .email((email != null) ? email.toString() : "")
+      .addressLines((addressLines != null) ? (ArrayList<String>)addressLines : new ArrayList<String>())
+      .city((city != null) ? city.toString() : "")
+      .countryCode(country)
+      .postalCode((postalCode != null) ? postalCode.toString() : "")
+      .phone((phone != null) ? phone.toString() : "")
+      .region((region != null) ? region.toString() : "")
+      .build((givenName != null) ? givenName.toString() : "");
+
     this.squareIdentifier = squareIdentifier;
     this.buyerAction = buyerAction;
     this.contact = contact;

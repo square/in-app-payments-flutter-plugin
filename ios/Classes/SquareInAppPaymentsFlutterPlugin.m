@@ -16,7 +16,6 @@
 
 #import "SquareInAppPaymentsFlutterPlugin.h"
 #import "FSQIPCardEntry.h"
-#import "FSQIPBuyerVerification.h"
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
 
@@ -65,75 +64,16 @@ FlutterMethodChannel *_channel;
         [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
     } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
         BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
-
-        NSDictionary *moneyMap = call.arguments[@"money"];
-        SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue]
-                            currency:[FSQIPBuyerVerification currencyForCurrencyCode:moneyMap[@"currencyCode"]]];
-
-        NSString *buyerActionString = call.arguments[@"buyerAction"];
-        SQIPBuyerAction *buyerAction = nil;
-        if ([@"Store" isEqualToString:buyerActionString]) {
-            buyerAction = [SQIPBuyerAction storeAction];
-        } else {
-            buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
-        }
-
         NSString *squareLocationId = call.arguments[@"squareLocationId"];
-
-        // Contact info
-        NSString *givenName = call.arguments[@"givenName"];
-        NSString *familyName = call.arguments[@"familyName"];
-        NSArray<NSString *> *addressLines = call.arguments[@"addressLines"];
-        NSString *city = call.arguments[@"city"];
-        NSString *countryCode = call.arguments[@"countryCode"];
-        NSString *email = call.arguments[@"email"];
-        NSString *phone = call.arguments[@"phone"];
-        NSString *postalCode = call.arguments[@"postalCode"];
-        NSString *region = call.arguments[@"region"];
-
-        SQIPContact *contact = [[SQIPContact alloc] init];
-        contact.givenName = givenName;
-
-        if (![familyName isEqual:[NSNull null]]) {
-            contact.familyName = familyName;
-        }
-
-        if (![email isEqual:[NSNull null]]) {
-            contact.email = email;
-        }
-
-        if (![addressLines isEqual:[NSNull null]]) {
-            contact.addressLines = addressLines;
-            NSLog(@"%@", addressLines);
-        }
-
-        if (![city isEqual:[NSNull null]]) {
-            contact.city = city;
-        }
-
-        if (![region isEqual:[NSNull null]]) {
-            contact.region = region;
-        }
-
-        if (![postalCode isEqual:[NSNull null]]) {
-            contact.postalCode = postalCode;
-        }
-
-        if (![postalCode isEqual:[NSNull null]]) {
-            contact.postalCode = postalCode;
-        }
-        
-        contact.country = [FSQIPBuyerVerification countryForCountryCode:countryCode];
-
-        if (![phone isEqual:[NSNull null]]) {
-            contact.phone = phone;
-        }
-
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
         [self.cardEntryModule startCardEntryFlowWithVerification:result
             collectPostalCode:collectPostalCode
             locationId:squareLocationId
-            buyerAction:buyerAction
-            contact:contact];
+            buyerActionString:buyerActionString
+            moneyMap:moneyMap
+            contactMap:contactMap];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {

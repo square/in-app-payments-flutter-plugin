@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 import sqip.InAppPaymentsSdk;
-import sqip.Currency;
-import sqip.Country;
-import sqip.Money;
 import sqip.BuyerAction;
-import sqip.SquareIdentifier;
 import sqip.Contact;
+import sqip.Country;
+import sqip.Currency;
+import sqip.Money;
+import sqip.SquareIdentifier;
 import sqip.SquareIdentifier.LocationToken;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
@@ -79,46 +79,12 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
     } else if (call.method.equals("startCardEntryFlowWithBuyerVerification")) {
       boolean collectPostalCode = call.argument("collectPostalCode");
-
-      HashMap<String, Object> moneyMap = call.argument("money");
-      Money money = new Money(
-        ((Integer)moneyMap.get("amount")).intValue(),
-        sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
-
-      String buyerActionString = call.argument("buyerAction");
-      BuyerAction buyerAction;
-      if (buyerActionString.equals("Store")) {
-        buyerAction = new BuyerAction.Store();
-      } else {
-        buyerAction = new BuyerAction.Charge(money);
-      }
-
       String squareLocationId = call.argument("squareLocationId");
-      SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+      String buyerActionString = call.argument("buyerAction");
+      HashMap<String, Object> moneyMap = call.argument("money");
+      HashMap<String, Object> contactMap = call.argument("contact");
 
-      // Contact info
-      String givenName = call.argument("givenName");
-      String familyName = call.argument("familyName");
-      ArrayList<String> addressLines = call.argument("addressLines");
-      String city = call.argument("city");
-      String countryCode = call.argument("countryCode");
-      String email = call.argument("email");
-      String phone = call.argument("phone");
-      String postalCode = call.argument("postalCode");
-      String region = call.argument("region");
-      Country country = Country.valueOf((countryCode != null) ? countryCode : "US");
-      Contact contact = new Contact.Builder()
-        .familyName((familyName != null) ? familyName : "")
-        .email((email != null) ? email : "")
-        .addressLines((addressLines != null) ? addressLines : new ArrayList<String>())
-        .city((city != null) ? city : "")
-        .countryCode(country)
-        .postalCode((postalCode != null) ? postalCode : "")
-        .phone((phone != null) ? phone : "")
-        .region((region != null) ? region : "")
-        .build(givenName);
-
-      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareIdentifier, buyerAction, contact);
+      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareLocationId, buyerActionString, moneyMap, contactMap);
     } else {
       result.notImplemented();
     }

@@ -3,7 +3,7 @@
 ### v1.3.0 November 20, 2019
 
 * Bump Square In-App Payments SDK dependency to `1.3.0`.
-* Strong Customer Authentication (SCA).
+* Add support for Strong Customer Authentication (SCA).
 
 ### v1.2.3 September 10, 2019
 

@@ -251,7 +251,7 @@ abstract class Contact implements Built<Contact, ContactBuilder> {
   @nullable
   String get familyName;
   @nullable
-  List<String> get addressLines;
+  BuiltList<String> get addressLines;
   @nullable
   String get city;
   @nullable

@@ -955,7 +955,7 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
         ..add('addressLines')
         ..add(serializers.serialize(object.addressLines,
             specifiedType:
-                const FullType(List, const [const FullType(String)])));
+                const FullType(BuiltList, const [const FullType(String)])));
     }
     if (object.city != null) {
       result
@@ -1016,10 +1016,10 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
               specifiedType: const FullType(String)) as String;
           break;
         case 'addressLines':
-          result.addressLines = serializers.deserialize(value,
+          result.addressLines.replace(serializers.deserialize(value,
                   specifiedType:
-                      const FullType(List, const [const FullType(String)]))
-              as List<String>;
+                      const FullType(BuiltList, const [const FullType(String)]))
+              as BuiltList<dynamic>);
           break;
         case 'city':
           result.city = serializers.deserialize(value,
@@ -2138,7 +2138,7 @@ class _$Contact extends Contact {
   @override
   final String familyName;
   @override
-  final List<String> addressLines;
+  final BuiltList<String> addressLines;
   @override
   final String city;
   @override
@@ -2240,9 +2240,10 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
   String get familyName => _$this._familyName;
   set familyName(String familyName) => _$this._familyName = familyName;
 
-  List<String> _addressLines;
-  List<String> get addressLines => _$this._addressLines;
-  set addressLines(List<String> addressLines) =>
+  ListBuilder<String> _addressLines;
+  ListBuilder<String> get addressLines =>
+      _$this._addressLines ??= new ListBuilder<String>();
+  set addressLines(ListBuilder<String> addressLines) =>
       _$this._addressLines = addressLines;
 
   String _city;
@@ -2275,7 +2276,7 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
     if (_$v != null) {
       _givenName = _$v.givenName;
       _familyName = _$v.familyName;
-      _addressLines = _$v.addressLines;
+      _addressLines = _$v.addressLines?.toBuilder();
       _city = _$v.city;
       _countryCode = _$v.countryCode;
       _email = _$v.email;
@@ -2302,17 +2303,30 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
 
   @override
   _$Contact build() {
-    final _$result = _$v ??
-        new _$Contact._(
-            givenName: givenName,
-            familyName: familyName,
-            addressLines: addressLines,
-            city: city,
-            countryCode: countryCode,
-            email: email,
-            phone: phone,
-            postalCode: postalCode,
-            region: region);
+    _$Contact _$result;
+    try {
+      _$result = _$v ??
+          new _$Contact._(
+              givenName: givenName,
+              familyName: familyName,
+              addressLines: _addressLines?.build(),
+              city: city,
+              countryCode: countryCode,
+              email: email,
+              phone: phone,
+              postalCode: postalCode,
+              region: region);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'addressLines';
+        _addressLines?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'Contact', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

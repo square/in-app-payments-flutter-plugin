@@ -16,6 +16,7 @@
 
 #import "FSQIPCardEntry.h"
 #import "FSQIPErrorUtilities.h"
+#import "FSQIPBuyerVerification.h"
 #import "Converters/SQIPCard+FSQIPAdditions.h"
 #import "Converters/SQIPCardDetails+FSQIPAdditions.h"
 #import "Converters/UIFont+FSQIPAdditions.h"
@@ -67,8 +68,68 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     result(nil);
 }
 
-- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerAction:(SQIPBuyerAction *)buyerAction contact:(SQIPContact *)contact
+- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap
 {
+    SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue]
+                            currency:[FSQIPBuyerVerification currencyForCurrencyCode:moneyMap[@"currencyCode"]]];
+
+    SQIPBuyerAction *buyerAction = nil;
+    if ([@"Store" isEqualToString:buyerActionString]) {
+        buyerAction = [SQIPBuyerAction storeAction];
+    } else {
+        buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
+    }
+
+    // Contact info
+    NSString *givenName = contactMap[@"givenName"];
+    NSString *familyName = contactMap[@"familyName"];
+    NSArray<NSString *> *addressLines = contactMap[@"addressLines"];
+    NSString *city = contactMap[@"city"];
+    NSString *countryCode = contactMap[@"countryCode"];
+    NSString *email = contactMap[@"email"];
+    NSString *phone = contactMap[@"phone"];
+    NSString *postalCode = contactMap[@"postalCode"];
+    NSString *region = contactMap[@"region"];
+    NSLog(@"%@", givenName);
+
+    SQIPContact *contact = [[SQIPContact alloc] init];
+    contact.givenName = givenName;
+
+    if (![familyName isEqual:[NSNull null]]) {
+        contact.familyName = familyName;
+    }
+
+    if (![email isEqual:[NSNull null]]) {
+        contact.email = email;
+    }
+
+    if (![addressLines isEqual:[NSNull null]]) {
+        contact.addressLines = addressLines;
+        NSLog(@"%@", addressLines);
+    }
+
+    if (![city isEqual:[NSNull null]]) {
+        contact.city = city;
+    }
+
+    if (![region isEqual:[NSNull null]]) {
+        contact.region = region;
+    }
+
+    if (![postalCode isEqual:[NSNull null]]) {
+        contact.postalCode = postalCode;
+    }
+
+    if (![postalCode isEqual:[NSNull null]]) {
+        contact.postalCode = postalCode;
+    }
+    
+    contact.country = [FSQIPBuyerVerification countryForCountryCode:countryCode];
+
+    if (![phone isEqual:[NSNull null]]) {
+        contact.phone = phone;
+    }
+
     self.locationId = locationId;
     self.buyerAction = buyerAction;
     self.contact = contact;

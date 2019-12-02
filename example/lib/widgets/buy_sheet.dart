@@ -15,6 +15,7 @@
 */
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
@@ -70,8 +71,10 @@ class BuySheetState extends State<BuySheet> {
     switch (selection) {
       case PaymentType.cardPayment:
         if (_squareLocationSet) {
-          // await _onStartCardEntryFlowWithBuyerVerification();
-          await _onStartCardEntryFlow(); // Use this flow to skip buyer verification
+          // call _onStartCardEntryFlowWithBuyerVerification to enable buyer verification flow
+          await _onStartCardEntryFlowWithBuyerVerification();
+          // OR call _onStartCardEntryFlow to skip buyer verification
+          // await _onStartCardEntryFlow();
         } else {
           _showSquareLocationIdNotSet();
         }
@@ -202,7 +205,7 @@ class BuySheetState extends State<BuySheet> {
     var contact = Contact((b) => b
         ..givenName = "John"
         ..familyName = "Doe"
-        ..addressLines = ["London Eye","Riverside Walk"]
+        ..addressLines = new BuiltList<String>(["London Eye","Riverside Walk"]).toBuilder()
         ..city = "London"
         ..countryCode = "GB"
         ..email = "johndoe@example.com"

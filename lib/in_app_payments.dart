@@ -322,16 +322,8 @@ class InAppPayments {
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
       'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact' : _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
-      'givenName': contact.givenName,
-      'familyName': contact.familyName,
-      'addressLines': contact.addressLines,
-      'city': contact.city,
-      'countryCode': contact.countryCode,
-      'email': contact.email,
-      'phone': contact.phone,
-      'postalCode': contact.postalCode,
-      'region': contact.region,
       'collectPostalCode': collectPostalCode,
     };
     await _channel.invokeMethod('startCardEntryFlowWithBuyerVerification', params);

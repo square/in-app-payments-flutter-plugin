@@ -22,7 +22,7 @@
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startCardEntryFlow:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode;
-- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerAction:(SQIPBuyerAction *)buyerAction contact:(SQIPContact *)contact;
+- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap;
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
