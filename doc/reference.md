@@ -155,7 +155,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     var contact = Contact((b) => b
         ..givenName = "John"
         ..familyName = "Doe"
-        ..addressLines = ["London Eye","Riverside Walk"]
+        ..addressLines = new BuiltList<String>(["London Eye","Riverside Walk"]).toBuilder()
         ..city = "London"
         ..countryCode = "GB"
         ..email = "johndoe@example.com"

@@ -34,6 +34,7 @@ typedef void (^CompletionHandler)(NSError *_Nullable);
 @property (strong, readwrite) NSString *locationId;
 @property (strong, readwrite) SQIPBuyerAction *buyerAction;
 @property (strong, readwrite) SQIPContact *contact;
+@property (strong, readwrite) SQIPCardDetails *cardDetails;
 
 @end
 
@@ -90,7 +91,6 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     NSString *phone = contactMap[@"phone"];
     NSString *postalCode = contactMap[@"postalCode"];
     NSString *region = contactMap[@"region"];
-    NSLog(@"%@", givenName);
 
     SQIPContact *contact = [[SQIPContact alloc] init];
     contact.givenName = givenName;
@@ -150,26 +150,44 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
 
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
-    self.completionHandler = completionHandler;
-
     if (self.contact) {
-        NSString *paymentSourceId = cardDetails.nonce;
+        self.cardDetails = cardDetails;
+        // If buyer verification needed, finish the card entry activity so we can verify buyer
+        // This is to maintain consistent behavior with Android platform
+        completionHandler(nil);
+    } else {
+        self.completionHandler = completionHandler;
+        [self.channel invokeMethod:FSQIPCardEntryDidObtainCardDetailsEventName arguments:[cardDetails jsonDictionary]];
+    }
+}
+
+- (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status
+{
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+
+    if (self.contact && status == SQIPCardEntryCompletionStatusSuccess) {
+        NSString *paymentSourceId = self.cardDetails.nonce;
         SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:paymentSourceId
                                                 buyerAction:self.buyerAction
                                                 locationID:self.locationId
                                                 contact:self.contact];
 
+        if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+            [rootViewController.navigationController popViewControllerAnimated:YES];
+        } else {
+            [rootViewController dismissViewControllerAnimated:YES completion:nil];
+        }
+
         [SQIPBuyerVerificationSDK.shared verifyWithParameters:params
             theme:self.theme
-            viewController:self.cardEntryViewController
+            viewController:rootViewController
             success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
                 NSDictionary *verificationResult =
                     @{
-                        @"nonce" : cardDetails.nonce,
-                        @"card" : [cardDetails.card jsonDictionary],
+                        @"nonce" : self.cardDetails.nonce,
+                        @"card" : [self.cardDetails.card jsonDictionary],
                         @"token" : verifiedDetails.verificationToken
                     };
-
                 [self.channel invokeMethod:FSQIPOnBuyerVerificationSuccessEventName
                     arguments:verificationResult];
             }
@@ -182,15 +200,9 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
                                     debugCode:debugCode
                                     debugMessage:debugMessage]];
             }];
-        self.contact = nil;
-    } else {
-        [self.channel invokeMethod:FSQIPCardEntryDidObtainCardDetailsEventName arguments:[cardDetails jsonDictionary]];
+        return;
     }
-}
 
-- (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didCompleteWithStatus:(SQIPCardEntryCompletionStatus)status
-{
-    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [rootViewController.navigationController popViewControllerAnimated:YES];
         if (status == SQIPCardEntryCompletionStatusCanceled) {

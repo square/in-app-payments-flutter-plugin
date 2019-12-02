@@ -339,46 +339,25 @@ class BuySheetState extends State<BuySheet> {
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
     if (!_chargeServerHostReplaced) {
-      // In the case of Android, by design, buyer verification happens after card entry completes
-      if (Platform.isIOS) {
-        InAppPayments.completeCardEntry(
-          onCardEntryComplete: _onCardEntryComplete);
-      }
-
       _showUrlNotSetAndPrintCurlCommand(result.nonce, verificationToken:result.token);
       return;
     }
 
     try {
       await chargeCardAfterBuyerVerification(result);
-      // In the case of Android, by design, buyer verification happens after card entry completes
-      if (Platform.isIOS) {
-        InAppPayments.completeCardEntry(
-          onCardEntryComplete: _onCardEntryComplete);
-      }
     } on ChargeException catch (ex) {
-      // In the case of Android, by design, buyer verification happens after card entry completes
-      if (Platform.isIOS) {
-        InAppPayments.showCardNonceProcessingError(ex.errorMessage);
-      } else {
-        showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
-          title: "Error processing card payment",
-          description: ex.errorMessage);
-      }
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Error processing card payment",
+        description: ex.errorMessage);
     }
   }
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
-    // In the case of Android, by design, buyer verification happens after card entry completes
-    if (Platform.isIOS) {
-      InAppPayments.showCardNonceProcessingError(errorInfo.message);
-    } else {
-      showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
-        title: "Error verifying buyer",
-        description: errorInfo.toString());
-    }
+    showAlertDialog(
+      context: BuySheet.scaffoldKey.currentContext,
+      title: "Error verifying buyer",
+      description: errorInfo.toString());
   }
 
   Widget build(BuildContext context) => MaterialApp(
