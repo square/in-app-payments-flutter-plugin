@@ -152,7 +152,7 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
 {
     if (self.contact) {
         self.cardDetails = cardDetails;
-        // If buyer verification needed, finish the card entry activity so we can verify buyer
+        // If buyer verification is needed, complete the card entry form so we can verify buyer
         // This is to maintain consistent behavior with Android platform
         completionHandler(nil);
     } else {

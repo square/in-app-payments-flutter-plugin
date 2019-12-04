@@ -90,7 +90,7 @@ final public class CardEntryModule {
                     if (cardEntryActivityResult.isCanceled()) {
                       channel.invokeMethod("cardEntryCancel", null);
                     } else if (cardEntryActivityResult.isSuccess()) {
-                      channel.invokeMethod("cardEntryDidObtainCardDetails", cardDetailsConverter.toMapObject(cardEntryActivityResult.getSuccessValue()));
+                      channel.invokeMethod("cardEntryComplete", null);
                     }
                   }
                 }, delayDurationMs);
