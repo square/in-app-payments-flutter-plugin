@@ -36,8 +36,9 @@ This quick start guide makes the following assumptions:
 
 
 ### Step 2: Configure the sample app
-1. Open `<YOUR_PROJECT_DIRECTORY>/example/lib/main.dart`
-1. On line 27, replace `REPLACE_ME` with the Application ID from **Step 1**
+1. Open `<YOUR_PROJECT_DIRECTORY>/example/lib/config.dart`
+1. On line 17, replace `REPLACE_ME` with the Application ID from **Step 1**
+1. On line 18, replace `REPLACE_ME` with the Location ID from **Step 1**
 
 ### Step 3: Run the sample app for iOS
 

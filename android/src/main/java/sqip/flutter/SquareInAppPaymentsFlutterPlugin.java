@@ -15,7 +15,17 @@
 */
 package sqip.flutter;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import sqip.InAppPaymentsSdk;
+import sqip.BuyerAction;
+import sqip.Contact;
+import sqip.Country;
+import sqip.Currency;
+import sqip.Money;
+import sqip.SquareIdentifier;
+import sqip.SquareIdentifier.LocationToken;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
 import io.flutter.plugin.common.MethodCall;
@@ -67,6 +77,14 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
       String currencyCode = call.argument("currencyCode");
       int priceStatus = call.argument("priceStatus");
       googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
+    } else if (call.method.equals("startCardEntryFlowWithBuyerVerification")) {
+      boolean collectPostalCode = call.argument("collectPostalCode");
+      String squareLocationId = call.argument("squareLocationId");
+      String buyerActionString = call.argument("buyerAction");
+      HashMap<String, Object> moneyMap = call.argument("money");
+      HashMap<String, Object> contactMap = call.argument("contact");
+
+      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareLocationId, buyerActionString, moneyMap, contactMap);
     } else {
       result.notImplemented();
     }

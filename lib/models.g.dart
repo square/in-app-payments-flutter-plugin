@@ -8,6 +8,10 @@ part of 'models.dart';
 
 const ErrorCode _$usageError = const ErrorCode._('usageError');
 const ErrorCode _$noNetwork = const ErrorCode._('noNetwork');
+const ErrorCode _$failed = const ErrorCode._('failed');
+const ErrorCode _$canceled = const ErrorCode._('canceled');
+const ErrorCode _$unsupportedSDKVersion =
+    const ErrorCode._('unsupportedSDKVersion');
 
 ErrorCode _$errorCodeValueOf(String name) {
   switch (name) {
@@ -15,6 +19,12 @@ ErrorCode _$errorCodeValueOf(String name) {
       return _$usageError;
     case 'noNetwork':
       return _$noNetwork;
+    case 'failed':
+      return _$failed;
+    case 'canceled':
+      return _$canceled;
+    case 'unsupportedSDKVersion':
+      return _$unsupportedSDKVersion;
     default:
       throw new ArgumentError(name);
   }
@@ -24,6 +34,9 @@ final BuiltSet<ErrorCode> _$errorCodeValues =
     new BuiltSet<ErrorCode>(const <ErrorCode>[
   _$usageError,
   _$noNetwork,
+  _$failed,
+  _$canceled,
+  _$unsupportedSDKVersion,
 ]);
 
 const Brand _$otherBrand = const Brand._('otherBrand');
@@ -167,6 +180,8 @@ Serializer<CardPrepaidType> _$cardPrepaidTypeSerializer =
 Serializer<ApplePayPaymentType> _$applePayPaymentTypeSerializer =
     new _$ApplePayPaymentTypeSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
+Serializer<BuyerVerificationDetails> _$buyerVerificationDetailsSerializer =
+    new _$BuyerVerificationDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<RGBAColor> _$rGBAColorSerializer = new _$RGBAColorSerializer();
 Serializer<Font> _$fontSerializer = new _$FontSerializer();
@@ -174,15 +189,23 @@ Serializer<KeyboardAppearance> _$keyboardAppearanceSerializer =
     new _$KeyboardAppearanceSerializer();
 Serializer<IOSTheme> _$iOSThemeSerializer = new _$IOSThemeSerializer();
 Serializer<ErrorInfo> _$errorInfoSerializer = new _$ErrorInfoSerializer();
+Serializer<Money> _$moneySerializer = new _$MoneySerializer();
+Serializer<Contact> _$contactSerializer = new _$ContactSerializer();
 
 class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
   static const Map<String, String> _toWire = const <String, String>{
     'usageError': 'USAGE_ERROR',
     'noNetwork': 'NO_NETWORK',
+    'failed': 'FAILED',
+    'canceled': 'CANCELED',
+    'unsupportedSDKVersion': 'UNSUPPORTED_SDK_VERSION',
   };
   static const Map<String, String> _fromWire = const <String, String>{
     'USAGE_ERROR': 'usageError',
     'NO_NETWORK': 'noNetwork',
+    'FAILED': 'failed',
+    'CANCELED': 'canceled',
+    'UNSUPPORTED_SDK_VERSION': 'unsupportedSDKVersion',
   };
 
   @override
@@ -331,7 +354,7 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   final String wireName = 'CardDetails';
 
   @override
-  Iterable serialize(Serializers serializers, CardDetails object,
+  Iterable<Object> serialize(Serializers serializers, CardDetails object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'nonce',
@@ -345,7 +368,7 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   }
 
   @override
-  CardDetails deserialize(Serializers serializers, Iterable serialized,
+  CardDetails deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new CardDetailsBuilder();
 
@@ -370,6 +393,65 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   }
 }
 
+class _$BuyerVerificationDetailsSerializer
+    implements StructuredSerializer<BuyerVerificationDetails> {
+  @override
+  final Iterable<Type> types = const [
+    BuyerVerificationDetails,
+    _$BuyerVerificationDetails
+  ];
+  @override
+  final String wireName = 'BuyerVerificationDetails';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuyerVerificationDetails object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'nonce',
+      serializers.serialize(object.nonce,
+          specifiedType: const FullType(String)),
+      'card',
+      serializers.serialize(object.card, specifiedType: const FullType(Card)),
+      'token',
+      serializers.serialize(object.token,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  BuyerVerificationDetails deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuyerVerificationDetailsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'nonce':
+          result.nonce = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'card':
+          result.card.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Card)) as Card);
+          break;
+        case 'token':
+          result.token = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
 class _$CardSerializer implements StructuredSerializer<Card> {
   @override
   final Iterable<Type> types = const [Card, _$Card];
@@ -377,7 +459,7 @@ class _$CardSerializer implements StructuredSerializer<Card> {
   final String wireName = 'Card';
 
   @override
-  Iterable serialize(Serializers serializers, Card object,
+  Iterable<Object> serialize(Serializers serializers, Card object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'brand',
@@ -404,12 +486,11 @@ class _$CardSerializer implements StructuredSerializer<Card> {
         ..add(serializers.serialize(object.postalCode,
             specifiedType: const FullType(String)));
     }
-
     return result;
   }
 
   @override
-  Card deserialize(Serializers serializers, Iterable serialized,
+  Card deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new CardBuilder();
 
@@ -462,7 +543,7 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
   final String wireName = 'RGBAColor';
 
   @override
-  Iterable serialize(Serializers serializers, RGBAColor object,
+  Iterable<Object> serialize(Serializers serializers, RGBAColor object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'r',
@@ -478,12 +559,11 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
         ..add(serializers.serialize(object.a,
             specifiedType: const FullType(double)));
     }
-
     return result;
   }
 
   @override
-  RGBAColor deserialize(Serializers serializers, Iterable serialized,
+  RGBAColor deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new RGBAColorBuilder();
 
@@ -523,7 +603,7 @@ class _$FontSerializer implements StructuredSerializer<Font> {
   final String wireName = 'Font';
 
   @override
-  Iterable serialize(Serializers serializers, Font object,
+  Iterable<Object> serialize(Serializers serializers, Font object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'size',
@@ -535,12 +615,11 @@ class _$FontSerializer implements StructuredSerializer<Font> {
         ..add(serializers.serialize(object.name,
             specifiedType: const FullType(String)));
     }
-
     return result;
   }
 
   @override
-  Font deserialize(Serializers serializers, Iterable serialized,
+  Font deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new FontBuilder();
 
@@ -599,7 +678,7 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
   final String wireName = 'IOSTheme';
 
   @override
-  Iterable serialize(Serializers serializers, IOSTheme object,
+  Iterable<Object> serialize(Serializers serializers, IOSTheme object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[];
     if (object.font != null) {
@@ -674,12 +753,11 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
         ..add(serializers.serialize(object.keyboardAppearance,
             specifiedType: const FullType(KeyboardAppearance)));
     }
-
     return result;
   }
 
   @override
-  IOSTheme deserialize(Serializers serializers, Iterable serialized,
+  IOSTheme deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new IOSThemeBuilder();
 
@@ -752,7 +830,7 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   final String wireName = 'ErrorInfo';
 
   @override
-  Iterable serialize(Serializers serializers, ErrorInfo object,
+  Iterable<Object> serialize(Serializers serializers, ErrorInfo object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'code',
@@ -773,7 +851,7 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   }
 
   @override
-  ErrorInfo deserialize(Serializers serializers, Iterable serialized,
+  ErrorInfo deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new ErrorInfoBuilder();
 
@@ -797,6 +875,174 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
           break;
         case 'debugMessage':
           result.debugMessage = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$MoneySerializer implements StructuredSerializer<Money> {
+  @override
+  final Iterable<Type> types = const [Money, _$Money];
+  @override
+  final String wireName = 'Money';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, Money object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'amount',
+      serializers.serialize(object.amount, specifiedType: const FullType(int)),
+      'currencyCode',
+      serializers.serialize(object.currencyCode,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  Money deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new MoneyBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'amount':
+          result.amount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'currencyCode':
+          result.currencyCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ContactSerializer implements StructuredSerializer<Contact> {
+  @override
+  final Iterable<Type> types = const [Contact, _$Contact];
+  @override
+  final String wireName = 'Contact';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, Contact object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'givenName',
+      serializers.serialize(object.givenName,
+          specifiedType: const FullType(String)),
+    ];
+    if (object.familyName != null) {
+      result
+        ..add('familyName')
+        ..add(serializers.serialize(object.familyName,
+            specifiedType: const FullType(String)));
+    }
+    if (object.addressLines != null) {
+      result
+        ..add('addressLines')
+        ..add(serializers.serialize(object.addressLines,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(String)])));
+    }
+    if (object.city != null) {
+      result
+        ..add('city')
+        ..add(serializers.serialize(object.city,
+            specifiedType: const FullType(String)));
+    }
+    if (object.countryCode != null) {
+      result
+        ..add('countryCode')
+        ..add(serializers.serialize(object.countryCode,
+            specifiedType: const FullType(String)));
+    }
+    if (object.email != null) {
+      result
+        ..add('email')
+        ..add(serializers.serialize(object.email,
+            specifiedType: const FullType(String)));
+    }
+    if (object.phone != null) {
+      result
+        ..add('phone')
+        ..add(serializers.serialize(object.phone,
+            specifiedType: const FullType(String)));
+    }
+    if (object.postalCode != null) {
+      result
+        ..add('postalCode')
+        ..add(serializers.serialize(object.postalCode,
+            specifiedType: const FullType(String)));
+    }
+    if (object.region != null) {
+      result
+        ..add('region')
+        ..add(serializers.serialize(object.region,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  Contact deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ContactBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'givenName':
+          result.givenName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'familyName':
+          result.familyName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'addressLines':
+          result.addressLines.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(String)]))
+              as BuiltList<dynamic>);
+          break;
+        case 'city':
+          result.city = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'countryCode':
+          result.countryCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'email':
+          result.email = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'phone':
+          result.phone = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'postalCode':
+          result.postalCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'region':
+          result.region = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
       }
@@ -899,6 +1145,129 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'CardDetails', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuyerVerificationDetails extends BuyerVerificationDetails {
+  @override
+  final String nonce;
+  @override
+  final Card card;
+  @override
+  final String token;
+
+  factory _$BuyerVerificationDetails(
+          [void Function(BuyerVerificationDetailsBuilder) updates]) =>
+      (new BuyerVerificationDetailsBuilder()..update(updates)).build();
+
+  _$BuyerVerificationDetails._({this.nonce, this.card, this.token})
+      : super._() {
+    if (nonce == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'nonce');
+    }
+    if (card == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'card');
+    }
+    if (token == null) {
+      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'token');
+    }
+  }
+
+  @override
+  BuyerVerificationDetails rebuild(
+          void Function(BuyerVerificationDetailsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuyerVerificationDetailsBuilder toBuilder() =>
+      new BuyerVerificationDetailsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuyerVerificationDetails &&
+        nonce == other.nonce &&
+        card == other.card &&
+        token == other.token;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc($jc(0, nonce.hashCode), card.hashCode), token.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuyerVerificationDetails')
+          ..add('nonce', nonce)
+          ..add('card', card)
+          ..add('token', token))
+        .toString();
+  }
+}
+
+class BuyerVerificationDetailsBuilder
+    implements
+        Builder<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
+  _$BuyerVerificationDetails _$v;
+
+  String _nonce;
+  String get nonce => _$this._nonce;
+  set nonce(String nonce) => _$this._nonce = nonce;
+
+  CardBuilder _card;
+  CardBuilder get card => _$this._card ??= new CardBuilder();
+  set card(CardBuilder card) => _$this._card = card;
+
+  String _token;
+  String get token => _$this._token;
+  set token(String token) => _$this._token = token;
+
+  BuyerVerificationDetailsBuilder();
+
+  BuyerVerificationDetailsBuilder get _$this {
+    if (_$v != null) {
+      _nonce = _$v.nonce;
+      _card = _$v.card?.toBuilder();
+      _token = _$v.token;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuyerVerificationDetails other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuyerVerificationDetails;
+  }
+
+  @override
+  void update(void Function(BuyerVerificationDetailsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuyerVerificationDetails build() {
+    _$BuyerVerificationDetails _$result;
+    try {
+      _$result = _$v ??
+          new _$BuyerVerificationDetails._(
+              nonce: nonce, card: card.build(), token: token);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'card';
+        card.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuyerVerificationDetails', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1667,6 +2036,297 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
             message: message,
             debugCode: debugCode,
             debugMessage: debugMessage);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Money extends Money {
+  @override
+  final int amount;
+  @override
+  final String currencyCode;
+
+  factory _$Money([void Function(MoneyBuilder) updates]) =>
+      (new MoneyBuilder()..update(updates)).build();
+
+  _$Money._({this.amount, this.currencyCode}) : super._() {
+    if (amount == null) {
+      throw new BuiltValueNullFieldError('Money', 'amount');
+    }
+    if (currencyCode == null) {
+      throw new BuiltValueNullFieldError('Money', 'currencyCode');
+    }
+  }
+
+  @override
+  Money rebuild(void Function(MoneyBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  MoneyBuilder toBuilder() => new MoneyBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Money &&
+        amount == other.amount &&
+        currencyCode == other.currencyCode;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, amount.hashCode), currencyCode.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('Money')
+          ..add('amount', amount)
+          ..add('currencyCode', currencyCode))
+        .toString();
+  }
+}
+
+class MoneyBuilder implements Builder<Money, MoneyBuilder> {
+  _$Money _$v;
+
+  int _amount;
+  int get amount => _$this._amount;
+  set amount(int amount) => _$this._amount = amount;
+
+  String _currencyCode;
+  String get currencyCode => _$this._currencyCode;
+  set currencyCode(String currencyCode) => _$this._currencyCode = currencyCode;
+
+  MoneyBuilder();
+
+  MoneyBuilder get _$this {
+    if (_$v != null) {
+      _amount = _$v.amount;
+      _currencyCode = _$v.currencyCode;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Money other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$Money;
+  }
+
+  @override
+  void update(void Function(MoneyBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$Money build() {
+    final _$result =
+        _$v ?? new _$Money._(amount: amount, currencyCode: currencyCode);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Contact extends Contact {
+  @override
+  final String givenName;
+  @override
+  final String familyName;
+  @override
+  final BuiltList<String> addressLines;
+  @override
+  final String city;
+  @override
+  final String countryCode;
+  @override
+  final String email;
+  @override
+  final String phone;
+  @override
+  final String postalCode;
+  @override
+  final String region;
+
+  factory _$Contact([void Function(ContactBuilder) updates]) =>
+      (new ContactBuilder()..update(updates)).build();
+
+  _$Contact._(
+      {this.givenName,
+      this.familyName,
+      this.addressLines,
+      this.city,
+      this.countryCode,
+      this.email,
+      this.phone,
+      this.postalCode,
+      this.region})
+      : super._() {
+    if (givenName == null) {
+      throw new BuiltValueNullFieldError('Contact', 'givenName');
+    }
+  }
+
+  @override
+  Contact rebuild(void Function(ContactBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ContactBuilder toBuilder() => new ContactBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Contact &&
+        givenName == other.givenName &&
+        familyName == other.familyName &&
+        addressLines == other.addressLines &&
+        city == other.city &&
+        countryCode == other.countryCode &&
+        email == other.email &&
+        phone == other.phone &&
+        postalCode == other.postalCode &&
+        region == other.region;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc(
+                                $jc($jc(0, givenName.hashCode),
+                                    familyName.hashCode),
+                                addressLines.hashCode),
+                            city.hashCode),
+                        countryCode.hashCode),
+                    email.hashCode),
+                phone.hashCode),
+            postalCode.hashCode),
+        region.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('Contact')
+          ..add('givenName', givenName)
+          ..add('familyName', familyName)
+          ..add('addressLines', addressLines)
+          ..add('city', city)
+          ..add('countryCode', countryCode)
+          ..add('email', email)
+          ..add('phone', phone)
+          ..add('postalCode', postalCode)
+          ..add('region', region))
+        .toString();
+  }
+}
+
+class ContactBuilder implements Builder<Contact, ContactBuilder> {
+  _$Contact _$v;
+
+  String _givenName;
+  String get givenName => _$this._givenName;
+  set givenName(String givenName) => _$this._givenName = givenName;
+
+  String _familyName;
+  String get familyName => _$this._familyName;
+  set familyName(String familyName) => _$this._familyName = familyName;
+
+  ListBuilder<String> _addressLines;
+  ListBuilder<String> get addressLines =>
+      _$this._addressLines ??= new ListBuilder<String>();
+  set addressLines(ListBuilder<String> addressLines) =>
+      _$this._addressLines = addressLines;
+
+  String _city;
+  String get city => _$this._city;
+  set city(String city) => _$this._city = city;
+
+  String _countryCode;
+  String get countryCode => _$this._countryCode;
+  set countryCode(String countryCode) => _$this._countryCode = countryCode;
+
+  String _email;
+  String get email => _$this._email;
+  set email(String email) => _$this._email = email;
+
+  String _phone;
+  String get phone => _$this._phone;
+  set phone(String phone) => _$this._phone = phone;
+
+  String _postalCode;
+  String get postalCode => _$this._postalCode;
+  set postalCode(String postalCode) => _$this._postalCode = postalCode;
+
+  String _region;
+  String get region => _$this._region;
+  set region(String region) => _$this._region = region;
+
+  ContactBuilder();
+
+  ContactBuilder get _$this {
+    if (_$v != null) {
+      _givenName = _$v.givenName;
+      _familyName = _$v.familyName;
+      _addressLines = _$v.addressLines?.toBuilder();
+      _city = _$v.city;
+      _countryCode = _$v.countryCode;
+      _email = _$v.email;
+      _phone = _$v.phone;
+      _postalCode = _$v.postalCode;
+      _region = _$v.region;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Contact other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$Contact;
+  }
+
+  @override
+  void update(void Function(ContactBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$Contact build() {
+    _$Contact _$result;
+    try {
+      _$result = _$v ??
+          new _$Contact._(
+              givenName: givenName,
+              familyName: familyName,
+              addressLines: _addressLines?.build(),
+              city: city,
+              countryCode: countryCode,
+              email: email,
+              phone: phone,
+              postalCode: postalCode,
+              region: region);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'addressLines';
+        _addressLines?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'Contact', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

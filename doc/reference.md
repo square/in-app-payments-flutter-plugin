@@ -25,6 +25,7 @@ Method                                                       | Return Object    
 :----------------------------------------------------------- | :------------------------ | :------------------------------
 [setSquareApplicationId](#setsquareapplicationid)            | void                      | Sets the Square Application ID.
 [startCardEntryFlow](#startcardentryflow)                    | void                      | Displays a full-screen card entry view.
+[startCardEntryFlowWithBuyerVerification](#startcardentryflowwithbuyerverification) | void | Displays a full-screen card entry view with buyer verification flow enabled.
 [completeCardEntry](#completecardentry)                      | void                      | Closes the card entry form on success.
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
@@ -120,6 +121,68 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) {
     // process card nonce details
+  }
+```
+
+---
+
+### startCardEntryFlowWithBuyerVerification
+
+Displays a full-screen card entry view with buyer verification flow enabled. The method takes three callback parameters which correspond
+to the possible results of the request. 
+
+Parameter       | Type                                     | Description
+:-------------- | :--------------------------------------- | :-----------
+onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
+onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
+buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token. 
+money           | [Money](#Money)                          | Amount of money that will be charged
+squareLocationId | string                                  | The location that is being verified against.
+contact         | [Contact](#Contact)                      | The customers information
+collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br/>**Notes**: A Postal code must be collected for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+  Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
+    var money = Money((b) => b
+        ..amount = 100
+        ..currencyCode = 'USD');
+    
+    var contact = Contact((b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = new BuiltList<String>(["London Eye","Riverside Walk"]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7");
+    
+    await InAppPayments.startCardEntryFlowWithBuyerVerification(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onCardEntryCancel: _onCancelCardEntryFlow,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+        collectPostalCode: true);
+  }
+
+  void _onCancelCardEntryFlow() {
+    // handle the cancel callback
+  }
+
+  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
+    // process card nonce and verification results
+  }
+
+  void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
+    // handle the error
   }
 ```
 ---
@@ -735,6 +798,16 @@ errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the 
  Callback invoked when Google Pay payment authorization is canceled.
 
 ---
+ ### BuyerVerificationSuccessCallback
+ 
+ Callback invoked when Buyer Verification flow succeeds.
+
+---
+ ### BuyerVerificationErrorCallback
+ 
+ Callback invoked when Buyer Verification flow fails.
+
+---
 ## Classes
 
 ### InAppPaymentsException
@@ -788,6 +861,81 @@ import 'package:square_in_app_payments/models.dart';
 ```
 
 ---
+
+### BuyerVerificationDetails
+
+Represents the result of a successful buyer verification request.
+
+Field           | Type            | Description
+:-------------- | :-------------- | :-----------------
+nonce           | String          | A one-time-use payment token that can be used with the Square Connect APIs to charge the card or save the card information.
+card            | [Card](#card)   | Non-confidential details about the entered card, such as the brand and last four digits of the card number.
+token           | String          | The token representing a verified buyer.
+
+#### Example output
+
+```dart
+import 'package:square_in_app_payments/models.dart';
+
+   buyerVerificationDetails.toString();
+   /* toString() output:
+   {
+     "nonce": "XXXXXXXXXXXXXXXXXXXXXXXX",
+     "card": {
+       ...
+     },
+     "token":
+   }
+   */
+```
+
+---
+
+### Money
+
+Amount to charge in the specified currencyCode.
+
+Field           | Type            | Description
+:-------------- | :-------------- | :-----------------
+amount          | int             | Payment amount.
+currencyCode    | String          | ISO currency code of the payment amount.
+
+#### Example output
+
+```dart
+import 'package:square_in_app_payments/models.dart';
+
+   money.toString();
+   /* toString() output:
+   {
+     "amount": 100,
+     "card": {
+       ...
+     },
+     "currencyCode": "USD"
+   }
+   */
+```
+
+---
+
+### Contact
+
+This represents the required given name field and optional fields that can be passed in as part of the verification process.
+
+Field           | Type            | Description
+:-------------- | :-------------- | :-----------------
+givenName       | String          | Given name of the contact.
+familyName      | String          | Last name of the contact.
+addressLines    | List<String>    | The street address lines of the contact address.
+city            | String          | The city name of the contact address.
+countryCode     | String          | A 2-letter string containing the ISO 3166-1 country code of the contact address.
+email           | String          | Email address of the contact.
+phone           | String          | The telephone number of the contact
+postalCode      | String          | The postal code of the contact address.
+region          | String          | The applicable administrative region (e.g., province, state) of the contact address.
+---
+
 ### Card 
 
 Represents the non-confidential details of a card.
@@ -947,6 +1095,9 @@ ErrorCode                                             | Cause                   
 :---------------------------------------------------- | :--------------------------------------------------------------- | :---
 <a id="e1">`usageError`</a>                           | In-App Payments SDK was used in an unexpected or unsupported way.| all methods
 <a id="e2">`noNetwork`</a>                            | In-App Payments SDK could not connect to the network.            | [ApplePayNonceRequestFailureCallback](#applepaynoncerequestfailurecallback), [GooglePayNonceRequestFailureCallback](#googlepaynoncerequestfailurecallback)
+<a id="e2">`failed`</a> | Square Buyer Verification SDK could not verify the provided card. | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback)
+<a id="e2">`canceled`</a> | The result when the customer cancels the Square Buyer Verification flow before a card is successfully verified. | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback)
+<a id="e2">`unsupportedSDKVersion`</a> | The version of the Square Buyer Verification SDK used by this application is no longer supported | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback)
 
 
 [//]: # "Link anchor definitions"

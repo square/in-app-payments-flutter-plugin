@@ -22,18 +22,28 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.animation.Animation;
+import sqip.BuyerVerification;
 import sqip.Callback;
 import sqip.CardDetails;
 import sqip.CardEntry;
 import sqip.CardEntryActivityCommand;
 import sqip.CardEntryActivityResult;
 import sqip.CardNonceBackgroundHandler;
+import sqip.BuyerVerificationResult.Error;
+import sqip.SquareIdentifier;
+import sqip.BuyerAction;
+import sqip.Contact;
+import sqip.Country;
+import sqip.Money;
+import sqip.VerificationParameters;
 import sqip.flutter.R;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,6 +56,10 @@ final public class CardEntryModule {
   private final AtomicReference<CardEntryActivityCommand> reference;
   private final Handler handler;
   private volatile CountDownLatch countDownLatch;
+  private SquareIdentifier squareIdentifier;
+  private BuyerAction buyerAction;
+  private Contact contact;
+  private CardDetails cardResult;
 
   public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
     currentActivity = registrar.activity();
@@ -55,25 +69,51 @@ final public class CardEntryModule {
 
     registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
       @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
-          @Override public void onResult(final CardEntryActivityResult cardEntryActivityResult) {
-            // flutter UI doesn't know the context of fade_out animation
-            // so that the next action from flutter can be triggered too soon before
-            // card entry activity is closed completely.
-            // So this is a workaround to delay the callback until animation finished.
-            long delayDurationMs = readCardEntryCloseExitAnimationDurationMs();
-            handler.postDelayed(new Runnable() {
-              @Override
-              public void run() {
-                if (cardEntryActivityResult.isCanceled()) {
-                  channel.invokeMethod("cardEntryCancel", null);
-                } else if (cardEntryActivityResult.isSuccess()) {
-                  channel.invokeMethod("cardEntryComplete", null);
-                }
+        if (requestCode == CardEntry.DEFAULT_CARD_ENTRY_REQUEST_CODE) {
+          CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
+            @Override
+            public void onResult(final CardEntryActivityResult cardEntryActivityResult) {
+              if (cardEntryActivityResult.isSuccess() && CardEntryModule.this.contact != null) {
+                cardResult = cardEntryActivityResult.getSuccessValue();
+                String paymentSourceId = cardResult.getNonce();
+                VerificationParameters verificationParameters = new VerificationParameters(paymentSourceId, CardEntryModule.this.buyerAction, CardEntryModule.this.squareIdentifier, CardEntryModule.this.contact);
+                BuyerVerification.verify(currentActivity, verificationParameters);
+              } else {
+                // flutter UI doesn't know the context of fade_out animation
+                // so that the next action from flutter can be triggered too soon before
+                // card entry activity is closed completely.
+                // So this is a workaround to delay the callback until animation finished.
+                long delayDurationMs = readCardEntryCloseExitAnimationDurationMs();
+                handler.postDelayed(new Runnable() {
+                  @Override
+                  public void run() {
+                    if (cardEntryActivityResult.isCanceled()) {
+                      channel.invokeMethod("cardEntryCancel", null);
+                    } else if (cardEntryActivityResult.isSuccess()) {
+                      channel.invokeMethod("cardEntryComplete", null);
+                    }
+                  }
+                }, delayDurationMs);
               }
-            }, delayDurationMs);
-          }
-        });
+            }
+          });
+        }
+
+        if (requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE) {
+          BuyerVerification.handleActivityResult(data, result -> {
+            if (result.isSuccess()) {
+              Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(CardEntryModule.this.cardResult);
+              mapToReturn.put("token", result.getSuccessValue().getVerificationToken());
+              channel.invokeMethod("onBuyerVerificationSuccess", mapToReturn);
+            } else if (result.isError()) {
+              sqip.BuyerVerificationResult.Error error = result.getErrorValue();
+              Map<String, String> errorMap = ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage());
+              channel.invokeMethod("onBuyerVerificationError", errorMap);
+            }
+          });
+
+          CardEntryModule.this.contact = null;
+        }
         return false;
       }
     });
@@ -81,6 +121,11 @@ final public class CardEntryModule {
     CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
       @Override
       public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
+        if (CardEntryModule.this.contact != null) {
+          // If buyer verification needed, finish the card entry activity so we can verify buyer
+          return new CardEntryActivityCommand.Finish();
+        }
+
         final Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
         countDownLatch = new CountDownLatch(1);
         // must be run on the UI thread to prevent an exception
@@ -118,6 +163,50 @@ final public class CardEntryModule {
   public void showCardNonceProcessingError(MethodChannel.Result result, String errorMessage) {
     reference.set(new CardEntryActivityCommand.ShowError(errorMessage));
     countDownLatch.countDown();
+    result.success(null);
+  }
+
+  public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
+    SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+
+    Money money = new Money(
+        ((Integer)moneyMap.get("amount")).intValue(),
+        sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
+
+    BuyerAction buyerAction;
+    if (buyerActionString.equals("Store")) {
+      buyerAction = new BuyerAction.Store();
+    } else {
+      buyerAction = new BuyerAction.Charge(money);
+    }
+
+    // Contact info
+    Object givenName = contactMap.get("givenName");
+    Object familyName = contactMap.get("familyName");
+    Object addressLines = contactMap.get("addressLines"); // Arrays.asList((Object[])contactMap.get("addressLines"));
+    Object city = contactMap.get("city");
+    Object countryCode = contactMap.get("countryCode");
+    Object email = contactMap.get("email");
+    Object phone = contactMap.get("phone");
+    Object postalCode = contactMap.get("postalCode");
+    Object region = contactMap.get("region");
+    Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
+    Contact contact = new Contact.Builder()
+      .familyName((familyName != null) ? familyName.toString() : "")
+      .email((email != null) ? email.toString() : "")
+      .addressLines((addressLines != null) ? (ArrayList<String>)addressLines : new ArrayList<String>())
+      .city((city != null) ? city.toString() : "")
+      .countryCode(country)
+      .postalCode((postalCode != null) ? postalCode.toString() : "")
+      .phone((phone != null) ? phone.toString() : "")
+      .region((region != null) ? region.toString() : "")
+      .build((givenName != null) ? givenName.toString() : "");
+
+    this.squareIdentifier = squareIdentifier;
+    this.buyerAction = buyerAction;
+    this.contact = contact;
+
+    CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
 

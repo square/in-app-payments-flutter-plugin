@@ -62,6 +62,18 @@ FlutterMethodChannel *_channel;
     } else if ([@"startCardEntryFlow" isEqualToString:call.method]) {
         BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
         [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
+    } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
+        BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+        [self.cardEntryModule startCardEntryFlowWithVerification:result
+            collectPostalCode:collectPostalCode
+            locationId:squareLocationId
+            buyerActionString:buyerActionString
+            moneyMap:moneyMap
+            contactMap:contactMap];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {

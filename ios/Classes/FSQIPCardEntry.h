@@ -16,12 +16,13 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
-
+@import SquareBuyerVerificationSDK;
 
 @interface FSQIPCardEntry : NSObject <SQIPCardEntryViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startCardEntryFlow:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode;
+- (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap;
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;

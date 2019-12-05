@@ -48,3 +48,23 @@ Future<void> chargeCard(CardDetails result) async {
     throw ChargeException(responseBody["errorMessage"]);
   }
 }
+
+Future<void> chargeCardAfterBuyerVerification(BuyerVerificationDetails result) async {
+  var body = jsonEncode({"nonce": result.nonce, "token": result.token});
+  http.Response response;
+  try {
+    response = await http.post(chargeUrl, body: body, headers: {
+      "Accept": "application/json",
+      "content-type": "application/json"
+    });
+  } on SocketException catch (ex) {
+    throw ChargeException(ex.message);
+  }
+
+  var responseBody = json.decode(response.body);
+  if (response.statusCode == 200) {
+    return;
+  } else {
+    throw ChargeException(responseBody["errorMessage"]);
+  }
+}

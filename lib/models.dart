@@ -26,6 +26,12 @@ class ErrorCode extends EnumClass {
   static const ErrorCode usageError = _$usageError;
   @BuiltValueEnumConst(wireName: 'NO_NETWORK')
   static const ErrorCode noNetwork = _$noNetwork;
+  @BuiltValueEnumConst(wireName: 'FAILED')
+  static const ErrorCode failed = _$failed;
+  @BuiltValueEnumConst(wireName: 'CANCELED')
+  static const ErrorCode canceled = _$canceled;
+  @BuiltValueEnumConst(wireName: 'UNSUPPORTED_SDK_VERSION')
+  static const ErrorCode unsupportedSDKVersion = _$unsupportedSDKVersion;
 
   const ErrorCode._(String name) : super(name);
 
@@ -116,6 +122,16 @@ abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   CardDetails._();
   factory CardDetails([updates(CardDetailsBuilder b)]) = _$CardDetails;
   static Serializer<CardDetails> get serializer => _$cardDetailsSerializer;
+}
+
+abstract class BuyerVerificationDetails implements Built<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
+  String get nonce;
+  Card get card;
+  String get token;
+
+  BuyerVerificationDetails._();
+  factory BuyerVerificationDetails([updates(BuyerVerificationDetailsBuilder b)]) = _$BuyerVerificationDetails;
+  static Serializer<BuyerVerificationDetails> get serializer => _$buyerVerificationDetailsSerializer;
 }
 
 abstract class Card implements Built<Card, CardBuilder> {
@@ -219,4 +235,37 @@ abstract class ErrorInfo implements Built<ErrorInfo, ErrorInfoBuilder> {
   ErrorInfo._();
   factory ErrorInfo([updates(ErrorInfoBuilder b)]) = _$ErrorInfo;
   static Serializer<ErrorInfo> get serializer => _$errorInfoSerializer;
+}
+
+abstract class Money implements Built<Money, MoneyBuilder> {
+  int get amount;
+  String get currencyCode;
+
+  Money._();
+  factory Money([updates(MoneyBuilder b)]) = _$Money;
+  static Serializer<Money> get serializer => _$moneySerializer;
+}
+
+abstract class Contact implements Built<Contact, ContactBuilder> {
+  String get givenName;
+  @nullable
+  String get familyName;
+  @nullable
+  BuiltList<String> get addressLines;
+  @nullable
+  String get city;
+  @nullable
+  String get countryCode;
+  @nullable
+  String get email;
+  @nullable
+  String get phone;
+  @nullable
+  String get postalCode;
+  @nullable
+  String get region;
+
+  Contact._();
+  factory Contact([updates(ContactBuilder b)]) = _$Contact;
+  static Serializer<Contact> get serializer => _$contactSerializer;
 }
