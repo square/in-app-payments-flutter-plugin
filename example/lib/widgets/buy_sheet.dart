@@ -14,7 +14,6 @@
  limitations under the License.
 */
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +41,6 @@ class BuySheet extends StatefulWidget {
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-
   BuySheet(
       {this.applePayEnabled,
       this.googlePayEnabled,
@@ -66,7 +64,10 @@ class BuySheetState extends State<BuySheet> {
     var selection =
         await custom_modal_bottom_sheet.showModalBottomSheet<PaymentType>(
             context: BuySheet.scaffoldKey.currentState.context,
-            builder: (context) => OrderSheet(applePayEnabled: widget.applePayEnabled, googlePayEnabled: widget.googlePayEnabled,));
+            builder: (context) => OrderSheet(
+                  applePayEnabled: widget.applePayEnabled,
+                  googlePayEnabled: widget.googlePayEnabled,
+                ));
 
     switch (selection) {
       case PaymentType.cardPayment:
@@ -102,35 +103,35 @@ class BuySheetState extends State<BuySheet> {
 
     if (verificationToken == null) {
       print(
-        'curl --request POST $hostUrl/v2/locations/SQUARE_LOCATION_ID/transactions \\'
-        '--header \"Content-Type: application/json\" \\'
-        '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
-        '--header \"Accept: application/json\" \\'
-        '--data \'{'
-        '\"idempotency_key\": \"$uuid\",'
-        '\"amount_money\": {'
-        '\"amount\": $cookieAmount,'
-        '\"currency\": \"USD\"},'
-        '\"card_nonce\": \"$nonce\"'
-        '}\'');
+          'curl --request POST $hostUrl/v2/locations/SQUARE_LOCATION_ID/transactions \\'
+          '--header \"Content-Type: application/json\" \\'
+          '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
+          '--header \"Accept: application/json\" \\'
+          '--data \'{'
+          '\"idempotency_key\": \"$uuid\",'
+          '\"amount_money\": {'
+          '\"amount\": $cookieAmount,'
+          '\"currency\": \"USD\"},'
+          '\"card_nonce\": \"$nonce\"'
+          '}\'');
     } else {
-      print(
-        'curl --request POST $hostUrl/v2/payments \\'
-        '--header \"Content-Type: application/json\" \\'
-        '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
-        '--header \"Accept: application/json\" \\'
-        '--data \'{'
-        '\"idempotency_key\": \"$uuid\",'
-        '\"amount_money\": {'
-        '\"amount\": $cookieAmount,'
-        '\"currency\": \"USD\"},'
-        '\"source_id\": \"$nonce\",'
-        '\"verification_token\": \"$verificationToken\"'
-        '}\'');
+      print('curl --request POST $hostUrl/v2/payments \\'
+          '--header \"Content-Type: application/json\" \\'
+          '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
+          '--header \"Accept: application/json\" \\'
+          '--data \'{'
+          '\"idempotency_key\": \"$uuid\",'
+          '\"amount_money\": {'
+          '\"amount\": $cookieAmount,'
+          '\"currency\": \"USD\"},'
+          '\"source_id\": \"$nonce\",'
+          '\"verification_token\": \"$verificationToken\"'
+          '}\'');
     }
   }
 
-  void _showUrlNotSetAndPrintCurlCommand(String nonce, {String verificationToken}) {
+  void _showUrlNotSetAndPrintCurlCommand(String nonce,
+      {String verificationToken}) {
     String title;
     if (verificationToken != null) {
       title = "Nonce and verification token generated but not charged";
@@ -196,19 +197,20 @@ class BuySheetState extends State<BuySheet> {
 
   Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
     var money = Money((b) => b
-        ..amount = 100
-        ..currencyCode = 'USD');
-    
+      ..amount = 100
+      ..currencyCode = 'USD');
+
     var contact = Contact((b) => b
-        ..givenName = "John"
-        ..familyName = "Doe"
-        ..addressLines = new BuiltList<String>(["London Eye","Riverside Walk"]).toBuilder()
-        ..city = "London"
-        ..countryCode = "GB"
-        ..email = "johndoe@example.com"
-        ..phone = "8001234567"
-        ..postalCode = "SE1 7");
-    
+      ..givenName = "John"
+      ..familyName = "Doe"
+      ..addressLines =
+          new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..city = "London"
+      ..countryCode = "GB"
+      ..email = "johndoe@example.com"
+      ..phone = "8001234567"
+      ..postalCode = "SE1 7");
+
     await InAppPayments.startCardEntryFlowWithBuyerVerification(
         onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
@@ -322,9 +324,9 @@ class BuySheetState extends State<BuySheet> {
     await InAppPayments.completeApplePayAuthorization(
         isSuccess: false, errorMessage: errorInfo.message);
     showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
-          title: "Error request ApplePay nonce",
-          description: errorInfo.toString());
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Error request ApplePay nonce",
+        description: errorInfo.toString());
   }
 
   void _onApplePayEntryComplete() {
@@ -336,7 +338,8 @@ class BuySheetState extends State<BuySheet> {
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
     if (!_chargeServerHostReplaced) {
-      _showUrlNotSetAndPrintCurlCommand(result.nonce, verificationToken:result.token);
+      _showUrlNotSetAndPrintCurlCommand(result.nonce,
+          verificationToken: result.token);
       return;
     }
 
@@ -344,17 +347,17 @@ class BuySheetState extends State<BuySheet> {
       await chargeCardAfterBuyerVerification(result);
     } on ChargeException catch (ex) {
       showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
-        title: "Error processing card payment",
-        description: ex.errorMessage);
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
     }
   }
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
     showAlertDialog(
-      context: BuySheet.scaffoldKey.currentContext,
-      title: "Error verifying buyer",
-      description: errorInfo.toString());
+        context: BuySheet.scaffoldKey.currentContext,
+        title: "Error verifying buyer",
+        description: errorInfo.toString());
   }
 
   Widget build(BuildContext context) => MaterialApp(
@@ -364,37 +367,36 @@ class BuySheetState extends State<BuySheet> {
           key: BuySheet.scaffoldKey,
           body: Builder(
             builder: (context) => Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Image(image: AssetImage("assets/iconCookie.png")),
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: Image(image: AssetImage("assets/iconCookie.png")),
+                ),
+                Container(
+                  child: Text(
+                    'Super Cookie',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
                     ),
-                    Container(
-                      child: Text(
-                        'Super Cookie',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                        ),
-                      ),
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    "Instantly gain special powers \nwhen ordering a super cookie",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
                     ),
-                    Container(
-                      child: Text(
-                        "Instantly gain special powers \nwhen ordering a super cookie",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 32),
-                      child:
-                          CookieButton(text: "Buy", onPressed: _showOrderSheet),
-                    ),
-                  ],
-                )),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 32),
+                  child: CookieButton(text: "Buy", onPressed: _showOrderSheet),
+                ),
+              ],
+            )),
           ),
         ),
       );

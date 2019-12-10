@@ -98,13 +98,15 @@ class OrderSheet extends StatelessWidget {
             height: 64,
             width: MediaQuery.of(context).size.width * .4,
             child: RaisedButton(
-               onPressed: googlePayEnabled || applePayEnabled ? () {
-                if (Platform.isAndroid) {
-                  Navigator.pop(context, PaymentType.googlePay);
-                } else if (Platform.isIOS) {
-                  Navigator.pop(context, PaymentType.applePay);
-                }
-              } : null,
+              onPressed: googlePayEnabled || applePayEnabled
+                  ? () {
+                      if (Platform.isAndroid) {
+                        Navigator.pop(context, PaymentType.googlePay);
+                      } else if (Platform.isIOS) {
+                        Navigator.pop(context, PaymentType.applePay);
+                      }
+                    }
+                  : null,
               child: Image(
                   image: (Theme.of(context).platform == TargetPlatform.iOS)
                       ? AssetImage("assets/applePayLogo.png")
