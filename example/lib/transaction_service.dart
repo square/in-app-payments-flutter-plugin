@@ -49,7 +49,8 @@ Future<void> chargeCard(CardDetails result) async {
   }
 }
 
-Future<void> chargeCardAfterBuyerVerification(BuyerVerificationDetails result) async {
+Future<void> chargeCardAfterBuyerVerification(
+    BuyerVerificationDetails result) async {
   var body = jsonEncode({"nonce": result.nonce, "token": result.token});
   http.Response response;
   try {
