@@ -15,9 +15,13 @@
 */
 package sqip.flutter;
 
+import android.app.Activity;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.PluginRegistry;
 import sqip.InAppPaymentsSdk;
 import sqip.BuyerAction;
 import sqip.Contact;
@@ -33,60 +37,65 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 
-public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
-  private static MethodChannel channel;
+public class SquareInAppPaymentsFlutterPlugin implements FlutterPlugin, ActivityAware {
+  private  MethodChannel channel;
+  private CallHandler methodCallHandler;
+  private FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
 
-  private final CardEntryModule cardEntryModule;
-  private final GooglePayModule googlePayModule;
 
-  /** Plugin registration. */
+  /** Plugin registration. Used to support old pre 1.12 flutter Android projects  */
   public static void registerWith(Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
-    channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
-  }
-
-  private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
-    cardEntryModule = new CardEntryModule(registrar, channel);
-    googlePayModule = new GooglePayModule(registrar, channel);
+    SquareInAppPaymentsFlutterPlugin plugin =  new SquareInAppPaymentsFlutterPlugin();
+    plugin.configureMethodChannel(new RegistrarActivityAccessor(registrar), registrar.messenger());
   }
 
   @Override
-  public void onMethodCall(MethodCall call, final Result result) {
-    if (call.method.equals("setApplicationId")) {
-      String applicationId = call.argument("applicationId");
-      InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
-      result.success(null);
-    } else if (call.method.equals("startCardEntryFlow")) {
-      boolean collectPostalCode = call.argument("collectPostalCode");
-      cardEntryModule.startCardEntryFlow(result, collectPostalCode);
-    } else if (call.method.equals("completeCardEntry")) {
-      cardEntryModule.completeCardEntry(result);
-    } else if (call.method.equals("showCardNonceProcessingError")) {
-      String errorMessage = call.argument("errorMessage");
-      cardEntryModule.showCardNonceProcessingError(result, errorMessage);
-    } else if (call.method.equals("initializeGooglePay")) {
-      String squareLocationId = call.argument("squareLocationId");
-      int environment = call.argument("environment");
-      googlePayModule.initializeGooglePay(squareLocationId, environment);
-      result.success(null);
-    } else if (call.method.equals("canUseGooglePay")) {
-      googlePayModule.canUseGooglePay(result);
-    } else if (call.method.equals("requestGooglePayNonce")) {
-      String price = call.argument("price");
-      String currencyCode = call.argument("currencyCode");
-      int priceStatus = call.argument("priceStatus");
-      googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
-    } else if (call.method.equals("startCardEntryFlowWithBuyerVerification")) {
-      boolean collectPostalCode = call.argument("collectPostalCode");
-      String squareLocationId = call.argument("squareLocationId");
-      String buyerActionString = call.argument("buyerAction");
-      HashMap<String, Object> moneyMap = call.argument("money");
-      HashMap<String, Object> contactMap = call.argument("contact");
+  public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+    this.flutterPluginBinding = flutterPluginBinding;
+  }
 
-      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareLocationId, buyerActionString, moneyMap, contactMap);
-    } else {
-      result.notImplemented();
-    }
+  @Override
+  public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
+    teardownMethodChannel();
+  }
+
+  @Override
+  public void onAttachedToActivity(ActivityPluginBinding binding) {
+    configureMethodChannel(new ActivityAccessor(binding), flutterPluginBinding.getBinaryMessenger());
+  }
+
+  @Override
+  public void onDetachedFromActivity() {
+
+    methodCallHandler.setActivityLink(null);
+  }
+
+  @Override
+  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+    onAttachedToActivity(binding);
+  }
+
+  @Override
+  public void onDetachedFromActivityForConfigChanges() {
+    onDetachedFromActivity();
+  }
+
+  private SquareInAppPaymentsFlutterPlugin() {
+
+  }
+
+  private void configureMethodChannel(PluginActivityLink activityLink, BinaryMessenger messenger) {
+    channel = new MethodChannel(messenger, "square_in_app_payments");
+    this.methodCallHandler = new CallHandler(activityLink,channel);
+    channel.setMethodCallHandler(this.methodCallHandler);
+  }
+
+  private void teardownMethodChannel() {
+    channel.setMethodCallHandler(null);
+    channel = null;
   }
 }

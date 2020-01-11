@@ -22,6 +22,8 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.animation.Animation;
+
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import sqip.BuyerVerification;
 import sqip.Callback;
 import sqip.CardDetails;
@@ -36,6 +38,7 @@ import sqip.Contact;
 import sqip.Country;
 import sqip.Money;
 import sqip.VerificationParameters;
+import sqip.flutter.PluginActivityLink;
 import sqip.flutter.R;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
@@ -61,92 +64,15 @@ final public class CardEntryModule {
   private Contact contact;
   private CardDetails cardResult;
 
-  public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
-    currentActivity = registrar.activity();
+  public CardEntryModule(PluginActivityLink activityLink, final MethodChannel channel) {
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
     reference = new AtomicReference<>();
     handler = new Handler(Looper.getMainLooper());
 
-    registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
-      @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CardEntry.DEFAULT_CARD_ENTRY_REQUEST_CODE) {
-          CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
-            @Override
-            public void onResult(final CardEntryActivityResult cardEntryActivityResult) {
-              if (cardEntryActivityResult.isSuccess() && CardEntryModule.this.contact != null) {
-                cardResult = cardEntryActivityResult.getSuccessValue();
-                String paymentSourceId = cardResult.getNonce();
-                VerificationParameters verificationParameters = new VerificationParameters(paymentSourceId, CardEntryModule.this.buyerAction, CardEntryModule.this.squareIdentifier, CardEntryModule.this.contact);
-                BuyerVerification.verify(currentActivity, verificationParameters);
-              } else {
-                // flutter UI doesn't know the context of fade_out animation
-                // so that the next action from flutter can be triggered too soon before
-                // card entry activity is closed completely.
-                // So this is a workaround to delay the callback until animation finished.
-                long delayDurationMs = readCardEntryCloseExitAnimationDurationMs();
-                handler.postDelayed(new Runnable() {
-                  @Override
-                  public void run() {
-                    if (cardEntryActivityResult.isCanceled()) {
-                      channel.invokeMethod("cardEntryCancel", null);
-                    } else if (cardEntryActivityResult.isSuccess()) {
-                      channel.invokeMethod("cardEntryComplete", null);
-                    }
-                  }
-                }, delayDurationMs);
-              }
-            }
-          });
-        }
+    currentActivity = activityLink.getActivity();
+    activityLink.addListener(createActivityListener(channel));
+    CardEntry.setCardNonceBackgroundHandler(createNonceHandler(channel));
 
-        if (requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE) {
-          BuyerVerification.handleActivityResult(data, result -> {
-            if (result.isSuccess()) {
-              Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(CardEntryModule.this.cardResult);
-              mapToReturn.put("token", result.getSuccessValue().getVerificationToken());
-              channel.invokeMethod("onBuyerVerificationSuccess", mapToReturn);
-            } else if (result.isError()) {
-              sqip.BuyerVerificationResult.Error error = result.getErrorValue();
-              Map<String, String> errorMap = ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage());
-              channel.invokeMethod("onBuyerVerificationError", errorMap);
-            }
-          });
-
-          CardEntryModule.this.contact = null;
-        }
-        return false;
-      }
-    });
-
-    CardEntry.setCardNonceBackgroundHandler(new CardNonceBackgroundHandler() {
-      @Override
-      public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
-        if (CardEntryModule.this.contact != null) {
-          // If buyer verification needed, finish the card entry activity so we can verify buyer
-          return new CardEntryActivityCommand.Finish();
-        }
-
-        final Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
-        countDownLatch = new CountDownLatch(1);
-        // must be run on the UI thread to prevent an exception
-        currentActivity.runOnUiThread(
-           new Runnable() {
-            public void run() {
-              channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
-            }
-          }
-        );
-        try {
-          // completeCardEntry or showCardNonceProcessingError must be called,
-          // otherwise the thread will be leaked.
-          countDownLatch.await();
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-
-        return reference.get();
-      }
-    });
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
@@ -227,5 +153,91 @@ final public class CardEntryModule {
 
     typedArray.recycle();
     return delayDurationMs;
+  }
+
+  private PluginRegistry.ActivityResultListener createActivityListener(MethodChannel channel) {
+    return new PluginRegistry.ActivityResultListener() {
+      @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CardEntry.DEFAULT_CARD_ENTRY_REQUEST_CODE) {
+          CardEntry.handleActivityResult(data, new Callback<CardEntryActivityResult>() {
+            @Override
+            public void onResult(final CardEntryActivityResult cardEntryActivityResult) {
+              if (cardEntryActivityResult.isSuccess() && CardEntryModule.this.contact != null) {
+                cardResult = cardEntryActivityResult.getSuccessValue();
+                String paymentSourceId = cardResult.getNonce();
+                VerificationParameters verificationParameters = new VerificationParameters(paymentSourceId, CardEntryModule.this.buyerAction, CardEntryModule.this.squareIdentifier, CardEntryModule.this.contact);
+                BuyerVerification.verify(currentActivity, verificationParameters);
+              } else {
+                // flutter UI doesn't know the context of fade_out animation
+                // so that the next action from flutter can be triggered too soon before
+                // card entry activity is closed completely.
+                // So this is a workaround to delay the callback until animation finished.
+                long delayDurationMs = readCardEntryCloseExitAnimationDurationMs();
+                handler.postDelayed(new Runnable() {
+                  @Override
+                  public void run() {
+                    if (cardEntryActivityResult.isCanceled()) {
+                      channel.invokeMethod("cardEntryCancel", null);
+                    } else if (cardEntryActivityResult.isSuccess()) {
+                      channel.invokeMethod("cardEntryComplete", null);
+                    }
+                  }
+                }, delayDurationMs);
+              }
+            }
+          });
+        }
+
+        if (requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE) {
+          BuyerVerification.handleActivityResult(data, result -> {
+            if (result.isSuccess()) {
+              Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(CardEntryModule.this.cardResult);
+              mapToReturn.put("token", result.getSuccessValue().getVerificationToken());
+              channel.invokeMethod("onBuyerVerificationSuccess", mapToReturn);
+            } else if (result.isError()) {
+              sqip.BuyerVerificationResult.Error error = result.getErrorValue();
+              Map<String, String> errorMap = ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage());
+              channel.invokeMethod("onBuyerVerificationError", errorMap);
+            }
+          });
+
+          CardEntryModule.this.contact = null;
+        }
+        return false;
+      }
+    };
+  }
+
+  private CardNonceBackgroundHandler createNonceHandler (MethodChannel channel) {
+    return new CardNonceBackgroundHandler() {
+      @Override
+      public CardEntryActivityCommand handleEnteredCardInBackground(CardDetails cardDetails) {
+        if (CardEntryModule.this.contact != null) {
+          // If buyer verification needed, finish the card entry activity so we can verify buyer
+          return new CardEntryActivityCommand.Finish();
+        }
+
+        final Map<String, Object> mapToReturn = cardDetailsConverter.toMapObject(cardDetails);
+        countDownLatch = new CountDownLatch(1);
+        // must be run on the UI thread to prevent an exception
+        currentActivity.runOnUiThread(
+                new Runnable() {
+                  public void run() {
+                    channel.invokeMethod("cardEntryDidObtainCardDetails", mapToReturn);
+                  }
+                }
+        );
+        try {
+          // completeCardEntry or showCardNonceProcessingError must be called,
+          // otherwise the thread will be leaked.
+          countDownLatch.await();
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+
+        return reference.get();
+      }
+    };
+
   }
 }
