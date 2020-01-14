@@ -17,6 +17,8 @@ package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
@@ -50,18 +52,31 @@ final public class GooglePayModule {
 
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 4111;
 
-  private final Activity currentActivity;
+
+  private final MethodChannel currentChannel;
   private final CardDetailsConverter cardDetailsConverter;
 
+  private Activity currentActivity;
   private String squareLocationId;
   private PaymentsClient googlePayClients;
 
-  public GooglePayModule(PluginActivityLink activityLink, final MethodChannel channel) {
+  public GooglePayModule(@Nullable PluginActivityLink activityLink, final MethodChannel channel) {
+    currentChannel = channel;
     currentActivity = activityLink.getActivity();
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
 
     // Register callback when google pay activity is dismissed
-    activityLink.addListener(createActivityResultListener(channel));
+    activityLink.addListener(createActivityResultListener(currentChannel));
+  }
+
+  public void setActivityLink(@Nullable PluginActivityLink activityLink){
+    if (activityLink.equals(null)) {
+      currentActivity = null;
+    } else {
+      currentActivity = activityLink.getActivity();
+      // Register callback when google pay activity is dismissed
+      activityLink.addListener(createActivityResultListener(currentChannel));
+    }
   }
 
   public void initializeGooglePay(String squareLocationId, int environment) {

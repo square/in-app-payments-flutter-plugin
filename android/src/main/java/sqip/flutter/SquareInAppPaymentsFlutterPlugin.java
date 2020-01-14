@@ -15,27 +15,9 @@
 */
 package sqip.flutter;
 
-import android.app.Activity;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry;
-import sqip.InAppPaymentsSdk;
-import sqip.BuyerAction;
-import sqip.Contact;
-import sqip.Country;
-import sqip.Currency;
-import sqip.Money;
-import sqip.SquareIdentifier;
-import sqip.SquareIdentifier.LocationToken;
-import sqip.flutter.internal.CardEntryModule;
-import sqip.flutter.internal.GooglePayModule;
-import io.flutter.plugin.common.MethodCall;
+
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -44,7 +26,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 public class SquareInAppPaymentsFlutterPlugin implements FlutterPlugin, ActivityAware {
   private  MethodChannel channel;
   private CallHandler methodCallHandler;
-  private FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
 
 
   /** Plugin registration. Used to support old pre 1.12 flutter Android projects  */
@@ -55,7 +36,9 @@ public class SquareInAppPaymentsFlutterPlugin implements FlutterPlugin, Activity
 
   @Override
   public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
-    this.flutterPluginBinding = flutterPluginBinding;
+    // Gets binary messenger through now deprecated api in order to be backwards compatible
+    BinaryMessenger messenger = flutterPluginBinding.getFlutterEngine().getDartExecutor();
+    configureMethodChannel(null, messenger);
   }
 
   @Override
@@ -65,27 +48,22 @@ public class SquareInAppPaymentsFlutterPlugin implements FlutterPlugin, Activity
 
   @Override
   public void onAttachedToActivity(ActivityPluginBinding binding) {
-    configureMethodChannel(new ActivityAccessor(binding), flutterPluginBinding.getBinaryMessenger());
+    methodCallHandler.setActivityLink(new ActivityAccessor(binding));
   }
 
   @Override
   public void onDetachedFromActivity() {
-
     methodCallHandler.setActivityLink(null);
   }
 
   @Override
   public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-    onAttachedToActivity(binding);
+    methodCallHandler.setActivityLink(new ActivityAccessor(binding));
   }
 
   @Override
   public void onDetachedFromActivityForConfigChanges() {
     onDetachedFromActivity();
-  }
-
-  private SquareInAppPaymentsFlutterPlugin() {
-
   }
 
   private void configureMethodChannel(PluginActivityLink activityLink, BinaryMessenger messenger) {

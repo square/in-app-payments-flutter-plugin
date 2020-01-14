@@ -6,16 +6,12 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-
-import io.flutter.plugin.common.PluginRegistry;
 import sqip.InAppPaymentsSdk;
 import sqip.flutter.internal.CardEntryModule;
 import sqip.flutter.internal.GooglePayModule;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
-import android.app.Activity;
 
 class CallHandler implements MethodChannel.MethodCallHandler {
     private final CardEntryModule cardEntryModule;
@@ -43,8 +39,9 @@ class CallHandler implements MethodChannel.MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, final MethodChannel.Result result) {
+        // Handles the possibility that activityLink is null
         if (activityLink.equals(null)) {
-            result.error("500", "activity is null", "Caused by activity being null");
+            result.notImplemented();
         }
 
         if (call.method.equals("setApplicationId")) {

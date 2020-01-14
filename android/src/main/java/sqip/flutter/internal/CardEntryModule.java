@@ -21,9 +21,9 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.view.animation.Animation;
 
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import sqip.BuyerVerification;
 import sqip.Callback;
 import sqip.CardDetails;
@@ -31,7 +31,6 @@ import sqip.CardEntry;
 import sqip.CardEntryActivityCommand;
 import sqip.CardEntryActivityResult;
 import sqip.CardNonceBackgroundHandler;
-import sqip.BuyerVerificationResult.Error;
 import sqip.SquareIdentifier;
 import sqip.BuyerAction;
 import sqip.Contact;
@@ -46,7 +45,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -54,25 +52,37 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 
 final public class CardEntryModule {
 
-  private final Activity currentActivity;
+
+  private final MethodChannel currentChannel;
   private final CardDetailsConverter cardDetailsConverter;
   private final AtomicReference<CardEntryActivityCommand> reference;
   private final Handler handler;
   private volatile CountDownLatch countDownLatch;
+  private Activity currentActivity;
   private SquareIdentifier squareIdentifier;
   private BuyerAction buyerAction;
   private Contact contact;
   private CardDetails cardResult;
 
-  public CardEntryModule(PluginActivityLink activityLink, final MethodChannel channel) {
+  public CardEntryModule(@Nullable PluginActivityLink activityLink, final MethodChannel channel) {
+    currentChannel = channel;
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());
     reference = new AtomicReference<>();
     handler = new Handler(Looper.getMainLooper());
 
     currentActivity = activityLink.getActivity();
-    activityLink.addListener(createActivityListener(channel));
-    CardEntry.setCardNonceBackgroundHandler(createNonceHandler(channel));
+    activityLink.addListener(createActivityListener(currentChannel));
+    CardEntry.setCardNonceBackgroundHandler(createNonceHandler(currentChannel));
 
+  }
+
+  public void setActivityLink(@Nullable PluginActivityLink activityLink) {
+    if (activityLink.equals(null)){
+      currentActivity = null;
+    } else {
+      currentActivity = activityLink.getActivity();
+      activityLink.addListener(createActivityListener(currentChannel));
+    }
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
