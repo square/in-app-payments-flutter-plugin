@@ -69,7 +69,7 @@ limitations under the License.
 
 [//]: # "Link anchor definitions"
 [squareup.com/activate]: https://squareup.com/activate
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
+[In-App Payments SDK]: https://developer.squareup.com/docs/in-app-payments-sdk/what-it-does
 [Square Dashboard]: https://squareup.com/dashboard/
 [Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
 [`doc`]: https://github.com/square/in-app-payments-flutter-plugin/tree/master/doc
