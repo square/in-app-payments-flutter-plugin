@@ -66,7 +66,7 @@ Update the cURL command by completing the following steps:
 location ID that you copied in **Step 1**.
 1. Replace the access token placeholder with your access token. 
 1. Run the cURL command to take a payment in your Square account.
->**Note:** We provide a cURL command in the debug output that you can use to easily test the payment with our  Transactions API. Your production app should use a secure backend service to make calls to the Transactions API and should never expose your access token in the client.
+>**Note:** We provide a cURL command in the debug output that you can use to easily test the payment with our Payments API. Your production app should use a secure backend service to make calls to the Payments API and should never expose your access token in the client.
 
 Square provides a backend service in our sample app to get your started. follow the 
 steps in the [backend service setup guide] to configure the backend sample.
@@ -79,5 +79,4 @@ For help getting started with Flutter, view [documentation](https://flutter.io/)
 [Square Application Dashboard]: https://connect.squareup.com/apps/
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [root README]: ../README.md
-[transaction details in Square Dashboard]: https://squareup.com/dashboard/sales/transactions
 [backend service setup guide]: take_a_payment.md

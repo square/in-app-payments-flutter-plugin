@@ -42,7 +42,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 ## In-App Payments SDK requirements and limitations
 
 * In-App Payments SDK cannot issue refunds. Refunds can be issued programmatically using
-  the Transactions API or manually in the [Square Dashboard].
+  the Refunds API or manually in the [Square Dashboard].
 
 ## Sample applications
 * **[Quick start flutter app]:** You can learn how the In-App-Payments Flutter plugin is used by [getting started with the example app], a quick-start Flutter app that lets you take a payment after completing 6 set up steps. 

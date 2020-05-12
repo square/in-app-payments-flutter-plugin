@@ -103,7 +103,7 @@ class BuySheetState extends State<BuySheet> {
 
     if (verificationToken == null) {
       print(
-          'curl --request POST $hostUrl/v2/locations/SQUARE_LOCATION_ID/transactions \\'
+          'curl --request POST $hostUrl/v2/payments \\'
           '--header \"Content-Type: application/json\" \\'
           '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
           '--header \"Accept: application/json\" \\'
@@ -112,7 +112,7 @@ class BuySheetState extends State<BuySheet> {
           '\"amount_money\": {'
           '\"amount\": $cookieAmount,'
           '\"currency\": \"USD\"},'
-          '\"card_nonce\": \"$nonce\"'
+          '\"source_id\": \"$nonce\"'
           '}\'');
     } else {
       print('curl --request POST $hostUrl/v2/payments \\'

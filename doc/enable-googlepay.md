@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 ---
-**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Transactions API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
+**Note:** the `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Payments API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
 
