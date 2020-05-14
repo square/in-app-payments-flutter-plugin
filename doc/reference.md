@@ -2,7 +2,7 @@
 
 This technical reference documents methods available in the Flutter
 plugin for In-App Payments SDK. For detailed documentation on In-App Payments SDK, please see
-[docs.connect.squareup.com].
+[In-App Payments SDK].
 
 ---
 
@@ -1101,10 +1101,8 @@ ErrorCode                                             | Cause                   
 
 
 [//]: # "Link anchor definitions"
-[docs.connect.squareup.com]: https://docs.connect.squareup.com
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/inapppayments/intro
+[In-App Payments SDK]: https://developer.squareup.com/docs/in-app-payments-sdk/what-it-does
 [ISO 4217 format]: https://www.iban.com/currency-codes.html
 [Square Dashboard]: https://squareup.com/dashboard/
-[Transactions API]: https://docs.connect.squareup.com/payments/transactions/overview
 [Square-issued gift card]: https://squareup.com/us/en/software/gift-cards
 [`built_value`]: https://github.com/google/built_value.dart

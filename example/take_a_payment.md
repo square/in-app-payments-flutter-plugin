@@ -37,10 +37,10 @@ add logic to accept a nonce posted from this sample by following these steps:
 $access_token = $_ENV["SANDBOX_ACCESS_TOKEN"];
 $location_id =  $_ENV["SANDBOX_LOCATION_ID"];
 
-  $transactions_api = new \SquareConnect\Api\TransactionsApi();
+  $payments_api = new \SquareConnect\Api\PaymentsApi();
 
   $request_body = array (
-    "card_nonce" => $nonce,
+    "source_id" => $nonce,
     # Monetary amounts are specified in the smallest unit of the applicable currency.
     # This amount is in cents. It's also hard-coded for $1.00, which isn't very useful.
     "amount_money" => array (
