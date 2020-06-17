@@ -18,6 +18,9 @@ package sqip.flutter;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import sqip.InAppPaymentsSdk;
 import sqip.BuyerAction;
 import sqip.Contact;
@@ -34,11 +37,11 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
-  private static MethodChannel channel;
+public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware  {
 
-  private final CardEntryModule cardEntryModule;
-  private final GooglePayModule googlePayModule;
+  private static MethodChannel channel;
+  private CardEntryModule cardEntryModule;
+  private GooglePayModule googlePayModule;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -50,6 +53,11 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
     cardEntryModule = new CardEntryModule(registrar, channel);
     googlePayModule = new GooglePayModule(registrar, channel);
   }
+
+  /**
+   * Required for Flutter V2 embedding plugins.
+   */
+  public SquareInAppPaymentsFlutterPlugin() {}
 
   @Override
   public void onMethodCall(MethodCall call, final Result result) {
@@ -88,5 +96,43 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler {
     } else {
       result.notImplemented();
     }
+  }
+
+  @Override
+  public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "square_in_app_payments");
+    channel.setMethodCallHandler(this);
+    cardEntryModule = new CardEntryModule(channel);
+    googlePayModule = new GooglePayModule(channel);
+  }
+
+  @Override
+  public void onDetachedFromEngine(FlutterPluginBinding flutterPluginBinding) {
+    cardEntryModule = null;
+    googlePayModule = null;
+    channel = null;
+  }
+
+  @Override
+  public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
+    googlePayModule.attachActivityResultListener(activityPluginBinding, channel);
+    cardEntryModule.attachActivityResultListener(activityPluginBinding, channel);
+
+  }
+
+  @Override
+  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+    googlePayModule.attachActivityResultListener(activityPluginBinding, channel);
+    cardEntryModule.attachActivityResultListener(activityPluginBinding, channel);
+  }
+
+
+  @Override
+  public void onDetachedFromActivityForConfigChanges() {
+  }
+
+  @Override
+  public void onDetachedFromActivity() {
+
   }
 }
