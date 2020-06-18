@@ -26,6 +26,8 @@ import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
+
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import sqip.Callback;
 import sqip.GooglePay;
 import sqip.GooglePayNonceResult;
@@ -46,52 +48,30 @@ final public class GooglePayModule {
 
   private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 4111;
 
-  private final Activity currentActivity;
+  private PluginRegistry.ActivityResultListener activityResultListener;
+  private Activity currentActivity;
   private final CardDetailsConverter cardDetailsConverter;
 
   private String squareLocationId;
   private PaymentsClient googlePayClients;
 
   public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
+    this(channel);
     currentActivity = registrar.activity();
-    cardDetailsConverter = new CardDetailsConverter(new CardConverter());
-
     // Register callback when google pay activity is dismissed
-    registrar.addActivityResultListener(new PluginRegistry.ActivityResultListener() {
-      @Override public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE) {
-          switch (resultCode) {
-            case Activity.RESULT_OK:
-              PaymentData paymentData = PaymentData.getFromIntent(data);
-              ErrorHandlerUtils.checkNotNull(paymentData, "paymentData should never be null.");
-              String googlePayToken = paymentData.getPaymentMethodToken().getToken();
-              GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
-                  new Callback<GooglePayNonceResult>() {
-                    @Override public void onResult(GooglePayNonceResult googlePayNonceResult) {
-                      if (googlePayNonceResult.isSuccess()) {
-                        channel.invokeMethod("onGooglePayNonceRequestSuccess", cardDetailsConverter.toMapObject(googlePayNonceResult.getSuccessValue()));
-                      } else if (googlePayNonceResult.isError()) {
-                        GooglePayNonceResult.Error error = ((GooglePayNonceResult.Error) googlePayNonceResult);
-                        channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
-                      }
-                    }
-                  });
-              break;
-            case Activity.RESULT_CANCELED:
-              channel.invokeMethod("onGooglePayCanceled", null);
-              break;
-            case AutoResolveHelper.RESULT_ERROR:
-              channel.invokeMethod("onGooglePayNonceRequestFailure",
-                  ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_RESULT_ERROR), FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
-              break;
-            default:
-              channel.invokeMethod("onGooglePayNonceRequestFailure",
-                  ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_UNKNOWN_ERROR), FL_GOOGLE_PAY_UNKNOWN_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR));
-          }
-        }
-        return false;
-      }
-    });
+    registrar.addActivityResultListener(activityResultListener);
+  }
+  public GooglePayModule(final MethodChannel channel) {
+    activityResultListener = createActivityResultListener(channel);
+    cardDetailsConverter = new CardDetailsConverter(new CardConverter());
+  }
+
+  public void attachActivityResultListener(final ActivityPluginBinding activityPluginBinding, final MethodChannel channel) {
+    if (activityResultListener == null) {
+      activityResultListener = createActivityResultListener(channel);
+    }
+    activityPluginBinding.addActivityResultListener(activityResultListener);
+    this.currentActivity = activityPluginBinding.getActivity();
   }
 
   public void initializeGooglePay(String squareLocationId, int environment) {
@@ -133,6 +113,42 @@ final public class GooglePayModule {
         currentActivity,
         LOAD_PAYMENT_DATA_REQUEST_CODE);
     result.success(null);
+  }
+
+  private PluginRegistry.ActivityResultListener createActivityResultListener(MethodChannel channel) {
+    return (requestCode, resultCode, data) -> {
+      if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE) {
+        switch (resultCode) {
+          case Activity.RESULT_OK:
+            PaymentData paymentData = PaymentData.getFromIntent(data);
+            ErrorHandlerUtils.checkNotNull(paymentData, "paymentData should never be null.");
+            String googlePayToken = paymentData.getPaymentMethodToken().getToken();
+            GooglePay.requestGooglePayNonce(googlePayToken).enqueue(
+                    new Callback<GooglePayNonceResult>() {
+                      @Override public void onResult(GooglePayNonceResult googlePayNonceResult) {
+                        if (googlePayNonceResult.isSuccess()) {
+                          channel.invokeMethod("onGooglePayNonceRequestSuccess", cardDetailsConverter.toMapObject(googlePayNonceResult.getSuccessValue()));
+                        } else if (googlePayNonceResult.isError()) {
+                          GooglePayNonceResult.Error error = ((GooglePayNonceResult.Error) googlePayNonceResult);
+                          channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
+                        }
+                      }
+                    });
+            break;
+          case Activity.RESULT_CANCELED:
+            channel.invokeMethod("onGooglePayCanceled", null);
+            break;
+          case AutoResolveHelper.RESULT_ERROR:
+            channel.invokeMethod("onGooglePayNonceRequestFailure",
+                    ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_RESULT_ERROR), FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
+            break;
+          default:
+            channel.invokeMethod("onGooglePayNonceRequestFailure",
+                    ErrorHandlerUtils.getCallbackErrorObject(ErrorHandlerUtils.USAGE_ERROR, ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_UNKNOWN_ERROR), FL_GOOGLE_PAY_UNKNOWN_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR));
+        }
+      }
+      return false;
+    };
   }
 
   private PaymentDataRequest createPaymentChargeRequest(String squareLocationId, String price, String currencyCode, int priceStatus) {
