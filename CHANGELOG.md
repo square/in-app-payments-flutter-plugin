@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.4.0 June 25, 2020
+
+* Added support for v2 flutter embeddings (flutter 1.12+).
+
 ### v1.3.0 November 20, 2019
 
 * Bump Square In-App Payments SDK dependency to `1.3.0`.
