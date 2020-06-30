@@ -30,3 +30,17 @@ target 'Runner' do
   ...
 end
 ```
+
+## I get proguard.ParseException: Use of generics not allowed for java type at '<1>_<2>_<3>JsonAdapter
+
+### The Problem
+This is a problem related to proguard and removing R8 due to it obfuscating classes our SDKS need for proper functioning. More information in: https://github.com/square/moshi/issues/738.
+
+### Solution
+
+There are a few solutions you can use:
+1. Update to a version of proguard > 6.1.0-beta2 (https://sourceforge.net/p/proguard/bugs/731/)
+2. Add `android.proguard.enableRulesExtraction=false` in your android/gradle.properties file like found in the example app.
+
+
+
