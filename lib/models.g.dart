@@ -47,6 +47,7 @@ const Brand _$discover = const Brand._('discover');
 const Brand _$discoverDiners = const Brand._('discoverDiners');
 const Brand _$jCB = const Brand._('jcb');
 const Brand _$chinaUnionPay = const Brand._('chinaUnionPay');
+const Brand _$squareGiftCard = const Brand._('squareGiftCard');
 
 Brand _$brandValueOf(String name) {
   switch (name) {
@@ -66,6 +67,8 @@ Brand _$brandValueOf(String name) {
       return _$jCB;
     case 'chinaUnionPay':
       return _$chinaUnionPay;
+    case 'squareGiftCard':
+      return _$squareGiftCard;
     default:
       throw new ArgumentError(name);
   }
@@ -80,6 +83,7 @@ final BuiltSet<Brand> _$brandValues = new BuiltSet<Brand>(const <Brand>[
   _$discoverDiners,
   _$jCB,
   _$chinaUnionPay,
+  _$squareGiftCard,
 ]);
 
 const CardType _$debit = const CardType._('debit');
@@ -234,6 +238,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'discoverDiners': 'DISCOVER_DINERS',
     'jcb': 'JCB',
     'chinaUnionPay': 'CHINA_UNION_PAY',
+    'squareGiftCard': 'SQUARE_GIFT_CARD',
   };
   static const Map<String, String> _fromWire = const <String, String>{
     'OTHER_BRAND': 'otherBrand',
@@ -244,6 +249,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'DISCOVER_DINERS': 'discoverDiners',
     'JCB': 'jcb',
     'CHINA_UNION_PAY': 'chinaUnionPay',
+    'SQUARE_GIFT_CARD': 'squareGiftCard',
   };
 
   @override

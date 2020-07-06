@@ -148,6 +148,21 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     result(nil);
 }
 
+- (void)startGiftCardEntryFlow:(FlutterResult)result
+{
+    SQIPCardEntryViewController *cardEntryForm = [self _makeGiftCardEntryForm];
+    cardEntryForm.delegate = self;
+    self.cardEntryViewController = cardEntryForm;
+
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        [((UINavigationController *)rootViewController) pushViewController:cardEntryForm animated:YES];
+    } else {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cardEntryForm];
+        [rootViewController presentViewController:navigationController animated:YES completion:nil];
+    }
+    result(nil);
+}
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
     if (self.contact) {
@@ -294,6 +309,11 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
 - (SQIPCardEntryViewController *)_makeCardEntryForm
 {
     return [[SQIPCardEntryViewController alloc] initWithTheme:self.theme];
+}
+
+- (SQIPCardEntryViewController *)_makeGiftCardEntryForm
+{
+    return [[SQIPCardEntryViewController alloc] initWithTheme:self.theme isGiftCard:true];
 }
 
 - (UIKeyboardAppearance)_keyboardAppearanceFromString:(NSString *)keyboardTypeName

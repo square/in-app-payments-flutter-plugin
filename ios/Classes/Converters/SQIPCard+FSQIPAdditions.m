@@ -61,6 +61,8 @@
         case SQIPCardBrandChinaUnionPay:
             result = @"CHINA_UNION_PAY";
             break;
+        case SQIPCardBrandSquareGiftCard:
+            result = @"SQUARE_GIFT_CARD";
     }
     return result;
 }

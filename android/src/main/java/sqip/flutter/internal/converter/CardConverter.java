@@ -52,6 +52,9 @@ public final class CardConverter {
         case CHINA_UNION_PAY:
           brandStringMap.put(brand, "CHINA_UNION_PAY");
           break;
+        case SQUARE_GIFT_CARD:
+          brandStringMap.put(brand, "SQUARE_GIFT_CARD");
+          break;
         default:
           throw new RuntimeException("Unexpected brand value: " + brand.name());
       }
