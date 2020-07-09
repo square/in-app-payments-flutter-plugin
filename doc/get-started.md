@@ -54,7 +54,7 @@ dependencies:
 
   ...
 
-  square_in_app_payments: ^1.3.0
+  square_in_app_payments: ^1.4.0
 ```
 
 ## Step 4: Get Square Application ID

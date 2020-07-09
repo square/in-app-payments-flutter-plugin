@@ -17,7 +17,7 @@ You can override the default In-App Payments SDK versions by following this guid
     ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
     # specify the version of SquareInAppPaymentsSDK
-    $sqipVersion = '1.3.0'
+    $sqipVersion = '1.4.0'
     ```
 
 1. Remove the `ios/Podfile.lock` and build your project again.
@@ -39,7 +39,7 @@ You can override the default In-App Payments SDK versions by following this guid
 
     // add the override here
     ext {
-        sqipVersion = '1.3.0'
+        sqipVersion = '1.4.0'
     }
     ```
 
