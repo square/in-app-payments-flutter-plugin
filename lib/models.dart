@@ -58,6 +58,8 @@ class Brand extends EnumClass {
   static const Brand jcb = _$jCB;
   @BuiltValueEnumConst(wireName: 'CHINA_UNION_PAY')
   static const Brand chinaUnionPay = _$chinaUnionPay;
+  @BuiltValueEnumConst(wireName: 'SQUARE_GIFT_CARD')
+  static const Brand squareGiftCard = _$squareGiftCard;
 
   const Brand._(String name) : super(name);
 

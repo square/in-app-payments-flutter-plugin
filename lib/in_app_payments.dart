@@ -172,6 +172,15 @@ class InAppPayments {
     await _channel.invokeMethod('startCardEntryFlow', params);
   }
 
+  static Future startGiftCardEntryFlow(
+      {CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
+        CardEntryCancelCallback onCardEntryCancel}) async {
+    _cardEntryCancelCallback = onCardEntryCancel;
+    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
+    await _channel.invokeMethod('startGiftCardEntryFlow');
+  }
+
+
   static Future completeCardEntry(
       {CardEntryCompleteCallback onCardEntryComplete}) async {
     _cardEntryCompleteCallback = onCardEntryComplete;

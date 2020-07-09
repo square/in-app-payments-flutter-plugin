@@ -24,7 +24,7 @@ class CookieButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       height: 64,
-      width: MediaQuery.of(context).size.width * .4,
+      width: MediaQuery.of(context).size.width * .3,
       child: RaisedButton(
           child: FittedBox(
               child: Text(text,

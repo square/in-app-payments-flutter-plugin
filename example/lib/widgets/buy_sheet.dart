@@ -70,6 +70,10 @@ class BuySheetState extends State<BuySheet> {
                 ));
 
     switch (selection) {
+      case PaymentType.giftcardPayment:
+      // call _onStartGiftCardEntryFlow to start Gift Card Entry.
+        await _onStartGiftCardEntryFlow();
+        break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
         await _onStartCardEntryFlow();
@@ -168,7 +172,7 @@ class BuySheetState extends State<BuySheet> {
           context: BuySheet.scaffoldKey.currentContext,
           title: "Your order was successful",
           description:
-              "Go to your Square dashbord to see this order reflected in the sales tab.");
+              "Go to your Square dashboard to see this order reflected in the sales tab.");
     }
   }
 
@@ -193,6 +197,12 @@ class BuySheetState extends State<BuySheet> {
         onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
         onCardEntryCancel: _onCancelCardEntryFlow,
         collectPostalCode: true);
+  }
+
+  Future<void> _onStartGiftCardEntryFlow() async {
+    await InAppPayments.startGiftCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCancelCardEntryFlow);
   }
 
   Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
