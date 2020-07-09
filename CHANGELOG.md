@@ -1,5 +1,11 @@
 ## Changelog
 
+### v1.5.0 July 9, 2020
+
+* Updated to IAP SDK 1.4.0.
+* Added support for gift card payments.
+* Disable R8 in exchange for proguard. 
+
 ### v1.4.0 June 25, 2020
 
 * Added support for v2 flutter embeddings (flutter 1.12+).
