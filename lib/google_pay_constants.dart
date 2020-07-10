@@ -13,6 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+//https://developers.google.com/android/reference/com/google/android/gms/wallet/WalletConstants
+
 const int totalPriceStatusNotCurrentlyKnown = 1;
 const int totalPriceStatusEstimated = 2;
 const int totalPriceStatusFinal = 3;
