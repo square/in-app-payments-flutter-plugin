@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.5.1 November 19, 2020
+
+* Updated dependencies.built_value to `^7.0.0` in `pubspec.yaml`
+
 ### v1.5.0 July 9, 2020
 
 * Updated to IAP SDK 1.4.0.

@@ -13,3 +13,4 @@ android/bin
 .vscode/settings.json
 .vscode/launch.json
 .clang-format
+.flutter-plugins-dependencies
