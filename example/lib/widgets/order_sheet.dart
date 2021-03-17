@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import 'cookie_button.dart';
 
-enum PaymentType { giftcardPayment, cardPayment, googlePay, applePay }
+enum PaymentType { giftcardPayment, cardPayment, googlePay, applePay, buyerVerification }
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
@@ -100,7 +100,14 @@ class OrderSheet extends StatelessWidget {
               Navigator.pop(context, PaymentType.cardPayment);
             },
           ),
-          Container(
+          CookieButton(
+            text: "Verification",
+            onPressed: () {
+              Navigator.pop(context, PaymentType.buyerVerification);
+            },
+          ),
+          //TODO: Uncomment below block once development done.
+          /*Container(
             height: 64,
             width: MediaQuery.of(context).size.width * .3,
             child: RaisedButton(
@@ -121,7 +128,7 @@ class OrderSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0)),
               color: Colors.black,
             ),
-          ),
+          ),*/
         ],
       );
 }

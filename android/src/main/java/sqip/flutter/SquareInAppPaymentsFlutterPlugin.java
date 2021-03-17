@@ -95,6 +95,14 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
       HashMap<String, Object> contactMap = call.argument("contact");
 
       cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareLocationId, buyerActionString, moneyMap, contactMap);
+    } else if (call.method.equals("startBuyerVerificationFlow")) {
+      String squareLocationId = call.argument("squareLocationId");
+      String buyerActionString = call.argument("buyerAction");
+      HashMap<String, Object> moneyMap = call.argument("money");
+      HashMap<String, Object> contactMap = call.argument("contact");
+      String paymentSourceId = call.argument("paymentSourceId");
+
+      cardEntryModule.startBuyerVerificationFlow(result, buyerActionString, moneyMap, squareLocationId, contactMap, paymentSourceId);
     } else {
       result.notImplemented();
     }

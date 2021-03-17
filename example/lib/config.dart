@@ -15,5 +15,5 @@
 */
 
 const String squareApplicationId = "sandbox-sq0idb-N02XuDb6uEUf4IeetIEA0w";
-const String squareLocationId = "L1YWF10BY8YQY";
+const String squareLocationId = "LJ78668ECCF45";
 const String applePayMerchantId = "REPLACE_ME";

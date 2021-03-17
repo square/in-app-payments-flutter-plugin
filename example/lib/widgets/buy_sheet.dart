@@ -81,6 +81,9 @@ class BuySheetState extends State<BuySheet> {
         // NOTE this requires _squareLocationSet to be set
          await _onStartCardEntryFlowWithBuyerVerification();
         break;
+      case PaymentType.buyerVerification:
+        await _onStartBuyerVerificationFlow();
+        break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled) {
           _onStartGooglePay();
@@ -230,6 +233,31 @@ class BuySheetState extends State<BuySheet> {
         squareLocationId: squareLocationId,
         contact: contact,
         collectPostalCode: true);
+  }
+
+  Future<void> _onStartBuyerVerificationFlow() async {
+    var money = Money((b) => b
+      ..amount = 100
+      ..currencyCode = 'USD');
+
+    var contact = Contact((b) => b
+      ..givenName = "John"
+      ..familyName = "Doe"
+      ..addressLines = new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..city = "London"
+      ..countryCode = "GB"
+      ..email = "johndoe@example.com"
+      ..phone = "8001234567"
+      ..postalCode = "SE1 7");
+
+    await InAppPayments.startBuyerVerificationFlow(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+        paymentSourceId: "ccof:customer-card-id-requires-verification");
   }
 
   void _onCancelCardEntryFlow() {
