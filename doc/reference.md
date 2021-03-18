@@ -29,7 +29,7 @@ Method                                                       | Return Object    
 [completeCardEntry](#completecardentry)                      | void                      | Closes the card entry form on success.
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
-[startBuyerVerificationFlow](#startbuyerverification)        | void                      | Starts buyer verfication flow for card-on-file (cof). Displays verification view for some geographies.
+[startBuyerVerificationFlow](#startbuyerverificationflow)    | void                      | Starts buyer verfication flow for card-on-file (cof). Displays verification view for some geographies.
 
 ### Apple Pay methods
 Method                                                          | Return Object             | Description
