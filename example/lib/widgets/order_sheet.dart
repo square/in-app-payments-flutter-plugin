@@ -59,6 +59,7 @@ class OrderSheet extends StatelessWidget {
                       _LineDivider(),
                       _RefundInformation(),
                       _payButtons(context),
+                      _buyerVerificationButton(context)
                     ]),
               ),
             ]),
@@ -100,14 +101,7 @@ class OrderSheet extends StatelessWidget {
               Navigator.pop(context, PaymentType.cardPayment);
             },
           ),
-          CookieButton(
-            text: "Verification",
-            onPressed: () {
-              Navigator.pop(context, PaymentType.buyerVerification);
-            },
-          ),
-          //TODO: Uncomment below block once development done.
-          /*Container(
+          Container(
             height: 64,
             width: MediaQuery.of(context).size.width * .3,
             child: RaisedButton(
@@ -128,9 +122,21 @@ class OrderSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0)),
               color: Colors.black,
             ),
-          ),*/
+          ),
         ],
       );
+
+  Widget _buyerVerificationButton(context) => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: <Widget>[
+      CookieButton(
+        text: "Buyer Verification",
+        onPressed: () {
+          Navigator.pop(context, PaymentType.buyerVerification);
+        },
+      ),
+    ],
+  );
 }
 
 class _ShippingInformation extends StatelessWidget {
