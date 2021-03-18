@@ -76,10 +76,10 @@ class BuySheetState extends State<BuySheet> {
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
-        //await _onStartCardEntryFlow();
+        await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-         await _onStartCardEntryFlowWithBuyerVerification();
+         //await _onStartCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.buyerVerification:
         await _onStartBuyerVerificationFlow();
