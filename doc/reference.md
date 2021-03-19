@@ -1152,7 +1152,7 @@ Type of the Apple Pay payment summary item.
 
 ---
 
-## ErrorCode
+## ErrorCodes
 
 ErrorCode                                             | Cause                                                            | Returned by
 :---------------------------------------------------- | :--------------------------------------------------------------- | :---
