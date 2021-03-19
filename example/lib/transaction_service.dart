@@ -21,7 +21,7 @@ import 'package:http/http.dart' as http;
 
 // Replace this with the server host you create, if you have your own server running
 // e.g. https://server-host.com
-String chargeServerHost = "REPLACE_ME";
+String chargeServerHost = "https://testappsaviant.herokuapp.com";
 String chargeUrl = "$chargeServerHost/chargeForCookie";
 
 class ChargeException implements Exception {
@@ -50,8 +50,8 @@ Future<void> chargeCard(CardDetails result) async {
 }
 
 Future<void> chargeCardAfterBuyerVerification(
-    BuyerVerificationDetails result) async {
-  var body = jsonEncode({"nonce": result.nonce, "token": result.token});
+    String nonce, String token) async {
+  var body = jsonEncode({"nonce": nonce, "token": token});
   http.Response response;
   try {
     response = await http.post(chargeUrl, body: body, headers: {

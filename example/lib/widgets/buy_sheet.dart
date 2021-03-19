@@ -79,7 +79,10 @@ class BuySheetState extends State<BuySheet> {
         await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-        // await _onStartCardEntryFlowWithBuyerVerification();
+         //await _onStartCardEntryFlowWithBuyerVerification();
+        break;
+      case PaymentType.buyerVerification:
+        await _onStartBuyerVerificationFlow();
         break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled) {
@@ -232,6 +235,31 @@ class BuySheetState extends State<BuySheet> {
         collectPostalCode: true);
   }
 
+  Future<void> _onStartBuyerVerificationFlow() async {
+    var money = Money((b) => b
+      ..amount = 100
+      ..currencyCode = 'USD');
+
+    var contact = Contact((b) => b
+      ..givenName = "John"
+      ..familyName = "Doe"
+      ..addressLines = new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..city = "London"
+      ..countryCode = "GB"
+      ..email = "johndoe@example.com"
+      ..phone = "8001234567"
+      ..postalCode = "SE1 7");
+
+    await InAppPayments.startBuyerVerificationFlow(
+        onCardOnFileBuyerVerificationSuccess: _onCardOnFileBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+        paymentSourceId: "ccof:customer-card-id-requires-verification");
+  }
+
   void _onCancelCardEntryFlow() {
     _showOrderSheet();
   }
@@ -354,7 +382,24 @@ class BuySheetState extends State<BuySheet> {
     }
 
     try {
-      await chargeCardAfterBuyerVerification(result);
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on ChargeException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
+    }
+  }
+
+  void _onCardOnFileBuyerVerificationSuccess(BuyerVerificationForCardOnFile result) async {
+    if (!_chargeServerHostReplaced) {
+      _showUrlNotSetAndPrintCurlCommand(result.nonce,
+          verificationToken: result.token);
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
     } on ChargeException catch (ex) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext,
