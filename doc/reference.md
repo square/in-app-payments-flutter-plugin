@@ -12,7 +12,7 @@ plugin for In-App Payments SDK. For detailed documentation on In-App Payments SD
 * [Objects](#objects)
 * [Constants](#constants)
 * [Enumerations](#enumerations)
-* [Errors](#errors)
+* [Error Codes](#errorcodes)
 
 ---
 
@@ -309,7 +309,7 @@ to the possible results of the request.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
-onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
+onBuyerVerificationSuccess | [CardOnFileBuyerVerificationSuccessCallback](#CardOnFileBuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token. 
 money           | [Money](#Money)                          | Amount of money that will be charged
@@ -340,7 +340,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         ..postalCode = "SE1 7");
     
     await InAppPayments.startBuyerVerificationFlow(
-        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onCardOnFileBuyerVerificationSuccess: _onCardOnFileBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         buyerAction: "Charge",
         money: money,
@@ -349,7 +349,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         paymentSourceId: "REPLACE_ME");
   }
 
-  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
+  void _onCardOnFileBuyerVerificationSuccess(BuyerVerificationForCardOnFile result) async {
     // process card nonce and verification results
   }
 
@@ -865,6 +865,11 @@ errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the 
  
  Callback invoked when Buyer Verification flow fails.
 
+---
+ ### CardOnFileBuyerVerificationSuccessCallback
+ 
+ Callback invoked when Buyer Verification for card-on-file flow succeeds.
+ 
 ---
 ## Classes
 
