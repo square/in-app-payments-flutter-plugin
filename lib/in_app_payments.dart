@@ -40,6 +40,9 @@ typedef BuyerVerificationSuccessCallback = void Function(
     BuyerVerificationDetails result);
 typedef BuyerVerificationErrorCallback = void Function(ErrorInfo errorInfo);
 
+typedef CardOnFileBuyerVerificationSuccessCallback = void Function(
+    BuyerVerificationForCardOnFile result);
+
 // ignore: avoid_classes_with_only_static_members
 class InAppPayments {
   static final MethodChannel _channel =
@@ -68,6 +71,8 @@ class InAppPayments {
 
   static BuyerVerificationSuccessCallback _buyerVerificationSuccessCallback;
   static BuyerVerificationErrorCallback _buyerVerificationErrorCallback;
+
+  static CardOnFileBuyerVerificationSuccessCallback _cardOnFileBuyerVerificationSuccessCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
@@ -139,6 +144,13 @@ class InAppPayments {
             var errorInfo = _standardSerializers.deserializeWith(
                 ErrorInfo.serializer, call.arguments);
             _buyerVerificationErrorCallback(errorInfo);
+          }
+          break;
+        case 'onCardOnFileBuyerVerificationSuccess':
+          if (_cardOnFileBuyerVerificationSuccessCallback != null) {
+            var result = _standardSerializers.deserializeWith(
+                BuyerVerificationForCardOnFile.serializer, call.arguments);
+            _cardOnFileBuyerVerificationSuccessCallback(result);
           }
           break;
         default:
@@ -339,14 +351,14 @@ class InAppPayments {
   }
 
   static Future startBuyerVerificationFlow(
-      {BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      {CardOnFileBuyerVerificationSuccessCallback onCardOnFileBuyerVerificationSuccess,
       BuyerVerificationErrorCallback onBuyerVerificationFailure,
       String buyerAction,
       Money money,
       String squareLocationId,
       Contact contact,
       String paymentSourceId}) async {
-    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _cardOnFileBuyerVerificationSuccessCallback = onCardOnFileBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
