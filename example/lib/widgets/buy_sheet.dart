@@ -251,13 +251,13 @@ class BuySheetState extends State<BuySheet> {
       ..postalCode = "SE1 7");
 
     await InAppPayments.startBuyerVerificationFlow(
-        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onCardOnFileBuyerVerificationSuccess: _onCardOnFileBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         buyerAction: "Charge",
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "REPLACE_ME");
+        paymentSourceId: "ccof:customer-card-id-requires-verification");
   }
 
   void _onCancelCardEntryFlow() {
@@ -382,7 +382,24 @@ class BuySheetState extends State<BuySheet> {
     }
 
     try {
-      await chargeCardAfterBuyerVerification(result);
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on ChargeException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
+    }
+  }
+
+  void _onCardOnFileBuyerVerificationSuccess(BuyerVerificationForCardOnFile result) async {
+    if (!_chargeServerHostReplaced) {
+      _showUrlNotSetAndPrintCurlCommand(result.nonce,
+          verificationToken: result.token);
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
     } on ChargeException catch (ex) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext,

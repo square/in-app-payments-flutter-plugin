@@ -1433,7 +1433,7 @@ class BuyerVerificationForCardOnFileBuilder
           new _$BuyerVerificationForCardOnFile._(
               nonce: nonce, token: token);
     } catch (_) {
-      rethrow;
+        rethrow;
     }
     replace(_$result);
     return _$result;
