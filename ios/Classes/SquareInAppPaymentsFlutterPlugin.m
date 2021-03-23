@@ -103,6 +103,18 @@ FlutterMethodChannel *_channel;
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
         [self.applePayModule completeApplePayAuthorization:result isSuccess:isSuccess errorMessage:errorMessage];
+    } else if ([@"startBuyerVerificationFlow" isEqualToString:call.method]) {
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+        NSString *paymentSourceId = call.arguments[@"paymentSourceId"];
+        [self.cardEntryModule startBuyerVerificationFlow:result
+                                       buyerActionString:buyerActionString
+                                                moneyMap:moneyMap
+                                              locationId:squareLocationId
+                                              contactMap:contactMap
+                                         paymentSourceId:paymentSourceId];
     } else {
         result(FlutterMethodNotImplemented);
     }

@@ -43,6 +43,7 @@ static NSString *const FSQIPCardEntryCompleteEventName = @"cardEntryComplete";
 static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntryDidObtainCardDetails";
 static NSString *const FSQIPOnBuyerVerificationSuccessEventName = @"onBuyerVerificationSuccess";
 static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerificationError";
+static NSString *const FSQIPOnCardOnFileBuyerVerificationSuccessEventName = @"onCardOnFileBuyerVerificationSuccess";
 
 @implementation FSQIPCardEntry
 
@@ -71,64 +72,9 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
 
 - (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap
 {
-    SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue]
-                            currency:[FSQIPBuyerVerification currencyForCurrencyCode:moneyMap[@"currencyCode"]]];
-
-    SQIPBuyerAction *buyerAction = nil;
-    if ([@"Store" isEqualToString:buyerActionString]) {
-        buyerAction = [SQIPBuyerAction storeAction];
-    } else {
-        buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
-    }
-
-    // Contact info
-    NSString *givenName = contactMap[@"givenName"];
-    NSString *familyName = contactMap[@"familyName"];
-    NSArray<NSString *> *addressLines = contactMap[@"addressLines"];
-    NSString *city = contactMap[@"city"];
-    NSString *countryCode = contactMap[@"countryCode"];
-    NSString *email = contactMap[@"email"];
-    NSString *phone = contactMap[@"phone"];
-    NSString *postalCode = contactMap[@"postalCode"];
-    NSString *region = contactMap[@"region"];
-
-    SQIPContact *contact = [[SQIPContact alloc] init];
-    contact.givenName = givenName;
-
-    if (![familyName isEqual:[NSNull null]]) {
-        contact.familyName = familyName;
-    }
-
-    if (![email isEqual:[NSNull null]]) {
-        contact.email = email;
-    }
-
-    if (![addressLines isEqual:[NSNull null]]) {
-        contact.addressLines = addressLines;
-        NSLog(@"%@", addressLines);
-    }
-
-    if (![city isEqual:[NSNull null]]) {
-        contact.city = city;
-    }
-
-    if (![region isEqual:[NSNull null]]) {
-        contact.region = region;
-    }
-
-    if (![postalCode isEqual:[NSNull null]]) {
-        contact.postalCode = postalCode;
-    }
-
-    if (![postalCode isEqual:[NSNull null]]) {
-        contact.postalCode = postalCode;
-    }
-    
-    contact.country = [FSQIPBuyerVerification countryForCountryCode:countryCode];
-
-    if (![phone isEqual:[NSNull null]]) {
-        contact.phone = phone;
-    }
+    SQIPMoney * money = [self _getMoney:moneyMap];
+    SQIPBuyerAction * buyerAction = [self _getBuyerAction:buyerActionString money:money];
+    SQIPContact * contact = [self _getContact:contactMap];
 
     self.locationId = locationId;
     self.buyerAction = buyerAction;
@@ -305,6 +251,52 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     result(nil);
 }
 
+- (void)startBuyerVerificationFlow:(FlutterResult)result buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap locationId:(NSString *)locationId contactMap:(NSDictionary *)contactMap paymentSourceId:(NSString *)paymentSourceId
+{
+    SQIPMoney * money = [self _getMoney:moneyMap];
+    SQIPBuyerAction * buyerAction = [self _getBuyerAction:buyerActionString money:money];
+    SQIPContact * contact = [self _getContact:contactMap];
+
+    self.locationId = locationId;
+    self.buyerAction = buyerAction;
+    self.contact = contact;
+    
+    SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc]                initWithPaymentSourceID:paymentSourceId
+                    buyerAction:self.buyerAction
+                     locationID:self.locationId
+                        contact:self.contact];
+    
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        [rootViewController.navigationController popViewControllerAnimated:YES];
+    } else {
+        [rootViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+
+    [SQIPBuyerVerificationSDK.shared verifyWithParameters:params
+        theme:self.theme
+        viewController:rootViewController
+        success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
+            NSDictionary *verificationResult =
+                @{
+                    @"nonce" : paymentSourceId,
+                    @"token" : verifiedDetails.verificationToken
+                };
+            [self.channel invokeMethod:FSQIPOnCardOnFileBuyerVerificationSuccessEventName
+                arguments:verificationResult];
+        }
+        failure:^(NSError *_Nonnull error) {
+            NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
+            NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
+            [self.channel invokeMethod:FSQIPOnBuyerVerificationErrorEventName
+                arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
+                                message:error.localizedDescription
+                                debugCode:debugCode
+                                debugMessage:debugMessage]];
+        }];
+    result(nil);
+}
+
 #pragma mark - Private Methods
 - (SQIPCardEntryViewController *)_makeCardEntryForm
 {
@@ -325,6 +317,73 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     } else {
         return UIKeyboardAppearanceDefault;
     }
+}
+
+- (SQIPMoney *)_getMoney:(NSDictionary *)moneyMap {
+    SQIPMoney *money = [[SQIPMoney alloc] initWithAmount:[moneyMap[@"amount"] longValue]
+                                                currency:[FSQIPBuyerVerification currencyForCurrencyCode:moneyMap[@"currencyCode"]]];
+    return money;
+}
+
+- (SQIPBuyerAction *)_getBuyerAction:(NSString *)buyerActionString money:(SQIPMoney *)money {
+    SQIPBuyerAction *buyerAction = nil;
+    if ([@"Store" isEqualToString:buyerActionString]) {
+        buyerAction = [SQIPBuyerAction storeAction];
+    } else {
+        buyerAction = [SQIPBuyerAction chargeActionWithMoney:money];
+    }
+    return buyerAction;
+}
+
+- (SQIPContact *)_getContact:(NSDictionary *)contactMap {
+    NSString *givenName = contactMap[@"givenName"];
+    NSString *familyName = contactMap[@"familyName"];
+    NSArray<NSString *> *addressLines = contactMap[@"addressLines"];
+    NSString *city = contactMap[@"city"];
+    NSString *countryCode = contactMap[@"countryCode"];
+    NSString *email = contactMap[@"email"];
+    NSString *phone = contactMap[@"phone"];
+    NSString *postalCode = contactMap[@"postalCode"];
+    NSString *region = contactMap[@"region"];
+    
+    SQIPContact *contact = [[SQIPContact alloc] init];
+    contact.givenName = givenName;
+    
+    if (![familyName isEqual:[NSNull null]]) {
+        contact.familyName = familyName;
+    }
+    
+    if (![email isEqual:[NSNull null]]) {
+        contact.email = email;
+    }
+    
+    if (![addressLines isEqual:[NSNull null]]) {
+        contact.addressLines = addressLines;
+        NSLog(@"%@", addressLines);
+    }
+    
+    if (![city isEqual:[NSNull null]]) {
+        contact.city = city;
+    }
+    
+    if (![region isEqual:[NSNull null]]) {
+        contact.region = region;
+    }
+    
+    if (![postalCode isEqual:[NSNull null]]) {
+        contact.postalCode = postalCode;
+    }
+    
+    if (![postalCode isEqual:[NSNull null]]) {
+        contact.postalCode = postalCode;
+    }
+    
+    contact.country = [FSQIPBuyerVerification countryForCountryCode:countryCode];
+    
+    if (![phone isEqual:[NSNull null]]) {
+        contact.phone = phone;
+    }
+    return contact;
 }
 
 @end
