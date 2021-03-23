@@ -261,10 +261,10 @@ static NSString *const FSQIPOnCardOnFileBuyerVerificationSuccessEventName = @"on
     self.buyerAction = buyerAction;
     self.contact = contact;
     
-    SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc]                initWithPaymentSourceID:paymentSourceId
-                    buyerAction:self.buyerAction
-                     locationID:self.locationId
-                        contact:self.contact];
+    SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:paymentSourceId
+                                           buyerAction:self.buyerAction
+                                            locationID:self.locationId
+                                               contact:self.contact];
     
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
