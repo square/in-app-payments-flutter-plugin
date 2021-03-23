@@ -27,5 +27,6 @@
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
+- (void)startBuyerVerificationFlow:(FlutterResult)result buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap locationId:(NSString *)locationId contactMap:(NSDictionary *)contactMap paymentSourceId:(NSString *)paymentSourceId;
 
 @end
