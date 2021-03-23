@@ -146,38 +146,9 @@ final public class CardEntryModule {
   public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
     SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
 
-    Money money = new Money(
-        ((Integer)moneyMap.get("amount")).intValue(),
-        sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
-
-    BuyerAction buyerAction;
-    if (buyerActionString.equals("Store")) {
-      buyerAction = new BuyerAction.Store();
-    } else {
-      buyerAction = new BuyerAction.Charge(money);
-    }
-
-    // Contact info
-    Object givenName = contactMap.get("givenName");
-    Object familyName = contactMap.get("familyName");
-    Object addressLines = contactMap.get("addressLines"); // Arrays.asList((Object[])contactMap.get("addressLines"));
-    Object city = contactMap.get("city");
-    Object countryCode = contactMap.get("countryCode");
-    Object email = contactMap.get("email");
-    Object phone = contactMap.get("phone");
-    Object postalCode = contactMap.get("postalCode");
-    Object region = contactMap.get("region");
-    Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
-    Contact contact = new Contact.Builder()
-      .familyName((familyName != null) ? familyName.toString() : "")
-      .email((email != null) ? email.toString() : "")
-      .addressLines((addressLines != null) ? (ArrayList<String>)addressLines : new ArrayList<String>())
-      .city((city != null) ? city.toString() : "")
-      .countryCode(country)
-      .postalCode((postalCode != null) ? postalCode.toString() : "")
-      .phone((phone != null) ? phone.toString() : "")
-      .region((region != null) ? region.toString() : "")
-      .build((givenName != null) ? givenName.toString() : "");
+    Money money = getMoney(moneyMap);
+    BuyerAction buyerAction = getBuyerAction(buyerActionString, money);
+    Contact contact = getContact(contactMap);
 
     this.squareIdentifier = squareIdentifier;
     this.buyerAction = buyerAction;
@@ -190,17 +161,20 @@ final public class CardEntryModule {
   public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
     SquareIdentifier squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
 
-    Money money = new Money(
-            ((Integer)moneyMap.get("amount")).intValue(),
-            sqip.Currency.valueOf((String)moneyMap.get("currencyCode")));
+    Money money = getMoney(moneyMap);
+    BuyerAction buyerAction = getBuyerAction(buyerActionString, money);
+    Contact contact = getContact(contactMap);
 
-    BuyerAction buyerAction;
-    if (buyerActionString.equals("Store")) {
-      buyerAction = new BuyerAction.Store();
-    } else {
-      buyerAction = new BuyerAction.Charge(money);
-    }
+    this.squareIdentifier = squareIdentifier;
+    this.buyerAction = buyerAction;
+    this.contact = contact;
+    this.paymentSourceId = paymentSourceId;
+    VerificationParameters verificationParameters = new VerificationParameters(this.paymentSourceId, this.buyerAction, this.squareIdentifier, this.contact);
+    BuyerVerification.verify(currentActivity, verificationParameters);
+    result.success(null);
+  }
 
+  private Contact getContact(Map<String, Object> contactMap) {
     // Contact info
     Object givenName = contactMap.get("givenName");
     Object familyName = contactMap.get("familyName");
@@ -212,24 +186,32 @@ final public class CardEntryModule {
     Object postalCode = contactMap.get("postalCode");
     Object region = contactMap.get("region");
     Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
-    Contact contact = new Contact.Builder()
+    return new Contact.Builder()
             .familyName((familyName != null) ? familyName.toString() : "")
             .email((email != null) ? email.toString() : "")
-            .addressLines((addressLines != null) ? (ArrayList<String>)addressLines : new ArrayList<String>())
+            .addressLines((addressLines != null) ? (ArrayList<String>) addressLines : new ArrayList<String>())
             .city((city != null) ? city.toString() : "")
             .countryCode(country)
             .postalCode((postalCode != null) ? postalCode.toString() : "")
             .phone((phone != null) ? phone.toString() : "")
             .region((region != null) ? region.toString() : "")
             .build((givenName != null) ? givenName.toString() : "");
+  }
 
-    this.squareIdentifier = squareIdentifier;
-    this.buyerAction = buyerAction;
-    this.contact = contact;
-    this.paymentSourceId = paymentSourceId;
-    VerificationParameters verificationParameters = new VerificationParameters(this.paymentSourceId, this.buyerAction, this.squareIdentifier, this.contact);
-    BuyerVerification.verify(currentActivity, verificationParameters);
-    result.success(null);
+  private Money getMoney(Map<String, Object> moneyMap) {
+    return new Money(
+            ((Integer) moneyMap.get("amount")).intValue(),
+            sqip.Currency.valueOf((String) moneyMap.get("currencyCode")));
+  }
+
+  private BuyerAction getBuyerAction(String buyerActionString, Money money) {
+    BuyerAction buyerAction;
+    if (buyerActionString.equals("Store")) {
+      buyerAction = new BuyerAction.Store();
+    } else {
+      buyerAction = new BuyerAction.Charge(money);
+    }
+    return buyerAction;
   }
 
   private PluginRegistry.ActivityResultListener createActivityResultListener(MethodChannel channel) {
