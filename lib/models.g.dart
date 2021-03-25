@@ -417,12 +417,18 @@ class _$BuyerVerificationDetailsSerializer
       'nonce',
       serializers.serialize(object.nonce,
           specifiedType: const FullType(String)),
-      'card',
-      serializers.serialize(object.card, specifiedType: const FullType(Card)),
       'token',
       serializers.serialize(object.token,
           specifiedType: const FullType(String)),
     ];
+    Object value;
+    value = object.card;
+    if (value != null) {
+      result
+        ..add('card')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(Card)));
+    }
 
     return result;
   }
@@ -1176,9 +1182,6 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
     if (nonce == null) {
       throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'nonce');
     }
-    if (card == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'card');
-    }
     if (token == null) {
       throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'token');
     }
@@ -1265,12 +1268,12 @@ class BuyerVerificationDetailsBuilder
     try {
       _$result = _$v ??
           new _$BuyerVerificationDetails._(
-              nonce: nonce, card: card.build(), token: token);
+              nonce: nonce, card: _card?.build(), token: token);
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'card';
-        card.build();
+        _card?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuyerVerificationDetails', _$failedField, e.toString());
