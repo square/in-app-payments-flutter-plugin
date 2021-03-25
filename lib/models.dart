@@ -141,20 +141,6 @@ abstract class BuyerVerificationDetails
       _$buyerVerificationDetailsSerializer;
 }
 
-abstract class BuyerVerificationForCardOnFile
-    implements
-        Built<BuyerVerificationForCardOnFile, BuyerVerificationForCardOnFileBuilder> {
-  String get nonce;
-  String get token;
-
-  BuyerVerificationForCardOnFile._();
-  factory BuyerVerificationForCardOnFile(
-      [updates(BuyerVerificationForCardOnFileBuilder b)]) =
-  _$BuyerVerificationForCardOnFile;
-  static Serializer<BuyerVerificationForCardOnFile> get serializer =>
-      _$buyerVerificationForCardOnFileSerializer;
-}
-
 abstract class Card implements Built<Card, CardBuilder> {
   Brand get brand;
   String get lastFourDigits;

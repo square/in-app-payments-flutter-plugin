@@ -43,7 +43,6 @@ static NSString *const FSQIPCardEntryCompleteEventName = @"cardEntryComplete";
 static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntryDidObtainCardDetails";
 static NSString *const FSQIPOnBuyerVerificationSuccessEventName = @"onBuyerVerificationSuccess";
 static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerificationError";
-static NSString *const FSQIPOnCardOnFileBuyerVerificationSuccessEventName = @"onCardOnFileBuyerVerificationSuccess";
 
 @implementation FSQIPCardEntry
 
@@ -282,7 +281,7 @@ static NSString *const FSQIPOnCardOnFileBuyerVerificationSuccessEventName = @"on
                     @"nonce" : paymentSourceId,
                     @"token" : verifiedDetails.verificationToken
                 };
-            [self.channel invokeMethod:FSQIPOnCardOnFileBuyerVerificationSuccessEventName
+            [self.channel invokeMethod:FSQIPOnBuyerVerificationSuccessEventName
                 arguments:verificationResult];
         }
         failure:^(NSError *_Nonnull error) {

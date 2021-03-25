@@ -258,7 +258,7 @@ final public class CardEntryModule {
                 Map<String, Object> mapToReturn = new LinkedHashMap<>();
                 mapToReturn.put("nonce", CardEntryModule.this.paymentSourceId);
                 mapToReturn.put("token", result.getSuccessValue().getVerificationToken());
-                channel.invokeMethod("onCardOnFileBuyerVerificationSuccess", mapToReturn);
+                channel.invokeMethod("onBuyerVerificationSuccess", mapToReturn);
               }
             } else if (result.isError()) {
               Error error = result.getErrorValue();

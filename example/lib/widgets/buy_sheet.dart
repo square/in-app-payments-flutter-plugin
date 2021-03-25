@@ -79,7 +79,7 @@ class BuySheetState extends State<BuySheet> {
         await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-         //await _onStartCardEntryFlowWithBuyerVerification();
+        // await _onStartCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.buyerVerification:
         await _onStartBuyerVerificationFlow();
@@ -251,13 +251,13 @@ class BuySheetState extends State<BuySheet> {
       ..postalCode = "SE1 7");
 
     await InAppPayments.startBuyerVerificationFlow(
-        onCardOnFileBuyerVerificationSuccess: _onCardOnFileBuyerVerificationSuccess,
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         buyerAction: "Charge",
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "REPLACE_ME");
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
   }
 
   void _onCancelCardEntryFlow() {
@@ -331,6 +331,23 @@ class BuySheetState extends State<BuySheet> {
     }
   }
 
+  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
+    if (!_chargeServerHostReplaced) {
+      _showUrlNotSetAndPrintCurlCommand(result.nonce,
+          verificationToken: result.token);
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on ChargeException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
+    }
+  }
+
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
       await InAppPayments.completeApplePayAuthorization(isSuccess: false);
@@ -371,40 +388,6 @@ class BuySheetState extends State<BuySheet> {
     if (_applePayStatus == ApplePayStatus.unknown) {
       // the apple pay is canceled
       _showOrderSheet();
-    }
-  }
-
-  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
-    if (!_chargeServerHostReplaced) {
-      _showUrlNotSetAndPrintCurlCommand(result.nonce,
-          verificationToken: result.token);
-      return;
-    }
-
-    try {
-      await chargeCardAfterBuyerVerification(result.nonce, result.token);
-    } on ChargeException catch (ex) {
-      showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
-          title: "Error processing card payment",
-          description: ex.errorMessage);
-    }
-  }
-
-  void _onCardOnFileBuyerVerificationSuccess(BuyerVerificationForCardOnFile result) async {
-    if (!_chargeServerHostReplaced) {
-      _showUrlNotSetAndPrintCurlCommand(result.nonce,
-          verificationToken: result.token);
-      return;
-    }
-
-    try {
-      await chargeCardAfterBuyerVerification(result.nonce, result.token);
-    } on ChargeException catch (ex) {
-      showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
-          title: "Error processing card payment",
-          description: ex.errorMessage);
     }
   }
 
