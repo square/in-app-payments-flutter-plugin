@@ -1,15 +1,12 @@
 matrix:
   include:
   - language: android
-    sudo: false
-    jdk: oraclejdk8
-    os:
-    - linux
-    licenses:
-    - android-sdk-preview-license-.+
-    - android-sdk-license-.+
-    - google-gdk-license-.+
+    dist: trusty
     android:
+      licenses:
+      - 'android-sdk-preview-license-52d11cd2'
+      - 'android-sdk-license-.+'
+      - 'google-gdk-license-.+'
       components:
       - tools
       - platform-tools
@@ -17,13 +14,6 @@ matrix:
       - build-tools-28.0.3
       - android-28
       - extra-google-google_play_services
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - libstdc++6
-        - fonts-droid
     before_install:
     - cd example
     - yes | sdkmanager "platforms;android-28"
