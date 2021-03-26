@@ -197,14 +197,14 @@ Serializer<Money> _$moneySerializer = new _$MoneySerializer();
 Serializer<Contact> _$contactSerializer = new _$ContactSerializer();
 
 class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'usageError': 'USAGE_ERROR',
     'noNetwork': 'NO_NETWORK',
     'failed': 'FAILED',
     'canceled': 'CANCELED',
     'unsupportedSDKVersion': 'UNSUPPORTED_SDK_VERSION',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'USAGE_ERROR': 'usageError',
     'NO_NETWORK': 'noNetwork',
     'FAILED': 'failed',
@@ -229,7 +229,7 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
 }
 
 class _$BrandSerializer implements PrimitiveSerializer<Brand> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'otherBrand': 'OTHER_BRAND',
     'visa': 'VISA',
     'mastercard': 'MASTERCARD',
@@ -240,7 +240,7 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
     'chinaUnionPay': 'CHINA_UNION_PAY',
     'squareGiftCard': 'SQUARE_GIFT_CARD',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'OTHER_BRAND': 'otherBrand',
     'VISA': 'visa',
     'MASTERCARD': 'mastercard',
@@ -269,12 +269,12 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
 }
 
 class _$CardTypeSerializer implements PrimitiveSerializer<CardType> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'debit': 'DEBIT',
     'credit': 'CREDIT',
     'unknown': 'UNKNOWN',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'DEBIT': 'debit',
     'CREDIT': 'credit',
     'UNKNOWN': 'unknown',
@@ -298,12 +298,12 @@ class _$CardTypeSerializer implements PrimitiveSerializer<CardType> {
 
 class _$CardPrepaidTypeSerializer
     implements PrimitiveSerializer<CardPrepaidType> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'prepaid': 'PREPAID',
     'notPrepaid': 'NOT_PREPAID',
     'unknown': 'UNKNOWN',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'PREPAID': 'prepaid',
     'NOT_PREPAID': 'notPrepaid',
     'UNKNOWN': 'unknown',
@@ -327,11 +327,11 @@ class _$CardPrepaidTypeSerializer
 
 class _$ApplePayPaymentTypeSerializer
     implements PrimitiveSerializer<ApplePayPaymentType> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'finalPayment': 'FINAL',
     'pendingPayment': 'PENDING',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'FINAL': 'finalPayment',
     'PENDING': 'pendingPayment',
   };
@@ -360,9 +360,9 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   final String wireName = 'CardDetails';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, CardDetails object,
+  Iterable<Object?> serialize(Serializers serializers, CardDetails object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'nonce',
       serializers.serialize(object.nonce,
           specifiedType: const FullType(String)),
@@ -374,7 +374,7 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
   }
 
   @override
-  CardDetails deserialize(Serializers serializers, Iterable<Object> serialized,
+  CardDetails deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new CardDetailsBuilder();
 
@@ -382,7 +382,7 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'nonce':
           result.nonce = serializers.deserialize(value,
@@ -390,7 +390,7 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
           break;
         case 'card':
           result.card.replace(serializers.deserialize(value,
-              specifiedType: const FullType(Card)) as Card);
+              specifiedType: const FullType(Card))! as Card);
           break;
       }
     }
@@ -410,10 +410,10 @@ class _$BuyerVerificationDetailsSerializer
   final String wireName = 'BuyerVerificationDetails';
 
   @override
-  Iterable<Object> serialize(
+  Iterable<Object?> serialize(
       Serializers serializers, BuyerVerificationDetails object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'nonce',
       serializers.serialize(object.nonce,
           specifiedType: const FullType(String)),
@@ -421,21 +421,20 @@ class _$BuyerVerificationDetailsSerializer
       serializers.serialize(object.token,
           specifiedType: const FullType(String)),
     ];
-    Object value;
+    Object? value;
     value = object.card;
     if (value != null) {
       result
         ..add('card')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(Card)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(Card)));
     }
-
     return result;
   }
 
   @override
   BuyerVerificationDetails deserialize(
-      Serializers serializers, Iterable<Object> serialized,
+      Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new BuyerVerificationDetailsBuilder();
 
@@ -443,7 +442,7 @@ class _$BuyerVerificationDetailsSerializer
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'nonce':
           result.nonce = serializers.deserialize(value,
@@ -451,7 +450,7 @@ class _$BuyerVerificationDetailsSerializer
           break;
         case 'card':
           result.card.replace(serializers.deserialize(value,
-              specifiedType: const FullType(Card)) as Card);
+              specifiedType: const FullType(Card))! as Card);
           break;
         case 'token':
           result.token = serializers.deserialize(value,
@@ -471,9 +470,9 @@ class _$CardSerializer implements StructuredSerializer<Card> {
   final String wireName = 'Card';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Card object,
+  Iterable<Object?> serialize(Serializers serializers, Card object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'brand',
       serializers.serialize(object.brand, specifiedType: const FullType(Brand)),
       'lastFourDigits',
@@ -492,17 +491,19 @@ class _$CardSerializer implements StructuredSerializer<Card> {
       serializers.serialize(object.prepaidType,
           specifiedType: const FullType(CardPrepaidType)),
     ];
-    if (object.postalCode != null) {
+    Object? value;
+    value = object.postalCode;
+    if (value != null) {
       result
         ..add('postalCode')
-        ..add(serializers.serialize(object.postalCode,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
     return result;
   }
 
   @override
-  Card deserialize(Serializers serializers, Iterable<Object> serialized,
+  Card deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new CardBuilder();
 
@@ -510,7 +511,7 @@ class _$CardSerializer implements StructuredSerializer<Card> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'brand':
           result.brand = serializers.deserialize(value,
@@ -555,9 +556,9 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
   final String wireName = 'RGBAColor';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, RGBAColor object,
+  Iterable<Object?> serialize(Serializers serializers, RGBAColor object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'r',
       serializers.serialize(object.r, specifiedType: const FullType(int)),
       'g',
@@ -565,17 +566,19 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
       'b',
       serializers.serialize(object.b, specifiedType: const FullType(int)),
     ];
-    if (object.a != null) {
+    Object? value;
+    value = object.a;
+    if (value != null) {
       result
         ..add('a')
-        ..add(serializers.serialize(object.a,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(double)));
     }
     return result;
   }
 
   @override
-  RGBAColor deserialize(Serializers serializers, Iterable<Object> serialized,
+  RGBAColor deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new RGBAColorBuilder();
 
@@ -583,7 +586,7 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'r':
           result.r = serializers.deserialize(value,
@@ -615,23 +618,25 @@ class _$FontSerializer implements StructuredSerializer<Font> {
   final String wireName = 'Font';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Font object,
+  Iterable<Object?> serialize(Serializers serializers, Font object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'size',
       serializers.serialize(object.size, specifiedType: const FullType(double)),
     ];
-    if (object.name != null) {
+    Object? value;
+    value = object.name;
+    if (value != null) {
       result
         ..add('name')
-        ..add(serializers.serialize(object.name,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
     return result;
   }
 
   @override
-  Font deserialize(Serializers serializers, Iterable<Object> serialized,
+  Font deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new FontBuilder();
 
@@ -639,7 +644,7 @@ class _$FontSerializer implements StructuredSerializer<Font> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'size':
           result.size = serializers.deserialize(value,
@@ -658,11 +663,11 @@ class _$FontSerializer implements StructuredSerializer<Font> {
 
 class _$KeyboardAppearanceSerializer
     implements PrimitiveSerializer<KeyboardAppearance> {
-  static const Map<String, String> _toWire = const <String, String>{
+  static const Map<String, Object> _toWire = const <String, Object>{
     'dark': 'Dark',
     'light': 'Light',
   };
-  static const Map<String, String> _fromWire = const <String, String>{
+  static const Map<Object, String> _fromWire = const <Object, String>{
     'Dark': 'dark',
     'Light': 'light',
   };
@@ -690,86 +695,99 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
   final String wireName = 'IOSTheme';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, IOSTheme object,
+  Iterable<Object?> serialize(Serializers serializers, IOSTheme object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[];
-    if (object.font != null) {
+    final result = <Object?>[];
+    Object? value;
+    value = object.font;
+    if (value != null) {
       result
         ..add('font')
-        ..add(serializers.serialize(object.font,
-            specifiedType: const FullType(Font)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(Font)));
     }
-    if (object.backgroundColor != null) {
+    value = object.backgroundColor;
+    if (value != null) {
       result
         ..add('backgroundColor')
-        ..add(serializers.serialize(object.backgroundColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.foregroundColor != null) {
+    value = object.foregroundColor;
+    if (value != null) {
       result
         ..add('foregroundColor')
-        ..add(serializers.serialize(object.foregroundColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.textColor != null) {
+    value = object.textColor;
+    if (value != null) {
       result
         ..add('textColor')
-        ..add(serializers.serialize(object.textColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.placeholderTextColor != null) {
+    value = object.placeholderTextColor;
+    if (value != null) {
       result
         ..add('placeholderTextColor')
-        ..add(serializers.serialize(object.placeholderTextColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.tintColor != null) {
+    value = object.tintColor;
+    if (value != null) {
       result
         ..add('tintColor')
-        ..add(serializers.serialize(object.tintColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.messageColor != null) {
+    value = object.messageColor;
+    if (value != null) {
       result
         ..add('messageColor')
-        ..add(serializers.serialize(object.messageColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.errorColor != null) {
+    value = object.errorColor;
+    if (value != null) {
       result
         ..add('errorColor')
-        ..add(serializers.serialize(object.errorColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.saveButtonTitle != null) {
+    value = object.saveButtonTitle;
+    if (value != null) {
       result
         ..add('saveButtonTitle')
-        ..add(serializers.serialize(object.saveButtonTitle,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.saveButtonFont != null) {
+    value = object.saveButtonFont;
+    if (value != null) {
       result
         ..add('saveButtonFont')
-        ..add(serializers.serialize(object.saveButtonFont,
-            specifiedType: const FullType(Font)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(Font)));
     }
-    if (object.saveButtonTextColor != null) {
+    value = object.saveButtonTextColor;
+    if (value != null) {
       result
         ..add('saveButtonTextColor')
-        ..add(serializers.serialize(object.saveButtonTextColor,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(RGBAColor)));
     }
-    if (object.keyboardAppearance != null) {
+    value = object.keyboardAppearance;
+    if (value != null) {
       result
         ..add('keyboardAppearance')
-        ..add(serializers.serialize(object.keyboardAppearance,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(KeyboardAppearance)));
     }
     return result;
   }
 
   @override
-  IOSTheme deserialize(Serializers serializers, Iterable<Object> serialized,
+  IOSTheme deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new IOSThemeBuilder();
 
@@ -777,39 +795,39 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'font':
           result.font.replace(serializers.deserialize(value,
-              specifiedType: const FullType(Font)) as Font);
+              specifiedType: const FullType(Font))! as Font);
           break;
         case 'backgroundColor':
           result.backgroundColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'foregroundColor':
           result.foregroundColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'textColor':
           result.textColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'placeholderTextColor':
           result.placeholderTextColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'tintColor':
           result.tintColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'messageColor':
           result.messageColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'errorColor':
           result.errorColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'saveButtonTitle':
           result.saveButtonTitle = serializers.deserialize(value,
@@ -817,11 +835,11 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
           break;
         case 'saveButtonFont':
           result.saveButtonFont.replace(serializers.deserialize(value,
-              specifiedType: const FullType(Font)) as Font);
+              specifiedType: const FullType(Font))! as Font);
           break;
         case 'saveButtonTextColor':
           result.saveButtonTextColor.replace(serializers.deserialize(value,
-              specifiedType: const FullType(RGBAColor)) as RGBAColor);
+              specifiedType: const FullType(RGBAColor))! as RGBAColor);
           break;
         case 'keyboardAppearance':
           result.keyboardAppearance = serializers.deserialize(value,
@@ -842,9 +860,9 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   final String wireName = 'ErrorInfo';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, ErrorInfo object,
+  Iterable<Object?> serialize(Serializers serializers, ErrorInfo object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'code',
       serializers.serialize(object.code,
           specifiedType: const FullType(ErrorCode)),
@@ -863,7 +881,7 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
   }
 
   @override
-  ErrorInfo deserialize(Serializers serializers, Iterable<Object> serialized,
+  ErrorInfo deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new ErrorInfoBuilder();
 
@@ -871,7 +889,7 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'code':
           result.code = serializers.deserialize(value,
@@ -903,9 +921,9 @@ class _$MoneySerializer implements StructuredSerializer<Money> {
   final String wireName = 'Money';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Money object,
+  Iterable<Object?> serialize(Serializers serializers, Money object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'amount',
       serializers.serialize(object.amount, specifiedType: const FullType(int)),
       'currencyCode',
@@ -917,7 +935,7 @@ class _$MoneySerializer implements StructuredSerializer<Money> {
   }
 
   @override
-  Money deserialize(Serializers serializers, Iterable<Object> serialized,
+  Money deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new MoneyBuilder();
 
@@ -925,7 +943,7 @@ class _$MoneySerializer implements StructuredSerializer<Money> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'amount':
           result.amount = serializers.deserialize(value,
@@ -949,67 +967,76 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
   final String wireName = 'Contact';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Contact object,
+  Iterable<Object?> serialize(Serializers serializers, Contact object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'givenName',
       serializers.serialize(object.givenName,
           specifiedType: const FullType(String)),
     ];
-    if (object.familyName != null) {
+    Object? value;
+    value = object.familyName;
+    if (value != null) {
       result
         ..add('familyName')
-        ..add(serializers.serialize(object.familyName,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.addressLines != null) {
+    value = object.addressLines;
+    if (value != null) {
       result
         ..add('addressLines')
-        ..add(serializers.serialize(object.addressLines,
+        ..add(serializers.serialize(value,
             specifiedType:
                 const FullType(BuiltList, const [const FullType(String)])));
     }
-    if (object.city != null) {
+    value = object.city;
+    if (value != null) {
       result
         ..add('city')
-        ..add(serializers.serialize(object.city,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.countryCode != null) {
+    value = object.countryCode;
+    if (value != null) {
       result
         ..add('countryCode')
-        ..add(serializers.serialize(object.countryCode,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.email != null) {
+    value = object.email;
+    if (value != null) {
       result
         ..add('email')
-        ..add(serializers.serialize(object.email,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.phone != null) {
+    value = object.phone;
+    if (value != null) {
       result
         ..add('phone')
-        ..add(serializers.serialize(object.phone,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.postalCode != null) {
+    value = object.postalCode;
+    if (value != null) {
       result
         ..add('postalCode')
-        ..add(serializers.serialize(object.postalCode,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.region != null) {
+    value = object.region;
+    if (value != null) {
       result
         ..add('region')
-        ..add(serializers.serialize(object.region,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
     return result;
   }
 
   @override
-  Contact deserialize(Serializers serializers, Iterable<Object> serialized,
+  Contact deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new ContactBuilder();
 
@@ -1017,7 +1044,7 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'givenName':
           result.givenName = serializers.deserialize(value,
@@ -1029,9 +1056,9 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
           break;
         case 'addressLines':
           result.addressLines.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(String)]))
-              as BuiltList<dynamic>);
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(String)]))!
+              as BuiltList<Object>);
           break;
         case 'city':
           result.city = serializers.deserialize(value,
@@ -1070,16 +1097,12 @@ class _$CardDetails extends CardDetails {
   @override
   final Card card;
 
-  factory _$CardDetails([void Function(CardDetailsBuilder) updates]) =>
+  factory _$CardDetails([void Function(CardDetailsBuilder)? updates]) =>
       (new CardDetailsBuilder()..update(updates)).build();
 
-  _$CardDetails._({this.nonce, this.card}) : super._() {
-    if (nonce == null) {
-      throw new BuiltValueNullFieldError('CardDetails', 'nonce');
-    }
-    if (card == null) {
-      throw new BuiltValueNullFieldError('CardDetails', 'card');
-    }
+  _$CardDetails._({required this.nonce, required this.card}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(nonce, 'CardDetails', 'nonce');
+    BuiltValueNullFieldError.checkNotNull(card, 'CardDetails', 'card');
   }
 
   @override
@@ -1110,22 +1133,23 @@ class _$CardDetails extends CardDetails {
 }
 
 class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
-  _$CardDetails _$v;
+  _$CardDetails? _$v;
 
-  String _nonce;
-  String get nonce => _$this._nonce;
-  set nonce(String nonce) => _$this._nonce = nonce;
+  String? _nonce;
+  String? get nonce => _$this._nonce;
+  set nonce(String? nonce) => _$this._nonce = nonce;
 
-  CardBuilder _card;
+  CardBuilder? _card;
   CardBuilder get card => _$this._card ??= new CardBuilder();
-  set card(CardBuilder card) => _$this._card = card;
+  set card(CardBuilder? card) => _$this._card = card;
 
   CardDetailsBuilder();
 
   CardDetailsBuilder get _$this {
-    if (_$v != null) {
-      _nonce = _$v.nonce;
-      _card = _$v.card?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _nonce = $v.nonce;
+      _card = $v.card.toBuilder();
       _$v = null;
     }
     return this;
@@ -1133,14 +1157,12 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
 
   @override
   void replace(CardDetails other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$CardDetails;
   }
 
   @override
-  void update(void Function(CardDetailsBuilder) updates) {
+  void update(void Function(CardDetailsBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -1148,9 +1170,13 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
   _$CardDetails build() {
     _$CardDetails _$result;
     try {
-      _$result = _$v ?? new _$CardDetails._(nonce: nonce, card: card.build());
+      _$result = _$v ??
+          new _$CardDetails._(
+              nonce: BuiltValueNullFieldError.checkNotNull(
+                  nonce, 'CardDetails', 'nonce'),
+              card: card.build());
     } catch (_) {
-      String _$failedField;
+      late String _$failedField;
       try {
         _$failedField = 'card';
         card.build();
@@ -1169,22 +1195,21 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
   @override
   final String nonce;
   @override
-  final Card card;
+  final Card? card;
   @override
   final String token;
 
   factory _$BuyerVerificationDetails(
-          [void Function(BuyerVerificationDetailsBuilder) updates]) =>
+          [void Function(BuyerVerificationDetailsBuilder)? updates]) =>
       (new BuyerVerificationDetailsBuilder()..update(updates)).build();
 
-  _$BuyerVerificationDetails._({this.nonce, this.card, this.token})
+  _$BuyerVerificationDetails._(
+      {required this.nonce, this.card, required this.token})
       : super._() {
-    if (nonce == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'nonce');
-    }
-    if (token == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'token');
-    }
+    BuiltValueNullFieldError.checkNotNull(
+        nonce, 'BuyerVerificationDetails', 'nonce');
+    BuiltValueNullFieldError.checkNotNull(
+        token, 'BuyerVerificationDetails', 'token');
   }
 
   @override
@@ -1223,27 +1248,28 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
 class BuyerVerificationDetailsBuilder
     implements
         Builder<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
-  _$BuyerVerificationDetails _$v;
+  _$BuyerVerificationDetails? _$v;
 
-  String _nonce;
-  String get nonce => _$this._nonce;
-  set nonce(String nonce) => _$this._nonce = nonce;
+  String? _nonce;
+  String? get nonce => _$this._nonce;
+  set nonce(String? nonce) => _$this._nonce = nonce;
 
-  CardBuilder _card;
+  CardBuilder? _card;
   CardBuilder get card => _$this._card ??= new CardBuilder();
-  set card(CardBuilder card) => _$this._card = card;
+  set card(CardBuilder? card) => _$this._card = card;
 
-  String _token;
-  String get token => _$this._token;
-  set token(String token) => _$this._token = token;
+  String? _token;
+  String? get token => _$this._token;
+  set token(String? token) => _$this._token = token;
 
   BuyerVerificationDetailsBuilder();
 
   BuyerVerificationDetailsBuilder get _$this {
-    if (_$v != null) {
-      _nonce = _$v.nonce;
-      _card = _$v.card?.toBuilder();
-      _token = _$v.token;
+    final $v = _$v;
+    if ($v != null) {
+      _nonce = $v.nonce;
+      _card = $v.card?.toBuilder();
+      _token = $v.token;
       _$v = null;
     }
     return this;
@@ -1251,14 +1277,12 @@ class BuyerVerificationDetailsBuilder
 
   @override
   void replace(BuyerVerificationDetails other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$BuyerVerificationDetails;
   }
 
   @override
-  void update(void Function(BuyerVerificationDetailsBuilder) updates) {
+  void update(void Function(BuyerVerificationDetailsBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -1268,9 +1292,13 @@ class BuyerVerificationDetailsBuilder
     try {
       _$result = _$v ??
           new _$BuyerVerificationDetails._(
-              nonce: nonce, card: _card?.build(), token: token);
+              nonce: BuiltValueNullFieldError.checkNotNull(
+                  nonce, 'BuyerVerificationDetails', 'nonce'),
+              card: _card?.build(),
+              token: BuiltValueNullFieldError.checkNotNull(
+                  token, 'BuyerVerificationDetails', 'token'));
     } catch (_) {
-      String _$failedField;
+      late String _$failedField;
       try {
         _$failedField = 'card';
         _card?.build();
@@ -1299,38 +1327,29 @@ class _$Card extends Card {
   @override
   final CardPrepaidType prepaidType;
   @override
-  final String postalCode;
+  final String? postalCode;
 
-  factory _$Card([void Function(CardBuilder) updates]) =>
+  factory _$Card([void Function(CardBuilder)? updates]) =>
       (new CardBuilder()..update(updates)).build();
 
   _$Card._(
-      {this.brand,
-      this.lastFourDigits,
-      this.expirationMonth,
-      this.expirationYear,
-      this.type,
-      this.prepaidType,
+      {required this.brand,
+      required this.lastFourDigits,
+      required this.expirationMonth,
+      required this.expirationYear,
+      required this.type,
+      required this.prepaidType,
       this.postalCode})
       : super._() {
-    if (brand == null) {
-      throw new BuiltValueNullFieldError('Card', 'brand');
-    }
-    if (lastFourDigits == null) {
-      throw new BuiltValueNullFieldError('Card', 'lastFourDigits');
-    }
-    if (expirationMonth == null) {
-      throw new BuiltValueNullFieldError('Card', 'expirationMonth');
-    }
-    if (expirationYear == null) {
-      throw new BuiltValueNullFieldError('Card', 'expirationYear');
-    }
-    if (type == null) {
-      throw new BuiltValueNullFieldError('Card', 'type');
-    }
-    if (prepaidType == null) {
-      throw new BuiltValueNullFieldError('Card', 'prepaidType');
-    }
+    BuiltValueNullFieldError.checkNotNull(brand, 'Card', 'brand');
+    BuiltValueNullFieldError.checkNotNull(
+        lastFourDigits, 'Card', 'lastFourDigits');
+    BuiltValueNullFieldError.checkNotNull(
+        expirationMonth, 'Card', 'expirationMonth');
+    BuiltValueNullFieldError.checkNotNull(
+        expirationYear, 'Card', 'expirationYear');
+    BuiltValueNullFieldError.checkNotNull(type, 'Card', 'type');
+    BuiltValueNullFieldError.checkNotNull(prepaidType, 'Card', 'prepaidType');
   }
 
   @override
@@ -1382,51 +1401,52 @@ class _$Card extends Card {
 }
 
 class CardBuilder implements Builder<Card, CardBuilder> {
-  _$Card _$v;
+  _$Card? _$v;
 
-  Brand _brand;
-  Brand get brand => _$this._brand;
-  set brand(Brand brand) => _$this._brand = brand;
+  Brand? _brand;
+  Brand? get brand => _$this._brand;
+  set brand(Brand? brand) => _$this._brand = brand;
 
-  String _lastFourDigits;
-  String get lastFourDigits => _$this._lastFourDigits;
-  set lastFourDigits(String lastFourDigits) =>
+  String? _lastFourDigits;
+  String? get lastFourDigits => _$this._lastFourDigits;
+  set lastFourDigits(String? lastFourDigits) =>
       _$this._lastFourDigits = lastFourDigits;
 
-  int _expirationMonth;
-  int get expirationMonth => _$this._expirationMonth;
-  set expirationMonth(int expirationMonth) =>
+  int? _expirationMonth;
+  int? get expirationMonth => _$this._expirationMonth;
+  set expirationMonth(int? expirationMonth) =>
       _$this._expirationMonth = expirationMonth;
 
-  int _expirationYear;
-  int get expirationYear => _$this._expirationYear;
-  set expirationYear(int expirationYear) =>
+  int? _expirationYear;
+  int? get expirationYear => _$this._expirationYear;
+  set expirationYear(int? expirationYear) =>
       _$this._expirationYear = expirationYear;
 
-  CardType _type;
-  CardType get type => _$this._type;
-  set type(CardType type) => _$this._type = type;
+  CardType? _type;
+  CardType? get type => _$this._type;
+  set type(CardType? type) => _$this._type = type;
 
-  CardPrepaidType _prepaidType;
-  CardPrepaidType get prepaidType => _$this._prepaidType;
-  set prepaidType(CardPrepaidType prepaidType) =>
+  CardPrepaidType? _prepaidType;
+  CardPrepaidType? get prepaidType => _$this._prepaidType;
+  set prepaidType(CardPrepaidType? prepaidType) =>
       _$this._prepaidType = prepaidType;
 
-  String _postalCode;
-  String get postalCode => _$this._postalCode;
-  set postalCode(String postalCode) => _$this._postalCode = postalCode;
+  String? _postalCode;
+  String? get postalCode => _$this._postalCode;
+  set postalCode(String? postalCode) => _$this._postalCode = postalCode;
 
   CardBuilder();
 
   CardBuilder get _$this {
-    if (_$v != null) {
-      _brand = _$v.brand;
-      _lastFourDigits = _$v.lastFourDigits;
-      _expirationMonth = _$v.expirationMonth;
-      _expirationYear = _$v.expirationYear;
-      _type = _$v.type;
-      _prepaidType = _$v.prepaidType;
-      _postalCode = _$v.postalCode;
+    final $v = _$v;
+    if ($v != null) {
+      _brand = $v.brand;
+      _lastFourDigits = $v.lastFourDigits;
+      _expirationMonth = $v.expirationMonth;
+      _expirationYear = $v.expirationYear;
+      _type = $v.type;
+      _prepaidType = $v.prepaidType;
+      _postalCode = $v.postalCode;
       _$v = null;
     }
     return this;
@@ -1434,14 +1454,12 @@ class CardBuilder implements Builder<Card, CardBuilder> {
 
   @override
   void replace(Card other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Card;
   }
 
   @override
-  void update(void Function(CardBuilder) updates) {
+  void update(void Function(CardBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -1449,12 +1467,17 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   _$Card build() {
     final _$result = _$v ??
         new _$Card._(
-            brand: brand,
-            lastFourDigits: lastFourDigits,
-            expirationMonth: expirationMonth,
-            expirationYear: expirationYear,
-            type: type,
-            prepaidType: prepaidType,
+            brand:
+                BuiltValueNullFieldError.checkNotNull(brand, 'Card', 'brand'),
+            lastFourDigits: BuiltValueNullFieldError.checkNotNull(
+                lastFourDigits, 'Card', 'lastFourDigits'),
+            expirationMonth: BuiltValueNullFieldError.checkNotNull(
+                expirationMonth, 'Card', 'expirationMonth'),
+            expirationYear: BuiltValueNullFieldError.checkNotNull(
+                expirationYear, 'Card', 'expirationYear'),
+            type: BuiltValueNullFieldError.checkNotNull(type, 'Card', 'type'),
+            prepaidType: BuiltValueNullFieldError.checkNotNull(
+                prepaidType, 'Card', 'prepaidType'),
             postalCode: postalCode);
     replace(_$result);
     return _$result;
@@ -1469,21 +1492,16 @@ class _$RGBAColor extends RGBAColor {
   @override
   final int b;
   @override
-  final double a;
+  final double? a;
 
-  factory _$RGBAColor([void Function(RGBAColorBuilder) updates]) =>
+  factory _$RGBAColor([void Function(RGBAColorBuilder)? updates]) =>
       (new RGBAColorBuilder()..update(updates)).build();
 
-  _$RGBAColor._({this.r, this.g, this.b, this.a}) : super._() {
-    if (r == null) {
-      throw new BuiltValueNullFieldError('RGBAColor', 'r');
-    }
-    if (g == null) {
-      throw new BuiltValueNullFieldError('RGBAColor', 'g');
-    }
-    if (b == null) {
-      throw new BuiltValueNullFieldError('RGBAColor', 'b');
-    }
+  _$RGBAColor._({required this.r, required this.g, required this.b, this.a})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(r, 'RGBAColor', 'r');
+    BuiltValueNullFieldError.checkNotNull(g, 'RGBAColor', 'g');
+    BuiltValueNullFieldError.checkNotNull(b, 'RGBAColor', 'b');
   }
 
   @override
@@ -1521,32 +1539,33 @@ class _$RGBAColor extends RGBAColor {
 }
 
 class RGBAColorBuilder implements Builder<RGBAColor, RGBAColorBuilder> {
-  _$RGBAColor _$v;
+  _$RGBAColor? _$v;
 
-  int _r;
-  int get r => _$this._r;
-  set r(int r) => _$this._r = r;
+  int? _r;
+  int? get r => _$this._r;
+  set r(int? r) => _$this._r = r;
 
-  int _g;
-  int get g => _$this._g;
-  set g(int g) => _$this._g = g;
+  int? _g;
+  int? get g => _$this._g;
+  set g(int? g) => _$this._g = g;
 
-  int _b;
-  int get b => _$this._b;
-  set b(int b) => _$this._b = b;
+  int? _b;
+  int? get b => _$this._b;
+  set b(int? b) => _$this._b = b;
 
-  double _a;
-  double get a => _$this._a;
-  set a(double a) => _$this._a = a;
+  double? _a;
+  double? get a => _$this._a;
+  set a(double? a) => _$this._a = a;
 
   RGBAColorBuilder();
 
   RGBAColorBuilder get _$this {
-    if (_$v != null) {
-      _r = _$v.r;
-      _g = _$v.g;
-      _b = _$v.b;
-      _a = _$v.a;
+    final $v = _$v;
+    if ($v != null) {
+      _r = $v.r;
+      _g = $v.g;
+      _b = $v.b;
+      _a = $v.a;
       _$v = null;
     }
     return this;
@@ -1554,20 +1573,23 @@ class RGBAColorBuilder implements Builder<RGBAColor, RGBAColorBuilder> {
 
   @override
   void replace(RGBAColor other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$RGBAColor;
   }
 
   @override
-  void update(void Function(RGBAColorBuilder) updates) {
+  void update(void Function(RGBAColorBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$RGBAColor build() {
-    final _$result = _$v ?? new _$RGBAColor._(r: r, g: g, b: b, a: a);
+    final _$result = _$v ??
+        new _$RGBAColor._(
+            r: BuiltValueNullFieldError.checkNotNull(r, 'RGBAColor', 'r'),
+            g: BuiltValueNullFieldError.checkNotNull(g, 'RGBAColor', 'g'),
+            b: BuiltValueNullFieldError.checkNotNull(b, 'RGBAColor', 'b'),
+            a: a);
     replace(_$result);
     return _$result;
   }
@@ -1577,15 +1599,13 @@ class _$Font extends Font {
   @override
   final double size;
   @override
-  final String name;
+  final String? name;
 
-  factory _$Font([void Function(FontBuilder) updates]) =>
+  factory _$Font([void Function(FontBuilder)? updates]) =>
       (new FontBuilder()..update(updates)).build();
 
-  _$Font._({this.size, this.name}) : super._() {
-    if (size == null) {
-      throw new BuiltValueNullFieldError('Font', 'size');
-    }
+  _$Font._({required this.size, this.name}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(size, 'Font', 'size');
   }
 
   @override
@@ -1616,22 +1636,23 @@ class _$Font extends Font {
 }
 
 class FontBuilder implements Builder<Font, FontBuilder> {
-  _$Font _$v;
+  _$Font? _$v;
 
-  double _size;
-  double get size => _$this._size;
-  set size(double size) => _$this._size = size;
+  double? _size;
+  double? get size => _$this._size;
+  set size(double? size) => _$this._size = size;
 
-  String _name;
-  String get name => _$this._name;
-  set name(String name) => _$this._name = name;
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
 
   FontBuilder();
 
   FontBuilder get _$this {
-    if (_$v != null) {
-      _size = _$v.size;
-      _name = _$v.name;
+    final $v = _$v;
+    if ($v != null) {
+      _size = $v.size;
+      _name = $v.name;
       _$v = null;
     }
     return this;
@@ -1639,20 +1660,21 @@ class FontBuilder implements Builder<Font, FontBuilder> {
 
   @override
   void replace(Font other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Font;
   }
 
   @override
-  void update(void Function(FontBuilder) updates) {
+  void update(void Function(FontBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$Font build() {
-    final _$result = _$v ?? new _$Font._(size: size, name: name);
+    final _$result = _$v ??
+        new _$Font._(
+            size: BuiltValueNullFieldError.checkNotNull(size, 'Font', 'size'),
+            name: name);
     replace(_$result);
     return _$result;
   }
@@ -1660,31 +1682,31 @@ class FontBuilder implements Builder<Font, FontBuilder> {
 
 class _$IOSTheme extends IOSTheme {
   @override
-  final Font font;
+  final Font? font;
   @override
-  final RGBAColor backgroundColor;
+  final RGBAColor? backgroundColor;
   @override
-  final RGBAColor foregroundColor;
+  final RGBAColor? foregroundColor;
   @override
-  final RGBAColor textColor;
+  final RGBAColor? textColor;
   @override
-  final RGBAColor placeholderTextColor;
+  final RGBAColor? placeholderTextColor;
   @override
-  final RGBAColor tintColor;
+  final RGBAColor? tintColor;
   @override
-  final RGBAColor messageColor;
+  final RGBAColor? messageColor;
   @override
-  final RGBAColor errorColor;
+  final RGBAColor? errorColor;
   @override
-  final String saveButtonTitle;
+  final String? saveButtonTitle;
   @override
-  final Font saveButtonFont;
+  final Font? saveButtonFont;
   @override
-  final RGBAColor saveButtonTextColor;
+  final RGBAColor? saveButtonTextColor;
   @override
-  final KeyboardAppearance keyboardAppearance;
+  final KeyboardAppearance? keyboardAppearance;
 
-  factory _$IOSTheme([void Function(IOSThemeBuilder) updates]) =>
+  factory _$IOSTheme([void Function(IOSThemeBuilder)? updates]) =>
       (new IOSThemeBuilder()..update(updates)).build();
 
   _$IOSTheme._(
@@ -1773,90 +1795,91 @@ class _$IOSTheme extends IOSTheme {
 }
 
 class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
-  _$IOSTheme _$v;
+  _$IOSTheme? _$v;
 
-  FontBuilder _font;
+  FontBuilder? _font;
   FontBuilder get font => _$this._font ??= new FontBuilder();
-  set font(FontBuilder font) => _$this._font = font;
+  set font(FontBuilder? font) => _$this._font = font;
 
-  RGBAColorBuilder _backgroundColor;
+  RGBAColorBuilder? _backgroundColor;
   RGBAColorBuilder get backgroundColor =>
       _$this._backgroundColor ??= new RGBAColorBuilder();
-  set backgroundColor(RGBAColorBuilder backgroundColor) =>
+  set backgroundColor(RGBAColorBuilder? backgroundColor) =>
       _$this._backgroundColor = backgroundColor;
 
-  RGBAColorBuilder _foregroundColor;
+  RGBAColorBuilder? _foregroundColor;
   RGBAColorBuilder get foregroundColor =>
       _$this._foregroundColor ??= new RGBAColorBuilder();
-  set foregroundColor(RGBAColorBuilder foregroundColor) =>
+  set foregroundColor(RGBAColorBuilder? foregroundColor) =>
       _$this._foregroundColor = foregroundColor;
 
-  RGBAColorBuilder _textColor;
+  RGBAColorBuilder? _textColor;
   RGBAColorBuilder get textColor =>
       _$this._textColor ??= new RGBAColorBuilder();
-  set textColor(RGBAColorBuilder textColor) => _$this._textColor = textColor;
+  set textColor(RGBAColorBuilder? textColor) => _$this._textColor = textColor;
 
-  RGBAColorBuilder _placeholderTextColor;
+  RGBAColorBuilder? _placeholderTextColor;
   RGBAColorBuilder get placeholderTextColor =>
       _$this._placeholderTextColor ??= new RGBAColorBuilder();
-  set placeholderTextColor(RGBAColorBuilder placeholderTextColor) =>
+  set placeholderTextColor(RGBAColorBuilder? placeholderTextColor) =>
       _$this._placeholderTextColor = placeholderTextColor;
 
-  RGBAColorBuilder _tintColor;
+  RGBAColorBuilder? _tintColor;
   RGBAColorBuilder get tintColor =>
       _$this._tintColor ??= new RGBAColorBuilder();
-  set tintColor(RGBAColorBuilder tintColor) => _$this._tintColor = tintColor;
+  set tintColor(RGBAColorBuilder? tintColor) => _$this._tintColor = tintColor;
 
-  RGBAColorBuilder _messageColor;
+  RGBAColorBuilder? _messageColor;
   RGBAColorBuilder get messageColor =>
       _$this._messageColor ??= new RGBAColorBuilder();
-  set messageColor(RGBAColorBuilder messageColor) =>
+  set messageColor(RGBAColorBuilder? messageColor) =>
       _$this._messageColor = messageColor;
 
-  RGBAColorBuilder _errorColor;
+  RGBAColorBuilder? _errorColor;
   RGBAColorBuilder get errorColor =>
       _$this._errorColor ??= new RGBAColorBuilder();
-  set errorColor(RGBAColorBuilder errorColor) =>
+  set errorColor(RGBAColorBuilder? errorColor) =>
       _$this._errorColor = errorColor;
 
-  String _saveButtonTitle;
-  String get saveButtonTitle => _$this._saveButtonTitle;
-  set saveButtonTitle(String saveButtonTitle) =>
+  String? _saveButtonTitle;
+  String? get saveButtonTitle => _$this._saveButtonTitle;
+  set saveButtonTitle(String? saveButtonTitle) =>
       _$this._saveButtonTitle = saveButtonTitle;
 
-  FontBuilder _saveButtonFont;
+  FontBuilder? _saveButtonFont;
   FontBuilder get saveButtonFont =>
       _$this._saveButtonFont ??= new FontBuilder();
-  set saveButtonFont(FontBuilder saveButtonFont) =>
+  set saveButtonFont(FontBuilder? saveButtonFont) =>
       _$this._saveButtonFont = saveButtonFont;
 
-  RGBAColorBuilder _saveButtonTextColor;
+  RGBAColorBuilder? _saveButtonTextColor;
   RGBAColorBuilder get saveButtonTextColor =>
       _$this._saveButtonTextColor ??= new RGBAColorBuilder();
-  set saveButtonTextColor(RGBAColorBuilder saveButtonTextColor) =>
+  set saveButtonTextColor(RGBAColorBuilder? saveButtonTextColor) =>
       _$this._saveButtonTextColor = saveButtonTextColor;
 
-  KeyboardAppearance _keyboardAppearance;
-  KeyboardAppearance get keyboardAppearance => _$this._keyboardAppearance;
-  set keyboardAppearance(KeyboardAppearance keyboardAppearance) =>
+  KeyboardAppearance? _keyboardAppearance;
+  KeyboardAppearance? get keyboardAppearance => _$this._keyboardAppearance;
+  set keyboardAppearance(KeyboardAppearance? keyboardAppearance) =>
       _$this._keyboardAppearance = keyboardAppearance;
 
   IOSThemeBuilder();
 
   IOSThemeBuilder get _$this {
-    if (_$v != null) {
-      _font = _$v.font?.toBuilder();
-      _backgroundColor = _$v.backgroundColor?.toBuilder();
-      _foregroundColor = _$v.foregroundColor?.toBuilder();
-      _textColor = _$v.textColor?.toBuilder();
-      _placeholderTextColor = _$v.placeholderTextColor?.toBuilder();
-      _tintColor = _$v.tintColor?.toBuilder();
-      _messageColor = _$v.messageColor?.toBuilder();
-      _errorColor = _$v.errorColor?.toBuilder();
-      _saveButtonTitle = _$v.saveButtonTitle;
-      _saveButtonFont = _$v.saveButtonFont?.toBuilder();
-      _saveButtonTextColor = _$v.saveButtonTextColor?.toBuilder();
-      _keyboardAppearance = _$v.keyboardAppearance;
+    final $v = _$v;
+    if ($v != null) {
+      _font = $v.font?.toBuilder();
+      _backgroundColor = $v.backgroundColor?.toBuilder();
+      _foregroundColor = $v.foregroundColor?.toBuilder();
+      _textColor = $v.textColor?.toBuilder();
+      _placeholderTextColor = $v.placeholderTextColor?.toBuilder();
+      _tintColor = $v.tintColor?.toBuilder();
+      _messageColor = $v.messageColor?.toBuilder();
+      _errorColor = $v.errorColor?.toBuilder();
+      _saveButtonTitle = $v.saveButtonTitle;
+      _saveButtonFont = $v.saveButtonFont?.toBuilder();
+      _saveButtonTextColor = $v.saveButtonTextColor?.toBuilder();
+      _keyboardAppearance = $v.keyboardAppearance;
       _$v = null;
     }
     return this;
@@ -1864,14 +1887,12 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
 
   @override
   void replace(IOSTheme other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$IOSTheme;
   }
 
   @override
-  void update(void Function(IOSThemeBuilder) updates) {
+  void update(void Function(IOSThemeBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -1894,7 +1915,7 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
               saveButtonTextColor: _saveButtonTextColor?.build(),
               keyboardAppearance: keyboardAppearance);
     } catch (_) {
-      String _$failedField;
+      late String _$failedField;
       try {
         _$failedField = 'font';
         _font?.build();
@@ -1938,23 +1959,20 @@ class _$ErrorInfo extends ErrorInfo {
   @override
   final String debugMessage;
 
-  factory _$ErrorInfo([void Function(ErrorInfoBuilder) updates]) =>
+  factory _$ErrorInfo([void Function(ErrorInfoBuilder)? updates]) =>
       (new ErrorInfoBuilder()..update(updates)).build();
 
-  _$ErrorInfo._({this.code, this.message, this.debugCode, this.debugMessage})
+  _$ErrorInfo._(
+      {required this.code,
+      required this.message,
+      required this.debugCode,
+      required this.debugMessage})
       : super._() {
-    if (code == null) {
-      throw new BuiltValueNullFieldError('ErrorInfo', 'code');
-    }
-    if (message == null) {
-      throw new BuiltValueNullFieldError('ErrorInfo', 'message');
-    }
-    if (debugCode == null) {
-      throw new BuiltValueNullFieldError('ErrorInfo', 'debugCode');
-    }
-    if (debugMessage == null) {
-      throw new BuiltValueNullFieldError('ErrorInfo', 'debugMessage');
-    }
+    BuiltValueNullFieldError.checkNotNull(code, 'ErrorInfo', 'code');
+    BuiltValueNullFieldError.checkNotNull(message, 'ErrorInfo', 'message');
+    BuiltValueNullFieldError.checkNotNull(debugCode, 'ErrorInfo', 'debugCode');
+    BuiltValueNullFieldError.checkNotNull(
+        debugMessage, 'ErrorInfo', 'debugMessage');
   }
 
   @override
@@ -1993,32 +2011,33 @@ class _$ErrorInfo extends ErrorInfo {
 }
 
 class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
-  _$ErrorInfo _$v;
+  _$ErrorInfo? _$v;
 
-  ErrorCode _code;
-  ErrorCode get code => _$this._code;
-  set code(ErrorCode code) => _$this._code = code;
+  ErrorCode? _code;
+  ErrorCode? get code => _$this._code;
+  set code(ErrorCode? code) => _$this._code = code;
 
-  String _message;
-  String get message => _$this._message;
-  set message(String message) => _$this._message = message;
+  String? _message;
+  String? get message => _$this._message;
+  set message(String? message) => _$this._message = message;
 
-  String _debugCode;
-  String get debugCode => _$this._debugCode;
-  set debugCode(String debugCode) => _$this._debugCode = debugCode;
+  String? _debugCode;
+  String? get debugCode => _$this._debugCode;
+  set debugCode(String? debugCode) => _$this._debugCode = debugCode;
 
-  String _debugMessage;
-  String get debugMessage => _$this._debugMessage;
-  set debugMessage(String debugMessage) => _$this._debugMessage = debugMessage;
+  String? _debugMessage;
+  String? get debugMessage => _$this._debugMessage;
+  set debugMessage(String? debugMessage) => _$this._debugMessage = debugMessage;
 
   ErrorInfoBuilder();
 
   ErrorInfoBuilder get _$this {
-    if (_$v != null) {
-      _code = _$v.code;
-      _message = _$v.message;
-      _debugCode = _$v.debugCode;
-      _debugMessage = _$v.debugMessage;
+    final $v = _$v;
+    if ($v != null) {
+      _code = $v.code;
+      _message = $v.message;
+      _debugCode = $v.debugCode;
+      _debugMessage = $v.debugMessage;
       _$v = null;
     }
     return this;
@@ -2026,14 +2045,12 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
 
   @override
   void replace(ErrorInfo other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$ErrorInfo;
   }
 
   @override
-  void update(void Function(ErrorInfoBuilder) updates) {
+  void update(void Function(ErrorInfoBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -2041,10 +2058,14 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   _$ErrorInfo build() {
     final _$result = _$v ??
         new _$ErrorInfo._(
-            code: code,
-            message: message,
-            debugCode: debugCode,
-            debugMessage: debugMessage);
+            code: BuiltValueNullFieldError.checkNotNull(
+                code, 'ErrorInfo', 'code'),
+            message: BuiltValueNullFieldError.checkNotNull(
+                message, 'ErrorInfo', 'message'),
+            debugCode: BuiltValueNullFieldError.checkNotNull(
+                debugCode, 'ErrorInfo', 'debugCode'),
+            debugMessage: BuiltValueNullFieldError.checkNotNull(
+                debugMessage, 'ErrorInfo', 'debugMessage'));
     replace(_$result);
     return _$result;
   }
@@ -2056,16 +2077,13 @@ class _$Money extends Money {
   @override
   final String currencyCode;
 
-  factory _$Money([void Function(MoneyBuilder) updates]) =>
+  factory _$Money([void Function(MoneyBuilder)? updates]) =>
       (new MoneyBuilder()..update(updates)).build();
 
-  _$Money._({this.amount, this.currencyCode}) : super._() {
-    if (amount == null) {
-      throw new BuiltValueNullFieldError('Money', 'amount');
-    }
-    if (currencyCode == null) {
-      throw new BuiltValueNullFieldError('Money', 'currencyCode');
-    }
+  _$Money._({required this.amount, required this.currencyCode}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(amount, 'Money', 'amount');
+    BuiltValueNullFieldError.checkNotNull(
+        currencyCode, 'Money', 'currencyCode');
   }
 
   @override
@@ -2098,22 +2116,23 @@ class _$Money extends Money {
 }
 
 class MoneyBuilder implements Builder<Money, MoneyBuilder> {
-  _$Money _$v;
+  _$Money? _$v;
 
-  int _amount;
-  int get amount => _$this._amount;
-  set amount(int amount) => _$this._amount = amount;
+  int? _amount;
+  int? get amount => _$this._amount;
+  set amount(int? amount) => _$this._amount = amount;
 
-  String _currencyCode;
-  String get currencyCode => _$this._currencyCode;
-  set currencyCode(String currencyCode) => _$this._currencyCode = currencyCode;
+  String? _currencyCode;
+  String? get currencyCode => _$this._currencyCode;
+  set currencyCode(String? currencyCode) => _$this._currencyCode = currencyCode;
 
   MoneyBuilder();
 
   MoneyBuilder get _$this {
-    if (_$v != null) {
-      _amount = _$v.amount;
-      _currencyCode = _$v.currencyCode;
+    final $v = _$v;
+    if ($v != null) {
+      _amount = $v.amount;
+      _currencyCode = $v.currencyCode;
       _$v = null;
     }
     return this;
@@ -2121,21 +2140,23 @@ class MoneyBuilder implements Builder<Money, MoneyBuilder> {
 
   @override
   void replace(Money other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Money;
   }
 
   @override
-  void update(void Function(MoneyBuilder) updates) {
+  void update(void Function(MoneyBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
   _$Money build() {
-    final _$result =
-        _$v ?? new _$Money._(amount: amount, currencyCode: currencyCode);
+    final _$result = _$v ??
+        new _$Money._(
+            amount: BuiltValueNullFieldError.checkNotNull(
+                amount, 'Money', 'amount'),
+            currencyCode: BuiltValueNullFieldError.checkNotNull(
+                currencyCode, 'Money', 'currencyCode'));
     replace(_$result);
     return _$result;
   }
@@ -2145,27 +2166,27 @@ class _$Contact extends Contact {
   @override
   final String givenName;
   @override
-  final String familyName;
+  final String? familyName;
   @override
-  final BuiltList<String> addressLines;
+  final BuiltList<String>? addressLines;
   @override
-  final String city;
+  final String? city;
   @override
-  final String countryCode;
+  final String? countryCode;
   @override
-  final String email;
+  final String? email;
   @override
-  final String phone;
+  final String? phone;
   @override
-  final String postalCode;
+  final String? postalCode;
   @override
-  final String region;
+  final String? region;
 
-  factory _$Contact([void Function(ContactBuilder) updates]) =>
+  factory _$Contact([void Function(ContactBuilder)? updates]) =>
       (new ContactBuilder()..update(updates)).build();
 
   _$Contact._(
-      {this.givenName,
+      {required this.givenName,
       this.familyName,
       this.addressLines,
       this.city,
@@ -2175,9 +2196,7 @@ class _$Contact extends Contact {
       this.postalCode,
       this.region})
       : super._() {
-    if (givenName == null) {
-      throw new BuiltValueNullFieldError('Contact', 'givenName');
-    }
+    BuiltValueNullFieldError.checkNotNull(givenName, 'Contact', 'givenName');
   }
 
   @override
@@ -2239,59 +2258,60 @@ class _$Contact extends Contact {
 }
 
 class ContactBuilder implements Builder<Contact, ContactBuilder> {
-  _$Contact _$v;
+  _$Contact? _$v;
 
-  String _givenName;
-  String get givenName => _$this._givenName;
-  set givenName(String givenName) => _$this._givenName = givenName;
+  String? _givenName;
+  String? get givenName => _$this._givenName;
+  set givenName(String? givenName) => _$this._givenName = givenName;
 
-  String _familyName;
-  String get familyName => _$this._familyName;
-  set familyName(String familyName) => _$this._familyName = familyName;
+  String? _familyName;
+  String? get familyName => _$this._familyName;
+  set familyName(String? familyName) => _$this._familyName = familyName;
 
-  ListBuilder<String> _addressLines;
+  ListBuilder<String>? _addressLines;
   ListBuilder<String> get addressLines =>
       _$this._addressLines ??= new ListBuilder<String>();
-  set addressLines(ListBuilder<String> addressLines) =>
+  set addressLines(ListBuilder<String>? addressLines) =>
       _$this._addressLines = addressLines;
 
-  String _city;
-  String get city => _$this._city;
-  set city(String city) => _$this._city = city;
+  String? _city;
+  String? get city => _$this._city;
+  set city(String? city) => _$this._city = city;
 
-  String _countryCode;
-  String get countryCode => _$this._countryCode;
-  set countryCode(String countryCode) => _$this._countryCode = countryCode;
+  String? _countryCode;
+  String? get countryCode => _$this._countryCode;
+  set countryCode(String? countryCode) => _$this._countryCode = countryCode;
 
-  String _email;
-  String get email => _$this._email;
-  set email(String email) => _$this._email = email;
+  String? _email;
+  String? get email => _$this._email;
+  set email(String? email) => _$this._email = email;
 
-  String _phone;
-  String get phone => _$this._phone;
-  set phone(String phone) => _$this._phone = phone;
+  String? _phone;
+  String? get phone => _$this._phone;
+  set phone(String? phone) => _$this._phone = phone;
 
-  String _postalCode;
-  String get postalCode => _$this._postalCode;
-  set postalCode(String postalCode) => _$this._postalCode = postalCode;
+  String? _postalCode;
+  String? get postalCode => _$this._postalCode;
+  set postalCode(String? postalCode) => _$this._postalCode = postalCode;
 
-  String _region;
-  String get region => _$this._region;
-  set region(String region) => _$this._region = region;
+  String? _region;
+  String? get region => _$this._region;
+  set region(String? region) => _$this._region = region;
 
   ContactBuilder();
 
   ContactBuilder get _$this {
-    if (_$v != null) {
-      _givenName = _$v.givenName;
-      _familyName = _$v.familyName;
-      _addressLines = _$v.addressLines?.toBuilder();
-      _city = _$v.city;
-      _countryCode = _$v.countryCode;
-      _email = _$v.email;
-      _phone = _$v.phone;
-      _postalCode = _$v.postalCode;
-      _region = _$v.region;
+    final $v = _$v;
+    if ($v != null) {
+      _givenName = $v.givenName;
+      _familyName = $v.familyName;
+      _addressLines = $v.addressLines?.toBuilder();
+      _city = $v.city;
+      _countryCode = $v.countryCode;
+      _email = $v.email;
+      _phone = $v.phone;
+      _postalCode = $v.postalCode;
+      _region = $v.region;
       _$v = null;
     }
     return this;
@@ -2299,14 +2319,12 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
 
   @override
   void replace(Contact other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Contact;
   }
 
   @override
-  void update(void Function(ContactBuilder) updates) {
+  void update(void Function(ContactBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -2316,7 +2334,8 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
     try {
       _$result = _$v ??
           new _$Contact._(
-              givenName: givenName,
+              givenName: BuiltValueNullFieldError.checkNotNull(
+                  givenName, 'Contact', 'givenName'),
               familyName: familyName,
               addressLines: _addressLines?.build(),
               city: city,
@@ -2326,7 +2345,7 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
               postalCode: postalCode,
               region: region);
     } catch (_) {
-      String _$failedField;
+      late String _$failedField;
       try {
         _$failedField = 'addressLines';
         _addressLines?.build();
