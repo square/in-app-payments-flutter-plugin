@@ -186,8 +186,6 @@ Serializer<ApplePayPaymentType> _$applePayPaymentTypeSerializer =
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
 Serializer<BuyerVerificationDetails> _$buyerVerificationDetailsSerializer =
     new _$BuyerVerificationDetailsSerializer();
-Serializer<BuyerVerificationForCardOnFile> _$buyerVerificationForCardOnFileSerializer =
-new _$BuyerVerificationForCardOnFileSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
 Serializer<RGBAColor> _$rGBAColorSerializer = new _$RGBAColorSerializer();
 Serializer<Font> _$fontSerializer = new _$FontSerializer();
@@ -419,12 +417,18 @@ class _$BuyerVerificationDetailsSerializer
       'nonce',
       serializers.serialize(object.nonce,
           specifiedType: const FullType(String)),
-      'card',
-      serializers.serialize(object.card, specifiedType: const FullType(Card)),
       'token',
       serializers.serialize(object.token,
           specifiedType: const FullType(String)),
     ];
+    Object value;
+    value = object.card;
+    if (value != null) {
+      result
+        ..add('card')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(Card)));
+    }
 
     return result;
   }
@@ -448,59 +452,6 @@ class _$BuyerVerificationDetailsSerializer
         case 'card':
           result.card.replace(serializers.deserialize(value,
               specifiedType: const FullType(Card)) as Card);
-          break;
-        case 'token':
-          result.token = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$BuyerVerificationForCardOnFileSerializer
-    implements StructuredSerializer<BuyerVerificationForCardOnFile> {
-  @override
-  final Iterable<Type> types = const [
-    BuyerVerificationForCardOnFile,
-    _$BuyerVerificationForCardOnFile
-  ];
-  @override
-  final String wireName = 'BuyerVerificationForCardOnFile';
-
-  @override
-  Iterable<Object> serialize(
-      Serializers serializers, BuyerVerificationForCardOnFile object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'nonce',
-      serializers.serialize(object.nonce,
-          specifiedType: const FullType(String)),
-      'token',
-      serializers.serialize(object.token,
-          specifiedType: const FullType(String)),
-    ];
-
-    return result;
-  }
-
-  @override
-  BuyerVerificationForCardOnFile deserialize(
-      Serializers serializers, Iterable<Object> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new BuyerVerificationForCardOnFileBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final dynamic value = iterator.current;
-      switch (key) {
-        case 'nonce':
-          result.nonce = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
           break;
         case 'token':
           result.token = serializers.deserialize(value,
@@ -1231,9 +1182,6 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
     if (nonce == null) {
       throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'nonce');
     }
-    if (card == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'card');
-    }
     if (token == null) {
       throw new BuiltValueNullFieldError('BuyerVerificationDetails', 'token');
     }
@@ -1320,120 +1268,17 @@ class BuyerVerificationDetailsBuilder
     try {
       _$result = _$v ??
           new _$BuyerVerificationDetails._(
-              nonce: nonce, card: card.build(), token: token);
+              nonce: nonce, card: _card?.build(), token: token);
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'card';
-        card.build();
+        _card?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuyerVerificationDetails', _$failedField, e.toString());
       }
       rethrow;
-    }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$BuyerVerificationForCardOnFile extends BuyerVerificationForCardOnFile {
-  @override
-  final String nonce;
-  @override
-  final String token;
-
-  factory _$BuyerVerificationForCardOnFile(
-      [void Function(BuyerVerificationForCardOnFileBuilder) updates]) =>
-      (new BuyerVerificationForCardOnFileBuilder()..update(updates)).build();
-
-  _$BuyerVerificationForCardOnFile._({this.nonce, this.token})
-      : super._() {
-    if (nonce == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationForCardOnFile', 'nonce');
-    }
-    if (token == null) {
-      throw new BuiltValueNullFieldError('BuyerVerificationForCardOnFile', 'token');
-    }
-  }
-
-  @override
-  BuyerVerificationForCardOnFile rebuild(
-      void Function(BuyerVerificationForCardOnFileBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  BuyerVerificationForCardOnFileBuilder toBuilder() =>
-      new BuyerVerificationForCardOnFileBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is BuyerVerificationForCardOnFile &&
-        nonce == other.nonce &&
-        token == other.token;
-  }
-
-  @override
-  int get hashCode {
-    return $jf($jc($jc(0, nonce.hashCode), token.hashCode));
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper('BuyerVerificationForCardOnFile')
-      ..add('nonce', nonce)
-      ..add('token', token))
-        .toString();
-  }
-}
-
-class BuyerVerificationForCardOnFileBuilder
-    implements
-        Builder<BuyerVerificationForCardOnFile, BuyerVerificationForCardOnFileBuilder> {
-  _$BuyerVerificationForCardOnFile _$v;
-
-  String _nonce;
-  String get nonce => _$this._nonce;
-  set nonce(String nonce) => _$this._nonce = nonce;
-
-  String _token;
-  String get token => _$this._token;
-  set token(String token) => _$this._token = token;
-
-  BuyerVerificationForCardOnFileBuilder();
-
-  BuyerVerificationForCardOnFileBuilder get _$this {
-    if (_$v != null) {
-      _nonce = _$v.nonce;
-      _token = _$v.token;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(BuyerVerificationForCardOnFile other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
-    _$v = other as _$BuyerVerificationForCardOnFile;
-  }
-
-  @override
-  void update(void Function(BuyerVerificationForCardOnFileBuilder) updates) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  _$BuyerVerificationForCardOnFile build() {
-    _$BuyerVerificationForCardOnFile _$result;
-    try {
-      _$result = _$v ??
-          new _$BuyerVerificationForCardOnFile._(
-              nonce: nonce, token: token);
-    } catch (_) {
-        rethrow;
     }
     replace(_$result);
     return _$result;

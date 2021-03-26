@@ -35,7 +35,6 @@ part 'serializers.g.dart';
   ErrorInfo,
   Money,
   Contact,
-  BuyerVerificationDetails,
-  BuyerVerificationForCardOnFile
+  BuyerVerificationDetails
 ])
 final Serializers serializers = _$serializers;
