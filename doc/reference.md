@@ -309,7 +309,7 @@ to the possible results of the request.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
-onBuyerVerificationSuccess | [CardOnFileBuyerVerificationSuccessCallback](#CardOnFileBuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
+onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token. 
 money           | [Money](#Money)                          | Amount of money that will be charged
@@ -340,16 +340,16 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         ..postalCode = "SE1 7");
     
     await InAppPayments.startBuyerVerificationFlow(
-        onCardOnFileBuyerVerificationSuccess: _onCardOnFileBuyerVerificationSuccess,
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         buyerAction: "Charge",
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "REPLACE_ME");
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
   }
 
-  void _onCardOnFileBuyerVerificationSuccess(BuyerVerificationForCardOnFile result) async {
+  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
     // process card nonce and verification results
   }
 
@@ -865,11 +865,6 @@ errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the 
  
  Callback invoked when Buyer Verification flow fails.
 
----
- ### CardOnFileBuyerVerificationSuccessCallback
- 
- Callback invoked when Buyer Verification for card-on-file flow succeeds.
- 
 ---
 ## Classes
 
