@@ -8,7 +8,7 @@ PODS:
   - SquareInAppPaymentsSDK (1.4.0)
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
   - square_in_app_payments (from `.symlinks/plugins/square_in_app_payments/ios`)
 
 SPEC REPOS:
@@ -18,16 +18,16 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
   square_in_app_payments:
     :path: ".symlinks/plugins/square_in_app_payments/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   square_in_app_payments: 339aa5d1c828be189639090149e0fb303c2d9812
   SquareBuyerVerificationSDK: 6a73cc3b073d8e613cb1fe8643600ff9ac4d6373
   SquareInAppPaymentsSDK: 6c3293e5600c121bbdc5499ffa3b3976e2cf0054
 
-PODFILE CHECKSUM: ef23e6c890056509fa6d7df6bd6d024b158808e1
+PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1
