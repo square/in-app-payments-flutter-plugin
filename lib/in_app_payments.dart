@@ -338,6 +338,27 @@ class InAppPayments {
         'startCardEntryFlowWithBuyerVerification', params);
   }
 
+  static Future startBuyerVerificationFlow(
+      {BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      String buyerAction,
+      Money money,
+      String squareLocationId,
+      Contact contact,
+      String paymentSourceId}) async {
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    var params = <String, dynamic>{
+      'buyerAction': buyerAction,
+      'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact':
+      _standardSerializers.serializeWith(Contact.serializer, contact),
+      'squareLocationId': squareLocationId,
+      'paymentSourceId': paymentSourceId,
+    };
+    await _channel.invokeMethod('startBuyerVerificationFlow', params);
+  }
+
   static Future setIOSCardEntryTheme(IOSTheme theme) async {
     var params = <String, dynamic>{
       'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),

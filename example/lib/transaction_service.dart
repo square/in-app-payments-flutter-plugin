@@ -50,8 +50,8 @@ Future<void> chargeCard(CardDetails result) async {
 }
 
 Future<void> chargeCardAfterBuyerVerification(
-    BuyerVerificationDetails result) async {
-  var body = jsonEncode({"nonce": result.nonce, "token": result.token});
+    String nonce, String token) async {
+  var body = jsonEncode({"nonce": nonce, "token": token});
   http.Response response;
   try {
     response = await http.post(chargeUrl, body: body, headers: {

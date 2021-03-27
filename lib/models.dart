@@ -130,6 +130,7 @@ abstract class BuyerVerificationDetails
     implements
         Built<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
   String get nonce;
+  @nullable
   Card get card;
   String get token;
 

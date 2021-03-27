@@ -81,6 +81,9 @@ class BuySheetState extends State<BuySheet> {
         // NOTE this requires _squareLocationSet to be set
         // await _onStartCardEntryFlowWithBuyerVerification();
         break;
+      case PaymentType.buyerVerification:
+        await _onStartBuyerVerificationFlow();
+        break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled) {
           _onStartGooglePay();
@@ -232,6 +235,31 @@ class BuySheetState extends State<BuySheet> {
         collectPostalCode: true);
   }
 
+  Future<void> _onStartBuyerVerificationFlow() async {
+    var money = Money((b) => b
+      ..amount = 100
+      ..currencyCode = 'USD');
+
+    var contact = Contact((b) => b
+      ..givenName = "John"
+      ..familyName = "Doe"
+      ..addressLines = new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..city = "London"
+      ..countryCode = "GB"
+      ..email = "johndoe@example.com"
+      ..phone = "8001234567"
+      ..postalCode = "SE1 7");
+
+    await InAppPayments.startBuyerVerificationFlow(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
+  }
+
   void _onCancelCardEntryFlow() {
     _showOrderSheet();
   }
@@ -303,6 +331,23 @@ class BuySheetState extends State<BuySheet> {
     }
   }
 
+  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
+    if (!_chargeServerHostReplaced) {
+      _showUrlNotSetAndPrintCurlCommand(result.nonce,
+          verificationToken: result.token);
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on ChargeException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext,
+          title: "Error processing card payment",
+          description: ex.errorMessage);
+    }
+  }
+
   void _onApplePayNonceRequestSuccess(CardDetails result) async {
     if (!_chargeServerHostReplaced) {
       await InAppPayments.completeApplePayAuthorization(isSuccess: false);
@@ -343,23 +388,6 @@ class BuySheetState extends State<BuySheet> {
     if (_applePayStatus == ApplePayStatus.unknown) {
       // the apple pay is canceled
       _showOrderSheet();
-    }
-  }
-
-  void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {
-    if (!_chargeServerHostReplaced) {
-      _showUrlNotSetAndPrintCurlCommand(result.nonce,
-          verificationToken: result.token);
-      return;
-    }
-
-    try {
-      await chargeCardAfterBuyerVerification(result);
-    } on ChargeException catch (ex) {
-      showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
-          title: "Error processing card payment",
-          description: ex.errorMessage);
     }
   }
 
@@ -411,3 +439,4 @@ class BuySheetState extends State<BuySheet> {
         ),
       );
 }
+
