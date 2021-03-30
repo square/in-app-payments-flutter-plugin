@@ -29,7 +29,7 @@ Method                                                       | Return Object    
 [completeCardEntry](#completecardentry)                      | void                      | Closes the card entry form on success.
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
-[startBuyerVerificationFlow](#startbuyerverificationflow)    | void                      | Starts buyer verfication flow for card-on-file (cof). Displays verification view for some geographies.
+[startBuyerVerificationFlow](#startbuyerverificationflow)    | void                      | Starts the buyer verification for a given payment source id. The most likely use case will be to pass in a card-on-file (cof). This will display a verification view to the user for some geographies to address Strong Customer Authentication. [startCardEntryFlowWithBuyerVerification](#startcardentryflowwithbuyerverification) handles both card entry and verification for you as a convenience.
 
 ### Apple Pay methods
 Method                                                          | Return Object             | Description
@@ -87,7 +87,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     ...
     }
     ...
-  }  
+  }
 ```
 
 
@@ -96,7 +96,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ### startCardEntryFlow
 
 Displays a full-screen card entry view. The method takes two callback parameters which correspond
-to the possible results of the request. 
+to the possible results of the request.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
@@ -130,14 +130,14 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ### startCardEntryFlowWithBuyerVerification
 
 Displays a full-screen card entry view with buyer verification flow enabled. The method takes three callback parameters which correspond
-to the possible results of the request. 
+to the possible results of the request.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
 onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
-buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token. 
+buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
 money           | [Money](#Money)                          | Amount of money that will be charged
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
@@ -152,7 +152,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     var money = Money((b) => b
         ..amount = 100
         ..currencyCode = 'USD');
-    
+
     var contact = Contact((b) => b
         ..givenName = "John"
         ..familyName = "Doe"
@@ -162,7 +162,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         ..email = "johndoe@example.com"
         ..phone = "8001234567"
         ..postalCode = "SE1 7");
-    
+
     await InAppPayments.startCardEntryFlowWithBuyerVerification(
         onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
@@ -189,19 +189,19 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ---
 ### completeCardEntry
 
-Called in the `onCardNonceRequestSuccess` callback. Closes the card entry form. 
+Called in the `onCardNonceRequestSuccess` callback. Closes the card entry form.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
-cardEntryCompleteCallback | [CardEntryCompleteCallback](#cardentrycompletecallback)| The callback invoked when card entry is completed and is closed. 
+cardEntryCompleteCallback | [CardEntryCompleteCallback](#cardentrycompletecallback)| The callback invoked when card entry is completed and is closed.
 
-`completeCardEntry` should be called after all other callback logic is executed. 
-If callback logic makes a server call to process the supplied nonce, 
-this method is called after getting a success response from the server.  
+`completeCardEntry` should be called after all other callback logic is executed.
+If callback logic makes a server call to process the supplied nonce,
+this method is called after getting a success response from the server.
 
-If any nonce processing logic is to be executed _after_ the card entry form is closed, 
-call `completeCardEntry` after getting the card nonce from the `onCardNonceRequestSuccess` 
-`cardDetails` parameter. 
+If any nonce processing logic is to be executed _after_ the card entry form is closed,
+call `completeCardEntry` after getting the card nonce from the `onCardNonceRequestSuccess`
+`cardDetails` parameter.
 
 #### Example usage
 
@@ -229,12 +229,12 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ---
 ### showCardNonceProcessingError
 
-Called in the `onCardNonceRequestSuccess` callback. Returns execution to the card entry form 
-with an error string to be shown in the form. 
+Called in the `onCardNonceRequestSuccess` callback. Returns execution to the card entry form
+with an error string to be shown in the form.
 
-`showCardNonceProcessingError` should be called after all other callback logic is executed. 
-If callback logic makes a server call to request a payment with the supplied nonce, 
-this method is called after getting an error response from the server call.  
+`showCardNonceProcessingError` should be called after all other callback logic is executed.
+If callback logic makes a server call to request a payment with the supplied nonce,
+this method is called after getting an error response from the server call.
 
 
 Parameter       | Type       | Description
@@ -270,8 +270,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 Sets the customization theme for the card entry view controller in the native layer.
 
-It is not necessary to call this method before starting Apple Pay. The SDK provides a default 
-theme which can be customized to match the theme of your app. 
+It is not necessary to call this method before starting Apple Pay. The SDK provides a default
+theme which can be customized to match the theme of your app.
 
 Parameter          | Type                                    | Description
 :----------------- |:--------------------------------------- |:-----------
@@ -300,22 +300,22 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
   await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
 ```
---- 
+---
 
 ### startBuyerVerificationFlow
 
-Starts buyer verfication flow for card on file(cof). Displays verification view for some geographies. The method takes two callback parameters which correspond
-to the possible results of the request. 
+Starts the buyer verification for a given payment source id. The most likely use case will be to pass in a card-on-file (cof). This will display a verification view to the user for some geographies to address Strong Customer Authentication. The method takes two callback parameters which correspond
+to the possible results of the request.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
-onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when card entry with buyer verification is completed successfully.
-onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
-buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token. 
+onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when buyer verification on a given payment source id succeeds
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when buyer verification on a given payment source id encouters errors
+buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
 money           | [Money](#Money)                          | Amount of money that will be charged
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
-paymentSourceId | string                                   | This ID can be the nounce returned by [CardEntryFlow](#startcardentryflow) or card-on-file ID for the buyer's payment card stored with Square.
+paymentSourceId | string                                   | This ID can be the nonce returned by [CardEntryFlow](#startcardentryflow) or a card-on-file card ID for the buyer's payment card stored with Square.
 
 **Note**: To test Buyer Verfication flow in the Sandbox, [Test Values](https://developer.squareup.com/docs/testing/test-values#sca-testing-in-the-payment-form) can be used.
 
@@ -328,7 +328,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
     var money = Money((b) => b
         ..amount = 100
         ..currencyCode = 'USD');
-    
+
     var contact = Contact((b) => b
         ..givenName = "John"
         ..familyName = "Doe"
@@ -338,7 +338,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         ..email = "johndoe@example.com"
         ..phone = "8001234567"
         ..postalCode = "SE1 7");
-    
+
     await InAppPayments.startBuyerVerificationFlow(
         onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
@@ -363,9 +363,9 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 **iOS Only**
 
-Initializes the In-App Payments flutter plugin for Apple Pay. 
+Initializes the In-App Payments flutter plugin for Apple Pay.
 
-This is a method called only once when flutter app is being initialized on an iOS device. 
+This is a method called only once when flutter app is being initialized on an iOS device.
 Call this method only on an iOS device and when your app is intended to support Apple Pay.
 
 Parameter          | Type          | Description
@@ -503,7 +503,7 @@ Notifies the native layer to close the Apple Pay sheet with success or failure s
 Parameter                     | Type         | Description
 :---------------------------- | :----------- | :-----------
 isSuccess                     | bool         | Indicates success or failure.
-**Optional**: errorMessage    | String       | The error message that Apple Pay displays in the native layer card entry view controller. 
+**Optional**: errorMessage    | String       | The error message that Apple Pay displays in the native layer card entry view controller.
 
 #### Example usage
 
@@ -553,8 +553,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 **Android Only**
 
 
-**Optional**: Used to enable Google Pay in an Android app. Initialize flutter plugin for google pay. 
-This is a method called only once when flutter app is being initialized on an Android device. 
+**Optional**: Used to enable Google Pay in an Android app. Initialize flutter plugin for google pay.
+This is a method called only once when flutter app is being initialized on an Android device.
 
 ---
 Note: The location ID is found in the Square developer dashboard, on the **locations** page.
@@ -563,7 +563,7 @@ Note: The location ID is found in the Square developer dashboard, on the **locat
 
 Parameter          | Type            | Description
 :----------------- | :-------------- | :-----------------------------------------------
-squareLocationId   | String          | The Square Location ID from the developer portal. 
+squareLocationId   | String          | The Square Location ID from the developer portal.
 environment        | Int             | Specifies the Google Pay environment to run Google Pay in: `google_pay_constants.environmentTest`, `google_pay_constants.environmentProduction`
 
 
@@ -603,7 +603,7 @@ import 'package:square_in_app_payments/google_pay_constants.dart'
 ### canUseGooglePay
 **Android Only**
 
-Returns true if the device supports Google Pay and the user has added at least one 
+Returns true if the device supports Google Pay and the user has added at least one
 card that Square supports. Square doesn't support all the brands apple pay supports.
 
 
@@ -649,7 +649,7 @@ Starts the Google Pay payment authorization and returns a nonce based on the aut
 
 Parameter                      | Type                                   | Description
 :----------------------------- | :------------------------------------- | :-----------
-price                          | String                                 | The payment authorization amount as a string. 
+price                          | String                                 | The payment authorization amount as a string.
 currencyCode                   | String                                 | The ISO currency code
 priceStatus                    | [google_pay_constants](#google-pay-price-status-values).totalPriceStatusFinal | The status of the total price used
 onGooglePayNonceRequestSuccess | [GooglePayNonceRequestSuccessCallback](#googlepaynoncerequestsuccesscallback)| Success callback invoked when a nonce is available.
@@ -702,7 +702,7 @@ Callback invoked when card entry is returned successfully with card details.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
-cardDetails     | [CardDetails](#carddetails)              | The results of a successful card entry 
+cardDetails     | [CardDetails](#carddetails)              | The results of a successful card entry
 #### Example usage
 
 ```dart
@@ -733,7 +733,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ---
 ### CardEntryCancelCallback
 
-Callback invoked when card entry canceled and has been closed. 
+Callback invoked when card entry canceled and has been closed.
 
 Do not call [completeCardEntry](#completecardentry) because the operation is complete and the card entry form is closed.
 
@@ -749,12 +749,12 @@ Callback invoked when card entry is completed and has been closed.
 
 Callback invoked when Apple Pay card details are available
 
-This is called before the Apple Pay payment authorization sheet is closed. Call [completeApplePayAuthorization](#completeapplepayauthorization) 
+This is called before the Apple Pay payment authorization sheet is closed. Call [completeApplePayAuthorization](#completeapplepayauthorization)
 to close the apple pay sheet.
 
 Parameter       | Type                         | Description
 :-------------- | :--------------------------- | :-----------
-cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of the card and a nonce. 
+cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of the card and a nonce.
 
 
 #### Example usage
@@ -790,7 +790,7 @@ This callback is invoked before the native iOS Apple Pay payment authorization v
 
 Parameter       | Type                     | Description
 :-------------- | :----------------------- | :-----------
-errorInfo       | [ErrorInfo](#errorinfo)  | Information about the error condition that prevented a nonce from being generated. 
+errorInfo       | [ErrorInfo](#errorinfo)  | Information about the error condition that prevented a nonce from being generated.
 
 #### Example usage
 
@@ -820,7 +820,7 @@ Callback invoked when [CardDetails](#carddetails) with Google Pay are available.
 
 Parameter       | Type                         | Description
 :-------------- | :--------------------------- | :-----------
-cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of the card and a nonce. 
+cardDetails     | [CardDetails](#carddetails)  | The non-confidential details of the card and a nonce.
 
 
 #### Example usage
@@ -842,27 +842,27 @@ import 'package:square_in_app_payments/models.dart';
 ---
  ### GooglePayNonceRequestFailureCallback
 **Android Only**
- 
+
  Callback invoked a card nonce could not be obtained.
 
 Parameter       | Type                     | Description
 :-------------- | :----------------------- | :-----------
-errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the error. 
+errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the error.
 
 ---
  ### GooglePayCancelCallback
 **Android Only**
- 
+
  Callback invoked when Google Pay payment authorization is canceled.
 
 ---
  ### BuyerVerificationSuccessCallback
- 
+
  Callback invoked when Buyer Verification flow succeeds.
 
 ---
  ### BuyerVerificationErrorCallback
- 
+
  Callback invoked when Buyer Verification flow fails.
 
 ---
@@ -994,7 +994,7 @@ postalCode      | String          | The postal code of the contact address.
 region          | String          | The applicable administrative region (e.g., province, state) of the contact address.
 ---
 
-### Card 
+### Card
 
 Represents the non-confidential details of a card.
 
