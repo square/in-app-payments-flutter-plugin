@@ -26,7 +26,7 @@ String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
 class OrderSheet extends StatelessWidget {
   final bool googlePayEnabled;
   final bool applePayEnabled;
-  OrderSheet({this.googlePayEnabled, this.applePayEnabled});
+  OrderSheet({required this.googlePayEnabled, required this.applePayEnabled});
 
   @override
   Widget build(BuildContext context) => Container(

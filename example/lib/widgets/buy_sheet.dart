@@ -34,10 +34,10 @@ import 'order_sheet.dart';
 enum ApplePayStatus { success, fail, unknown }
 
 class BuySheet extends StatefulWidget {
-  final bool applePayEnabled;
-  final bool googlePayEnabled;
-  final String squareLocationId;
-  final String applePayMerchantId;
+  final bool? applePayEnabled;
+  final bool? googlePayEnabled;
+  final String? squareLocationId;
+  final String? applePayMerchantId;
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
@@ -63,10 +63,10 @@ class BuySheetState extends State<BuySheet> {
   void _showOrderSheet() async {
     var selection =
         await custom_modal_bottom_sheet.showModalBottomSheet<PaymentType>(
-            context: BuySheet.scaffoldKey.currentState.context,
+            context: BuySheet.scaffoldKey.currentState!.context,
             builder: (context) => OrderSheet(
-                  applePayEnabled: widget.applePayEnabled,
-                  googlePayEnabled: widget.googlePayEnabled,
+                  applePayEnabled: widget.applePayEnabled!,
+                  googlePayEnabled: widget.googlePayEnabled!,
                 ));
 
     switch (selection) {
@@ -85,14 +85,14 @@ class BuySheetState extends State<BuySheet> {
         await _onStartBuyerVerificationFlow();
         break;
       case PaymentType.googlePay:
-        if (_squareLocationSet && widget.googlePayEnabled) {
+        if (_squareLocationSet && widget.googlePayEnabled!) {
           _onStartGooglePay();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
       case PaymentType.applePay:
-        if (_applePayMerchantIdSet && widget.applePayEnabled) {
+        if (_applePayMerchantIdSet && widget.applePayEnabled!) {
           _onStartApplePay();
         } else {
           _showapplePayMerchantIdNotSet();
@@ -101,7 +101,7 @@ class BuySheetState extends State<BuySheet> {
     }
   }
 
-  void printCurlCommand(String nonce, String verificationToken) {
+  void printCurlCommand(String nonce, String? verificationToken) {
     var hostUrl = 'https://connect.squareup.com';
     if (squareApplicationId.startsWith('sandbox')) {
       hostUrl = 'https://connect.squareupsandbox.com';
@@ -138,7 +138,7 @@ class BuySheetState extends State<BuySheet> {
   }
 
   void _showUrlNotSetAndPrintCurlCommand(String nonce,
-      {String verificationToken}) {
+      {String? verificationToken}) {
     String title;
     if (verificationToken != null) {
       title = "Nonce and verification token generated but not charged";
@@ -146,7 +146,7 @@ class BuySheetState extends State<BuySheet> {
       title = "Nonce generated but not charged";
     }
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: title,
         description:
             "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
@@ -155,7 +155,7 @@ class BuySheetState extends State<BuySheet> {
 
   void _showSquareLocationIdNotSet() {
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: "Missing Square Location ID",
         description:
             "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
@@ -163,7 +163,7 @@ class BuySheetState extends State<BuySheet> {
 
   void _showapplePayMerchantIdNotSet() {
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: "Missing Apple Merchant ID",
         description:
             "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.");
@@ -172,7 +172,7 @@ class BuySheetState extends State<BuySheet> {
   void _onCardEntryComplete() {
     if (_chargeServerHostReplaced) {
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Your order was successful",
           description:
               "Go to your Square dashboard to see this order reflected in the sales tab.");
@@ -257,7 +257,7 @@ class BuySheetState extends State<BuySheet> {
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
+        paymentSourceId: "ccof:customer-card-id-requires-verification");
   }
 
   void _onCancelCardEntryFlow() {
@@ -275,7 +275,7 @@ class BuySheetState extends State<BuySheet> {
           onGooglePayCanceled: onGooglePayEntryCanceled);
     } on PlatformException catch (ex) {
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Failed to start GooglePay",
           description: ex.toString());
     }
@@ -289,13 +289,13 @@ class BuySheetState extends State<BuySheet> {
     try {
       await chargeCard(result);
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
     } on ChargeException catch (ex) {
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing GooglePay payment",
           description: ex.errorMessage);
     }
@@ -303,7 +303,7 @@ class BuySheetState extends State<BuySheet> {
 
   void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: "Failed to request GooglePay nonce",
         description: errorInfo.toString());
   }
@@ -325,7 +325,7 @@ class BuySheetState extends State<BuySheet> {
           onApplePayComplete: _onApplePayEntryComplete);
     } on PlatformException catch (ex) {
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Failed to start ApplePay",
           description: ex.toString());
     }
@@ -342,7 +342,7 @@ class BuySheetState extends State<BuySheet> {
       await chargeCardAfterBuyerVerification(result.nonce, result.token);
     } on ChargeException catch (ex) {
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing card payment",
           description: ex.errorMessage);
     }
@@ -358,7 +358,7 @@ class BuySheetState extends State<BuySheet> {
       await chargeCard(result);
       _applePayStatus = ApplePayStatus.success;
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Your order was successful",
           description:
               "Go to your Square dashbord to see this order reflected in the sales tab.");
@@ -367,7 +367,7 @@ class BuySheetState extends State<BuySheet> {
       await InAppPayments.completeApplePayAuthorization(
           isSuccess: false, errorMessage: ex.errorMessage);
       showAlertDialog(
-          context: BuySheet.scaffoldKey.currentContext,
+          context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing ApplePay payment",
           description: ex.errorMessage);
       _applePayStatus = ApplePayStatus.fail;
@@ -379,7 +379,7 @@ class BuySheetState extends State<BuySheet> {
     await InAppPayments.completeApplePayAuthorization(
         isSuccess: false, errorMessage: errorInfo.message);
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: "Error request ApplePay nonce",
         description: errorInfo.toString());
   }
@@ -393,7 +393,7 @@ class BuySheetState extends State<BuySheet> {
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
     showAlertDialog(
-        context: BuySheet.scaffoldKey.currentContext,
+        context: BuySheet.scaffoldKey.currentContext!,
         title: "Error verifying buyer",
         description: errorInfo.toString());
   }
