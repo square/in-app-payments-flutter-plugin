@@ -16,7 +16,6 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
-import 'package:meta/meta.dart';
 import 'models.dart';
 import 'src/serializers.dart';
 
@@ -152,8 +151,8 @@ class InAppPayments {
   }
 
   static Future setSquareApplicationId(String applicationId) async {
-    assert(applicationId != null && applicationId.isNotEmpty,
-        'application should not be null or empty.');
+    assert(applicationId.isNotEmpty,
+        'application should not be empty.');
     var params = <String, dynamic>{
       'applicationId': applicationId,
     };
@@ -196,9 +195,8 @@ class InAppPayments {
 
   static Future initializeGooglePay(
       String squareLocationId, int environment) async {
-    assert(environment != null, 'environment should not be null.');
-    assert(squareLocationId != null && squareLocationId.isNotEmpty,
-        'squareLocationId should not be null or empty.');
+    assert(squareLocationId.isNotEmpty,
+        'squareLocationId should not be empty.');
     var params = <String, dynamic>{
       'environment': environment,
       'squareLocationId': squareLocationId,
@@ -225,11 +223,10 @@ class InAppPayments {
       required GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
       required GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
       required GooglePayCancelCallback onGooglePayCanceled}) async {
-    assert(price != null && price.isNotEmpty,
-        'price should not be null or empty.');
-    assert(currencyCode != null && currencyCode.isNotEmpty,
-        'currencyCode should not be null or empty.');
-    assert(priceStatus != null, 'priceStatus should not be null.');
+    assert(price.isNotEmpty,
+        'price should not be empty.');
+    assert(currencyCode.isNotEmpty,
+        'currencyCode should not be empty.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -251,8 +248,8 @@ class InAppPayments {
   }
 
   static Future initializeApplePay(String applePayMerchantId) async {
-    assert(applePayMerchantId != null && applePayMerchantId.isNotEmpty,
-        'applePayMerchantId should not be null or empty.');
+    assert(applePayMerchantId.isNotEmpty,
+        'applePayMerchantId should not be empty.');
     var params = <String, dynamic>{
       'merchantId': applePayMerchantId,
     };
@@ -271,29 +268,28 @@ class InAppPayments {
       required ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
       required ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
       required ApplePayCompleteCallback onApplePayComplete}) async {
-    assert(summaryLabel != null && summaryLabel.isNotEmpty,
-        'summaryLabel should not be null or empty.');
-    assert(price != null && price.isNotEmpty,
-        'price should not be null or empty.');
-    assert(countryCode != null && countryCode.isNotEmpty,
-        'countryCode should not be null or empty.');
-    assert(currencyCode != null && currencyCode.isNotEmpty,
-        'currencyCode should not be null or empty.');
+    assert(summaryLabel.isNotEmpty,
+        'summaryLabel should not be empty.');
+    assert(price.isNotEmpty,
+        'price should not be empty.');
+    assert(countryCode.isNotEmpty,
+        'countryCode should not be empty.');
+    assert(currencyCode.isNotEmpty,
+        'currencyCode should not be empty.');
 
     _applePayNonceRequestSuccessCallback = onApplePayNonceRequestSuccess;
     _applePayNonceRequestFailureCallback = onApplePayNonceRequestFailure;
     _applePayCompleteCallback = onApplePayComplete;
 
-    String paymtnTypeString = _standardSerializers.serializeWith(
-        ApplePayPaymentType.serializer,
-        paymentType != null ? paymentType : ApplePayPaymentType.finalPayment) as String;
+    var paymentTypeString = _standardSerializers.serializeWith(
+        ApplePayPaymentType.serializer, paymentType);
     try {
       var params = <String, dynamic>{
         'price': price,
         'summaryLabel': summaryLabel,
         'countryCode': countryCode,
         'currencyCode': currencyCode,
-        'paymentType': paymtnTypeString,
+        'paymentType': paymentTypeString,
       };
       await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {
@@ -389,9 +385,7 @@ class InAppPaymentsException implements Exception {
     this._code,
     this.message,
     this.debugCode,
-    this.debugMessage,
-  )   : assert(_code != null),
-        assert(debugCode != null);
+    this.debugMessage);
 
   @override
   String toString() =>
