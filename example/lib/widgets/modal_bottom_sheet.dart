@@ -63,7 +63,7 @@ class _BottomSheetState extends State<BottomSheet> {
   void _handleDragUpdate(DragUpdateDetails details) {
     if (_dismissUnderway) return;
     widget.animationController!.value -=
-        details.primaryDelta! / (_childHeight ?? details.primaryDelta!);
+        details.primaryDelta! / (_childHeight);
   }
 
   void _handleDragEnd(DragEndDetails details) {
