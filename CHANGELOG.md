@@ -1,10 +1,14 @@
 ## Changelog
 
+### v1.6.0 March 26, 2021
+
+* Added a new flow called [startBuyerVerificationFlow](doc/reference.md#startbuyerverificationflow) to support Strong Customer Authentication with a card-on-file card ID
+
 ### v1.5.0 July 9, 2020
 
 * Updated to IAP SDK 1.4.0.
 * Added support for gift card payments.
-* Disable R8 in exchange for proguard. 
+* Disable R8 in exchange for proguard.
 
 ### v1.4.0 June 25, 2020
 
