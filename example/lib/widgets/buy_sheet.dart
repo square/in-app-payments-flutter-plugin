@@ -257,7 +257,7 @@ class BuySheetState extends State<BuySheet> {
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "ccof:customer-card-id-requires-verification");
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
   }
 
   void _onCancelCardEntryFlow() {
