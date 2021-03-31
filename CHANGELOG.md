@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.7.0 March 31, 2021
+
+* Added support for null safety in Flutter 2. Many files were changed to support this, and there may be some changes required from the developer to support.
+
 ### v1.6.0 March 26, 2021
 
 * Added a new flow called [startBuyerVerificationFlow](doc/reference.md#startbuyerverificationflow) to support Strong Customer Authentication with a card-on-file card ID
