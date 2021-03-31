@@ -122,7 +122,7 @@ abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   Card get card;
 
   CardDetails._();
-  factory CardDetails([updates(CardDetailsBuilder b)]) = _$CardDetails;
+  factory CardDetails([updates(CardDetailsBuilder b)?]) = _$CardDetails;
   static Serializer<CardDetails> get serializer => _$cardDetailsSerializer;
 }
 
@@ -130,13 +130,12 @@ abstract class BuyerVerificationDetails
     implements
         Built<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
   String get nonce;
-  @nullable
-  Card get card;
+  Card? get card;
   String get token;
 
   BuyerVerificationDetails._();
   factory BuyerVerificationDetails(
-          [updates(BuyerVerificationDetailsBuilder b)]) =
+          [updates(BuyerVerificationDetailsBuilder b)/*!*/]) =
       _$BuyerVerificationDetails;
   static Serializer<BuyerVerificationDetails> get serializer =>
       _$buyerVerificationDetailsSerializer;
@@ -150,11 +149,10 @@ abstract class Card implements Built<Card, CardBuilder> {
   CardType get type;
   CardPrepaidType get prepaidType;
 
-  @nullable
-  String get postalCode;
+  String? get postalCode;
 
   Card._();
-  factory Card([updates(CardBuilder b)]) = _$Card;
+  factory Card([updates(CardBuilder b)/*!*/]) = _$Card;
   static Serializer<Card> get serializer => _$cardSerializer;
 }
 
@@ -163,27 +161,25 @@ abstract class RGBAColor implements Built<RGBAColor, RGBAColorBuilder> {
   int get g;
   int get b;
 
-  @nullable
-  double get a;
+  double? get a;
 
   RGBAColor._() {
     assert(r >= 0);
     assert(g >= 0);
     assert(b >= 0);
-    assert(a == null || (a >= 0 && a <= 1.0));
+    assert(a == null || (a! >= 0 && a! <= 1.0));
   }
-  factory RGBAColor([updates(RGBAColorBuilder b)]) = _$RGBAColor;
+  factory RGBAColor([updates(RGBAColorBuilder b)/*!*/]) = _$RGBAColor;
   static Serializer<RGBAColor> get serializer => _$rGBAColorSerializer;
 }
 
 abstract class Font implements Built<Font, FontBuilder> {
   double get size;
 
-  @nullable
-  String get name;
+  String? get name;
 
   Font._();
-  factory Font([updates(FontBuilder b)]) = _$Font;
+  factory Font([updates(FontBuilder b)/*!*/]) = _$Font;
   static Serializer<Font> get serializer => _$fontSerializer;
 }
 
@@ -204,33 +200,21 @@ class KeyboardAppearance extends EnumClass {
 }
 
 abstract class IOSTheme implements Built<IOSTheme, IOSThemeBuilder> {
-  @nullable
-  Font get font;
-  @nullable
-  RGBAColor get backgroundColor;
-  @nullable
-  RGBAColor get foregroundColor;
-  @nullable
-  RGBAColor get textColor;
-  @nullable
-  RGBAColor get placeholderTextColor;
-  @nullable
-  RGBAColor get tintColor;
-  @nullable
-  RGBAColor get messageColor;
-  @nullable
-  RGBAColor get errorColor;
-  @nullable
-  String get saveButtonTitle;
-  @nullable
-  Font get saveButtonFont;
-  @nullable
-  RGBAColor get saveButtonTextColor;
-  @nullable
-  KeyboardAppearance get keyboardAppearance;
+  Font? get font;
+  RGBAColor? get backgroundColor;
+  RGBAColor? get foregroundColor;
+  RGBAColor? get textColor;
+  RGBAColor? get placeholderTextColor;
+  RGBAColor? get tintColor;
+  RGBAColor? get messageColor;
+  RGBAColor? get errorColor;
+  String? get saveButtonTitle;
+  Font? get saveButtonFont;
+  RGBAColor? get saveButtonTextColor;
+  KeyboardAppearance? get keyboardAppearance;
 
   IOSTheme._();
-  factory IOSTheme([updates(IOSThemeBuilder b)]) = _$IOSTheme;
+  factory IOSTheme([updates(IOSThemeBuilder b)?]) = _$IOSTheme;
   static Serializer<IOSTheme> get serializer => _$iOSThemeSerializer;
 }
 
@@ -241,7 +225,7 @@ abstract class ErrorInfo implements Built<ErrorInfo, ErrorInfoBuilder> {
   String get debugMessage;
 
   ErrorInfo._();
-  factory ErrorInfo([updates(ErrorInfoBuilder b)]) = _$ErrorInfo;
+  factory ErrorInfo([updates(ErrorInfoBuilder b)/*!*/]) = _$ErrorInfo;
   static Serializer<ErrorInfo> get serializer => _$errorInfoSerializer;
 }
 
@@ -250,30 +234,22 @@ abstract class Money implements Built<Money, MoneyBuilder> {
   String get currencyCode;
 
   Money._();
-  factory Money([updates(MoneyBuilder b)]) = _$Money;
+  factory Money([updates(MoneyBuilder b)/*!*/]) = _$Money;
   static Serializer<Money> get serializer => _$moneySerializer;
 }
 
 abstract class Contact implements Built<Contact, ContactBuilder> {
   String get givenName;
-  @nullable
-  String get familyName;
-  @nullable
-  BuiltList<String> get addressLines;
-  @nullable
-  String get city;
-  @nullable
-  String get countryCode;
-  @nullable
-  String get email;
-  @nullable
-  String get phone;
-  @nullable
-  String get postalCode;
-  @nullable
-  String get region;
+  String? get familyName;
+  BuiltList<String>? get addressLines;
+  String? get city;
+  String? get countryCode;
+  String? get email;
+  String? get phone;
+  String? get postalCode;
+  String? get region;
 
   Contact._();
-  factory Contact([updates(ContactBuilder b)]) = _$Contact;
+  factory Contact([updates(ContactBuilder b)/*!*/]) = _$Contact;
   static Serializer<Contact> get serializer => _$contactSerializer;
 }

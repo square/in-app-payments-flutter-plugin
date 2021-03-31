@@ -16,7 +16,6 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:built_value/standard_json_plugin.dart';
-import 'package:meta/meta.dart';
 import 'models.dart';
 import 'src/serializers.dart';
 
@@ -49,96 +48,96 @@ class InAppPayments {
   static final _standardSerializers =
       (serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
 
-  static CardEntryCancelCallback _cardEntryCancelCallback;
-  static CardEntryCardNonceRequestSuccessCallback
+  static CardEntryCancelCallback? _cardEntryCancelCallback;
+  static CardEntryCardNonceRequestSuccessCallback?
       _cardEntryCardNonceRequestSuccessCallback;
-  static CardEntryCompleteCallback _cardEntryCompleteCallback;
+  static CardEntryCompleteCallback? _cardEntryCompleteCallback;
 
-  static GooglePayNonceRequestSuccessCallback
+  static GooglePayNonceRequestSuccessCallback?
       _googlePayNonceRequestSuccessCallback;
-  static GooglePayNonceRequestFailureCallback
+  static GooglePayNonceRequestFailureCallback?
       _googlePayNonceRequestFailureCallback;
-  static GooglePayCancelCallback _googlePayCancelCallback;
+  static GooglePayCancelCallback? _googlePayCancelCallback;
 
-  static ApplePayNonceRequestSuccessCallback
+  static ApplePayNonceRequestSuccessCallback?
       _applePayNonceRequestSuccessCallback;
-  static ApplePayNonceRequestFailureCallback
+  static ApplePayNonceRequestFailureCallback?
       _applePayNonceRequestFailureCallback;
-  static ApplePayCompleteCallback _applePayCompleteCallback;
+  static ApplePayCompleteCallback? _applePayCompleteCallback;
 
-  static BuyerVerificationSuccessCallback _buyerVerificationSuccessCallback;
-  static BuyerVerificationErrorCallback _buyerVerificationErrorCallback;
+  static BuyerVerificationSuccessCallback? _buyerVerificationSuccessCallback;
+  static BuyerVerificationErrorCallback? _buyerVerificationErrorCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
       switch (call.method) {
         case 'cardEntryCancel':
           if (_cardEntryCancelCallback != null) {
-            _cardEntryCancelCallback();
+            _cardEntryCancelCallback!();
           }
           break;
         case 'cardEntryDidObtainCardDetails':
           if (_cardEntryCardNonceRequestSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(
-                CardDetails.serializer, call.arguments);
-            _cardEntryCardNonceRequestSuccessCallback(result);
+                CardDetails.serializer, call.arguments)!;
+            _cardEntryCardNonceRequestSuccessCallback!(result);
           }
           break;
         case 'cardEntryComplete':
           if (_cardEntryCompleteCallback != null) {
-            _cardEntryCompleteCallback();
+            _cardEntryCompleteCallback!();
           }
           break;
         case 'onGooglePayCanceled':
           if (_googlePayCancelCallback != null) {
-            _googlePayCancelCallback();
+            _googlePayCancelCallback!();
           }
           break;
         case 'onGooglePayNonceRequestSuccess':
           if (_googlePayNonceRequestSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(
-                CardDetails.serializer, call.arguments);
-            _googlePayNonceRequestSuccessCallback(result);
+                CardDetails.serializer, call.arguments)!;
+            _googlePayNonceRequestSuccessCallback!(result);
           }
           break;
         case 'onGooglePayNonceRequestFailure':
           if (_googlePayNonceRequestFailureCallback != null) {
             var errorInfo = _standardSerializers.deserializeWith(
-                ErrorInfo.serializer, call.arguments);
-            _googlePayNonceRequestFailureCallback(errorInfo);
+                ErrorInfo.serializer, call.arguments)!;
+            _googlePayNonceRequestFailureCallback!(errorInfo);
           }
           break;
         case 'onApplePayNonceRequestSuccess':
           if (_applePayNonceRequestSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(
-                CardDetails.serializer, call.arguments);
-            _applePayNonceRequestSuccessCallback(result);
+                CardDetails.serializer, call.arguments)!;
+            _applePayNonceRequestSuccessCallback!(result);
           }
           break;
         case 'onApplePayNonceRequestFailure':
           if (_applePayNonceRequestFailureCallback != null) {
             var errorInfo = _standardSerializers.deserializeWith(
-                ErrorInfo.serializer, call.arguments);
-            _applePayNonceRequestFailureCallback(errorInfo);
+                ErrorInfo.serializer, call.arguments)!;
+            _applePayNonceRequestFailureCallback!(errorInfo);
           }
           break;
         case 'onApplePayComplete':
           if (_applePayCompleteCallback != null) {
-            _applePayCompleteCallback();
+            _applePayCompleteCallback!();
           }
           break;
         case 'onBuyerVerificationSuccess':
           if (_buyerVerificationSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(
-                BuyerVerificationDetails.serializer, call.arguments);
-            _buyerVerificationSuccessCallback(result);
+                BuyerVerificationDetails.serializer, call.arguments)!;
+            _buyerVerificationSuccessCallback!(result);
           }
           break;
         case 'onBuyerVerificationError':
           if (_buyerVerificationErrorCallback != null) {
             var errorInfo = _standardSerializers.deserializeWith(
-                ErrorInfo.serializer, call.arguments);
-            _buyerVerificationErrorCallback(errorInfo);
+                ErrorInfo.serializer, call.arguments)!;
+            _buyerVerificationErrorCallback!(errorInfo);
           }
           break;
         default:
@@ -152,8 +151,8 @@ class InAppPayments {
   }
 
   static Future setSquareApplicationId(String applicationId) async {
-    assert(applicationId != null && applicationId.isNotEmpty,
-        'application should not be null or empty.');
+    assert(applicationId.isNotEmpty,
+        'application should not be empty.');
     var params = <String, dynamic>{
       'applicationId': applicationId,
     };
@@ -161,8 +160,8 @@ class InAppPayments {
   }
 
   static Future startCardEntryFlow(
-      {CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
-      CardEntryCancelCallback onCardEntryCancel,
+      {required CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
+      required CardEntryCancelCallback onCardEntryCancel,
       bool collectPostalCode = true}) async {
     _cardEntryCancelCallback = onCardEntryCancel;
     _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
@@ -173,8 +172,8 @@ class InAppPayments {
   }
 
   static Future startGiftCardEntryFlow(
-      {CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
-        CardEntryCancelCallback onCardEntryCancel}) async {
+      {required CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
+        required CardEntryCancelCallback onCardEntryCancel}) async {
     _cardEntryCancelCallback = onCardEntryCancel;
     _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     await _channel.invokeMethod('startGiftCardEntryFlow');
@@ -182,7 +181,7 @@ class InAppPayments {
 
 
   static Future completeCardEntry(
-      {CardEntryCompleteCallback onCardEntryComplete}) async {
+      {required CardEntryCompleteCallback onCardEntryComplete}) async {
     _cardEntryCompleteCallback = onCardEntryComplete;
     await _channel.invokeMethod('completeCardEntry');
   }
@@ -196,9 +195,8 @@ class InAppPayments {
 
   static Future initializeGooglePay(
       String squareLocationId, int environment) async {
-    assert(environment != null, 'environment should not be null.');
-    assert(squareLocationId != null && squareLocationId.isNotEmpty,
-        'squareLocationId should not be null or empty.');
+    assert(squareLocationId.isNotEmpty,
+        'squareLocationId should not be empty.');
     var params = <String, dynamic>{
       'environment': environment,
       'squareLocationId': squareLocationId,
@@ -208,7 +206,7 @@ class InAppPayments {
 
   static Future<bool> get canUseGooglePay async {
     try {
-      return await _channel.invokeMethod('canUseGooglePay');
+      return await (_channel.invokeMethod('canUseGooglePay'));
     } on PlatformException catch (ex) {
       throw InAppPaymentsException(
           ex.code,
@@ -219,17 +217,16 @@ class InAppPayments {
   }
 
   static Future requestGooglePayNonce(
-      {@required String price,
-      @required String currencyCode,
-      @required int priceStatus,
-      GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
-      GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
-      GooglePayCancelCallback onGooglePayCanceled}) async {
-    assert(price != null && price.isNotEmpty,
-        'price should not be null or empty.');
-    assert(currencyCode != null && currencyCode.isNotEmpty,
-        'currencyCode should not be null or empty.');
-    assert(priceStatus != null, 'priceStatus should not be null.');
+      {required String price,
+      required String currencyCode,
+      required int priceStatus,
+      required GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
+      required GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
+      required GooglePayCancelCallback onGooglePayCanceled}) async {
+    assert(price.isNotEmpty,
+        'price should not be empty.');
+    assert(currencyCode.isNotEmpty,
+        'currencyCode should not be empty.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -251,8 +248,8 @@ class InAppPayments {
   }
 
   static Future initializeApplePay(String applePayMerchantId) async {
-    assert(applePayMerchantId != null && applePayMerchantId.isNotEmpty,
-        'applePayMerchantId should not be null or empty.');
+    assert(applePayMerchantId.isNotEmpty,
+        'applePayMerchantId should not be empty.');
     var params = <String, dynamic>{
       'merchantId': applePayMerchantId,
     };
@@ -260,40 +257,39 @@ class InAppPayments {
   }
 
   static Future<bool> get canUseApplePay async =>
-      await _channel.invokeMethod('canUseApplePay');
+      await (_channel.invokeMethod('canUseApplePay'));
 
   static Future requestApplePayNonce(
-      {@required String price,
-      @required String summaryLabel,
-      @required String countryCode,
-      @required String currencyCode,
-      ApplePayPaymentType paymentType,
-      ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
-      ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
-      ApplePayCompleteCallback onApplePayComplete}) async {
-    assert(summaryLabel != null && summaryLabel.isNotEmpty,
-        'summaryLabel should not be null or empty.');
-    assert(price != null && price.isNotEmpty,
-        'price should not be null or empty.');
-    assert(countryCode != null && countryCode.isNotEmpty,
-        'countryCode should not be null or empty.');
-    assert(currencyCode != null && currencyCode.isNotEmpty,
-        'currencyCode should not be null or empty.');
+      {required String price,
+      required String summaryLabel,
+      required String countryCode,
+      required String currencyCode,
+      required ApplePayPaymentType paymentType,
+      required ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
+      required ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
+      required ApplePayCompleteCallback onApplePayComplete}) async {
+    assert(summaryLabel.isNotEmpty,
+        'summaryLabel should not be empty.');
+    assert(price.isNotEmpty,
+        'price should not be empty.');
+    assert(countryCode.isNotEmpty,
+        'countryCode should not be empty.');
+    assert(currencyCode.isNotEmpty,
+        'currencyCode should not be empty.');
 
     _applePayNonceRequestSuccessCallback = onApplePayNonceRequestSuccess;
     _applePayNonceRequestFailureCallback = onApplePayNonceRequestFailure;
     _applePayCompleteCallback = onApplePayComplete;
 
-    String paymtnTypeString = _standardSerializers.serializeWith(
-        ApplePayPaymentType.serializer,
-        paymentType != null ? paymentType : ApplePayPaymentType.finalPayment);
+    var paymentTypeString = _standardSerializers.serializeWith(
+        ApplePayPaymentType.serializer, paymentType);
     try {
       var params = <String, dynamic>{
         'price': price,
         'summaryLabel': summaryLabel,
         'countryCode': countryCode,
         'currencyCode': currencyCode,
-        'paymentType': paymtnTypeString,
+        'paymentType': paymentTypeString,
       };
       await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {
@@ -306,7 +302,7 @@ class InAppPayments {
   }
 
   static Future completeApplePayAuthorization(
-      {@required bool isSuccess, String errorMessage = ''}) async {
+      {required bool isSuccess, String errorMessage = ''}) async {
     var params = <String, dynamic>{
       'isSuccess': isSuccess,
       'errorMessage': errorMessage,
@@ -315,13 +311,13 @@ class InAppPayments {
   }
 
   static Future startCardEntryFlowWithBuyerVerification(
-      {BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
-      BuyerVerificationErrorCallback onBuyerVerificationFailure,
-      CardEntryCancelCallback onCardEntryCancel,
-      String buyerAction,
-      Money money,
-      String squareLocationId,
-      Contact contact,
+      {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required CardEntryCancelCallback onCardEntryCancel,
+      required String buyerAction,
+      required Money money,
+      required String squareLocationId,
+      required Contact contact,
       bool collectPostalCode = true}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
@@ -339,13 +335,13 @@ class InAppPayments {
   }
 
   static Future startBuyerVerificationFlow(
-      {BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
-      BuyerVerificationErrorCallback onBuyerVerificationFailure,
-      String buyerAction,
-      Money money,
-      String squareLocationId,
-      Contact contact,
-      String paymentSourceId}) async {
+      {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required String buyerAction,
+      required Money money,
+      required String squareLocationId,
+      required Contact contact,
+      required String paymentSourceId}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     var params = <String, dynamic>{
@@ -376,22 +372,20 @@ class InAppPaymentsException implements Exception {
 
   final String _code;
 
-  final String message;
+  final String? message;
 
   final String debugCode;
 
-  final String debugMessage;
+  final String? debugMessage;
 
-  ErrorCode get code =>
+  ErrorCode? get code =>
       _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
 
   InAppPaymentsException(
     this._code,
     this.message,
     this.debugCode,
-    this.debugMessage,
-  )   : assert(_code != null),
-        assert(debugCode != null);
+    this.debugMessage);
 
   @override
   String toString() =>

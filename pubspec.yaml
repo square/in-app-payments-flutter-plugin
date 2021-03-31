@@ -5,21 +5,21 @@ homepage: https://github.com/square/in-app-payments-flutter-plugin
 documentation: https://github.com/square/in-app-payments-flutter-plugin
 
 environment:
-  sdk: ">=2.0.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  built_value: ^7.0.0
-  built_collection: ^4.0.0
+  built_value: ^8.0.4
+  built_collection: ^5.0.0
   meta: ^1.1.6
 
 dev_dependencies:
-  build: ^1.1.0
-  build_runner: ^1.2.3
-  source_gen:  ^0.9.4+1
-  built_value_generator: ^7.0.0
+  build: ^2.0.0
+  build_runner: ^1.12.2
+  source_gen:  ^1.0.0
+  built_value_generator: ^8.0.4
 
 # The following section is specific to Flutter.
 flutter:

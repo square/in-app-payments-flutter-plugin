@@ -19,7 +19,7 @@ import '../colors.dart';
 class CookieButton extends StatelessWidget {
   final String text;
   final Function onPressed;
-  CookieButton({this.text, this.onPressed});
+  CookieButton({required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -32,5 +32,5 @@ class CookieButton extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: mainButtonColor,
-          onPressed: onPressed));
+          onPressed: onPressed as void Function()?));
 }
