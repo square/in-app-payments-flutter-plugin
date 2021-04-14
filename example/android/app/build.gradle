@@ -22,6 +22,7 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
@@ -51,6 +52,23 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+}
+
+dependencies {
+  // ...
+
+  // Import the Firebase BoM
+  implementation platform('com.google.firebase:firebase-bom:27.0.0')
+
+  // When using the BoM, you don't specify versions in Firebase library dependencies
+
+  // Declare the dependency for the Firebase SDK for Google Analytics
+  implementation 'com.google.firebase:firebase-analytics'
+
+  // Declare the dependencies for any other desired Firebase products
+  // For example, declare the dependencies for Firebase Authentication and Cloud Firestore
+  implementation 'com.google.firebase:firebase-auth'
+  implementation 'com.google.firebase:firebase-firestore'
 }
 
 flutter {
