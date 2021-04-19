@@ -13,6 +13,9 @@ dependencies:
   http: ^0.13.1
   uuid: ^3.0.3
 
+  firebase_core: ^1.0.3
+  firebase_messaging: ^9.1.1
+
 dev_dependencies:
   square_in_app_payments:
     path: ../
