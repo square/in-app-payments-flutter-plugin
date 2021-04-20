@@ -2,7 +2,7 @@
 
 ### v1.7.1 April 20, 2021
 
-* Fixed an issue where `onAttachedToEngine` was called twice on Android, causing it to crash when the plugin `com.google.gms.google-services` was added.
+* Fixed an issue where `onAttachedToEngine` was called twice on Android, causing it to crash when the firebase plugin is added and initialized in the app.
 
 ### v1.7.0 March 31, 2021
 
