@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.7.1 April 20, 2021
+
+* Fixed an issue where `onAttachedToEngine` was called twice on Android, causing it to crash when the plugin `com.google.gms.google-services` was added.
+
 ### v1.7.0 March 31, 2021
 
 * Added support for null safety in Flutter 2. Many files were changed to support this, and there may be some changes required from the developer to support.
