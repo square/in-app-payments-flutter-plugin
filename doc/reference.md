@@ -189,7 +189,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 ---
 ### completeCardEntry
 
-Called in the `onCardNonceRequestSuccess` callback. Closes the card entry form.
+Called in the `onCardNonceRequestSuccess` callback for `startCardEntryFlow` to close the card entry form.
+You do NOT need to call this method for `startCardEntryFlowWithBuyerVerification` and `startCardEntryFlow`, for these two workflow the card entry form will be closed right before nonce is returned.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------

@@ -226,6 +226,7 @@ class _MyAppState extends State<MyApp> {
 
       // payment finished successfully
       // you must call this method to close card entry
+      // this ONLY apply to startCardEntryFlow, please don't call this method when use startCardEntryFlowWithBuyerVerification
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
     } on Exception catch (ex) {
@@ -244,10 +245,10 @@ class _MyAppState extends State<MyApp> {
   ...
 }  
 ```
-**Note**: To start the payment flow with Strong Customer Authentication, you should call `startCardEntryFlowWithBuyerVerification`.
+**Note**: To start the payment flow with Strong Customer Authentication, you should call `startCardEntryFlowWithBuyerVerification`. `InAppPayments.completeCardEntry` is NOT needed for this call.
 
 ---
-**Note**: To start Strong Customer Authentication for card-on-file, you should call `startBuyerVerificationFlow`.
+**Note**: To start Strong Customer Authentication for card-on-file, you should call `startBuyerVerificationFlow`. `InAppPayments.completeCardEntry` is NOT needed for this call.
 
 ---
 **Note:** The `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Payments API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
