@@ -69,6 +69,13 @@ final public class CardEntryModule {
   private CardDetails cardResult;
   private String paymentSourceId;
 
+  @SuppressWarnings("deprecation")
+  public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
+    this(channel);
+    currentActivity = registrar.activity();
+    registrar.addActivityResultListener(activityResultListener);
+  }
+
   public CardEntryModule(final MethodChannel channel) {
     reference = new AtomicReference<>();
     handler = new Handler(Looper.getMainLooper());

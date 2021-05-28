@@ -54,7 +54,14 @@ final public class GooglePayModule {
 
   private String squareLocationId;
   private PaymentsClient googlePayClients;
-  
+
+  @SuppressWarnings("deprecation")
+  public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
+    this(channel);
+    currentActivity = registrar.activity();
+    // Register callback when google pay activity is dismissed
+    registrar.addActivityResultListener(activityResultListener);
+  }
   public GooglePayModule(final MethodChannel channel) {
     activityResultListener = createActivityResultListener(channel);
     cardDetailsConverter = new CardDetailsConverter(new CardConverter());

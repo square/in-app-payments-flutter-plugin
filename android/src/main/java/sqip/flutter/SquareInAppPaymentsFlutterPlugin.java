@@ -34,6 +34,19 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   private CardEntryModule cardEntryModule;
   private GooglePayModule googlePayModule;
 
+  /** Plugin registration. */
+  @SuppressWarnings("deprecation")
+  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+    channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
+    channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
+  }
+
+  @SuppressWarnings("deprecation")
+  private SquareInAppPaymentsFlutterPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+    cardEntryModule = new CardEntryModule(registrar, channel);
+    googlePayModule = new GooglePayModule(registrar, channel);
+  }
+
   /**
    * Required for Flutter V2 embedding plugins.
    */
