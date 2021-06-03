@@ -69,6 +69,7 @@ final public class CardEntryModule {
   private CardDetails cardResult;
   private String paymentSourceId;
 
+  @SuppressWarnings("deprecation")
   public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
     this(channel);
     currentActivity = registrar.activity();
