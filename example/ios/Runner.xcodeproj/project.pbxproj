@@ -286,8 +286,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${PODS_ROOT}/SquareBuyerVerificationSDK/SquareInAppPaymentsSDKs.framework/SquareBuyerVerificationSDK.framework",
-				"${PODS_ROOT}/SquareInAppPaymentsSDK/SquareInAppPaymentsSDKs.framework/SquareInAppPaymentsSDK.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SquareBuyerVerificationSDK/SquareBuyerVerificationSDK.framework/SquareBuyerVerificationSDK",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SquareInAppPaymentsSDK/SquareInAppPaymentsSDK.framework/SquareInAppPaymentsSDK",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
