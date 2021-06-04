@@ -55,6 +55,7 @@ final public class GooglePayModule {
   private String squareLocationId;
   private PaymentsClient googlePayClients;
 
+  @SuppressWarnings("deprecation")
   public GooglePayModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
     this(channel);
     currentActivity = registrar.activity();

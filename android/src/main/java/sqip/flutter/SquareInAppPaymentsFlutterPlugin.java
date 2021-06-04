@@ -27,7 +27,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware  {
 
@@ -36,12 +35,14 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   private GooglePayModule googlePayModule;
 
   /** Plugin registration. */
-  public static void registerWith(Registrar registrar) {
+  @SuppressWarnings("deprecation")
+  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
     channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
   }
 
-  private SquareInAppPaymentsFlutterPlugin(Registrar registrar) {
+  @SuppressWarnings("deprecation")
+  private SquareInAppPaymentsFlutterPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     cardEntryModule = new CardEntryModule(registrar, channel);
     googlePayModule = new GooglePayModule(registrar, channel);
   }
