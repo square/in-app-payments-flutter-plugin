@@ -39,6 +39,10 @@ typedef BuyerVerificationSuccessCallback = void Function(
     BuyerVerificationDetails result);
 typedef BuyerVerificationErrorCallback = void Function(ErrorInfo errorInfo);
 
+typedef MasterCardNonceRequestSuccessCallback = void Function(CardDetails result);
+typedef MasterCardNonceRequestFailureCallback = void Function(
+    ErrorInfo errorInfo);
+
 // ignore: avoid_classes_with_only_static_members
 class InAppPayments {
   static final MethodChannel _channel =
@@ -67,6 +71,9 @@ class InAppPayments {
 
   static BuyerVerificationSuccessCallback? _buyerVerificationSuccessCallback;
   static BuyerVerificationErrorCallback? _buyerVerificationErrorCallback;
+
+  static MasterCardNonceRequestSuccessCallback? _masterCardNonceRequestSuccessCallback;
+  static MasterCardNonceRequestFailureCallback? _masterCardNonceRequestFailureCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
@@ -138,6 +145,20 @@ class InAppPayments {
             var errorInfo = _standardSerializers.deserializeWith(
                 ErrorInfo.serializer, call.arguments)!;
             _buyerVerificationErrorCallback!(errorInfo);
+          }
+          break;
+        case 'OnMasterCardNonceRequestSuccess':
+          if (_masterCardNonceRequestSuccessCallback != null) {
+            var result = _standardSerializers.deserializeWith(
+                CardDetails.serializer, call.arguments)!;
+            _masterCardNonceRequestSuccessCallback!(result);
+          }
+          break;
+        case 'OnMasterCardNonceRequestFailure':
+          if (_masterCardNonceRequestFailureCallback != null) {
+            var errorInfo = _standardSerializers.deserializeWith(
+                ErrorInfo.serializer, call.arguments)!;
+            _masterCardNonceRequestFailureCallback!(errorInfo);
           }
           break;
         default:
@@ -360,6 +381,18 @@ class InAppPayments {
       'theme': _standardSerializers.serializeWith(IOSTheme.serializer, theme),
     };
     await _channel.invokeMethod('setFormTheme', params);
+  }
+
+  static Future startSecureRemoteCommerce(
+      {required String amount,
+      required MasterCardNonceRequestSuccessCallback
+          onMaterCardNonceRequestSuccess,
+      required MasterCardNonceRequestFailureCallback
+          onMasterCardNonceRequestFailure}) async {
+    _masterCardNonceRequestSuccessCallback = onMaterCardNonceRequestSuccess;
+    _masterCardNonceRequestFailureCallback = onMasterCardNonceRequestFailure;
+    var params = <String, dynamic>{'amount': amount};
+    await _channel.invokeMethod('startSecureRemoteCommerce', params);
   }
 }
 
