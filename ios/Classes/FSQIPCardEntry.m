@@ -43,6 +43,8 @@ static NSString *const FSQIPCardEntryCompleteEventName = @"cardEntryComplete";
 static NSString *const FSQIPCardEntryDidObtainCardDetailsEventName = @"cardEntryDidObtainCardDetails";
 static NSString *const FSQIPOnBuyerVerificationSuccessEventName = @"onBuyerVerificationSuccess";
 static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerificationError";
+static NSString *const FSQIPOnMaterCardNonceRequestSuccessEventName = @"onMaterCardNonceRequestSuccess";
+static NSString *const FSQIPOnMasterCardNonceRequestFailureEventName = @"onMasterCardNonceRequestFailure";
 
 @implementation FSQIPCardEntry
 
@@ -293,6 +295,31 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
                                 debugCode:debugCode
                                 debugMessage:debugMessage]];
         }];
+    result(nil);
+}
+
+- (void)startSecureRemoteCommerce:(FlutterResult)result amount:(NSString *)amount{
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    
+    SQIPSecureRemoteCommerceParameters params;
+    params.amount = [amount intValue];
+    
+    [[SQIPSecureRemoteCommerce alloc]
+        createPaymentRequest: rootViewController
+        secureRemoteCommerceParameters: params
+        completionHandler:^(SQIPCardDetails * _Nullable cardDetails, NSError * _Nullable error) {
+        if(cardDetails != NULL){
+            [self.channel invokeMethod:FSQIPOnMaterCardNonceRequestSuccessEventName arguments:[cardDetails jsonDictionary]];
+        }else if (error != NULL){
+            NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
+            NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
+            [self.channel invokeMethod:FSQIPOnMasterCardNonceRequestFailureEventName
+                arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
+                                message:error.localizedDescription
+                                debugCode:debugCode
+                                debugMessage:debugMessage]];
+        }
+    }];
     result(nil);
 }
 

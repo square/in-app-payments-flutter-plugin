@@ -115,6 +115,10 @@ FlutterMethodChannel *_channel;
                                               locationId:squareLocationId
                                               contactMap:contactMap
                                          paymentSourceId:paymentSourceId];
+    } else if ([@"startSecureRemoteCommerce" isEqualToString:call.method]) {
+        NSString *amount = call.arguments[@"amount"];
+        [self.cardEntryModule startSecureRemoteCommerce:result
+                                       amount:amount];
     } else {
         result(FlutterMethodNotImplemented);
     }
