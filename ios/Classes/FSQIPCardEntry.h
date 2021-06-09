@@ -28,6 +28,5 @@
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;
 - (void)startBuyerVerificationFlow:(FlutterResult)result buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap locationId:(NSString *)locationId contactMap:(NSDictionary *)contactMap paymentSourceId:(NSString *)paymentSourceId;
-- (void)startSecureRemoteCommerce:(FlutterResult) result amount:(NSString *)amount;
 
 @end
