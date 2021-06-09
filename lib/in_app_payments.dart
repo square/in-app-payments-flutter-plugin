@@ -384,7 +384,7 @@ class InAppPayments {
   }
 
   static Future startSecureRemoteCommerce(
-      {required String amount,
+      {required int amount,
       required MasterCardNonceRequestSuccessCallback
           onMaterCardNonceRequestSuccess,
       required MasterCardNonceRequestFailureCallback

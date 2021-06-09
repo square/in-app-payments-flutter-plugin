@@ -402,7 +402,7 @@ class BuySheetState extends State<BuySheet> {
   }
 
   Future<void> _onStartSecureRemoteCommerceFlow() async{
-    await InAppPayments.startSecureRemoteCommerce(amount: '4',
+    await InAppPayments.startSecureRemoteCommerce(amount: 100,
         onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
         onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure);
   }

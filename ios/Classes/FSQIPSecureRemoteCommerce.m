@@ -33,11 +33,11 @@ static NSString *const FSQIPOnMasterCardNonceRequestFailureEventName = @"onMaste
     self.channel = channel;
 }
 
-- (void)startSecureRemoteCommerce:(FlutterResult)result amount:(NSString *)amount{
+- (void)startSecureRemoteCommerce:(FlutterResult)result amount:(NSInteger)amount{
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
     SQIPSecureRemoteCommerceParameters params;
-    params.amount = [amount intValue];
+    params.amount = amount;
     
     [[SQIPSecureRemoteCommerce alloc]
      createPaymentRequest: rootViewController

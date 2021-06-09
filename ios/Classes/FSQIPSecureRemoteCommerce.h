@@ -20,6 +20,6 @@
 @interface FSQIPSecureRemoteCommerce : NSObject
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
-- (void)startSecureRemoteCommerce:(FlutterResult) result amount:(NSString *)amount;
+- (void)startSecureRemoteCommerce:(FlutterResult) result amount:(NSInteger)amount;
 
 @end
