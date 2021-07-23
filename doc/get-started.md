@@ -42,7 +42,7 @@ To use the In-App Payments plugin on iOS devices, install **In-App Payments SDK 
 to make it an available resource for the Flutter library. 
 
 1. Open your iOS project `Runner.xcodeproj` with **Xcode**.
-1. Set the `iOS Deployment Target` to 11.0 or above
+1. Set the `iOS Deployment Target` to 12.0 or above
 
 
 ## Step 3: Configure the In-App Payments SDK dependency
@@ -54,7 +54,7 @@ dependencies:
 
   ...
 
-  square_in_app_payments: ^1.4.0
+  square_in_app_payments: ^1.7.1
 ```
 
 ## Step 4: Get Square Application ID
