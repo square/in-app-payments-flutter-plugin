@@ -101,7 +101,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
       cardEntryModule.startBuyerVerificationFlow(result, buyerActionString, moneyMap, squareLocationId, contactMap, paymentSourceId);
     }else if (call.method.equals("startSecureRemoteCommerce")) {
       int amount = call.argument("amount");
-      secureRemoteCommerceModule.startSecureRemoteCommerce(result,amount);
+      secureRemoteCommerceModule.startSecureRemoteCommerce(result, amount);
     } else {
       result.notImplemented();
     }
