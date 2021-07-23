@@ -254,6 +254,9 @@ class _MyAppState extends State<MyApp> {
 **Note:** The `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Payments API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
+**Note**: To start Secure Remote Commerce (Mastercard Click-to-pay), you should call `startSecureRemoteCommerce`.
+
+---
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
