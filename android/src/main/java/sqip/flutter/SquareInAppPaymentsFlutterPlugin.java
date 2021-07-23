@@ -27,12 +27,14 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import sqip.flutter.internal.SecureRemoteCommerceModule;
 
 public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware  {
 
   private static MethodChannel channel;
   private CardEntryModule cardEntryModule;
   private GooglePayModule googlePayModule;
+  private SecureRemoteCommerceModule secureRemoteCommerceModule;
 
   /** Plugin registration. */
   @SuppressWarnings("deprecation")
@@ -45,6 +47,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   private SquareInAppPaymentsFlutterPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     cardEntryModule = new CardEntryModule(registrar, channel);
     googlePayModule = new GooglePayModule(registrar, channel);
+    secureRemoteCommerceModule = new SecureRemoteCommerceModule(registrar, channel);
   }
 
   /**
@@ -96,6 +99,9 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
       String paymentSourceId = call.argument("paymentSourceId");
 
       cardEntryModule.startBuyerVerificationFlow(result, buyerActionString, moneyMap, squareLocationId, contactMap, paymentSourceId);
+    }else if (call.method.equals("startSecureRemoteCommerce")) {
+      int amount = call.argument("amount");
+      secureRemoteCommerceModule.startSecureRemoteCommerce(result,amount);
     } else {
       result.notImplemented();
     }
@@ -119,6 +125,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   public void onDetachedFromEngine(FlutterPluginBinding flutterPluginBinding) {
     cardEntryModule = null;
     googlePayModule = null;
+    secureRemoteCommerceModule = null;
     channel = null;
   }
 
@@ -129,9 +136,10 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
     channel.setMethodCallHandler(this);
     cardEntryModule = new CardEntryModule(channel);
     googlePayModule = new GooglePayModule(channel);
+    secureRemoteCommerceModule = new SecureRemoteCommerceModule(channel);
     googlePayModule.attachActivityResultListener(activityPluginBinding, channel);
     cardEntryModule.attachActivityResultListener(activityPluginBinding, channel);
-
+    secureRemoteCommerceModule.attachActivityResultListener(activityPluginBinding, channel);
   }
 
   @Override
@@ -152,6 +160,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
     // Once the issue is resolved, we can check if we can remove following three lines.
     cardEntryModule = null;
     googlePayModule = null;
+    secureRemoteCommerceModule = null;
     channel = null;
   }
 
@@ -161,6 +170,7 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
     // Once the issue is resolved, we can check if we can remove following three lines.
     cardEntryModule = null;
     googlePayModule = null;
+    secureRemoteCommerceModule = null;
     channel = null;
   }
 }

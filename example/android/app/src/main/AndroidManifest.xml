@@ -15,7 +15,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Flutter 🍪"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

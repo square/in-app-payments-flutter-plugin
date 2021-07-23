@@ -24,7 +24,7 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
-def MIN_IAP_SDK_VERSION = '1.5.1'
+def MIN_IAP_SDK_VERSION = '1.5.2'
 def COMPILE_SDK_VERSION = 28
 def TARGET_SDK_VERSION = 28
 
@@ -34,7 +34,7 @@ android {
     compileSdkVersion sqipCompileSdkVersion
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion sqipTargetSdkVersion
     }
     lintOptions {
@@ -52,4 +52,5 @@ dependencies {
     implementation "com.squareup.sdk.in-app-payments:google-pay:$sqipVersion"
     implementation 'com.google.android.gms:play-services-wallet:16.0.1'
     implementation "com.squareup.sdk.in-app-payments:buyer-verification:$sqipVersion"
+    implementation "com.squareup.sdk.in-app-payments:secure-remote-commerce:$sqipVersion"
 }

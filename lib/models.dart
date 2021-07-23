@@ -32,6 +32,8 @@ class ErrorCode extends EnumClass {
   static const ErrorCode canceled = _$canceled;
   @BuiltValueEnumConst(wireName: 'UNSUPPORTED_SDK_VERSION')
   static const ErrorCode unsupportedSDKVersion = _$unsupportedSDKVersion;
+  @BuiltValueEnumConst(wireName: 'INCOMPLETE_FLOW')
+  static const ErrorCode incompleteFlow = _$incompleteFlow;
 
   const ErrorCode._(String name) : super(name);
 

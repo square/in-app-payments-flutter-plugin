@@ -24,8 +24,8 @@
 
 @end
 
-static NSString *const FSQIPOnMaterCardNonceRequestSuccessEventName = @"onMaterCardNonceRequestSuccess";
-static NSString *const FSQIPOnMasterCardNonceRequestFailureEventName = @"onMasterCardNonceRequestFailure";
+static NSString *const FSQIPOnMaterCardNonceRequestSuccessEventName = @"OnMaterCardNonceRequestSuccess";
+static NSString *const FSQIPOnMasterCardNonceRequestFailureEventName = @"OnMasterCardNonceRequestFailure";
 
 @implementation FSQIPSecureRemoteCommerce
 

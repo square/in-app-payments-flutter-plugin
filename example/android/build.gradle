@@ -20,7 +20,7 @@ allprojects {
 }
 
 ext {
-    sqipVersion = '1.5.1'
+    sqipVersion = '1.5.2'
 }
 
 rootProject.buildDir = '../build'

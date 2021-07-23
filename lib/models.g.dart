@@ -12,6 +12,7 @@ const ErrorCode _$failed = const ErrorCode._('failed');
 const ErrorCode _$canceled = const ErrorCode._('canceled');
 const ErrorCode _$unsupportedSDKVersion =
     const ErrorCode._('unsupportedSDKVersion');
+const ErrorCode _$incompleteFlow = const ErrorCode._('incompleteFlow');
 
 ErrorCode _$errorCodeValueOf(String name) {
   switch (name) {
@@ -25,6 +26,8 @@ ErrorCode _$errorCodeValueOf(String name) {
       return _$canceled;
     case 'unsupportedSDKVersion':
       return _$unsupportedSDKVersion;
+    case 'incompleteFlow':
+      return _$incompleteFlow;
     default:
       throw new ArgumentError(name);
   }
@@ -37,6 +40,7 @@ final BuiltSet<ErrorCode> _$errorCodeValues =
   _$failed,
   _$canceled,
   _$unsupportedSDKVersion,
+  _$incompleteFlow,
 ]);
 
 const Brand _$otherBrand = const Brand._('otherBrand');
@@ -203,6 +207,7 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
     'failed': 'FAILED',
     'canceled': 'CANCELED',
     'unsupportedSDKVersion': 'UNSUPPORTED_SDK_VERSION',
+    'incompleteFlow': 'INCOMPLETE_FLOW',
   };
   static const Map<Object, String> _fromWire = const <Object, String>{
     'USAGE_ERROR': 'usageError',
@@ -210,6 +215,7 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
     'FAILED': 'failed',
     'CANCELED': 'canceled',
     'UNSUPPORTED_SDK_VERSION': 'unsupportedSDKVersion',
+    'INCOMPLETE_FLOW': 'incompleteFlow',
   };
 
   @override
