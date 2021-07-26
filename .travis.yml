@@ -26,7 +26,7 @@ matrix:
         - fonts-droid
     before_install:
     - cd example
-    - yes | sdkmanager "platforms;android-28"
+    - yes | sdkmanager "platforms;android-29"
     install:
     - git clone https://github.com/flutter/flutter.git -b stable --depth 1
     - "./flutter/bin/flutter doctor"
