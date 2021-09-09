@@ -1,13 +1,13 @@
 # Flutter plugin for In-App Payments SDK
 
-[![Build Status](https://travis-ci.com/square/in-app-payments-flutter-plugin.svg?branch=master)](https://travis-ci.com/square/in-app-payments-flutter-plugin)
+[![build](https://github.com/square/in-app-payments-flutter-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/square/in-app-payments-flutter-plugin/actions/workflows/build.yml)
 [![Pub](https://img.shields.io/pub/v/square_in_app_payments)](https://pub.dev/packages/square_in_app_payments)
 
 The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
 supports the following native In-App Payments SDK versions:
 
-  * iOS: 1.4.0
-  * Android: 1.4.0
+  * iOS: 1.5.2
+  * Android: 1.5.2
 
 ## Additional documentation
 
