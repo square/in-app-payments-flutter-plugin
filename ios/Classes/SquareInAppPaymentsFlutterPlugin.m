@@ -18,12 +18,14 @@
 #import "FSQIPCardEntry.h"
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
+#import "FSQIPSecureRemoteCommerce.h"
 
 
 @interface SquareInAppPaymentsFlutterPlugin ()
 
 @property (strong, readwrite) FSQIPCardEntry *cardEntryModule;
 @property (strong, readwrite) FSQIPApplePay *applePayModule;
+@property (strong, readwrite) FSQIPSecureRemoteCommerce *secureRemoteCommerceModule;
 @end
 
 FlutterMethodChannel *_channel;
@@ -50,6 +52,8 @@ FlutterMethodChannel *_channel;
     [self.cardEntryModule initWithMethodChannel:_channel];
     self.applePayModule = [[FSQIPApplePay alloc] init];
     [self.applePayModule initWithMethodChannel:_channel];
+    self.secureRemoteCommerceModule = [[FSQIPSecureRemoteCommerce alloc] init];
+    [self.secureRemoteCommerceModule initWithMethodChannel:_channel];
     return self;
 }
 
@@ -115,6 +119,10 @@ FlutterMethodChannel *_channel;
                                               locationId:squareLocationId
                                               contactMap:contactMap
                                          paymentSourceId:paymentSourceId];
+    } else if ([@"startSecureRemoteCommerce" isEqualToString:call.method]) {
+        NSNumber *amount = call.arguments[@"amount"];
+        [self.secureRemoteCommerceModule startSecureRemoteCommerce:result
+                                                            amount:amount.integerValue];
     } else {
         result(FlutterMethodNotImplemented);
     }

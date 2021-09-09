@@ -11,13 +11,13 @@ You can override the default In-App Payments SDK versions by following this guid
 
     ```ruby
     # Uncomment this line to define a global platform for your project
-    platform :ios, '11.0'
+    platform :ios, '12.0'
 
     # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
     ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
     # specify the version of SquareInAppPaymentsSDK
-    $sqipVersion = '1.4.0'
+    $sqipVersion = '1.7.1'
     ```
 
 1. Remove the `ios/Podfile.lock` and build your project again.
@@ -39,7 +39,7 @@ You can override the default In-App Payments SDK versions by following this guid
 
     // add the override here
     ext {
-        sqipVersion = '1.4.0'
+        sqipVersion = '1.7.1'
     }
     ```
 

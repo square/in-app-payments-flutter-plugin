@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import 'cookie_button.dart';
 
-enum PaymentType { giftcardPayment, cardPayment, googlePay, applePay, buyerVerification }
+enum PaymentType { giftcardPayment, cardPayment, googlePay, applePay, buyerVerification, secureRemoteCommerce }
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
@@ -127,7 +127,7 @@ class OrderSheet extends StatelessWidget {
       );
 
   Widget _buyerVerificationButton(context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
       CookieButton(
         text: "Buyer Verification",
@@ -135,7 +135,20 @@ class OrderSheet extends StatelessWidget {
           Navigator.pop(context, PaymentType.buyerVerification);
         },
       ),
-    ],
+      Container(
+            height: 64,
+            width: MediaQuery.of(context).size.width * .3,
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.pop(context, PaymentType.secureRemoteCommerce);
+              },
+              child: Image(image: AssetImage("assets/masterCardLogo.png")),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0)),
+              color: Colors.black,
+            ),
+          ),
+        ],
   );
 }
 

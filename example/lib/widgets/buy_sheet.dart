@@ -98,6 +98,9 @@ class BuySheetState extends State<BuySheet> {
           _showapplePayMerchantIdNotSet();
         }
         break;
+      case PaymentType.secureRemoteCommerce:
+        await _onStartSecureRemoteCommerceFlow();
+        break;
     }
   }
 
@@ -395,6 +398,35 @@ class BuySheetState extends State<BuySheet> {
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Error verifying buyer",
+        description: errorInfo.toString());
+  }
+
+  Future<void> _onStartSecureRemoteCommerceFlow() async{
+    await InAppPayments.startSecureRemoteCommerce(amount: 100,
+        onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
+        onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure);
+  }
+
+  void _onMaterCardNonceRequestSuccess(CardDetails result) async {
+    if (!_chargeServerHostReplaced) {
+      _showUrlNotSetAndPrintCurlCommand(result.nonce);
+      return;
+    }
+
+    try {
+      await chargeCard(result);
+    } on ChargeException catch (ex) {
+      showAlertDialog(
+          context: BuySheet.scaffoldKey.currentContext!,
+          title: "Error processing payment",
+          description: ex.errorMessage);
+    }
+  }
+
+  void _onMasterCardNonceRequestFailure(ErrorInfo errorInfo) async {
+    showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Error processing payment",
         description: errorInfo.toString());
   }
 

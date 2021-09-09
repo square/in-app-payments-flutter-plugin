@@ -31,8 +31,8 @@ A version of Flutter greater than 1.12 is required for v2 embedding support. Any
   
 ### Android
 
-* Android minSdkVersion is API 21 (Lollipop, 5.0) or higher. 
-* Android Target SDK version: API 27 (Oreo, 8.1).
+* Android minSdkVersion is API 24 (Nougat, 7.0) or higher. 
+* Android Target SDK version: API 29 (Android10, 10).
 * Android SDK build tools: 26.0.3
 * Android Gradle Plugin: 3.0.0 or greater.
 * Support library: 27.1.1
@@ -41,9 +41,9 @@ A version of Flutter greater than 1.12 is required for v2 embedding support. Any
 
 ### iOS
 
-* Xcode version: 9.1 or greater.
-* iOS Base SDK: 11.1 or greater.
-* Deployment target: iOS 11.0 or greater.
+* Xcode version: 10 or greater.
+* iOS Base SDK: 12 or greater.
+* Deployment target: iOS 12.0 or greater.
 
 ## In-App Payments SDK requirements and limitations
 

@@ -13,4 +13,8 @@
         <item name="android:windowBackground">@color/colorCardEntryBackground</item>
         <item name="android:textColorHint">@color/alto</item>
     </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
 </resources>

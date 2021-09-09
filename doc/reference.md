@@ -30,6 +30,7 @@ Method                                                       | Return Object    
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
 [startBuyerVerificationFlow](#startbuyerverificationflow)    | void                      | Starts the buyer verification for a given payment source id. The most likely use case will be to pass in a card-on-file (cof). This will display a verification view to the user for some geographies to address Strong Customer Authentication. [startCardEntryFlowWithBuyerVerification](#startcardentryflowwithbuyerverification) handles both card entry and verification for you as a convenience.
+[startSecureRemoteCommerce](#startSecureRemoteCommerce)      | void                      | Starts Secure Remote Commerce (Mastercard Click-to-pay) flow for payment with integrated user interface.
 
 ### Apple Pay methods
 Method                                                          | Return Object             | Description
@@ -355,6 +356,38 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   }
 
   void _onBuyerVerificationFailure(ErrorInfo errorInfo) async {
+    // handle the error
+  }
+```
+---
+
+### startSecureRemoteCommerce
+
+Starts Secure Remote Commerce (Mastercard Click-to-pay) flow for payment with integrated user interface. The method takes two callback parameters which correspond
+to the possible results of the request.
+
+Parameter       | Type                                     | Description
+:-------------- | :--------------------------------------- | :-----------
+onMaterCardNonceRequestSuccess | [MasterCardNonceRequestSuccessCallback](#MasterCardNonceRequestSuccessCallback) | Invoked when payment with click-to-pay succeeds
+onMasterCardNonceRequestFailure | [MasterCardNonceRequestFailureCallback](#MasterCardNonceRequestFailureCallback) | Invoked when payment with click-to-pay encouters errors
+amount           | int                          | Amount that will be charged
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+  Future<void> _onStartSecureRemoteCommerceFlow() async{
+    await InAppPayments.startSecureRemoteCommerce(amount: 100,
+        onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
+        onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure);
+  }
+
+  void _onMaterCardNonceRequestSuccess(CardDetails result) async {
+    // process card nonce and verification results
+  }
+
+  void _onMasterCardNonceRequestFailure(ErrorInfo errorInfo) async {
     // handle the error
   }
 ```
@@ -865,6 +898,16 @@ errorInfo       | [ErrorInfo](#errorinfo)  | Information about the cause of the 
  ### BuyerVerificationErrorCallback
 
  Callback invoked when Buyer Verification flow fails.
+
+---
+ ### MasterCardNonceRequestSuccessCallback
+
+ Callback invoked when Mastercard click-to-pay flow succeeds.
+
+---
+ ### MasterCardNonceRequestFailureCallback
+
+ Callback invoked when Mastercard click-to-pay flow fails.
 
 ---
 ## Classes
