@@ -6,7 +6,7 @@ Likely causes and solutions for common problems.
 
 ### The problem
 
-You're using Flutter 2.5.0 on a Mac.When you run `flutter run`, you hit this error:
+You're using Flutter 2.5.0 on a Mac.  When you run `flutter run`, you hit this error:
 
 ```
 error: linker command failed with exit code 1 (use -v to see invocation) ld: building for iOS Simulator, but linking in dylib built for iOS
@@ -34,7 +34,9 @@ post_install do |installer|
   end
 end
 ```
+
 2.) run `pod install`
+
 3.) You should be able to run the In-App-Payments SDK using the latest version of flutter on intel-based macs.
 
 ## I get iOS build error "While building module 'SquareInAppPaymentsSDK' imported from ..."
