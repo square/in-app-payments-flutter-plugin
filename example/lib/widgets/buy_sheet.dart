@@ -71,15 +71,15 @@ class BuySheetState extends State<BuySheet> {
 
     switch (selection) {
       case PaymentType.giftcardPayment:
-      // call _onStartGiftCardEntryFlow to start Gift Card Entry.
+        // call _onStartGiftCardEntryFlow to start Gift Card Entry.
         await _onStartGiftCardEntryFlow();
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
-        await _onStartCardEntryFlow();
+        // await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-        // await _onStartCardEntryFlowWithBuyerVerification();
+        await _onStartCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.buyerVerification:
         await _onStartBuyerVerificationFlow();
@@ -112,8 +112,7 @@ class BuySheetState extends State<BuySheet> {
     var uuid = Uuid().v4();
 
     if (verificationToken == null) {
-      print(
-          'curl --request POST $hostUrl/v2/payments \\'
+      print('curl --request POST $hostUrl/v2/payments \\'
           '--header \"Content-Type: application/json\" \\'
           '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
           '--header \"Accept: application/json\" \\'
@@ -246,7 +245,8 @@ class BuySheetState extends State<BuySheet> {
     var contact = Contact((b) => b
       ..givenName = "John"
       ..familyName = "Doe"
-      ..addressLines = new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..addressLines =
+          new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
       ..city = "London"
       ..countryCode = "GB"
       ..email = "johndoe@example.com"
@@ -260,7 +260,7 @@ class BuySheetState extends State<BuySheet> {
         money: money,
         squareLocationId: squareLocationId,
         contact: contact,
-        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID");
+        paymentSourceId: "ccof:customer-card-id-requires-verification");
   }
 
   void _onCancelCardEntryFlow() {
@@ -401,8 +401,9 @@ class BuySheetState extends State<BuySheet> {
         description: errorInfo.toString());
   }
 
-  Future<void> _onStartSecureRemoteCommerceFlow() async{
-    await InAppPayments.startSecureRemoteCommerce(amount: 100,
+  Future<void> _onStartSecureRemoteCommerceFlow() async {
+    await InAppPayments.startSecureRemoteCommerce(
+        amount: 100,
         onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
         onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure);
   }
@@ -471,4 +472,3 @@ class BuySheetState extends State<BuySheet> {
         ),
       );
 }
-
