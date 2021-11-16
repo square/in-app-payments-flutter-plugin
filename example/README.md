@@ -80,3 +80,6 @@ For help getting started with Flutter, view [documentation](https://flutter.io/)
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [root README]: ../README.md
 [backend service setup guide]: take_a_payment.md
+
+## Feedback
+Rate this sample app [here](https://delighted.com/t/Z1xmKSqy)!
