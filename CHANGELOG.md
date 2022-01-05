@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.7.2 Oct 29, 2021
+
+* Updated to IAP SDK 1.5.4.
+
 ### v1.7.1 April 20, 2021
 
 * Fixed an issue where `onAttachedToEngine` was called twice on Android, causing it to crash when the firebase plugin is added and initialized in the app.
