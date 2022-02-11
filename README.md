@@ -6,8 +6,8 @@
 The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
 supports the following native In-App Payments SDK versions:
 
-  * iOS: 1.5.4
-  * Android: 1.5.4
+  * iOS: 1.5.5
+  * Android: 1.5.5
 
 ## Additional documentation
 
@@ -32,7 +32,7 @@ A version of Flutter greater than 1.12 is required for v2 embedding support. Any
 ### Android
 
 * Android minSdkVersion is API 24 (Nougat, 7.0) or higher. 
-* Android Target SDK version: API 29 (Android10, 10).
+* Android Target SDK version: API 31 (Android12, 12).
 * Android SDK build tools: 26.0.3
 * Android Gradle Plugin: 3.0.0 or greater.
 * Support library: 27.1.1
