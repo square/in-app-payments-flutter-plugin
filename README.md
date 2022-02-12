@@ -27,7 +27,8 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ### Flutter
 
-A version of Flutter greater than 1.12 is required for v2 embedding support. Any application that uses v1 embeddings for android will still be backwards compatible and supported.
+* Flutter version 2.0 or higher
+* Dart version 2.12 or higher
   
 ### Android
 
@@ -44,6 +45,7 @@ A version of Flutter greater than 1.12 is required for v2 embedding support. Any
 * Xcode version: 10 or greater.
 * iOS Base SDK: 12 or greater.
 * Deployment target: iOS 12.0 or greater.
+* Currently, this plugin will work only on Mac with Intel processor. This will not work on Mac with M1 chip.
 
 ## In-App Payments SDK requirements and limitations
 
