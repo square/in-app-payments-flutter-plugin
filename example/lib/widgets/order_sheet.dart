@@ -18,7 +18,14 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import 'cookie_button.dart';
 
-enum PaymentType { giftcardPayment, cardPayment, googlePay, applePay, buyerVerification, secureRemoteCommerce }
+enum PaymentType {
+  giftcardPayment,
+  cardPayment,
+  googlePay,
+  applePay,
+  buyerVerification,
+  secureRemoteCommerce
+}
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
@@ -40,13 +47,12 @@ class OrderSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                margin: EdgeInsets.only(left: 10, top: 10),
                 child: _title(context),
               ),
               ConstrainedBox(
                 constraints: BoxConstraints(
                     minWidth: MediaQuery.of(context).size.width,
-                    minHeight: 300,
+                    minHeight: 350,
                     maxHeight: MediaQuery.of(context).size.height,
                     maxWidth: MediaQuery.of(context).size.width),
                 child: Column(
@@ -59,32 +65,37 @@ class OrderSheet extends StatelessWidget {
                       _LineDivider(),
                       _RefundInformation(),
                       _payButtons(context),
-                      _buyerVerificationButton(context)
+                      _buyerVerificationButton(context),
+                      _masterCardButton(context)
                     ]),
               ),
             ]),
       );
 
-  Widget _title(context) =>
-      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        Container(
-            child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.close),
-                color: closeButtonColor)),
-        Container(
-          child: Expanded(
+  Widget _title(context) => Container(
+        padding: EdgeInsets.all(5.0),
+        color: mainButtonColor,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          Expanded(
             child: Text(
               "Place your order",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
-        ),
-        Padding(padding: EdgeInsets.only(right: 56)),
-      ]);
+          Container(
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.close),
+                  color: closeButtonColor)),
+        ]),
+      );
 
   Widget _payButtons(context) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -101,9 +112,15 @@ class OrderSheet extends StatelessWidget {
               Navigator.pop(context, PaymentType.cardPayment);
             },
           ),
+        ],
+      );
+
+  Widget _buyerVerificationButton(context) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
           Container(
-            height: 64,
-            width: MediaQuery.of(context).size.width * .3,
+            height: 50,
+            width: MediaQuery.of(context).size.width * .44,
             child: RaisedButton(
               onPressed: googlePayEnabled || applePayEnabled
                   ? () {
@@ -119,37 +136,36 @@ class OrderSheet extends StatelessWidget {
                       ? AssetImage("assets/applePayLogo.png")
                       : AssetImage("assets/googlePayLogo.png")),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0)),
+                  borderRadius: BorderRadius.circular(15.0)),
               color: Colors.black,
             ),
+          ),
+          CookieButton(
+            text: "Buyer Verification",
+            onPressed: () {
+              Navigator.pop(context, PaymentType.buyerVerification);
+            },
           ),
         ],
       );
 
-  Widget _buyerVerificationButton(context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: <Widget>[
-      CookieButton(
-        text: "Buyer Verification",
-        onPressed: () {
-          Navigator.pop(context, PaymentType.buyerVerification);
-        },
-      ),
-      Container(
-            height: 64,
-            width: MediaQuery.of(context).size.width * .3,
+  Widget _masterCardButton(context) => Column(
+        children: [
+          Container(
+            height: 50,
+            width: MediaQuery.of(context).size.width * .44,
             child: RaisedButton(
               onPressed: () {
                 Navigator.pop(context, PaymentType.secureRemoteCommerce);
               },
               child: Image(image: AssetImage("assets/masterCardLogo.png")),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0)),
+                  borderRadius: BorderRadius.circular(15.0)),
               color: Colors.black,
             ),
           ),
         ],
-  );
+      );
 }
 
 class _ShippingInformation extends StatelessWidget {
@@ -161,24 +177,27 @@ class _ShippingInformation extends StatelessWidget {
           Padding(padding: EdgeInsets.only(left: 30)),
           Text(
             "Ship to",
-            style: TextStyle(fontSize: 16, color: mainTextColor),
+            style: TextStyle(
+                fontSize: 16,
+                color: mainTextColor,
+                fontWeight: FontWeight.bold),
           ),
-          Padding(padding: EdgeInsets.only(left: 30)),
+          Padding(padding: EdgeInsets.only(left: 20)),
           Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   "Lauren Nobel",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 6),
+                  padding: EdgeInsets.only(bottom: 4),
                 ),
                 Text(
                   "1455 Market Street\nSan Francisco, CA, 94103",
-                  style: TextStyle(fontSize: 16, color: subTextColor),
+                  style: TextStyle(fontSize: 15, color: subTextColor),
                 ),
               ]),
         ],
@@ -204,9 +223,12 @@ class _PaymentTotal extends StatelessWidget {
           Padding(padding: EdgeInsets.only(left: 30)),
           Text(
             "Total",
-            style: TextStyle(fontSize: 16, color: mainTextColor),
+            style: TextStyle(
+                fontSize: 16,
+                color: mainTextColor,
+                fontWeight: FontWeight.bold),
           ),
-          Padding(padding: EdgeInsets.only(right: 47)),
+          Padding(padding: EdgeInsets.only(left: 30)),
           Text(
             "\$${getCookieAmount()}",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -218,20 +240,12 @@ class _PaymentTotal extends StatelessWidget {
 
 class _RefundInformation extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => FittedBox(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(left: 30.0, right: 30.0),
-              width: MediaQuery.of(context).size.width - 60,
-              child: Text(
-                "You can refund this transaction through your Square dashboard, go to squareup.com/dashboard.",
-                style: TextStyle(fontSize: 12, color: subTextColor),
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => Container(
+        width: MediaQuery.of(context).size.width - 50,
+        child: Text(
+          "You can refund this transaction through your Square dashboard, go to squareup.com/dashboard.",
+          style: TextStyle(fontSize: 12, color: subTextColor),
+          textAlign: TextAlign.center,
         ),
       );
 }
