@@ -152,7 +152,7 @@ class BuySheetState extends State<BuySheet> {
         title: title,
         description:
             "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.",
-        status: false);
+        status: true);
     printCurlCommand(nonce, verificationToken);
   }
 
