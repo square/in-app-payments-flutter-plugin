@@ -14,24 +14,50 @@
  limitations under the License.
 */
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:square_in_app_payments_example/colors.dart';
 
 Future<void> showAlertDialog(
-        {required BuildContext context, required String title, required String description}) =>
+        {required BuildContext context,
+        required String title,
+        required String description,
+        required bool status}) =>
     showDialog<void>(
         context: context,
         barrierDismissible: true,
         builder: (context) => AlertDialog(
-              title: Text(title),
-              content: SingleChildScrollView(
-                child: Text(description),
+              title: Column(
+                children: [
+                  Image(
+                    height: 50,
+                    width: 50,
+                    image: status
+                        ? AssetImage("assets/sucessIcon.png")
+                        : AssetImage("assets/failIcon.png"),
+                    color: status ? mainButtonColor : Colors.red,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      description,
+                      style: TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              actions: <Widget>[],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
             ));

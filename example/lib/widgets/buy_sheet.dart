@@ -71,7 +71,7 @@ class BuySheetState extends State<BuySheet> {
 
     switch (selection) {
       case PaymentType.giftcardPayment:
-      // call _onStartGiftCardEntryFlow to start Gift Card Entry.
+        // call _onStartGiftCardEntryFlow to start Gift Card Entry.
         await _onStartGiftCardEntryFlow();
         break;
       case PaymentType.cardPayment:
@@ -112,8 +112,7 @@ class BuySheetState extends State<BuySheet> {
     var uuid = Uuid().v4();
 
     if (verificationToken == null) {
-      print(
-          'curl --request POST $hostUrl/v2/payments \\'
+      print('curl --request POST $hostUrl/v2/payments \\'
           '--header \"Content-Type: application/json\" \\'
           '--header \"Authorization: Bearer YOUR_ACCESS_TOKEN\" \\'
           '--header \"Accept: application/json\" \\'
@@ -152,7 +151,8 @@ class BuySheetState extends State<BuySheet> {
         context: BuySheet.scaffoldKey.currentContext!,
         title: title,
         description:
-            "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.");
+            "Check your console for a CURL command to charge the nonce, or replace CHARGE_SERVER_HOST with your server host.",
+        status: true);
     printCurlCommand(nonce, verificationToken);
   }
 
@@ -161,7 +161,8 @@ class BuySheetState extends State<BuySheet> {
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Missing Square Location ID",
         description:
-            "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.");
+            "To request a Google Pay nonce, replace squareLocationId in main.dart with a Square Location ID.",
+        status: false);
   }
 
   void _showapplePayMerchantIdNotSet() {
@@ -169,16 +170,18 @@ class BuySheetState extends State<BuySheet> {
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Missing Apple Merchant ID",
         description:
-            "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.");
+            "To request an Apple Pay nonce, replace applePayMerchantId in main.dart with an Apple Merchant ID.",
+        status: false);
   }
 
   void _onCardEntryComplete() {
     if (_chargeServerHostReplaced) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
-          title: "Your order was successful",
+          title: "Congratulation,Your order was successful",
           description:
-              "Go to your Square dashboard to see this order reflected in the sales tab.");
+              "Go to your Square dashboard to see this order reflected in the sales tab.",
+          status: true);
     }
   }
 
@@ -246,7 +249,8 @@ class BuySheetState extends State<BuySheet> {
     var contact = Contact((b) => b
       ..givenName = "John"
       ..familyName = "Doe"
-      ..addressLines = new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+      ..addressLines =
+          new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
       ..city = "London"
       ..countryCode = "GB"
       ..email = "johndoe@example.com"
@@ -280,7 +284,8 @@ class BuySheetState extends State<BuySheet> {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Failed to start GooglePay",
-          description: ex.toString());
+          description: ex.toString(),
+          status: false);
     }
   }
 
@@ -293,14 +298,16 @@ class BuySheetState extends State<BuySheet> {
       await chargeCard(result);
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
-          title: "Your order was successful",
+          title: "Congratulation,Your order was successful",
           description:
-              "Go to your Square dashbord to see this order reflected in the sales tab.");
+              "Go to your Square dashbord to see this order reflected in the sales tab.",
+          status: true);
     } on ChargeException catch (ex) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing GooglePay payment",
-          description: ex.errorMessage);
+          description: ex.errorMessage,
+          status: false);
     }
   }
 
@@ -308,7 +315,8 @@ class BuySheetState extends State<BuySheet> {
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Failed to request GooglePay nonce",
-        description: errorInfo.toString());
+        description: errorInfo.toString(),
+        status: false);
   }
 
   void onGooglePayEntryCanceled() {
@@ -330,7 +338,8 @@ class BuySheetState extends State<BuySheet> {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Failed to start ApplePay",
-          description: ex.toString());
+          description: ex.toString(),
+          status: false);
     }
   }
 
@@ -347,7 +356,8 @@ class BuySheetState extends State<BuySheet> {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing card payment",
-          description: ex.errorMessage);
+          description: ex.errorMessage,
+          status: false);
     }
   }
 
@@ -362,9 +372,10 @@ class BuySheetState extends State<BuySheet> {
       _applePayStatus = ApplePayStatus.success;
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
-          title: "Your order was successful",
+          title: "Congratulation,Your order was successful",
           description:
-              "Go to your Square dashbord to see this order reflected in the sales tab.");
+              "Go to your Square dashbord to see this order reflected in the sales tab.",
+          status: true);
       await InAppPayments.completeApplePayAuthorization(isSuccess: true);
     } on ChargeException catch (ex) {
       await InAppPayments.completeApplePayAuthorization(
@@ -372,7 +383,8 @@ class BuySheetState extends State<BuySheet> {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing ApplePay payment",
-          description: ex.errorMessage);
+          description: ex.errorMessage,
+          status: false);
       _applePayStatus = ApplePayStatus.fail;
     }
   }
@@ -384,7 +396,8 @@ class BuySheetState extends State<BuySheet> {
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Error request ApplePay nonce",
-        description: errorInfo.toString());
+        description: errorInfo.toString(),
+        status: false);
   }
 
   void _onApplePayEntryComplete() {
@@ -398,11 +411,13 @@ class BuySheetState extends State<BuySheet> {
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Error verifying buyer",
-        description: errorInfo.toString());
+        description: errorInfo.toString(),
+        status: false);
   }
 
-  Future<void> _onStartSecureRemoteCommerceFlow() async{
-    await InAppPayments.startSecureRemoteCommerce(amount: 100,
+  Future<void> _onStartSecureRemoteCommerceFlow() async {
+    await InAppPayments.startSecureRemoteCommerce(
+        amount: 100,
         onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
         onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure);
   }
@@ -419,7 +434,8 @@ class BuySheetState extends State<BuySheet> {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Error processing payment",
-          description: ex.errorMessage);
+          description: ex.errorMessage,
+          status: false);
     }
   }
 
@@ -427,7 +443,8 @@ class BuySheetState extends State<BuySheet> {
     showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: "Error processing payment",
-        description: errorInfo.toString());
+        description: errorInfo.toString(),
+        status: false);
   }
 
   Widget build(BuildContext context) => MaterialApp(
@@ -471,4 +488,3 @@ class BuySheetState extends State<BuySheet> {
         ),
       );
 }
-
