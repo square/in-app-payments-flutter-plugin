@@ -65,7 +65,6 @@ class HomeScreenState extends State<HomeScreen> {
       canUseApplePay = await InAppPayments.canUseApplePay;
     }
     
-
     setState(() {
       isLoading = false;
       applePayEnabled = canUseApplePay;
