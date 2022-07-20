@@ -6,7 +6,7 @@
 The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
 supports the following native In-App Payments SDK versions:
 
-  * iOS: 1.5.6
+  * iOS: 1.5.7
   * Android: 1.5.6
 
 ## Additional documentation
@@ -60,7 +60,7 @@ takes the nonce created by the flutter app and uses it to create a payment credi
 ## License
 
 ```
-Copyright 2019 Square Inc.
+Copyright 2022 Square Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
