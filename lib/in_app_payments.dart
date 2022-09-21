@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Square Inc.
+ Copyright 2022 Square Inc.
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ typedef BuyerVerificationSuccessCallback = void Function(
     BuyerVerificationDetails result);
 typedef BuyerVerificationErrorCallback = void Function(ErrorInfo errorInfo);
 
-typedef MasterCardNonceRequestSuccessCallback = void Function(CardDetails result);
+typedef MasterCardNonceRequestSuccessCallback = void Function(
+    CardDetails result);
 typedef MasterCardNonceRequestFailureCallback = void Function(
     ErrorInfo errorInfo);
 
@@ -72,8 +73,10 @@ class InAppPayments {
   static BuyerVerificationSuccessCallback? _buyerVerificationSuccessCallback;
   static BuyerVerificationErrorCallback? _buyerVerificationErrorCallback;
 
-  static MasterCardNonceRequestSuccessCallback? _masterCardNonceRequestSuccessCallback;
-  static MasterCardNonceRequestFailureCallback? _masterCardNonceRequestFailureCallback;
+  static MasterCardNonceRequestSuccessCallback?
+      _masterCardNonceRequestSuccessCallback;
+  static MasterCardNonceRequestFailureCallback?
+      _masterCardNonceRequestFailureCallback;
 
   static Future<dynamic> _nativeCallHandler(MethodCall call) async {
     try {
@@ -172,8 +175,7 @@ class InAppPayments {
   }
 
   static Future setSquareApplicationId(String applicationId) async {
-    assert(applicationId.isNotEmpty,
-        'application should not be empty.');
+    assert(applicationId.isNotEmpty, 'application should not be empty.');
     var params = <String, dynamic>{
       'applicationId': applicationId,
     };
@@ -181,7 +183,8 @@ class InAppPayments {
   }
 
   static Future startCardEntryFlow(
-      {required CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
+      {required CardEntryCardNonceRequestSuccessCallback
+          onCardNonceRequestSuccess,
       required CardEntryCancelCallback onCardEntryCancel,
       bool collectPostalCode = true}) async {
     _cardEntryCancelCallback = onCardEntryCancel;
@@ -193,13 +196,13 @@ class InAppPayments {
   }
 
   static Future startGiftCardEntryFlow(
-      {required CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
-        required CardEntryCancelCallback onCardEntryCancel}) async {
+      {required CardEntryCardNonceRequestSuccessCallback
+          onCardNonceRequestSuccess,
+      required CardEntryCancelCallback onCardEntryCancel}) async {
     _cardEntryCancelCallback = onCardEntryCancel;
     _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
     await _channel.invokeMethod('startGiftCardEntryFlow');
   }
-
 
   static Future completeCardEntry(
       {required CardEntryCompleteCallback onCardEntryComplete}) async {
@@ -216,8 +219,8 @@ class InAppPayments {
 
   static Future initializeGooglePay(
       String squareLocationId, int environment) async {
-    assert(squareLocationId.isNotEmpty,
-        'squareLocationId should not be empty.');
+    assert(
+        squareLocationId.isNotEmpty, 'squareLocationId should not be empty.');
     var params = <String, dynamic>{
       'environment': environment,
       'squareLocationId': squareLocationId,
@@ -241,13 +244,13 @@ class InAppPayments {
       {required String price,
       required String currencyCode,
       required int priceStatus,
-      required GooglePayNonceRequestSuccessCallback onGooglePayNonceRequestSuccess,
-      required GooglePayNonceRequestFailureCallback onGooglePayNonceRequestFailure,
+      required GooglePayNonceRequestSuccessCallback
+          onGooglePayNonceRequestSuccess,
+      required GooglePayNonceRequestFailureCallback
+          onGooglePayNonceRequestFailure,
       required GooglePayCancelCallback onGooglePayCanceled}) async {
-    assert(price.isNotEmpty,
-        'price should not be empty.');
-    assert(currencyCode.isNotEmpty,
-        'currencyCode should not be empty.');
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
     _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
     _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
@@ -286,17 +289,15 @@ class InAppPayments {
       required String countryCode,
       required String currencyCode,
       required ApplePayPaymentType paymentType,
-      required ApplePayNonceRequestSuccessCallback onApplePayNonceRequestSuccess,
-      required ApplePayNonceRequestFailureCallback onApplePayNonceRequestFailure,
+      required ApplePayNonceRequestSuccessCallback
+          onApplePayNonceRequestSuccess,
+      required ApplePayNonceRequestFailureCallback
+          onApplePayNonceRequestFailure,
       required ApplePayCompleteCallback onApplePayComplete}) async {
-    assert(summaryLabel.isNotEmpty,
-        'summaryLabel should not be empty.');
-    assert(price.isNotEmpty,
-        'price should not be empty.');
-    assert(countryCode.isNotEmpty,
-        'countryCode should not be empty.');
-    assert(currencyCode.isNotEmpty,
-        'currencyCode should not be empty.');
+    assert(summaryLabel.isNotEmpty, 'summaryLabel should not be empty.');
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(countryCode.isNotEmpty, 'countryCode should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
 
     _applePayNonceRequestSuccessCallback = onApplePayNonceRequestSuccess;
     _applePayNonceRequestFailureCallback = onApplePayNonceRequestFailure;
@@ -369,7 +370,7 @@ class InAppPayments {
       'buyerAction': buyerAction,
       'money': _standardSerializers.serializeWith(Money.serializer, money),
       'contact':
-      _standardSerializers.serializeWith(Contact.serializer, contact),
+          _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'paymentSourceId': paymentSourceId,
     };
@@ -415,10 +416,7 @@ class InAppPaymentsException implements Exception {
       _standardSerializers.deserializeWith(ErrorCode.serializer, _code);
 
   InAppPaymentsException(
-    this._code,
-    this.message,
-    this.debugCode,
-    this.debugMessage);
+      this._code, this.message, this.debugCode, this.debugMessage);
 
   @override
   String toString() =>

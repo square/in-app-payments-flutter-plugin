@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Square Inc.
+ Copyright 2022 Square Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-package sqip.flutter.example;
+package sqip.flutter.example
 
-import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.android.FlutterActivity
 
-public class MainActivity extends FlutterActivity {
-
-}
+class MainActivity : FlutterActivity()

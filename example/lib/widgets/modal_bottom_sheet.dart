@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Square Inc.
+ Copyright 2022 Square Inc.
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -62,8 +62,7 @@ class _BottomSheetState extends State<BottomSheet> {
 
   void _handleDragUpdate(DragUpdateDetails details) {
     if (_dismissUnderway) return;
-    widget.animationController!.value -=
-        details.primaryDelta! / (_childHeight);
+    widget.animationController!.value -= details.primaryDelta! / (_childHeight);
   }
 
   void _handleDragEnd(DragEndDetails details) {
@@ -234,7 +233,7 @@ Future<T?> showModalBottomSheet<T>({
       context,
       _ModalBottomSheetRoute<T>(
         builder: builder,
-        theme: Theme.of(context),//, shadowThemeOnly: true),
+        theme: Theme.of(context), //, shadowThemeOnly: true),
         barrierLabel:
             MaterialLocalizations.of(context).modalBarrierDismissLabel,
       ));
@@ -243,4 +242,5 @@ Future<T?> showModalBottomSheet<T>({
 PersistentBottomSheetController<T> showMyBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
-}) => Scaffold.of(context).showBottomSheet<T>(builder);
+}) =>
+    Scaffold.of(context).showBottomSheet<T>(builder);
