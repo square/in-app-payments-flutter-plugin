@@ -11,15 +11,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  built_value: ^8.2.3
+  built_value: ^8.4.1
   built_collection: ^5.1.1
   meta: ^1.7.0
 
 dev_dependencies:
-  build: ^2.0.0
-  build_runner: ^1.12.2
-  source_gen:  ^1.0.0
-  built_value_generator: ^8.0.4
+  build: ^2.3.0
+  build_runner: ^2.2.0
+  source_gen: ^1.2.2
+  built_value_generator: ^8.4.1
 
 # The following section is specific to Flutter.
 flutter:

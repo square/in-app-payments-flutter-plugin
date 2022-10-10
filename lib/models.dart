@@ -137,7 +137,7 @@ abstract class BuyerVerificationDetails
 
   BuyerVerificationDetails._();
   factory BuyerVerificationDetails(
-          [updates(BuyerVerificationDetailsBuilder b)/*!*/]) =
+          [updates(BuyerVerificationDetailsBuilder b) /*!*/]) =
       _$BuyerVerificationDetails;
   static Serializer<BuyerVerificationDetails> get serializer =>
       _$buyerVerificationDetailsSerializer;
@@ -154,7 +154,7 @@ abstract class Card implements Built<Card, CardBuilder> {
   String? get postalCode;
 
   Card._();
-  factory Card([updates(CardBuilder b)/*!*/]) = _$Card;
+  factory Card([updates(CardBuilder b) /*!*/]) = _$Card;
   static Serializer<Card> get serializer => _$cardSerializer;
 }
 
@@ -171,7 +171,7 @@ abstract class RGBAColor implements Built<RGBAColor, RGBAColorBuilder> {
     assert(b >= 0);
     assert(a == null || (a! >= 0 && a! <= 1.0));
   }
-  factory RGBAColor([updates(RGBAColorBuilder b)/*!*/]) = _$RGBAColor;
+  factory RGBAColor([updates(RGBAColorBuilder b) /*!*/]) = _$RGBAColor;
   static Serializer<RGBAColor> get serializer => _$rGBAColorSerializer;
 }
 
@@ -181,7 +181,7 @@ abstract class Font implements Built<Font, FontBuilder> {
   String? get name;
 
   Font._();
-  factory Font([updates(FontBuilder b)/*!*/]) = _$Font;
+  factory Font([updates(FontBuilder b) /*!*/]) = _$Font;
   static Serializer<Font> get serializer => _$fontSerializer;
 }
 
@@ -227,7 +227,7 @@ abstract class ErrorInfo implements Built<ErrorInfo, ErrorInfoBuilder> {
   String get debugMessage;
 
   ErrorInfo._();
-  factory ErrorInfo([updates(ErrorInfoBuilder b)/*!*/]) = _$ErrorInfo;
+  factory ErrorInfo([updates(ErrorInfoBuilder b) /*!*/]) = _$ErrorInfo;
   static Serializer<ErrorInfo> get serializer => _$errorInfoSerializer;
 }
 
@@ -236,7 +236,7 @@ abstract class Money implements Built<Money, MoneyBuilder> {
   String get currencyCode;
 
   Money._();
-  factory Money([updates(MoneyBuilder b)/*!*/]) = _$Money;
+  factory Money([updates(MoneyBuilder b) /*!*/]) = _$Money;
   static Serializer<Money> get serializer => _$moneySerializer;
 }
 
@@ -252,6 +252,6 @@ abstract class Contact implements Built<Contact, ContactBuilder> {
   String? get region;
 
   Contact._();
-  factory Contact([updates(ContactBuilder b)/*!*/]) = _$Contact;
+  factory Contact([updates(ContactBuilder b) /*!*/]) = _$Contact;
   static Serializer<Contact> get serializer => _$contactSerializer;
 }

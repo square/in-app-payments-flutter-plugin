@@ -26,6 +26,7 @@ enum PaymentType {
   buyerVerification,
   secureRemoteCommerce
 }
+
 final int cookieAmount = 100;
 
 String getCookieAmount() => (cookieAmount / 100).toStringAsFixed(2);
