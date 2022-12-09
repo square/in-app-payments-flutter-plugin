@@ -146,14 +146,14 @@ class _MyAppState extends State<MyApp> {
 
 [//]: # "Link anchor definitions"
 [docs.connect.squareup.com]: https://docs.connect.squareup.com
-[In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview
+[In-App Payments SDK]: https://developer.squareup.com/docs/in-app-payments-sdk/what-it-does
 [Square Dashboard]: https://squareup.com/dashboard/
-[update policy for In-App Payments SDK]: https://docs.connect.squareup.com/payments/readersdk/overview#readersdkupdatepolicy
-[Testing Mobile Apps]: https://docs.connect.squareup.com/testing/mobile
+[update policy for In-App Payments SDK]: https://developer.squareup.com/docs/payments/readersdk/overview#readersdkupdatepolicy
+[Testing Mobile Apps]: https://developer.squareup.com/docs/testing/mobile
 [squareup.com/activate]: https://squareup.com/activate
 [Square Application Dashboard]: https://connect.squareup.com/apps/
-[In-App Payments SDK Android Setup Guide]: https://docs.connect.squareup.com/payments/readersdk/setup-android
-[In-App Payments SDK iOS Setup Guide]: https://docs.connect.squareup.com/payments/readersdk/setup-ios
+[In-App Payments SDK Android Setup Guide]: https://developer.squareup.com/docs/payments/readersdk/setup-android
+[In-App Payments SDK iOS Setup Guide]: https://developer.squareup.com/docs/payments/readersdk/setup-ios
 [root README]: ../README.md
 [Flutter Getting Started]: https://flutter.io/docs/get-started/install
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
