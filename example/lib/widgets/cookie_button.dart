@@ -23,14 +23,17 @@ class CookieButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      height: 50,
-      width: MediaQuery.of(context).size.width * .44,
-      child: RaisedButton(
+      height: 64,
+      width: MediaQuery.of(context).size.width * .3,
+      child: ElevatedButton(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0))),
+            backgroundColor: MaterialStateProperty.all(mainButtonColor),
+          ),
           child: FittedBox(
               child: Text(text,
-                  style: TextStyle(color: Colors.white, fontSize: 15))),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-          color: mainButtonColor,
+                  style: TextStyle(color: Colors.white, fontSize: 18))),
           onPressed: onPressed as void Function()?));
 }

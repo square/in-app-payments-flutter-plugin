@@ -120,9 +120,15 @@ class OrderSheet extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-            height: 50,
-            width: MediaQuery.of(context).size.width * .44,
-            child: RaisedButton(
+            height: 64,
+            width: MediaQuery.of(context).size.width * .3,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0))),
+                backgroundColor: MaterialStateProperty.all(Colors.black),
+              ),
               onPressed: googlePayEnabled || applePayEnabled
                   ? () {
                       if (Platform.isAndroid) {
@@ -136,9 +142,6 @@ class OrderSheet extends StatelessWidget {
                   image: (Theme.of(context).platform == TargetPlatform.iOS)
                       ? AssetImage("assets/applePayLogo.png")
                       : AssetImage("assets/googlePayLogo.png")),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)),
-              color: Colors.black,
             ),
           ),
           CookieButton(
@@ -155,15 +158,17 @@ class OrderSheet extends StatelessWidget {
           Container(
             height: 50,
             width: MediaQuery.of(context).size.width * .44,
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.pop(context, PaymentType.secureRemoteCommerce);
-              },
-              child: Image(image: AssetImage("assets/masterCardLogo.png")),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)),
-              color: Colors.black,
-            ),
+            child: ElevatedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0))),
+                  backgroundColor: MaterialStateProperty.all(Colors.black),
+                ),
+                onPressed: () {
+                  Navigator.pop(context, PaymentType.secureRemoteCommerce);
+                },
+                child: Image(image: AssetImage("assets/masterCardLogo.png"))),
           ),
         ],
       );
