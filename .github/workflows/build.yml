@@ -28,9 +28,10 @@ jobs:
       #IOS
       - run: |
           cd example
+          flutter pub get
+          cd ios
           flutter clean
           rm Pods && rm Podfile.lock
           flutter pub get
-          pod update Firebase/CoreOnly
           pod install --repo-update
           xcodebuild -workspace Runner.xcworkspace -configuration Debug -scheme Runner -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14"
