@@ -43,7 +43,16 @@ to make it an available resource for the Flutter library.
 
 1. Open your iOS project `Runner.xcodeproj` with **Xcode**.
 1. Set the `iOS Deployment Target` to 12.0 or above
-
+1. Add an In-App Payments SDK build phase:
+    1. Open the **Xcode** project for your application.
+    1. In the **Build Phases** tab for your application target, click the **+**
+        button at the top of the pane.
+    1. Select **New Run Script Phase**.
+    1. Paste the following into the editor panel of the new run script:
+        ```
+        FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+        "${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
+        ```
 
 ## Step 3: Configure the In-App Payments SDK dependency
 

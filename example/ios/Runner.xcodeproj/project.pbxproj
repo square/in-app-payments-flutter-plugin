@@ -146,6 +146,7 @@
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				5BC38C83D881270381C64576 /* [CP] Embed Pods Frameworks */,
 				09ACBE0189125E5E78E58F54 /* [CP] Copy Pods Resources */,
+				D4A2830129DC8C66002AE188 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -265,6 +266,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		D4A2830129DC8C66002AE188 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FRAMEWORKS=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\"${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup\"\n";
 		};
 		D8C50486A84C5EDFF3E42275 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

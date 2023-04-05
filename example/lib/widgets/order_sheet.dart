@@ -120,14 +120,14 @@ class OrderSheet extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-            height: 64,
-            width: MediaQuery.of(context).size.width * .3,
+            height: 50,
+            width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0))),
-                backgroundColor: MaterialStateProperty.all(Colors.black),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
               ),
               onPressed: googlePayEnabled || applePayEnabled
                   ? () {
@@ -159,16 +159,17 @@ class OrderSheet extends StatelessWidget {
             height: 50,
             width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0))),
-                  backgroundColor: MaterialStateProperty.all(Colors.black),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                onPressed: () {
-                  Navigator.pop(context, PaymentType.secureRemoteCommerce);
-                },
-                child: Image(image: AssetImage("assets/masterCardLogo.png"))),
+              ),
+              onPressed: () {
+                Navigator.pop(context, PaymentType.secureRemoteCommerce);
+              },
+              child: Image(image: AssetImage("assets/masterCardLogo.png")),
+            ),
           ),
         ],
       );
