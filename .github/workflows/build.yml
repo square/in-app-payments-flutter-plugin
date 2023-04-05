@@ -29,4 +29,9 @@ jobs:
       - run: |
           cd example
           flutter pub get
-          flutter build ios --no-codesign
+          cd ios
+          flutter clean
+          rm Pods && rm Podfile.lock
+          flutter pub get
+          pod install --repo-update
+          xcodebuild -workspace Runner.xcworkspace -configuration Debug -scheme Runner -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14"

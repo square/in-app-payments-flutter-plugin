@@ -122,7 +122,13 @@ class OrderSheet extends StatelessWidget {
           Container(
             height: 50,
             width: MediaQuery.of(context).size.width * .44,
-            child: RaisedButton(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
               onPressed: googlePayEnabled || applePayEnabled
                   ? () {
                       if (Platform.isAndroid) {
@@ -136,9 +142,6 @@ class OrderSheet extends StatelessWidget {
                   image: (Theme.of(context).platform == TargetPlatform.iOS)
                       ? AssetImage("assets/applePayLogo.png")
                       : AssetImage("assets/googlePayLogo.png")),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)),
-              color: Colors.black,
             ),
           ),
           CookieButton(
@@ -155,14 +158,17 @@ class OrderSheet extends StatelessWidget {
           Container(
             height: 50,
             width: MediaQuery.of(context).size.width * .44,
-            child: RaisedButton(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
               onPressed: () {
                 Navigator.pop(context, PaymentType.secureRemoteCommerce);
               },
               child: Image(image: AssetImage("assets/masterCardLogo.png")),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)),
-              color: Colors.black,
             ),
           ),
         ],
