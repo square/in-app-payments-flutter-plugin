@@ -14,7 +14,6 @@
  limitations under the License.
 */
 import 'dart:async';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:square_in_app_payments_example/colors.dart';
 
