@@ -13,8 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:built_value/serializer.dart';
+
 import '../models.dart';
 
 part 'serializers.g.dart';

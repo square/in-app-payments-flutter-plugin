@@ -14,8 +14,10 @@
  limitations under the License.
 */
 import 'dart:async';
-import 'package:flutter/services.dart';
+
 import 'package:built_value/standard_json_plugin.dart';
+import 'package:flutter/services.dart';
+
 import 'models.dart';
 import 'src/serializers.dart';
 

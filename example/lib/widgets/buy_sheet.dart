@@ -14,14 +14,16 @@
  limitations under the License.
 */
 import 'dart:async';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:uuid/uuid.dart';
-import 'package:square_in_app_payments/models.dart';
-import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/google_pay_constants.dart'
     as google_pay_constants;
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/models.dart';
+import 'package:uuid/uuid.dart';
+
 import '../colors.dart';
 import '../config.dart';
 import '../transaction_service.dart';
@@ -223,7 +225,7 @@ class BuySheetState extends State<BuySheet> {
       ..givenName = "John"
       ..familyName = "Doe"
       ..addressLines =
-          new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+          BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
       ..city = "London"
       ..countryCode = "GB"
       ..email = "johndoe@example.com"
@@ -250,7 +252,7 @@ class BuySheetState extends State<BuySheet> {
       ..givenName = "John"
       ..familyName = "Doe"
       ..addressLines =
-          new BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
+          BuiltList<String>(["London Eye", "Riverside Walk"]).toBuilder()
       ..city = "London"
       ..countryCode = "GB"
       ..email = "johndoe@example.com"
