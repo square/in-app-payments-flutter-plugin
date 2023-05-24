@@ -27,7 +27,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ### Flutter
 
-* Flutter version 2.0 or higher
+* Flutter version 3.0 or higher
 * Dart version 2.12 or higher
   
 ### Android
@@ -42,7 +42,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ### iOS
 
-* Xcode version: 10 or greater.
+* Xcode version: 14.1 or greater.
 * iOS Base SDK: 12 or greater.
 * Deployment target: iOS 12.0 or greater.
 * Currently, this plugin will work only on Mac with Intel processor. This will not work on Mac with M1 chip.
