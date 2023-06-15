@@ -27,7 +27,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ### Flutter
 
-* Flutter version 2.0 or higher
+* Flutter version 3.0 or higher
 * Dart version 2.12 or higher
   
 ### Android
