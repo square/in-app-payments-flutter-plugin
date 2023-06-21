@@ -58,6 +58,7 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     cardEntryForm.collectPostalCode = collectPostalCode;
     cardEntryForm.delegate = self;
     self.cardEntryViewController = cardEntryForm;
+    self.contact = nil;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
@@ -98,6 +99,7 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     SQIPCardEntryViewController *cardEntryForm = [self _makeGiftCardEntryForm];
     cardEntryForm.delegate = self;
     self.cardEntryViewController = cardEntryForm;
+    self.contact = nil;
 
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
@@ -108,6 +110,9 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     }
     result(nil);
 }
+
+#pragma mark - SQIPCardEntryViewControllerDelegate
+
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler
 {
     if (self.contact) {
