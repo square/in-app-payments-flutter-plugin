@@ -45,7 +45,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * Xcode version: 10 or greater.
 * iOS Base SDK: 12 or greater.
 * Deployment target: iOS 12.0 or greater.
-* Currently, this plugin will work only on Mac with Intel processor. This will not work on Mac with M1 chip.
+* This plugin will work on Mac with Intel processor and Apple silicon chips.
 
 ## In-App Payments SDK requirements and limitations
 
