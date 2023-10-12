@@ -24,7 +24,7 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
-def MIN_IAP_SDK_VERSION = '1.6.2'
+def MIN_IAP_SDK_VERSION = '1.6.5'
 def COMPILE_SDK_VERSION = 33
 def TARGET_SDK_VERSION = 33
 
