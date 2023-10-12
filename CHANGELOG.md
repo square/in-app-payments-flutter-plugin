@@ -1,6 +1,6 @@
 ## Changelog
 
-### v1.7.6 Sep 4, 2023
+### v1.7.7 Sep 27, 2023
 
 * Updated to IAP SDK iOS to 1.6.2.
 
