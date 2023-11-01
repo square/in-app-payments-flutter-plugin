@@ -65,7 +65,4 @@ flutter {
 dependencies {
     implementation 'com.google.guava:guava:28.2-android'
     implementation 'com.android.support:multidex:2.0.1'
-    implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
 }
