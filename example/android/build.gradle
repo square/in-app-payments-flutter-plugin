@@ -1,15 +1,9 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.0'
 
     repositories {
         google()
         mavenCentral()
-        maven {
-        url "https://repo.spring.io/release"
-        }
-        maven {
-        url "https://repository.jboss.org/maven2"
-      }
     }
 
     dependencies {
@@ -19,6 +13,11 @@ buildscript {
 }
 
 allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'com.facebook.react:react-native:0.65.2' //select Version you used
+        }
+    }
     repositories {
         google()
         mavenCentral()
