@@ -39,6 +39,7 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -63,4 +64,5 @@ flutter {
 
 dependencies {
     implementation 'com.google.guava:guava:28.2-android'
+    implementation 'com.android.support:multidex:2.0.1'
 }

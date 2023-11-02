@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.0'
 
     repositories {
         google()
@@ -13,14 +13,21 @@ buildscript {
 }
 
 allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'com.facebook.react:react-native:0.65.2' //select Version you used
+        }
+    }
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
 ext {
-    sqipVersion = '1.6.2'
+    sqipVersion = '1.6.5'
 }
 
 rootProject.buildDir = '../build'
