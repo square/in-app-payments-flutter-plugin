@@ -124,7 +124,7 @@ class OrderSheet extends StatelessWidget {
             width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                primary: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -162,7 +162,7 @@ class OrderSheet extends StatelessWidget {
             width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                primary: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
