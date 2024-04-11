@@ -237,8 +237,8 @@ Future<T?> showModalBottomSheet<T>({
       ));
 }
 
-PersistentBottomSheetController<T> showMyBottomSheet<T>({
+PersistentBottomSheetController showMyBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
 }) =>
-    Scaffold.of(context).showBottomSheet<T>(builder);
+    Scaffold.of(context).showBottomSheet(builder);

@@ -124,7 +124,7 @@ class OrderSheet extends StatelessWidget {
             width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.black,
+                backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -147,6 +147,8 @@ class OrderSheet extends StatelessWidget {
           CookieButton(
             text: "Buyer Verification",
             onPressed: () {
+
+              Scaffold.of(context).showBottomSheet((context) =>Container());
               Navigator.pop(context, PaymentType.buyerVerification);
             },
           ),
@@ -160,7 +162,7 @@ class OrderSheet extends StatelessWidget {
             width: MediaQuery.of(context).size.width * .44,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.black,
+                backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -173,6 +175,7 @@ class OrderSheet extends StatelessWidget {
           ),
         ],
       );
+
 }
 
 class _ShippingInformation extends StatelessWidget {
