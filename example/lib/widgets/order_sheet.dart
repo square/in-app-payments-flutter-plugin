@@ -147,8 +147,6 @@ class OrderSheet extends StatelessWidget {
           CookieButton(
             text: "Buyer Verification",
             onPressed: () {
-
-              Scaffold.of(context).showBottomSheet((context) =>Container());
               Navigator.pop(context, PaymentType.buyerVerification);
             },
           ),
