@@ -64,6 +64,7 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
                  paymentType:(NSString *)paymentType
+       shippingContactFields:(NSArray<NSString *>*)shippingContactFields
 {
     if (!self.applePayMerchantId) {
         result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
@@ -81,6 +82,25 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
         [PKPaymentRequest squarePaymentRequestWithMerchantIdentifier:self.applePayMerchantId
                                                          countryCode:countryCode
                                                         currencyCode:currencyCode];
+    
+    if (shippingContactFields.count > 0) {
+        NSMutableSet<PKContactField> *shippingFields = [NSMutableSet setWithCapacity:shippingContactFields.count];
+        
+        for (NSString *field in shippingContactFields) {
+            if ([field isEqualToString:@"email"]) {
+                [shippingFields addObject:PKContactFieldEmailAddress];
+            } else if ([field isEqualToString:@"name"]) {
+                [shippingFields addObject:PKContactFieldName];
+            } else if ([field isEqualToString:@"phoneNumber"]) {
+                [shippingFields addObject:PKContactFieldPhoneNumber];
+            } else if ([field isEqualToString:@"postalAddress"]) {
+                [shippingFields addObject:PKContactFieldPostalAddress];
+            }
+        }
+        
+        paymentRequest.requiredShippingContactFields = shippingFields;
+    }
+    
     if ([paymentType isEqual: @"PENDING"]) {
         paymentRequest.paymentSummaryItems = @[
            [PKPaymentSummaryItem summaryItemWithLabel:summaryLabel
@@ -150,7 +170,59 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                                                                    debugMessage:debugMessage]];
         } else {
             // if error is not nil, result must be valid
-            [self.channel invokeMethod:@"onApplePayNonceRequestSuccess" arguments:[result jsonDictionary]];
+            NSMutableDictionary *jsonObject = [NSMutableDictionary dictionaryWithDictionary:[result jsonDictionary]];
+            
+            if (payment.shippingContact != nil) {
+                NSMutableDictionary *contactJson = [[NSMutableDictionary alloc] init];
+                
+                if (payment.shippingContact.emailAddress != nil) {
+                    [contactJson setObject:payment.shippingContact.emailAddress forKey:@"email"];
+                }
+                
+                if (payment.shippingContact.phoneNumber.stringValue != nil) {
+                    [contactJson setObject:payment.shippingContact.phoneNumber.stringValue forKey:@"phoneNumber"];
+                }
+                
+                if (payment.shippingContact.name != nil) {
+                    NSMutableDictionary *nameJson = [[NSMutableDictionary alloc] init];
+                    
+                    if (payment.shippingContact.name.givenName != nil) {
+                        [contactJson setObject:payment.shippingContact.name.givenName forKey:@"givenName"];
+                    }
+                    
+                    if (payment.shippingContact.name.middleName != nil) {
+                        [contactJson setObject:payment.shippingContact.name.middleName forKey:@"middleName"];
+                    }
+                    
+                    if (payment.shippingContact.name.familyName != nil) {
+                        [contactJson setObject:payment.shippingContact.name.familyName forKey:@"familyName"];
+                    }
+                    
+                    if (payment.shippingContact.name.nameSuffix != nil) {
+                        [contactJson setObject:payment.shippingContact.name.nameSuffix forKey:@"nameSuffix"];
+                    }
+                    
+                    if (payment.shippingContact.name.nickname != nil) {
+                        [contactJson setObject:payment.shippingContact.name.nickname forKey:@"nickname"];
+                    }
+                }
+                
+                if (payment.shippingContact.postalAddress != nil) {
+                    NSMutableDictionary *postalAddress = @{
+                        @"street": payment.shippingContact.postalAddress.street,
+                        @"city": payment.shippingContact.postalAddress.city,
+                        @"state": payment.shippingContact.postalAddress.state,
+                        @"postalCode": payment.shippingContact.postalAddress.postalCode,
+                        @"country": payment.shippingContact.postalAddress.country,
+                        @"isoCountryCode": payment.shippingContact.postalAddress.ISOCountryCode,
+                    };
+                    
+                    [contactJson setObject:postalAddress forKey:@"postalAddress"];
+                }
+                
+            }
+
+            [self.channel invokeMethod:@"onApplePayNonceRequestSuccess" arguments:jsonObject];
         }
     }];
 }

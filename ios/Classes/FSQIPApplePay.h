@@ -31,7 +31,8 @@
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
-                 paymentType:(NSString *)paymentType;
+                 paymentType:(NSString *)paymentType
+                 shippingContactFields:(NSArray<NSString *>*)shippingContactFields;
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
                             isSuccess:(BOOL)isSuccess

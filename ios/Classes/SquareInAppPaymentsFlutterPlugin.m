@@ -97,12 +97,14 @@ FlutterMethodChannel *_channel;
         NSString *summaryLabel = call.arguments[@"summaryLabel"];
         NSString *price = call.arguments[@"price"];
         NSString *paymentType = call.arguments[@"paymentType"];
+        NSArray<NSString *> *shippingContactFields = call.arguments[@"shippingFields"];
         [self.applePayModule requestApplePayNonce:result
                                       countryCode:countryCode
                                      currencyCode:currencyCode
                                      summaryLabel:summaryLabel
                                             price:price
-                                      paymentType:paymentType];
+                                      paymentType:paymentType
+                                    shippingContactFields:shippingContactFields];
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];

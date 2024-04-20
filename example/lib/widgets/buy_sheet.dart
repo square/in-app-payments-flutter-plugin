@@ -195,7 +195,7 @@ class BuySheetState extends State<BuySheet> {
       return;
     }
     try {
-      await chargeCard(result);
+      await chargeCard(result.nonce);
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
     } on ChargeException catch (ex) {
@@ -297,7 +297,7 @@ class BuySheetState extends State<BuySheet> {
       return;
     }
     try {
-      await chargeCard(result);
+      await chargeCard(result.nonce);
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
           title: "Congratulation,Your order was successful",
@@ -335,7 +335,9 @@ class BuySheetState extends State<BuySheet> {
           paymentType: ApplePayPaymentType.finalPayment,
           onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
           onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
-          onApplePayComplete: _onApplePayEntryComplete);
+          onApplePayComplete: _onApplePayEntryComplete,
+          contactFields: [ShippingContactField.email, ShippingContactField.phoneNumber],
+          );
     } on PlatformException catch (ex) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
@@ -363,14 +365,14 @@ class BuySheetState extends State<BuySheet> {
     }
   }
 
-  void _onApplePayNonceRequestSuccess(CardDetails result) async {
+  void _onApplePayNonceRequestSuccess(PaymentInfo result) async {
     if (!_chargeServerHostReplaced) {
       await InAppPayments.completeApplePayAuthorization(isSuccess: false);
       _showUrlNotSetAndPrintCurlCommand(result.nonce);
       return;
     }
     try {
-      await chargeCard(result);
+      await chargeCard(result.nonce);
       _applePayStatus = ApplePayStatus.success;
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,
@@ -431,7 +433,7 @@ class BuySheetState extends State<BuySheet> {
     }
 
     try {
-      await chargeCard(result);
+      await chargeCard(result.nonce);
     } on ChargeException catch (ex) {
       showAlertDialog(
           context: BuySheet.scaffoldKey.currentContext!,

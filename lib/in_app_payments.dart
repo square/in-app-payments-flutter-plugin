@@ -32,7 +32,7 @@ typedef GooglePayNonceRequestFailureCallback = void Function(
     ErrorInfo errorInfo);
 typedef GooglePayCancelCallback = void Function();
 
-typedef ApplePayNonceRequestSuccessCallback = void Function(CardDetails result);
+typedef ApplePayNonceRequestSuccessCallback = void Function(PaymentInfo result);
 typedef ApplePayNonceRequestFailureCallback = void Function(
     ErrorInfo errorInfo);
 typedef ApplePayCompleteCallback = void Function();
@@ -122,7 +122,7 @@ class InAppPayments {
         case 'onApplePayNonceRequestSuccess':
           if (_applePayNonceRequestSuccessCallback != null) {
             var result = _standardSerializers.deserializeWith(
-                CardDetails.serializer, call.arguments)!;
+                PaymentInfo.serializer, call.arguments)!;
             _applePayNonceRequestSuccessCallback!(result);
           }
           break;
@@ -295,7 +295,9 @@ class InAppPayments {
           onApplePayNonceRequestSuccess,
       required ApplePayNonceRequestFailureCallback
           onApplePayNonceRequestFailure,
-      required ApplePayCompleteCallback onApplePayComplete}) async {
+      required ApplePayCompleteCallback onApplePayComplete,
+      List<ShippingContactField> contactFields = const [],
+      }) async {
     assert(summaryLabel.isNotEmpty, 'summaryLabel should not be empty.');
     assert(price.isNotEmpty, 'price should not be empty.');
     assert(countryCode.isNotEmpty, 'countryCode should not be empty.');
@@ -314,6 +316,7 @@ class InAppPayments {
         'countryCode': countryCode,
         'currencyCode': currencyCode,
         'paymentType': paymentTypeString,
+        'shippingFields': contactFields.map((field) => field.name).toList(),
       };
       await _channel.invokeMethod('requestApplePayNonce', params);
     } on PlatformException catch (ex) {

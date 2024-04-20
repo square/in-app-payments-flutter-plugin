@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:square_in_app_payments/models.dart';
 
 // Replace this with the server host you create, if you have your own server running
 // e.g. https://server-host.com
@@ -30,8 +29,8 @@ class ChargeException implements Exception {
   ChargeException(this.errorMessage);
 }
 
-Future<void> chargeCard(CardDetails result) async {
-  var body = jsonEncode({"nonce": result.nonce});
+Future<void> chargeCard(String nonce) async {
+  var body = jsonEncode({"nonce": nonce});
   http.Response response;
   try {
     response = await http.post(chargeUrl, body: body, headers: {

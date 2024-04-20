@@ -128,6 +128,56 @@ abstract class CardDetails implements Built<CardDetails, CardDetailsBuilder> {
   static Serializer<CardDetails> get serializer => _$cardDetailsSerializer;
 }
 
+abstract class PaymentInfo implements Built<PaymentInfo, PaymentInfoBuilder> {
+  String get nonce;
+  Card get card;
+  ShippingContact? get shippingContact;
+
+  PaymentInfo._();
+  factory PaymentInfo([updates(PaymentInfoBuilder b) /*!*/]) = _$PaymentInfo;
+  static Serializer<PaymentInfo> get serializer => _$paymentInfoSerializer;
+
+}
+
+abstract class ShippingContact implements Built<ShippingContact, ShippingContactBuilder> {
+  String get phoneNumber;
+  String get email;
+  Card get card;
+  ShippingPostalAddress? get shippingAddress;
+  ShippingPostalAddress? get name;
+
+  ShippingContact._();
+  factory ShippingContact([updates(ShippingContactBuilder b) /*!*/]) = _$ShippingContact;
+  static Serializer<ShippingContact> get serializer => _$shippingContactSerializer;
+
+}
+
+abstract class ShippingPostalAddress implements Built<ShippingPostalAddress, ShippingPostalAddressBuilder> {
+  String get street;
+  String get city;
+  String get postalCode;
+  String get country;
+  String get isoCountryCode;
+
+  ShippingPostalAddress._();
+  factory ShippingPostalAddress([updates(ShippingPostalAddressBuilder b) /*!*/]) = _$ShippingPostalAddress;
+  static Serializer<ShippingPostalAddress> get serializer => _$shippingPostalAddressSerializer;
+
+}
+
+abstract class ShippingContactName implements Built<ShippingContactName, ShippingContactNameBuilder> {
+  String? get givenName;
+  String? get middleName;
+  String? get familyName;
+  String? get nameSuffix;
+  String? get nickname;
+
+  ShippingContactName._();
+  factory ShippingContactName([updates(ShippingContactNameBuilder b) /*!*/]) = _$ShippingContactName;
+  static Serializer<ShippingContactName> get serializer => _$shippingContactNameSerializer;
+
+}
+
 abstract class BuyerVerificationDetails
     implements
         Built<BuyerVerificationDetails, BuyerVerificationDetailsBuilder> {
@@ -255,3 +305,5 @@ abstract class Contact implements Built<Contact, ContactBuilder> {
   factory Contact([updates(ContactBuilder b) /*!*/]) = _$Contact;
   static Serializer<Contact> get serializer => _$contactSerializer;
 }
+
+enum ShippingContactField { email, name, phoneNumber, postalAddress }

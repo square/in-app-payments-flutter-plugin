@@ -188,6 +188,13 @@ Serializer<CardPrepaidType> _$cardPrepaidTypeSerializer =
 Serializer<ApplePayPaymentType> _$applePayPaymentTypeSerializer =
     new _$ApplePayPaymentTypeSerializer();
 Serializer<CardDetails> _$cardDetailsSerializer = new _$CardDetailsSerializer();
+Serializer<PaymentInfo> _$paymentInfoSerializer = new _$PaymentInfoSerializer();
+Serializer<ShippingContact> _$shippingContactSerializer =
+    new _$ShippingContactSerializer();
+Serializer<ShippingPostalAddress> _$shippingPostalAddressSerializer =
+    new _$ShippingPostalAddressSerializer();
+Serializer<ShippingContactName> _$shippingContactNameSerializer =
+    new _$ShippingContactNameSerializer();
 Serializer<BuyerVerificationDetails> _$buyerVerificationDetailsSerializer =
     new _$BuyerVerificationDetailsSerializer();
 Serializer<Card> _$cardSerializer = new _$CardSerializer();
@@ -231,7 +238,8 @@ class _$ErrorCodeSerializer implements PrimitiveSerializer<ErrorCode> {
   @override
   ErrorCode deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      ErrorCode.valueOf(_fromWire[serialized] ?? serialized as String);
+      ErrorCode.valueOf(
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$BrandSerializer implements PrimitiveSerializer<Brand> {
@@ -271,7 +279,8 @@ class _$BrandSerializer implements PrimitiveSerializer<Brand> {
   @override
   Brand deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      Brand.valueOf(_fromWire[serialized] ?? serialized as String);
+      Brand.valueOf(
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$CardTypeSerializer implements PrimitiveSerializer<CardType> {
@@ -299,7 +308,8 @@ class _$CardTypeSerializer implements PrimitiveSerializer<CardType> {
   @override
   CardType deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      CardType.valueOf(_fromWire[serialized] ?? serialized as String);
+      CardType.valueOf(
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$CardPrepaidTypeSerializer
@@ -328,7 +338,8 @@ class _$CardPrepaidTypeSerializer
   @override
   CardPrepaidType deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      CardPrepaidType.valueOf(_fromWire[serialized] ?? serialized as String);
+      CardPrepaidType.valueOf(
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$ApplePayPaymentTypeSerializer
@@ -356,7 +367,7 @@ class _$ApplePayPaymentTypeSerializer
   ApplePayPaymentType deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
       ApplePayPaymentType.valueOf(
-          _fromWire[serialized] ?? serialized as String);
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
@@ -386,17 +397,320 @@ class _$CardDetailsSerializer implements StructuredSerializer<CardDetails> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'nonce':
           result.nonce = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'card':
           result.card.replace(serializers.deserialize(value,
               specifiedType: const FullType(Card))! as Card);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$PaymentInfoSerializer implements StructuredSerializer<PaymentInfo> {
+  @override
+  final Iterable<Type> types = const [PaymentInfo, _$PaymentInfo];
+  @override
+  final String wireName = 'PaymentInfo';
+
+  @override
+  Iterable<Object?> serialize(Serializers serializers, PaymentInfo object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object?>[
+      'nonce',
+      serializers.serialize(object.nonce,
+          specifiedType: const FullType(String)),
+      'card',
+      serializers.serialize(object.card, specifiedType: const FullType(Card)),
+    ];
+    Object? value;
+    value = object.shippingContact;
+    if (value != null) {
+      result
+        ..add('shippingContact')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(ShippingContact)));
+    }
+    return result;
+  }
+
+  @override
+  PaymentInfo deserialize(Serializers serializers, Iterable<Object?> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new PaymentInfoBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'nonce':
+          result.nonce = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'card':
+          result.card.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Card))! as Card);
+          break;
+        case 'shippingContact':
+          result.shippingContact.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(ShippingContact))!
+              as ShippingContact);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ShippingContactSerializer
+    implements StructuredSerializer<ShippingContact> {
+  @override
+  final Iterable<Type> types = const [ShippingContact, _$ShippingContact];
+  @override
+  final String wireName = 'ShippingContact';
+
+  @override
+  Iterable<Object?> serialize(Serializers serializers, ShippingContact object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object?>[
+      'phoneNumber',
+      serializers.serialize(object.phoneNumber,
+          specifiedType: const FullType(String)),
+      'email',
+      serializers.serialize(object.email,
+          specifiedType: const FullType(String)),
+      'card',
+      serializers.serialize(object.card, specifiedType: const FullType(Card)),
+    ];
+    Object? value;
+    value = object.shippingAddress;
+    if (value != null) {
+      result
+        ..add('shippingAddress')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(ShippingPostalAddress)));
+    }
+    value = object.name;
+    if (value != null) {
+      result
+        ..add('name')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(ShippingPostalAddress)));
+    }
+    return result;
+  }
+
+  @override
+  ShippingContact deserialize(
+      Serializers serializers, Iterable<Object?> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ShippingContactBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'phoneNumber':
+          result.phoneNumber = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'email':
+          result.email = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'card':
+          result.card.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Card))! as Card);
+          break;
+        case 'shippingAddress':
+          result.shippingAddress.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(ShippingPostalAddress))!
+              as ShippingPostalAddress);
+          break;
+        case 'name':
+          result.name.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(ShippingPostalAddress))!
+              as ShippingPostalAddress);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ShippingPostalAddressSerializer
+    implements StructuredSerializer<ShippingPostalAddress> {
+  @override
+  final Iterable<Type> types = const [
+    ShippingPostalAddress,
+    _$ShippingPostalAddress
+  ];
+  @override
+  final String wireName = 'ShippingPostalAddress';
+
+  @override
+  Iterable<Object?> serialize(
+      Serializers serializers, ShippingPostalAddress object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object?>[
+      'street',
+      serializers.serialize(object.street,
+          specifiedType: const FullType(String)),
+      'city',
+      serializers.serialize(object.city, specifiedType: const FullType(String)),
+      'postalCode',
+      serializers.serialize(object.postalCode,
+          specifiedType: const FullType(String)),
+      'country',
+      serializers.serialize(object.country,
+          specifiedType: const FullType(String)),
+      'isoCountryCode',
+      serializers.serialize(object.isoCountryCode,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  ShippingPostalAddress deserialize(
+      Serializers serializers, Iterable<Object?> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ShippingPostalAddressBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'street':
+          result.street = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'city':
+          result.city = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'postalCode':
+          result.postalCode = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'country':
+          result.country = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'isoCountryCode':
+          result.isoCountryCode = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ShippingContactNameSerializer
+    implements StructuredSerializer<ShippingContactName> {
+  @override
+  final Iterable<Type> types = const [
+    ShippingContactName,
+    _$ShippingContactName
+  ];
+  @override
+  final String wireName = 'ShippingContactName';
+
+  @override
+  Iterable<Object?> serialize(
+      Serializers serializers, ShippingContactName object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object?>[];
+    Object? value;
+    value = object.givenName;
+    if (value != null) {
+      result
+        ..add('givenName')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.middleName;
+    if (value != null) {
+      result
+        ..add('middleName')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.familyName;
+    if (value != null) {
+      result
+        ..add('familyName')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.nameSuffix;
+    if (value != null) {
+      result
+        ..add('nameSuffix')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.nickname;
+    if (value != null) {
+      result
+        ..add('nickname')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  ShippingContactName deserialize(
+      Serializers serializers, Iterable<Object?> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ShippingContactNameBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'givenName':
+          result.givenName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'middleName':
+          result.middleName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'familyName':
+          result.familyName = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'nameSuffix':
+          result.nameSuffix = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'nickname':
+          result.nickname = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
           break;
       }
     }
@@ -446,13 +760,13 @@ class _$BuyerVerificationDetailsSerializer
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'nonce':
           result.nonce = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'card':
           result.card.replace(serializers.deserialize(value,
@@ -460,7 +774,7 @@ class _$BuyerVerificationDetailsSerializer
           break;
         case 'token':
           result.token = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
       }
     }
@@ -515,38 +829,38 @@ class _$CardSerializer implements StructuredSerializer<Card> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'brand':
           result.brand = serializers.deserialize(value,
-              specifiedType: const FullType(Brand)) as Brand;
+              specifiedType: const FullType(Brand))! as Brand;
           break;
         case 'lastFourDigits':
           result.lastFourDigits = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'expirationMonth':
           result.expirationMonth = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'expirationYear':
           result.expirationYear = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'type':
           result.type = serializers.deserialize(value,
-              specifiedType: const FullType(CardType)) as CardType;
+              specifiedType: const FullType(CardType))! as CardType;
           break;
         case 'prepaidType':
           result.prepaidType = serializers.deserialize(value,
-                  specifiedType: const FullType(CardPrepaidType))
+                  specifiedType: const FullType(CardPrepaidType))!
               as CardPrepaidType;
           break;
         case 'postalCode':
           result.postalCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
       }
     }
@@ -590,25 +904,25 @@ class _$RGBAColorSerializer implements StructuredSerializer<RGBAColor> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'r':
           result.r = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'g':
           result.g = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'b':
           result.b = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'a':
           result.a = serializers.deserialize(value,
-              specifiedType: const FullType(double)) as double;
+              specifiedType: const FullType(double)) as double?;
           break;
       }
     }
@@ -648,17 +962,17 @@ class _$FontSerializer implements StructuredSerializer<Font> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'size':
           result.size = serializers.deserialize(value,
-              specifiedType: const FullType(double)) as double;
+              specifiedType: const FullType(double))! as double;
           break;
         case 'name':
           result.name = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
       }
     }
@@ -691,7 +1005,8 @@ class _$KeyboardAppearanceSerializer
   @override
   KeyboardAppearance deserialize(Serializers serializers, Object serialized,
           {FullType specifiedType = FullType.unspecified}) =>
-      KeyboardAppearance.valueOf(_fromWire[serialized] ?? serialized as String);
+      KeyboardAppearance.valueOf(
+          _fromWire[serialized] ?? (serialized is String ? serialized : ''));
 }
 
 class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
@@ -799,7 +1114,7 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
@@ -837,7 +1152,7 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
           break;
         case 'saveButtonTitle':
           result.saveButtonTitle = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'saveButtonFont':
           result.saveButtonFont.replace(serializers.deserialize(value,
@@ -850,7 +1165,7 @@ class _$IOSThemeSerializer implements StructuredSerializer<IOSTheme> {
         case 'keyboardAppearance':
           result.keyboardAppearance = serializers.deserialize(value,
                   specifiedType: const FullType(KeyboardAppearance))
-              as KeyboardAppearance;
+              as KeyboardAppearance?;
           break;
       }
     }
@@ -893,25 +1208,25 @@ class _$ErrorInfoSerializer implements StructuredSerializer<ErrorInfo> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'code':
           result.code = serializers.deserialize(value,
-              specifiedType: const FullType(ErrorCode)) as ErrorCode;
+              specifiedType: const FullType(ErrorCode))! as ErrorCode;
           break;
         case 'message':
           result.message = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'debugCode':
           result.debugCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'debugMessage':
           result.debugMessage = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
       }
     }
@@ -947,17 +1262,17 @@ class _$MoneySerializer implements StructuredSerializer<Money> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'amount':
           result.amount = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int))! as int;
           break;
         case 'currencyCode':
           result.currencyCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
       }
     }
@@ -1048,47 +1363,47 @@ class _$ContactSerializer implements StructuredSerializer<Contact> {
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current as String;
+      final key = iterator.current! as String;
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
         case 'givenName':
           result.givenName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String))! as String;
           break;
         case 'familyName':
           result.familyName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'addressLines':
           result.addressLines.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(String)]))!
-              as BuiltList<Object>);
+              as BuiltList<Object?>);
           break;
         case 'city':
           result.city = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'countryCode':
           result.countryCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'email':
           result.email = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'phone':
           result.phone = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'postalCode':
           result.postalCode = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'region':
           result.region = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
       }
     }
@@ -1104,11 +1419,11 @@ class _$CardDetails extends CardDetails {
   final Card card;
 
   factory _$CardDetails([void Function(CardDetailsBuilder)? updates]) =>
-      (new CardDetailsBuilder()..update(updates)).build();
+      (new CardDetailsBuilder()..update(updates))._build();
 
   _$CardDetails._({required this.nonce, required this.card}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(nonce, 'CardDetails', 'nonce');
-    BuiltValueNullFieldError.checkNotNull(card, 'CardDetails', 'card');
+    BuiltValueNullFieldError.checkNotNull(nonce, r'CardDetails', 'nonce');
+    BuiltValueNullFieldError.checkNotNull(card, r'CardDetails', 'card');
   }
 
   @override
@@ -1126,12 +1441,16 @@ class _$CardDetails extends CardDetails {
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, nonce.hashCode), card.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, nonce.hashCode);
+    _$hash = $jc(_$hash, card.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('CardDetails')
+    return (newBuiltValueToStringHelper(r'CardDetails')
           ..add('nonce', nonce)
           ..add('card', card))
         .toString();
@@ -1173,13 +1492,15 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
   }
 
   @override
-  _$CardDetails build() {
+  CardDetails build() => _build();
+
+  _$CardDetails _build() {
     _$CardDetails _$result;
     try {
       _$result = _$v ??
           new _$CardDetails._(
               nonce: BuiltValueNullFieldError.checkNotNull(
-                  nonce, 'CardDetails', 'nonce'),
+                  nonce, r'CardDetails', 'nonce'),
               card: card.build());
     } catch (_) {
       late String _$failedField;
@@ -1188,10 +1509,579 @@ class CardDetailsBuilder implements Builder<CardDetails, CardDetailsBuilder> {
         card.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'CardDetails', _$failedField, e.toString());
+            r'CardDetails', _$failedField, e.toString());
       }
       rethrow;
     }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$PaymentInfo extends PaymentInfo {
+  @override
+  final String nonce;
+  @override
+  final Card card;
+  @override
+  final ShippingContact? shippingContact;
+
+  factory _$PaymentInfo([void Function(PaymentInfoBuilder)? updates]) =>
+      (new PaymentInfoBuilder()..update(updates))._build();
+
+  _$PaymentInfo._(
+      {required this.nonce, required this.card, this.shippingContact})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(nonce, r'PaymentInfo', 'nonce');
+    BuiltValueNullFieldError.checkNotNull(card, r'PaymentInfo', 'card');
+  }
+
+  @override
+  PaymentInfo rebuild(void Function(PaymentInfoBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  PaymentInfoBuilder toBuilder() => new PaymentInfoBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is PaymentInfo &&
+        nonce == other.nonce &&
+        card == other.card &&
+        shippingContact == other.shippingContact;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, nonce.hashCode);
+    _$hash = $jc(_$hash, card.hashCode);
+    _$hash = $jc(_$hash, shippingContact.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'PaymentInfo')
+          ..add('nonce', nonce)
+          ..add('card', card)
+          ..add('shippingContact', shippingContact))
+        .toString();
+  }
+}
+
+class PaymentInfoBuilder implements Builder<PaymentInfo, PaymentInfoBuilder> {
+  _$PaymentInfo? _$v;
+
+  String? _nonce;
+  String? get nonce => _$this._nonce;
+  set nonce(String? nonce) => _$this._nonce = nonce;
+
+  CardBuilder? _card;
+  CardBuilder get card => _$this._card ??= new CardBuilder();
+  set card(CardBuilder? card) => _$this._card = card;
+
+  ShippingContactBuilder? _shippingContact;
+  ShippingContactBuilder get shippingContact =>
+      _$this._shippingContact ??= new ShippingContactBuilder();
+  set shippingContact(ShippingContactBuilder? shippingContact) =>
+      _$this._shippingContact = shippingContact;
+
+  PaymentInfoBuilder();
+
+  PaymentInfoBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _nonce = $v.nonce;
+      _card = $v.card.toBuilder();
+      _shippingContact = $v.shippingContact?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(PaymentInfo other) {
+    ArgumentError.checkNotNull(other, 'other');
+    _$v = other as _$PaymentInfo;
+  }
+
+  @override
+  void update(void Function(PaymentInfoBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  PaymentInfo build() => _build();
+
+  _$PaymentInfo _build() {
+    _$PaymentInfo _$result;
+    try {
+      _$result = _$v ??
+          new _$PaymentInfo._(
+              nonce: BuiltValueNullFieldError.checkNotNull(
+                  nonce, r'PaymentInfo', 'nonce'),
+              card: card.build(),
+              shippingContact: _shippingContact?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'card';
+        card.build();
+        _$failedField = 'shippingContact';
+        _shippingContact?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'PaymentInfo', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ShippingContact extends ShippingContact {
+  @override
+  final String phoneNumber;
+  @override
+  final String email;
+  @override
+  final Card card;
+  @override
+  final ShippingPostalAddress? shippingAddress;
+  @override
+  final ShippingPostalAddress? name;
+
+  factory _$ShippingContact([void Function(ShippingContactBuilder)? updates]) =>
+      (new ShippingContactBuilder()..update(updates))._build();
+
+  _$ShippingContact._(
+      {required this.phoneNumber,
+      required this.email,
+      required this.card,
+      this.shippingAddress,
+      this.name})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        phoneNumber, r'ShippingContact', 'phoneNumber');
+    BuiltValueNullFieldError.checkNotNull(email, r'ShippingContact', 'email');
+    BuiltValueNullFieldError.checkNotNull(card, r'ShippingContact', 'card');
+  }
+
+  @override
+  ShippingContact rebuild(void Function(ShippingContactBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ShippingContactBuilder toBuilder() =>
+      new ShippingContactBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ShippingContact &&
+        phoneNumber == other.phoneNumber &&
+        email == other.email &&
+        card == other.card &&
+        shippingAddress == other.shippingAddress &&
+        name == other.name;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, phoneNumber.hashCode);
+    _$hash = $jc(_$hash, email.hashCode);
+    _$hash = $jc(_$hash, card.hashCode);
+    _$hash = $jc(_$hash, shippingAddress.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'ShippingContact')
+          ..add('phoneNumber', phoneNumber)
+          ..add('email', email)
+          ..add('card', card)
+          ..add('shippingAddress', shippingAddress)
+          ..add('name', name))
+        .toString();
+  }
+}
+
+class ShippingContactBuilder
+    implements Builder<ShippingContact, ShippingContactBuilder> {
+  _$ShippingContact? _$v;
+
+  String? _phoneNumber;
+  String? get phoneNumber => _$this._phoneNumber;
+  set phoneNumber(String? phoneNumber) => _$this._phoneNumber = phoneNumber;
+
+  String? _email;
+  String? get email => _$this._email;
+  set email(String? email) => _$this._email = email;
+
+  CardBuilder? _card;
+  CardBuilder get card => _$this._card ??= new CardBuilder();
+  set card(CardBuilder? card) => _$this._card = card;
+
+  ShippingPostalAddressBuilder? _shippingAddress;
+  ShippingPostalAddressBuilder get shippingAddress =>
+      _$this._shippingAddress ??= new ShippingPostalAddressBuilder();
+  set shippingAddress(ShippingPostalAddressBuilder? shippingAddress) =>
+      _$this._shippingAddress = shippingAddress;
+
+  ShippingPostalAddressBuilder? _name;
+  ShippingPostalAddressBuilder get name =>
+      _$this._name ??= new ShippingPostalAddressBuilder();
+  set name(ShippingPostalAddressBuilder? name) => _$this._name = name;
+
+  ShippingContactBuilder();
+
+  ShippingContactBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _phoneNumber = $v.phoneNumber;
+      _email = $v.email;
+      _card = $v.card.toBuilder();
+      _shippingAddress = $v.shippingAddress?.toBuilder();
+      _name = $v.name?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ShippingContact other) {
+    ArgumentError.checkNotNull(other, 'other');
+    _$v = other as _$ShippingContact;
+  }
+
+  @override
+  void update(void Function(ShippingContactBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  ShippingContact build() => _build();
+
+  _$ShippingContact _build() {
+    _$ShippingContact _$result;
+    try {
+      _$result = _$v ??
+          new _$ShippingContact._(
+              phoneNumber: BuiltValueNullFieldError.checkNotNull(
+                  phoneNumber, r'ShippingContact', 'phoneNumber'),
+              email: BuiltValueNullFieldError.checkNotNull(
+                  email, r'ShippingContact', 'email'),
+              card: card.build(),
+              shippingAddress: _shippingAddress?.build(),
+              name: _name?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'card';
+        card.build();
+        _$failedField = 'shippingAddress';
+        _shippingAddress?.build();
+        _$failedField = 'name';
+        _name?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'ShippingContact', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ShippingPostalAddress extends ShippingPostalAddress {
+  @override
+  final String street;
+  @override
+  final String city;
+  @override
+  final String postalCode;
+  @override
+  final String country;
+  @override
+  final String isoCountryCode;
+
+  factory _$ShippingPostalAddress(
+          [void Function(ShippingPostalAddressBuilder)? updates]) =>
+      (new ShippingPostalAddressBuilder()..update(updates))._build();
+
+  _$ShippingPostalAddress._(
+      {required this.street,
+      required this.city,
+      required this.postalCode,
+      required this.country,
+      required this.isoCountryCode})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        street, r'ShippingPostalAddress', 'street');
+    BuiltValueNullFieldError.checkNotNull(
+        city, r'ShippingPostalAddress', 'city');
+    BuiltValueNullFieldError.checkNotNull(
+        postalCode, r'ShippingPostalAddress', 'postalCode');
+    BuiltValueNullFieldError.checkNotNull(
+        country, r'ShippingPostalAddress', 'country');
+    BuiltValueNullFieldError.checkNotNull(
+        isoCountryCode, r'ShippingPostalAddress', 'isoCountryCode');
+  }
+
+  @override
+  ShippingPostalAddress rebuild(
+          void Function(ShippingPostalAddressBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ShippingPostalAddressBuilder toBuilder() =>
+      new ShippingPostalAddressBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ShippingPostalAddress &&
+        street == other.street &&
+        city == other.city &&
+        postalCode == other.postalCode &&
+        country == other.country &&
+        isoCountryCode == other.isoCountryCode;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, street.hashCode);
+    _$hash = $jc(_$hash, city.hashCode);
+    _$hash = $jc(_$hash, postalCode.hashCode);
+    _$hash = $jc(_$hash, country.hashCode);
+    _$hash = $jc(_$hash, isoCountryCode.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'ShippingPostalAddress')
+          ..add('street', street)
+          ..add('city', city)
+          ..add('postalCode', postalCode)
+          ..add('country', country)
+          ..add('isoCountryCode', isoCountryCode))
+        .toString();
+  }
+}
+
+class ShippingPostalAddressBuilder
+    implements Builder<ShippingPostalAddress, ShippingPostalAddressBuilder> {
+  _$ShippingPostalAddress? _$v;
+
+  String? _street;
+  String? get street => _$this._street;
+  set street(String? street) => _$this._street = street;
+
+  String? _city;
+  String? get city => _$this._city;
+  set city(String? city) => _$this._city = city;
+
+  String? _postalCode;
+  String? get postalCode => _$this._postalCode;
+  set postalCode(String? postalCode) => _$this._postalCode = postalCode;
+
+  String? _country;
+  String? get country => _$this._country;
+  set country(String? country) => _$this._country = country;
+
+  String? _isoCountryCode;
+  String? get isoCountryCode => _$this._isoCountryCode;
+  set isoCountryCode(String? isoCountryCode) =>
+      _$this._isoCountryCode = isoCountryCode;
+
+  ShippingPostalAddressBuilder();
+
+  ShippingPostalAddressBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _street = $v.street;
+      _city = $v.city;
+      _postalCode = $v.postalCode;
+      _country = $v.country;
+      _isoCountryCode = $v.isoCountryCode;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ShippingPostalAddress other) {
+    ArgumentError.checkNotNull(other, 'other');
+    _$v = other as _$ShippingPostalAddress;
+  }
+
+  @override
+  void update(void Function(ShippingPostalAddressBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  ShippingPostalAddress build() => _build();
+
+  _$ShippingPostalAddress _build() {
+    final _$result = _$v ??
+        new _$ShippingPostalAddress._(
+            street: BuiltValueNullFieldError.checkNotNull(
+                street, r'ShippingPostalAddress', 'street'),
+            city: BuiltValueNullFieldError.checkNotNull(
+                city, r'ShippingPostalAddress', 'city'),
+            postalCode: BuiltValueNullFieldError.checkNotNull(
+                postalCode, r'ShippingPostalAddress', 'postalCode'),
+            country: BuiltValueNullFieldError.checkNotNull(
+                country, r'ShippingPostalAddress', 'country'),
+            isoCountryCode: BuiltValueNullFieldError.checkNotNull(
+                isoCountryCode, r'ShippingPostalAddress', 'isoCountryCode'));
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ShippingContactName extends ShippingContactName {
+  @override
+  final String? givenName;
+  @override
+  final String? middleName;
+  @override
+  final String? familyName;
+  @override
+  final String? nameSuffix;
+  @override
+  final String? nickname;
+
+  factory _$ShippingContactName(
+          [void Function(ShippingContactNameBuilder)? updates]) =>
+      (new ShippingContactNameBuilder()..update(updates))._build();
+
+  _$ShippingContactName._(
+      {this.givenName,
+      this.middleName,
+      this.familyName,
+      this.nameSuffix,
+      this.nickname})
+      : super._();
+
+  @override
+  ShippingContactName rebuild(
+          void Function(ShippingContactNameBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ShippingContactNameBuilder toBuilder() =>
+      new ShippingContactNameBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ShippingContactName &&
+        givenName == other.givenName &&
+        middleName == other.middleName &&
+        familyName == other.familyName &&
+        nameSuffix == other.nameSuffix &&
+        nickname == other.nickname;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, givenName.hashCode);
+    _$hash = $jc(_$hash, middleName.hashCode);
+    _$hash = $jc(_$hash, familyName.hashCode);
+    _$hash = $jc(_$hash, nameSuffix.hashCode);
+    _$hash = $jc(_$hash, nickname.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'ShippingContactName')
+          ..add('givenName', givenName)
+          ..add('middleName', middleName)
+          ..add('familyName', familyName)
+          ..add('nameSuffix', nameSuffix)
+          ..add('nickname', nickname))
+        .toString();
+  }
+}
+
+class ShippingContactNameBuilder
+    implements Builder<ShippingContactName, ShippingContactNameBuilder> {
+  _$ShippingContactName? _$v;
+
+  String? _givenName;
+  String? get givenName => _$this._givenName;
+  set givenName(String? givenName) => _$this._givenName = givenName;
+
+  String? _middleName;
+  String? get middleName => _$this._middleName;
+  set middleName(String? middleName) => _$this._middleName = middleName;
+
+  String? _familyName;
+  String? get familyName => _$this._familyName;
+  set familyName(String? familyName) => _$this._familyName = familyName;
+
+  String? _nameSuffix;
+  String? get nameSuffix => _$this._nameSuffix;
+  set nameSuffix(String? nameSuffix) => _$this._nameSuffix = nameSuffix;
+
+  String? _nickname;
+  String? get nickname => _$this._nickname;
+  set nickname(String? nickname) => _$this._nickname = nickname;
+
+  ShippingContactNameBuilder();
+
+  ShippingContactNameBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _givenName = $v.givenName;
+      _middleName = $v.middleName;
+      _familyName = $v.familyName;
+      _nameSuffix = $v.nameSuffix;
+      _nickname = $v.nickname;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ShippingContactName other) {
+    ArgumentError.checkNotNull(other, 'other');
+    _$v = other as _$ShippingContactName;
+  }
+
+  @override
+  void update(void Function(ShippingContactNameBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  ShippingContactName build() => _build();
+
+  _$ShippingContactName _build() {
+    final _$result = _$v ??
+        new _$ShippingContactName._(
+            givenName: givenName,
+            middleName: middleName,
+            familyName: familyName,
+            nameSuffix: nameSuffix,
+            nickname: nickname);
     replace(_$result);
     return _$result;
   }
@@ -1207,15 +2097,15 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
 
   factory _$BuyerVerificationDetails(
           [void Function(BuyerVerificationDetailsBuilder)? updates]) =>
-      (new BuyerVerificationDetailsBuilder()..update(updates)).build();
+      (new BuyerVerificationDetailsBuilder()..update(updates))._build();
 
   _$BuyerVerificationDetails._(
       {required this.nonce, this.card, required this.token})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
-        nonce, 'BuyerVerificationDetails', 'nonce');
+        nonce, r'BuyerVerificationDetails', 'nonce');
     BuiltValueNullFieldError.checkNotNull(
-        token, 'BuyerVerificationDetails', 'token');
+        token, r'BuyerVerificationDetails', 'token');
   }
 
   @override
@@ -1238,12 +2128,17 @@ class _$BuyerVerificationDetails extends BuyerVerificationDetails {
 
   @override
   int get hashCode {
-    return $jf($jc($jc($jc(0, nonce.hashCode), card.hashCode), token.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, nonce.hashCode);
+    _$hash = $jc(_$hash, card.hashCode);
+    _$hash = $jc(_$hash, token.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('BuyerVerificationDetails')
+    return (newBuiltValueToStringHelper(r'BuyerVerificationDetails')
           ..add('nonce', nonce)
           ..add('card', card)
           ..add('token', token))
@@ -1293,16 +2188,18 @@ class BuyerVerificationDetailsBuilder
   }
 
   @override
-  _$BuyerVerificationDetails build() {
+  BuyerVerificationDetails build() => _build();
+
+  _$BuyerVerificationDetails _build() {
     _$BuyerVerificationDetails _$result;
     try {
       _$result = _$v ??
           new _$BuyerVerificationDetails._(
               nonce: BuiltValueNullFieldError.checkNotNull(
-                  nonce, 'BuyerVerificationDetails', 'nonce'),
+                  nonce, r'BuyerVerificationDetails', 'nonce'),
               card: _card?.build(),
               token: BuiltValueNullFieldError.checkNotNull(
-                  token, 'BuyerVerificationDetails', 'token'));
+                  token, r'BuyerVerificationDetails', 'token'));
     } catch (_) {
       late String _$failedField;
       try {
@@ -1310,7 +2207,7 @@ class BuyerVerificationDetailsBuilder
         _card?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'BuyerVerificationDetails', _$failedField, e.toString());
+            r'BuyerVerificationDetails', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1336,7 +2233,7 @@ class _$Card extends Card {
   final String? postalCode;
 
   factory _$Card([void Function(CardBuilder)? updates]) =>
-      (new CardBuilder()..update(updates)).build();
+      (new CardBuilder()..update(updates))._build();
 
   _$Card._(
       {required this.brand,
@@ -1347,15 +2244,15 @@ class _$Card extends Card {
       required this.prepaidType,
       this.postalCode})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(brand, 'Card', 'brand');
+    BuiltValueNullFieldError.checkNotNull(brand, r'Card', 'brand');
     BuiltValueNullFieldError.checkNotNull(
-        lastFourDigits, 'Card', 'lastFourDigits');
+        lastFourDigits, r'Card', 'lastFourDigits');
     BuiltValueNullFieldError.checkNotNull(
-        expirationMonth, 'Card', 'expirationMonth');
+        expirationMonth, r'Card', 'expirationMonth');
     BuiltValueNullFieldError.checkNotNull(
-        expirationYear, 'Card', 'expirationYear');
-    BuiltValueNullFieldError.checkNotNull(type, 'Card', 'type');
-    BuiltValueNullFieldError.checkNotNull(prepaidType, 'Card', 'prepaidType');
+        expirationYear, r'Card', 'expirationYear');
+    BuiltValueNullFieldError.checkNotNull(type, r'Card', 'type');
+    BuiltValueNullFieldError.checkNotNull(prepaidType, r'Card', 'prepaidType');
   }
 
   @override
@@ -1380,21 +2277,21 @@ class _$Card extends Card {
 
   @override
   int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc(
-                    $jc($jc($jc(0, brand.hashCode), lastFourDigits.hashCode),
-                        expirationMonth.hashCode),
-                    expirationYear.hashCode),
-                type.hashCode),
-            prepaidType.hashCode),
-        postalCode.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, brand.hashCode);
+    _$hash = $jc(_$hash, lastFourDigits.hashCode);
+    _$hash = $jc(_$hash, expirationMonth.hashCode);
+    _$hash = $jc(_$hash, expirationYear.hashCode);
+    _$hash = $jc(_$hash, type.hashCode);
+    _$hash = $jc(_$hash, prepaidType.hashCode);
+    _$hash = $jc(_$hash, postalCode.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Card')
+    return (newBuiltValueToStringHelper(r'Card')
           ..add('brand', brand)
           ..add('lastFourDigits', lastFourDigits)
           ..add('expirationMonth', expirationMonth)
@@ -1470,20 +2367,22 @@ class CardBuilder implements Builder<Card, CardBuilder> {
   }
 
   @override
-  _$Card build() {
+  Card build() => _build();
+
+  _$Card _build() {
     final _$result = _$v ??
         new _$Card._(
             brand:
-                BuiltValueNullFieldError.checkNotNull(brand, 'Card', 'brand'),
+                BuiltValueNullFieldError.checkNotNull(brand, r'Card', 'brand'),
             lastFourDigits: BuiltValueNullFieldError.checkNotNull(
-                lastFourDigits, 'Card', 'lastFourDigits'),
+                lastFourDigits, r'Card', 'lastFourDigits'),
             expirationMonth: BuiltValueNullFieldError.checkNotNull(
-                expirationMonth, 'Card', 'expirationMonth'),
+                expirationMonth, r'Card', 'expirationMonth'),
             expirationYear: BuiltValueNullFieldError.checkNotNull(
-                expirationYear, 'Card', 'expirationYear'),
-            type: BuiltValueNullFieldError.checkNotNull(type, 'Card', 'type'),
+                expirationYear, r'Card', 'expirationYear'),
+            type: BuiltValueNullFieldError.checkNotNull(type, r'Card', 'type'),
             prepaidType: BuiltValueNullFieldError.checkNotNull(
-                prepaidType, 'Card', 'prepaidType'),
+                prepaidType, r'Card', 'prepaidType'),
             postalCode: postalCode);
     replace(_$result);
     return _$result;
@@ -1501,13 +2400,13 @@ class _$RGBAColor extends RGBAColor {
   final double? a;
 
   factory _$RGBAColor([void Function(RGBAColorBuilder)? updates]) =>
-      (new RGBAColorBuilder()..update(updates)).build();
+      (new RGBAColorBuilder()..update(updates))._build();
 
   _$RGBAColor._({required this.r, required this.g, required this.b, this.a})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(r, 'RGBAColor', 'r');
-    BuiltValueNullFieldError.checkNotNull(g, 'RGBAColor', 'g');
-    BuiltValueNullFieldError.checkNotNull(b, 'RGBAColor', 'b');
+    BuiltValueNullFieldError.checkNotNull(r, r'RGBAColor', 'r');
+    BuiltValueNullFieldError.checkNotNull(g, r'RGBAColor', 'g');
+    BuiltValueNullFieldError.checkNotNull(b, r'RGBAColor', 'b');
   }
 
   @override
@@ -1529,13 +2428,18 @@ class _$RGBAColor extends RGBAColor {
 
   @override
   int get hashCode {
-    return $jf(
-        $jc($jc($jc($jc(0, r.hashCode), g.hashCode), b.hashCode), a.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, r.hashCode);
+    _$hash = $jc(_$hash, g.hashCode);
+    _$hash = $jc(_$hash, b.hashCode);
+    _$hash = $jc(_$hash, a.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('RGBAColor')
+    return (newBuiltValueToStringHelper(r'RGBAColor')
           ..add('r', r)
           ..add('g', g)
           ..add('b', b)
@@ -1589,12 +2493,14 @@ class RGBAColorBuilder implements Builder<RGBAColor, RGBAColorBuilder> {
   }
 
   @override
-  _$RGBAColor build() {
+  RGBAColor build() => _build();
+
+  _$RGBAColor _build() {
     final _$result = _$v ??
         new _$RGBAColor._(
-            r: BuiltValueNullFieldError.checkNotNull(r, 'RGBAColor', 'r'),
-            g: BuiltValueNullFieldError.checkNotNull(g, 'RGBAColor', 'g'),
-            b: BuiltValueNullFieldError.checkNotNull(b, 'RGBAColor', 'b'),
+            r: BuiltValueNullFieldError.checkNotNull(r, r'RGBAColor', 'r'),
+            g: BuiltValueNullFieldError.checkNotNull(g, r'RGBAColor', 'g'),
+            b: BuiltValueNullFieldError.checkNotNull(b, r'RGBAColor', 'b'),
             a: a);
     replace(_$result);
     return _$result;
@@ -1608,10 +2514,10 @@ class _$Font extends Font {
   final String? name;
 
   factory _$Font([void Function(FontBuilder)? updates]) =>
-      (new FontBuilder()..update(updates)).build();
+      (new FontBuilder()..update(updates))._build();
 
   _$Font._({required this.size, this.name}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(size, 'Font', 'size');
+    BuiltValueNullFieldError.checkNotNull(size, r'Font', 'size');
   }
 
   @override
@@ -1629,12 +2535,16 @@ class _$Font extends Font {
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, size.hashCode), name.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, size.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Font')
+    return (newBuiltValueToStringHelper(r'Font')
           ..add('size', size)
           ..add('name', name))
         .toString();
@@ -1676,10 +2586,12 @@ class FontBuilder implements Builder<Font, FontBuilder> {
   }
 
   @override
-  _$Font build() {
+  Font build() => _build();
+
+  _$Font _build() {
     final _$result = _$v ??
         new _$Font._(
-            size: BuiltValueNullFieldError.checkNotNull(size, 'Font', 'size'),
+            size: BuiltValueNullFieldError.checkNotNull(size, r'Font', 'size'),
             name: name);
     replace(_$result);
     return _$result;
@@ -1713,7 +2625,7 @@ class _$IOSTheme extends IOSTheme {
   final KeyboardAppearance? keyboardAppearance;
 
   factory _$IOSTheme([void Function(IOSThemeBuilder)? updates]) =>
-      (new IOSThemeBuilder()..update(updates)).build();
+      (new IOSThemeBuilder()..update(updates))._build();
 
   _$IOSTheme._(
       {this.font,
@@ -1757,33 +2669,26 @@ class _$IOSTheme extends IOSTheme {
 
   @override
   int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc(
-                    $jc(
-                        $jc(
-                            $jc(
-                                $jc(
-                                    $jc(
-                                        $jc(
-                                            $jc($jc(0, font.hashCode),
-                                                backgroundColor.hashCode),
-                                            foregroundColor.hashCode),
-                                        textColor.hashCode),
-                                    placeholderTextColor.hashCode),
-                                tintColor.hashCode),
-                            messageColor.hashCode),
-                        errorColor.hashCode),
-                    saveButtonTitle.hashCode),
-                saveButtonFont.hashCode),
-            saveButtonTextColor.hashCode),
-        keyboardAppearance.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, font.hashCode);
+    _$hash = $jc(_$hash, backgroundColor.hashCode);
+    _$hash = $jc(_$hash, foregroundColor.hashCode);
+    _$hash = $jc(_$hash, textColor.hashCode);
+    _$hash = $jc(_$hash, placeholderTextColor.hashCode);
+    _$hash = $jc(_$hash, tintColor.hashCode);
+    _$hash = $jc(_$hash, messageColor.hashCode);
+    _$hash = $jc(_$hash, errorColor.hashCode);
+    _$hash = $jc(_$hash, saveButtonTitle.hashCode);
+    _$hash = $jc(_$hash, saveButtonFont.hashCode);
+    _$hash = $jc(_$hash, saveButtonTextColor.hashCode);
+    _$hash = $jc(_$hash, keyboardAppearance.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('IOSTheme')
+    return (newBuiltValueToStringHelper(r'IOSTheme')
           ..add('font', font)
           ..add('backgroundColor', backgroundColor)
           ..add('foregroundColor', foregroundColor)
@@ -1903,7 +2808,9 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
   }
 
   @override
-  _$IOSTheme build() {
+  IOSTheme build() => _build();
+
+  _$IOSTheme _build() {
     _$IOSTheme _$result;
     try {
       _$result = _$v ??
@@ -1946,7 +2853,7 @@ class IOSThemeBuilder implements Builder<IOSTheme, IOSThemeBuilder> {
         _saveButtonTextColor?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'IOSTheme', _$failedField, e.toString());
+            r'IOSTheme', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1966,7 +2873,7 @@ class _$ErrorInfo extends ErrorInfo {
   final String debugMessage;
 
   factory _$ErrorInfo([void Function(ErrorInfoBuilder)? updates]) =>
-      (new ErrorInfoBuilder()..update(updates)).build();
+      (new ErrorInfoBuilder()..update(updates))._build();
 
   _$ErrorInfo._(
       {required this.code,
@@ -1974,11 +2881,11 @@ class _$ErrorInfo extends ErrorInfo {
       required this.debugCode,
       required this.debugMessage})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(code, 'ErrorInfo', 'code');
-    BuiltValueNullFieldError.checkNotNull(message, 'ErrorInfo', 'message');
-    BuiltValueNullFieldError.checkNotNull(debugCode, 'ErrorInfo', 'debugCode');
+    BuiltValueNullFieldError.checkNotNull(code, r'ErrorInfo', 'code');
+    BuiltValueNullFieldError.checkNotNull(message, r'ErrorInfo', 'message');
+    BuiltValueNullFieldError.checkNotNull(debugCode, r'ErrorInfo', 'debugCode');
     BuiltValueNullFieldError.checkNotNull(
-        debugMessage, 'ErrorInfo', 'debugMessage');
+        debugMessage, r'ErrorInfo', 'debugMessage');
   }
 
   @override
@@ -2000,14 +2907,18 @@ class _$ErrorInfo extends ErrorInfo {
 
   @override
   int get hashCode {
-    return $jf($jc(
-        $jc($jc($jc(0, code.hashCode), message.hashCode), debugCode.hashCode),
-        debugMessage.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, code.hashCode);
+    _$hash = $jc(_$hash, message.hashCode);
+    _$hash = $jc(_$hash, debugCode.hashCode);
+    _$hash = $jc(_$hash, debugMessage.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('ErrorInfo')
+    return (newBuiltValueToStringHelper(r'ErrorInfo')
           ..add('code', code)
           ..add('message', message)
           ..add('debugCode', debugCode)
@@ -2061,17 +2972,19 @@ class ErrorInfoBuilder implements Builder<ErrorInfo, ErrorInfoBuilder> {
   }
 
   @override
-  _$ErrorInfo build() {
+  ErrorInfo build() => _build();
+
+  _$ErrorInfo _build() {
     final _$result = _$v ??
         new _$ErrorInfo._(
             code: BuiltValueNullFieldError.checkNotNull(
-                code, 'ErrorInfo', 'code'),
+                code, r'ErrorInfo', 'code'),
             message: BuiltValueNullFieldError.checkNotNull(
-                message, 'ErrorInfo', 'message'),
+                message, r'ErrorInfo', 'message'),
             debugCode: BuiltValueNullFieldError.checkNotNull(
-                debugCode, 'ErrorInfo', 'debugCode'),
+                debugCode, r'ErrorInfo', 'debugCode'),
             debugMessage: BuiltValueNullFieldError.checkNotNull(
-                debugMessage, 'ErrorInfo', 'debugMessage'));
+                debugMessage, r'ErrorInfo', 'debugMessage'));
     replace(_$result);
     return _$result;
   }
@@ -2084,12 +2997,12 @@ class _$Money extends Money {
   final String currencyCode;
 
   factory _$Money([void Function(MoneyBuilder)? updates]) =>
-      (new MoneyBuilder()..update(updates)).build();
+      (new MoneyBuilder()..update(updates))._build();
 
   _$Money._({required this.amount, required this.currencyCode}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(amount, 'Money', 'amount');
+    BuiltValueNullFieldError.checkNotNull(amount, r'Money', 'amount');
     BuiltValueNullFieldError.checkNotNull(
-        currencyCode, 'Money', 'currencyCode');
+        currencyCode, r'Money', 'currencyCode');
   }
 
   @override
@@ -2109,12 +3022,16 @@ class _$Money extends Money {
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, amount.hashCode), currencyCode.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, amount.hashCode);
+    _$hash = $jc(_$hash, currencyCode.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Money')
+    return (newBuiltValueToStringHelper(r'Money')
           ..add('amount', amount)
           ..add('currencyCode', currencyCode))
         .toString();
@@ -2156,13 +3073,15 @@ class MoneyBuilder implements Builder<Money, MoneyBuilder> {
   }
 
   @override
-  _$Money build() {
+  Money build() => _build();
+
+  _$Money _build() {
     final _$result = _$v ??
         new _$Money._(
             amount: BuiltValueNullFieldError.checkNotNull(
-                amount, 'Money', 'amount'),
+                amount, r'Money', 'amount'),
             currencyCode: BuiltValueNullFieldError.checkNotNull(
-                currencyCode, 'Money', 'currencyCode'));
+                currencyCode, r'Money', 'currencyCode'));
     replace(_$result);
     return _$result;
   }
@@ -2189,7 +3108,7 @@ class _$Contact extends Contact {
   final String? region;
 
   factory _$Contact([void Function(ContactBuilder)? updates]) =>
-      (new ContactBuilder()..update(updates)).build();
+      (new ContactBuilder()..update(updates))._build();
 
   _$Contact._(
       {required this.givenName,
@@ -2202,7 +3121,7 @@ class _$Contact extends Contact {
       this.postalCode,
       this.region})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(givenName, 'Contact', 'givenName');
+    BuiltValueNullFieldError.checkNotNull(givenName, r'Contact', 'givenName');
   }
 
   @override
@@ -2229,27 +3148,23 @@ class _$Contact extends Contact {
 
   @override
   int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc(
-                    $jc(
-                        $jc(
-                            $jc(
-                                $jc($jc(0, givenName.hashCode),
-                                    familyName.hashCode),
-                                addressLines.hashCode),
-                            city.hashCode),
-                        countryCode.hashCode),
-                    email.hashCode),
-                phone.hashCode),
-            postalCode.hashCode),
-        region.hashCode));
+    var _$hash = 0;
+    _$hash = $jc(_$hash, givenName.hashCode);
+    _$hash = $jc(_$hash, familyName.hashCode);
+    _$hash = $jc(_$hash, addressLines.hashCode);
+    _$hash = $jc(_$hash, city.hashCode);
+    _$hash = $jc(_$hash, countryCode.hashCode);
+    _$hash = $jc(_$hash, email.hashCode);
+    _$hash = $jc(_$hash, phone.hashCode);
+    _$hash = $jc(_$hash, postalCode.hashCode);
+    _$hash = $jc(_$hash, region.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Contact')
+    return (newBuiltValueToStringHelper(r'Contact')
           ..add('givenName', givenName)
           ..add('familyName', familyName)
           ..add('addressLines', addressLines)
@@ -2335,13 +3250,15 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
   }
 
   @override
-  _$Contact build() {
+  Contact build() => _build();
+
+  _$Contact _build() {
     _$Contact _$result;
     try {
       _$result = _$v ??
           new _$Contact._(
               givenName: BuiltValueNullFieldError.checkNotNull(
-                  givenName, 'Contact', 'givenName'),
+                  givenName, r'Contact', 'givenName'),
               familyName: familyName,
               addressLines: _addressLines?.build(),
               city: city,
@@ -2357,7 +3274,7 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
         _addressLines?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'Contact', _$failedField, e.toString());
+            r'Contact', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -2366,4 +3283,4 @@ class ContactBuilder implements Builder<Contact, ContactBuilder> {
   }
 }
 
-// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
+// ignore_for_file: deprecated_member_use_from_same_package,type=lint
