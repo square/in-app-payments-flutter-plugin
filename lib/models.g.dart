@@ -507,7 +507,7 @@ class _$ShippingContactSerializer
       result
         ..add('name')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(ShippingPostalAddress)));
+            specifiedType: const FullType(ShippingContactName)));
     }
     return result;
   }
@@ -543,8 +543,8 @@ class _$ShippingContactSerializer
           break;
         case 'name':
           result.name.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(ShippingPostalAddress))!
-              as ShippingPostalAddress);
+                  specifiedType: const FullType(ShippingContactName))!
+              as ShippingContactName);
           break;
       }
     }
@@ -1653,7 +1653,7 @@ class _$ShippingContact extends ShippingContact {
   @override
   final ShippingPostalAddress? shippingAddress;
   @override
-  final ShippingPostalAddress? name;
+  final ShippingContactName? name;
 
   factory _$ShippingContact([void Function(ShippingContactBuilder)? updates]) =>
       (new ShippingContactBuilder()..update(updates))._build();
@@ -1736,10 +1736,10 @@ class ShippingContactBuilder
   set shippingAddress(ShippingPostalAddressBuilder? shippingAddress) =>
       _$this._shippingAddress = shippingAddress;
 
-  ShippingPostalAddressBuilder? _name;
-  ShippingPostalAddressBuilder get name =>
-      _$this._name ??= new ShippingPostalAddressBuilder();
-  set name(ShippingPostalAddressBuilder? name) => _$this._name = name;
+  ShippingContactNameBuilder? _name;
+  ShippingContactNameBuilder get name =>
+      _$this._name ??= new ShippingContactNameBuilder();
+  set name(ShippingContactNameBuilder? name) => _$this._name = name;
 
   ShippingContactBuilder();
 

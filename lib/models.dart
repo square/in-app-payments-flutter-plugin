@@ -144,7 +144,7 @@ abstract class ShippingContact implements Built<ShippingContact, ShippingContact
   String get email;
   Card get card;
   ShippingPostalAddress? get shippingAddress;
-  ShippingPostalAddress? get name;
+  ShippingContactName? get name;
 
   ShippingContact._();
   factory ShippingContact([updates(ShippingContactBuilder b) /*!*/]) = _$ShippingContact;
