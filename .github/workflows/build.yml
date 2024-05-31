@@ -34,4 +34,4 @@ jobs:
           rm Pods && rm Podfile.lock
           flutter pub get
           pod install --repo-update
-          xcodebuild -workspace Runner.xcworkspace -configuration Debug -scheme Runner -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14"
+          xcodebuild -workspace Runner.xcworkspace -configuration Debug -scheme Runner -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
