@@ -32,7 +32,7 @@ android {
     def sqipCompileSdkVersion = rootProject.hasProperty('sqipCompileSdkVersion') ? rootProject.sqipCompileSdkVersion : COMPILE_SDK_VERSION
     def sqipTargetSdkVersion = rootProject.hasProperty('sqipTargetSdkVersion') ? rootProject.sqipTargetSdkVersion : TARGET_SDK_VERSION
     compileSdkVersion sqipCompileSdkVersion
-
+     namespace 'sqip.flutter'
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion sqipTargetSdkVersion
