@@ -42,20 +42,7 @@ This quick start guide makes the following assumptions:
 
 ### Step 3: Run the sample app for iOS
 
-Open the Runner.xcworkspace from the example folder.
-
-1. In the Build Phases tab for the Runner target click the + button at the top of the pane.
-
-2. Select New Run Script Phase.
-
-3. Pase the following into the editor panel of the new run script:
-
-	```
-	FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-	"${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
-	```
-
-4. Launch iOS emulator, run the flutter example from the `example` project folder: 
+1. Launch iOS emulator, run the flutter example from the `example` project folder: 
     ```bash
     cd <YOUR_PROJECT_DIRECTORY>/example
     flutter run
