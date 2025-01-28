@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:8.6.0'
     }
 }
 
@@ -25,7 +25,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 def MIN_IAP_SDK_VERSION = '1.6.6'
-def COMPILE_SDK_VERSION = 33
+def COMPILE_SDK_VERSION = 35
 def TARGET_SDK_VERSION = 33
 
 android {
@@ -34,6 +34,7 @@ android {
     compileSdkVersion sqipCompileSdkVersion
 
     defaultConfig {
+        namespace "sqip.flutter"
         minSdkVersion 24
         targetSdkVersion sqipTargetSdkVersion
     }
@@ -41,8 +42,8 @@ android {
         disable 'InvalidPackage'
     }
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
