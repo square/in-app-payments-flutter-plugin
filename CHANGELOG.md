@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.7.10 Jan 28, 2025
+
+* Upgraded plugin to be compatible with AGP-8.x.x.
+* Addresses compatibility issues on newer versions of Android Gradle Plugin (AGP) and updates
+* the Java implementation to align with the latest Android development standards.
+* See PR 254: https://github.com/square/in-app-payments-flutter-plugin/pull/254 (Thanks to SSamratR)
+
 ### v1.7.9 May 31, 2024
 
 * Updated to IAP SDK Android to 1.6.6 and iOS to 1.6.3.
