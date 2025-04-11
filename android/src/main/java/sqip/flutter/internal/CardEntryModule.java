@@ -44,14 +44,12 @@ import sqip.flutter.internal.converter.CardDetailsConverter;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
@@ -68,13 +66,6 @@ final public class CardEntryModule {
   private Contact contact;
   private CardDetails cardResult;
   private String paymentSourceId;
-
-  @SuppressWarnings("deprecation")
-  public CardEntryModule(PluginRegistry.Registrar registrar, final MethodChannel channel) {
-    this(channel);
-    currentActivity = registrar.activity();
-    registrar.addActivityResultListener(activityResultListener);
-  }
 
   public CardEntryModule(final MethodChannel channel) {
     reference = new AtomicReference<>();
