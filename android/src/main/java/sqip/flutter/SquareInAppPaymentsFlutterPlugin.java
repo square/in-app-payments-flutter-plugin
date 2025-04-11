@@ -34,29 +34,16 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   private CardEntryModule cardEntryModule;
   private GooglePayModule googlePayModule;
 
-  /** Plugin registration. */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
-    channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
-  }
-
-  @SuppressWarnings("deprecation")
-  private SquareInAppPaymentsFlutterPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    cardEntryModule = new CardEntryModule(registrar, channel);
-    googlePayModule = new GooglePayModule(registrar, channel);
-  }
 
   /**
    * Required for Flutter V2 embedding plugins.
    */
-  public SquareInAppPaymentsFlutterPlugin() {}
 
   @Override
   public void onMethodCall(MethodCall call, final Result result) {
     if (call.method.equals("setApplicationId")) {
       String applicationId = call.argument("applicationId");
-      InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
+      InAppPaymentsSdk.setSquareApplicationId(applicationId);
       result.success(null);
     } else if (call.method.equals("startCardEntryFlow")) {
       boolean collectPostalCode = call.argument("collectPostalCode");
@@ -106,7 +93,6 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   @Override
   public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "square_in_app_payments");
-
     // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
     // Whenever the second time onAttachedToEngine is called, there will be no activity initialized for CaqrdEntryModule or GooglePayModule,
     // So there will be null pointer exception like this issue: https://github.com/square/in-app-payments-flutter-plugin/issues/150
@@ -121,7 +107,10 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
   public void onDetachedFromEngine(FlutterPluginBinding flutterPluginBinding) {
     cardEntryModule = null;
     googlePayModule = null;
-    channel = null;
+    if (channel != null) {
+      channel.setMethodCallHandler(null);
+      channel = null;
+    }
   }
 
   @Override
