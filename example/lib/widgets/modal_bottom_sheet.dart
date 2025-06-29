@@ -1,12 +1,12 @@
 /*
  Copyright 2018 Square Inc.
- 
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,13 +23,13 @@ const double _kMinFlingVelocity = 700.0;
 const double _kCloseProgressThreshold = 0.5;
 
 class BottomSheet extends StatefulWidget {
-  const BottomSheet(
-      {Key? key,
-      this.animationController,
-      this.enableDrag = true,
-      required this.onClosing,
-      required this.builder})
-      : super(key: key);
+  const BottomSheet({
+    Key? key,
+    this.animationController,
+    this.enableDrag = true,
+    required this.onClosing,
+    required this.builder,
+  }) : super(key: key);
 
   final AnimationController? animationController;
   final VoidCallback onClosing;
@@ -143,34 +143,42 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
       case TargetPlatform.fuchsia:
         routeLabel = localizations.dialogLabel;
         break;
+      case TargetPlatform.linux:
+        throw UnimplementedError();
+      case TargetPlatform.macOS:
+        throw UnimplementedError();
+      case TargetPlatform.windows:
+        throw UnimplementedError();
     }
 
     return GestureDetector(
-        excludeFromSemantics: true,
-        onTap: () => Navigator.pop(context),
-        child: AnimatedBuilder(
-            animation: widget.route!.animation!,
-            builder: (context, child) {
-              final animationValue = mediaQuery.accessibleNavigation
-                  ? 1.0
-                  : widget.route!.animation!.value;
-              return Semantics(
-                scopesRoute: true,
-                namesRoute: true,
-                label: routeLabel,
-                explicitChildNodes: true,
-                child: ClipRect(
-                  child: CustomSingleChildLayout(
-                    delegate: _ModalBottomSheetLayout(animationValue),
-                    child: BottomSheet(
-                      animationController: widget.route!._animationController,
-                      onClosing: () => Navigator.pop(context),
-                      builder: widget.route!.builder!,
-                    ),
-                  ),
+      excludeFromSemantics: true,
+      onTap: () => Navigator.pop(context),
+      child: AnimatedBuilder(
+        animation: widget.route!.animation!,
+        builder: (context, child) {
+          final animationValue = mediaQuery.accessibleNavigation
+              ? 1.0
+              : widget.route!.animation!.value;
+          return Semantics(
+            scopesRoute: true,
+            namesRoute: true,
+            label: routeLabel,
+            explicitChildNodes: true,
+            child: ClipRect(
+              child: CustomSingleChildLayout(
+                delegate: _ModalBottomSheetLayout(animationValue),
+                child: BottomSheet(
+                  animationController: widget.route!._animationController,
+                  onClosing: () => Navigator.pop(context),
+                  builder: widget.route!.builder!,
                 ),
-              );
-            }));
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -202,14 +210,18 @@ class _ModalBottomSheetRoute<T> extends PopupRoute<T> {
   @override
   AnimationController createAnimationController() {
     assert(_animationController == null);
-    _animationController =
-        BottomSheet.createAnimationController(navigator!.overlay!);
+    _animationController = BottomSheet.createAnimationController(
+      navigator!.overlay!,
+    );
     return _animationController!;
   }
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     // By definition, the bottom sheet is aligned to the bottom of the page
     // and isn't exposed to the top padding of the MediaQuery.
     Widget bottomSheet = MediaQuery.removePadding(
@@ -228,17 +240,16 @@ Future<T?> showModalBottomSheet<T>({
 }) {
   assert(debugCheckHasMaterialLocalizations(context));
   return Navigator.push(
-      context,
-      _ModalBottomSheetRoute<T>(
-        builder: builder,
-        theme: Theme.of(context), //, shadowThemeOnly: true),
-        barrierLabel:
-            MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      ));
+    context,
+    _ModalBottomSheetRoute<T>(
+      builder: builder,
+      theme: Theme.of(context), //, shadowThemeOnly: true),
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    ),
+  );
 }
 
 PersistentBottomSheetController showMyBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
-}) =>
-    Scaffold.of(context).showBottomSheet(builder);
+}) => Scaffold.of(context).showBottomSheet(builder);

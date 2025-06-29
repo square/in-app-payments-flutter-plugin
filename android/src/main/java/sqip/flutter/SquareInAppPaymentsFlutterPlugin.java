@@ -13,8 +13,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
+
 package sqip.flutter;
 
+import android.content.Context;
 import java.util.HashMap;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -28,129 +30,46 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware  {
+public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
 
-  private static MethodChannel channel;
+  private MethodChannel channel;
   private CardEntryModule cardEntryModule;
   private GooglePayModule googlePayModule;
+  private Context applicationContext;
 
-  /** Plugin registration. */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "square_in_app_payments");
-    channel.setMethodCallHandler(new SquareInAppPaymentsFlutterPlugin(registrar));
-  }
-
-  @SuppressWarnings("deprecation")
-  private SquareInAppPaymentsFlutterPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    cardEntryModule = new CardEntryModule(registrar, channel);
-    googlePayModule = new GooglePayModule(registrar, channel);
-  }
-
-  /**
-   * Required for Flutter V2 embedding plugins.
-   */
   public SquareInAppPaymentsFlutterPlugin() {}
 
   @Override
-  public void onMethodCall(MethodCall call, final Result result) {
-    if (call.method.equals("setApplicationId")) {
-      String applicationId = call.argument("applicationId");
-      InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
-      result.success(null);
-    } else if (call.method.equals("startCardEntryFlow")) {
-      boolean collectPostalCode = call.argument("collectPostalCode");
-      cardEntryModule.startCardEntryFlow(result, collectPostalCode);
-    } else if (call.method.equals("startGiftCardEntryFlow")) {
-      cardEntryModule.startGiftCardEntryFlow(result);
-    } else if (call.method.equals("completeCardEntry")) {
-      cardEntryModule.completeCardEntry(result);
-    } else if (call.method.equals("showCardNonceProcessingError")) {
-      String errorMessage = call.argument("errorMessage");
-      cardEntryModule.showCardNonceProcessingError(result, errorMessage);
-    } else if (call.method.equals("initializeGooglePay")) {
-      String squareLocationId = call.argument("squareLocationId");
-      int environment = call.argument("environment");
-      googlePayModule.initializeGooglePay(squareLocationId, environment);
-      result.success(null);
-    } else if (call.method.equals("canUseGooglePay")) {
-      googlePayModule.canUseGooglePay(result);
-    } else if (call.method.equals("requestGooglePayNonce")) {
-      String price = call.argument("price");
-      String currencyCode = call.argument("currencyCode");
-      int priceStatus = call.argument("priceStatus");
-      googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
-    } else if (call.method.equals("startCardEntryFlowWithBuyerVerification")) {
-      boolean collectPostalCode = call.argument("collectPostalCode");
-      String squareLocationId = call.argument("squareLocationId");
-      String buyerActionString = call.argument("buyerAction");
-      HashMap<String, Object> moneyMap = call.argument("money");
-      HashMap<String, Object> contactMap = call.argument("contact");
-
-      cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostalCode, squareLocationId, buyerActionString, moneyMap, contactMap);
-    } else if (call.method.equals("startBuyerVerificationFlow")) {
-      String squareLocationId = call.argument("squareLocationId");
-      String buyerActionString = call.argument("buyerAction");
-      HashMap<String, Object> moneyMap = call.argument("money");
-      HashMap<String, Object> contactMap = call.argument("contact");
-      String paymentSourceId = call.argument("paymentSourceId");
-
-      cardEntryModule.startBuyerVerificationFlow(result, buyerActionString, moneyMap, squareLocationId, contactMap, paymentSourceId);
-    }else if (call.method.equals("startSecureRemoteCommerce")) {
-      int amount = call.argument("amount");
-    } else {
-      result.notImplemented();
-    }
+  public void onAttachedToEngine(FlutterPluginBinding binding) {
+    this.applicationContext = binding.getApplicationContext();
+    channel = new MethodChannel(binding.getBinaryMessenger(), "square_in_app_payments");
+    // MethodCallHandler is set in onAttachedToActivity to avoid NPE issues
   }
 
   @Override
-  public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "square_in_app_payments");
-
-    // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
-    // Whenever the second time onAttachedToEngine is called, there will be no activity initialized for CaqrdEntryModule or GooglePayModule,
-    // So there will be null pointer exception like this issue: https://github.com/square/in-app-payments-flutter-plugin/issues/150
-    // We move the following code to onAttachedToActivity and onReattachedToActivityForConfigChanges, which will be only called once,
-    // in order to avoid creating an invalid CardEntryModule and GooglePayModule.
-    // channel.setMethodCallHandler(this);
-    // cardEntryModule = new CardEntryModule(channel);
-    // googlePayModule = new GooglePayModule(channel);
-  }
-
-  @Override
-  public void onDetachedFromEngine(FlutterPluginBinding flutterPluginBinding) {
+  public void onDetachedFromEngine(FlutterPluginBinding binding) {
     cardEntryModule = null;
     googlePayModule = null;
     channel = null;
   }
 
   @Override
-  public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
-    // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
-    // Once the issue is resolved, we can check if we can move following three lines to OnAttachedToEngine.
+  public void onAttachedToActivity(ActivityPluginBinding activityBinding) {
     channel.setMethodCallHandler(this);
-    cardEntryModule = new CardEntryModule(channel);
-    googlePayModule = new GooglePayModule(channel);
-    googlePayModule.attachActivityResultListener(activityPluginBinding, channel);
-    cardEntryModule.attachActivityResultListener(activityPluginBinding, channel);
+    cardEntryModule = new CardEntryModule(applicationContext, channel);
+    googlePayModule = new GooglePayModule(applicationContext, channel);
+
+    googlePayModule.attachActivityResultListener(activityBinding, channel);
+    cardEntryModule.attachActivityResultListener(activityBinding, channel);
   }
 
   @Override
-  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
-    // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
-    // Once the issue is resolved, we can check if we can move following three lines to OnAttachedToEngine.
-    channel.setMethodCallHandler(this);
-    cardEntryModule = new CardEntryModule(channel);
-    googlePayModule = new GooglePayModule(channel);
-    googlePayModule.attachActivityResultListener(activityPluginBinding, channel);
-    cardEntryModule.attachActivityResultListener(activityPluginBinding, channel);
+  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityBinding) {
+    onAttachedToActivity(activityBinding);
   }
-
 
   @Override
   public void onDetachedFromActivityForConfigChanges() {
-    // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
-    // Once the issue is resolved, we can check if we can remove following three lines.
     cardEntryModule = null;
     googlePayModule = null;
     channel = null;
@@ -158,10 +77,74 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
 
   @Override
   public void onDetachedFromActivity() {
-    // KNOWN ISSUE: OnAttachedToEngine can be called twice which may be due to https://github.com/flutter/flutter/issues/69721
-    // Once the issue is resolved, we can check if we can remove following three lines.
     cardEntryModule = null;
     googlePayModule = null;
     channel = null;
+  }
+
+  @Override
+  public void onMethodCall(MethodCall call, Result result) {
+    switch (call.method) {
+      case "setApplicationId":
+        String applicationId = call.argument("applicationId");
+        InAppPaymentsSdk.INSTANCE.setSquareApplicationId(applicationId);
+        result.success(null);
+        break;
+      case "startCardEntryFlow":
+        boolean collectPostalCode = call.argument("collectPostalCode");
+        cardEntryModule.startCardEntryFlow(result, collectPostalCode);
+        break;
+      case "startGiftCardEntryFlow":
+        cardEntryModule.startGiftCardEntryFlow(result);
+        break;
+      case "completeCardEntry":
+        cardEntryModule.completeCardEntry(result);
+        break;
+      case "showCardNonceProcessingError":
+        String errorMessage = call.argument("errorMessage");
+        cardEntryModule.showCardNonceProcessingError(result, errorMessage);
+        break;
+      case "initializeGooglePay":
+        String squareLocationId = call.argument("squareLocationId");
+        int environment = call.argument("environment");
+        googlePayModule.initializeGooglePay(squareLocationId, environment);
+        result.success(null);
+        break;
+      case "canUseGooglePay":
+        googlePayModule.canUseGooglePay(result);
+        break;
+      case "requestGooglePayNonce":
+        String price = call.argument("price");
+        String currencyCode = call.argument("currencyCode");
+        int priceStatus = call.argument("priceStatus");
+        googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
+        break;
+      case "startCardEntryFlowWithBuyerVerification":
+        boolean collectPostal = call.argument("collectPostalCode");
+        String locationId = call.argument("squareLocationId");
+        String buyerAction = call.argument("buyerAction");
+        HashMap<String, Object> moneyMap = call.argument("money");
+        HashMap<String, Object> contactMap = call.argument("contact");
+
+        cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostal, locationId, buyerAction, moneyMap, contactMap);
+        break;
+      case "startBuyerVerificationFlow":
+        String locationId2 = call.argument("squareLocationId");
+        String buyerAction2 = call.argument("buyerAction");
+        HashMap<String, Object> moneyMap2 = call.argument("money");
+        HashMap<String, Object> contactMap2 = call.argument("contact");
+        String paymentSourceId = call.argument("paymentSourceId");
+
+        cardEntryModule.startBuyerVerificationFlow(result, buyerAction2, moneyMap2, locationId2, contactMap2, paymentSourceId);
+        break;
+      case "startSecureRemoteCommerce":
+        int amount = call.argument("amount");
+        // Not yet implemented
+        result.notImplemented();
+        break;
+      default:
+        result.notImplemented();
+        break;
+    }
   }
 }
