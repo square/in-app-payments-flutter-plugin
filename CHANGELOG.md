@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.7.11 Jul 22, 2025
+
+* Upgraded plugin to support Flutter Embedding v2 and newer Flutter versions (specifically Flutter 3.29.3+ with Dart 3.7.2+). 
+
 ### v1.7.10 Jan 28, 2025
 
 * Upgraded plugin to be compatible with AGP-8.x.x.
