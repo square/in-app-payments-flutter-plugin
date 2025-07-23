@@ -1,0 +1,6 @@
+# .pubignore
+example/.idea/
+example/android/gradle/wrapper/gradle-wrapper.jar
+example/android/gradlew
+example/android/gradlew.bat
+example/example.iml
