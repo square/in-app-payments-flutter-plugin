@@ -24,10 +24,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  square_in_app_payments: 83d45e99111e35ffeb7ac79593806abcee37aa3b
+  square_in_app_payments: 96f9a5f6fd3f5aed494f0266f334fb56e1adefa7
   SquareBuyerVerificationSDK: d325f473a724cfa5684a837296a307152ca52854
   SquareInAppPaymentsSDK: 4d7f1e984fee5d8d7dbd44a67661ca1aedee7f76
 
 PODFILE CHECKSUM: 3095475c8b4475d5353089cfe9f0bebb1c4b418a
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
