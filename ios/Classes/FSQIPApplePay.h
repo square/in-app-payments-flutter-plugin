@@ -16,25 +16,33 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
-
+@import SquareBuyerVerificationSDK;
 
 @interface FSQIPApplePay : NSObject <PKPaymentAuthorizationViewControllerDelegate>
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
-
 - (void)initializeApplePay:(FlutterResult)result merchantId:(NSString *)merchantId;
-
 - (void)canUseApplePay:(FlutterResult)result;
-
 - (void)requestApplePayNonce:(FlutterResult)result
                  countryCode:(NSString *)countryCode
                 currencyCode:(NSString *)currencyCode
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
                  paymentType:(NSString *)paymentType;
-
 - (void)completeApplePayAuthorization:(FlutterResult)result
                             isSuccess:(BOOL)isSuccess
                          errorMessage:(NSString *__nullable)errorMessage;
+- (void)requestApplePayNonceWithVerification:(FlutterResult)result
+                                   countryCode:(NSString *)countryCode
+                                  currencyCode:(NSString *)currencyCode
+                                  summaryLabel:(NSString *)summaryLabel
+                                         price:(NSString *)price
+                                   paymentType:(NSString *)paymentType
+                                   squareLocationId:(NSString *)squareLocationId
+                                   buyerActionString:(NSString *)buyerActionString
+                                   moneyMap:(NSDictionary *)moneyMap
+                                   contactMap:(NSDictionary *)contactMap
+                                   paymentSourceId:(NSString *)paymentSourceId;
+- (void)applyTheme:(NSDictionary *)theme;
 
 @end

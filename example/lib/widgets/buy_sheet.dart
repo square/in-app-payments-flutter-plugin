@@ -76,41 +76,60 @@ class BuySheetState extends State<BuySheet> {
     switch (selection) {
       case PaymentType.giftcardPayment:
         // call _onStartGiftCardEntryFlow to start Gift Card Entry.
-        await _onStartGiftCardEntryFlow();
+        await _onStartGiftCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
         await _onStartCardEntryFlowWithBuyerVerification();
-
         break;
       case PaymentType.buyerVerification:
-      
         var res = await _onStartBuyerVerificationFlow();
         print(res);
         break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled!) {
-          _onStartGooglePay();
+          _onStartGooglePayWithBuyerVerification();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
       case PaymentType.applePay:
         if (_applePayMerchantIdSet && widget.applePayEnabled!) {
-          _onStartApplePay();
+          _onStartApplePayWithBuyerVerification();
         } else {
           _showapplePayMerchantIdNotSet();
         }
         break;
       case PaymentType.secureRemoteCommerce:
-        await _onStartSecureRemoteCommerceFlow();
+        await _onStartSecureRemoteCommerceFlowWithBuyerVerification();
         break;
       case null:
         throw UnimplementedError();
     }
   }
+
+  Money get _money => Money(
+    (b) => b
+      ..amount = 100
+      ..currencyCode = 'USD',
+  );
+
+  Contact get _contact => Contact(
+    (b) => b
+      ..givenName = "John"
+      ..familyName = "Doe"
+      ..addressLines = BuiltList<String>([
+        "London Eye",
+        "Riverside Walk",
+      ]).toBuilder()
+      ..city = "London"
+      ..countryCode = "GB"
+      ..email = "johndoe@example.com"
+      ..phone = "8001234567"
+      ..postalCode = "SE1 7",
+  );
 
   void printCurlCommand(String nonce, String? verificationToken) {
     var hostUrl = 'https://connect.squareup.com';
@@ -236,72 +255,45 @@ class BuySheetState extends State<BuySheet> {
     );
   }
 
+  Future<void> _onStartGiftCardEntryFlowWithBuyerVerification() async {
+    await InAppPayments.startGiftCardEntryFlowWithBuyerVerification(
+      onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+      onCardEntryCancel: _onCancelCardEntryFlow,
+      onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+      onBuyerVerificationFailure: _onBuyerVerificationFailure,
+      buyerAction: "Charge",
+      money: _money,
+      squareLocationId: squareLocationId,
+      contact: _contact,
+      paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
+    );
+  }
+
   Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
-    var money = Money(
-      (b) => b
-        ..amount = 100
-        ..currencyCode = 'USD',
-    );
-
-    var contact = Contact(
-      (b) => b
-        ..givenName = "John"
-        ..familyName = "Doe"
-        ..addressLines = BuiltList<String>([
-          "London Eye",
-          "Riverside Walk",
-        ]).toBuilder()
-        ..city = "London"
-        ..countryCode = "GB"
-        ..email = "johndoe@example.com"
-        ..phone = "8001234567"
-        ..postalCode = "SE1 7",
-    );
-
     await InAppPayments.startCardEntryFlowWithBuyerVerification(
       onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
       onBuyerVerificationFailure: _onBuyerVerificationFailure,
+      onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
       onCardEntryCancel: _onCancelCardEntryFlow,
       buyerAction: "Charge",
-      money: money,
+      money: _money,
       squareLocationId: squareLocationId,
-      contact: contact,
+      contact: _contact,
+      paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
       collectPostalCode: true,
     );
   }
 
-  Future<dynamic> _onStartBuyerVerificationFlow() async {
-    var money = Money(
-      (b) => b
-        ..amount = 100
-        ..currencyCode = 'USD',
-    );
-
-    var contact = Contact(
-      (b) => b
-        ..givenName = "John"
-        ..familyName = "Doe"
-        ..addressLines = BuiltList<String>([
-          "London Eye",
-          "Riverside Walk",
-        ]).toBuilder()
-        ..city = "London"
-        ..countryCode = "GB"
-        ..email = "johndoe@example.com"
-        ..phone = "8001234567"
-        ..postalCode = "SE1 7",
-    );
-
-    return await InAppPayments.startBuyerVerificationFlow(
-      onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
-      onBuyerVerificationFailure: _onBuyerVerificationFailure,
-      buyerAction: "Charge",
-      money: money,
-      squareLocationId: squareLocationId,
-      contact: contact,
-      paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
-    );
-  }
+  Future<dynamic> _onStartBuyerVerificationFlow() async =>
+      await InAppPayments.startBuyerVerificationFlow(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: _money,
+        squareLocationId: squareLocationId,
+        contact: _contact,
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
+      );
 
   void _onCancelCardEntryFlow() {
     _showOrderSheet();
@@ -310,6 +302,33 @@ class BuySheetState extends State<BuySheet> {
   void _onStartGooglePay() async {
     try {
       await InAppPayments.requestGooglePayNonce(
+        priceStatus: google_pay_constants.totalPriceStatusFinal,
+        price: getCookieAmount(),
+        currencyCode: 'USD',
+        onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+        onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+        onGooglePayCanceled: onGooglePayEntryCanceled,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start GooglePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
+  Future<void> _onStartGooglePayWithBuyerVerification() async {
+    try {
+      await InAppPayments.requestGooglePayNonceWithBuyerVerification(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: _money,
+        squareLocationId: squareLocationId,
+        contact: _contact,
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
         priceStatus: google_pay_constants.totalPriceStatusFinal,
         price: getCookieAmount(),
         currencyCode: 'USD',
@@ -367,6 +386,35 @@ class BuySheetState extends State<BuySheet> {
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
+        price: getCookieAmount(),
+        summaryLabel: 'Cookie',
+        countryCode: 'US',
+        currencyCode: 'USD',
+        paymentType: ApplePayPaymentType.finalPayment,
+        onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
+        onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
+        onApplePayComplete: _onApplePayEntryComplete,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start ApplePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
+  Future<void> _onStartApplePayWithBuyerVerification() async {
+    try {
+      await InAppPayments.requestApplePayNonceWithBuyerVerification(
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        buyerAction: "Charge",
+        money: _money,
+        squareLocationId: squareLocationId,
+        contact: _contact,
+        paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
         price: getCookieAmount(),
         summaryLabel: 'Cookie',
         countryCode: 'US',
@@ -471,6 +519,21 @@ class BuySheetState extends State<BuySheet> {
 
   Future<void> _onStartSecureRemoteCommerceFlow() async {
     await InAppPayments.startSecureRemoteCommerce(
+      amount: 100,
+      onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
+      onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure,
+    );
+  }
+
+  Future<void> _onStartSecureRemoteCommerceFlowWithBuyerVerification() async {
+    await InAppPayments.startSecureRemoteCommerceWithBuyerVerification(
+      onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+      onBuyerVerificationFailure: _onBuyerVerificationFailure,
+      buyerAction: "Charge",
+      money: _money,
+      squareLocationId: squareLocationId,
+      contact: _contact,
+      paymentSourceId: "REPLACE_WITH_PAYMENT_SOURCE_ID",
       amount: 100,
       onMaterCardNonceRequestSuccess: _onMaterCardNonceRequestSuccess,
       onMasterCardNonceRequestFailure: _onMasterCardNonceRequestFailure,

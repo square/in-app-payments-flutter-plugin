@@ -68,25 +68,44 @@ FlutterMethodChannel *_channel;
         [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
     } else if ([@"startGiftCardEntryFlow" isEqualToString:call.method]) {
         [self.cardEntryModule startGiftCardEntryFlow:result];
-    } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
-        BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
+    } else if ([@"startGiftCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
+        NSString *paymentSourceId =  call.arguments[@"paymentSourceId"];
         NSString *squareLocationId = call.arguments[@"squareLocationId"];
         NSString *buyerActionString = call.arguments[@"buyerAction"];
         NSDictionary *moneyMap = call.arguments[@"money"];
         NSDictionary *contactMap = call.arguments[@"contact"];
+
+        [self.cardEntryModule startGiftCardEntryFlowWithVerification:result
+            locationId:squareLocationId
+            buyerActionString:buyerActionString
+            moneyMap:moneyMap 
+            contactMap:contactMap
+            paymentSourceId:paymentSourceId];
+    } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
+        BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
+        NSString *paymentSourceId =  call.arguments[@"paymentSourceId"];
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+
         [self.cardEntryModule startCardEntryFlowWithVerification:result
             collectPostalCode:collectPostalCode
             locationId:squareLocationId
             buyerActionString:buyerActionString
             moneyMap:moneyMap
-            contactMap:contactMap];
+            contactMap:contactMap
+            paymentSourceId:paymentSourceId];
     } else if ([@"completeCardEntry" isEqualToString:call.method]) {
         [self.cardEntryModule completeCardEntry:result];
     } else if ([@"showCardNonceProcessingError" isEqualToString:call.method]) {
         [self.cardEntryModule showCardNonceProcessingError:result errorMessage:call.arguments[@"errorMessage"]];
     } else if ([@"setFormTheme" isEqualToString:call.method]) {
         NSDictionary *theme = call.arguments[@"theme"];
-        [self.cardEntryModule setTheme:result theme:theme];
+        [self.applePayModule applyTheme:theme];
+        [self.cardEntryModule applyTheme:theme];
+        [self.secureRemoteCommerceModule applyTheme:theme];
+        result(nil);
     } else if ([@"initializeApplePay" isEqualToString:call.method]) {
         [self.applePayModule initializeApplePay:result merchantId:call.arguments[@"merchantId"]];
     } else if ([@"canUseApplePay" isEqualToString:call.method]) {
@@ -103,6 +122,31 @@ FlutterMethodChannel *_channel;
                                      summaryLabel:summaryLabel
                                             price:price
                                       paymentType:paymentType];
+    } else if ([@"requestApplePayNonceWithBuyerVerification" isEqualToString:call.method]) {
+        NSString *price = call.arguments[@"price"];
+        NSString *summaryLabel = call.arguments[@"summaryLabel"];
+        NSString *countryCode = call.arguments[@"countryCode"];
+        NSString *currencyCode = call.arguments[@"currencyCode"];
+        NSString *paymentType = call.arguments[@"paymentType"];
+
+        NSString *paymentSourceId = call.arguments[@"paymentSourceId"];
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+
+        [self.applePayModule requestApplePayNonceWithVerification:result
+                                      countryCode:countryCode
+                                     currencyCode:currencyCode
+                                     summaryLabel:summaryLabel
+                                            price:price
+                                      paymentType:paymentType
+                                      squareLocationId:squareLocationId
+                                      buyerActionString:buyerActionString
+                                      moneyMap:moneyMap
+                                      contactMap:contactMap
+                                      paymentSourceId:paymentSourceId];
+
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];
@@ -123,6 +167,20 @@ FlutterMethodChannel *_channel;
         NSNumber *amount = call.arguments[@"amount"];
         [self.secureRemoteCommerceModule startSecureRemoteCommerce:result
                                                             amount:amount.integerValue];
+    } else if ([@"startSecureRemoteCommerceWithBuyerVerification" isEqualToString:call.method]) {
+        NSNumber *amount = call.arguments[@"amount"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *paymentSourceId = call.arguments[@"paymentSourceId"];
+        [self.secureRemoteCommerceModule startSecureRemoteCommerceWithVerification:result
+                                                            amount:amount.integerValue
+                                                        buyerActionString:buyerActionString
+                                                        moneyMap:moneyMap
+                                                      contactMap:contactMap
+                                                 squareLocationId:squareLocationId
+                                               paymentSourceId:paymentSourceId];
     } else {
         result(FlutterMethodNotImplemented);
     }

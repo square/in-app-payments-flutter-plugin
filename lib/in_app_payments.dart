@@ -273,6 +273,47 @@ class InAppPayments {
     }
   }
 
+  static Future requestGooglePayNonceWithBuyerVerification({
+    required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+    required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+    required String buyerAction,
+    required Money money,
+    required String squareLocationId,
+    required Contact contact,
+    required String paymentSourceId,
+    required String price,
+    required String currencyCode,
+    required int priceStatus,
+    required GooglePayNonceRequestSuccessCallback
+        onGooglePayNonceRequestSuccess,
+    required GooglePayNonceRequestFailureCallback
+        onGooglePayNonceRequestFailure,
+    required GooglePayCancelCallback onGooglePayCanceled,
+  }) async {
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _googlePayNonceRequestSuccessCallback = onGooglePayNonceRequestSuccess;
+    _googlePayNonceRequestFailureCallback = onGooglePayNonceRequestFailure;
+    _googlePayCancelCallback = onGooglePayCanceled;
+
+    var params = <String, dynamic>{
+      'buyerAction': buyerAction,
+      'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact':
+          _standardSerializers.serializeWith(Contact.serializer, contact),
+      'squareLocationId': squareLocationId,
+      'paymentSourceId': paymentSourceId,
+      'price': price,
+      'currencyCode': currencyCode,
+      'priceStatus': priceStatus,
+    };
+
+    await _channel.invokeMethod(
+        'requestGooglePayNonceWithBuyerVerification', params);
+  }
+
   static Future initializeApplePay(String applePayMerchantId) async {
     assert(applePayMerchantId.isNotEmpty,
         'applePayMerchantId should not be empty.');
@@ -325,6 +366,54 @@ class InAppPayments {
     }
   }
 
+  static Future requestApplePayNonceWithBuyerVerification(
+      {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required String buyerAction,
+      required Money money,
+      required String squareLocationId,
+      required Contact contact,
+      required String paymentSourceId,
+      required String price,
+      required String summaryLabel,
+      required String countryCode,
+      required String currencyCode,
+      required ApplePayPaymentType paymentType,
+      required ApplePayNonceRequestSuccessCallback
+          onApplePayNonceRequestSuccess,
+      required ApplePayNonceRequestFailureCallback
+          onApplePayNonceRequestFailure,
+      required ApplePayCompleteCallback onApplePayComplete}) async {
+    assert(summaryLabel.isNotEmpty, 'summaryLabel should not be empty.');
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(countryCode.isNotEmpty, 'countryCode should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
+
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _applePayNonceRequestSuccessCallback = onApplePayNonceRequestSuccess;
+    _applePayNonceRequestFailureCallback = onApplePayNonceRequestFailure;
+    _applePayCompleteCallback = onApplePayComplete;
+
+    var params = <String, dynamic>{
+      'buyerAction': buyerAction,
+      'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact':
+          _standardSerializers.serializeWith(Contact.serializer, contact),
+      'squareLocationId': squareLocationId,
+      'paymentSourceId': paymentSourceId,
+      'price': price,
+      'summaryLabel': summaryLabel,
+      'countryCode': countryCode,
+      'currencyCode': currencyCode,
+      'paymentType': _standardSerializers.serializeWith(
+          ApplePayPaymentType.serializer, paymentType),
+    };
+
+    await _channel.invokeMethod(
+        'requestApplePayNonceWithBuyerVerification', params);
+  }
+
   static Future completeApplePayAuthorization(
       {required bool isSuccess, String errorMessage = ''}) async {
     var params = <String, dynamic>{
@@ -338,14 +427,19 @@ class InAppPayments {
       {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,
       required CardEntryCancelCallback onCardEntryCancel,
+      required CardEntryCardNonceRequestSuccessCallback
+          onCardNonceRequestSuccess,
       required String buyerAction,
       required Money money,
       required String squareLocationId,
       required Contact contact,
+      required String paymentSourceId,
       bool collectPostalCode = true}) async {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     _cardEntryCancelCallback = onCardEntryCancel;
+    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
+
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
       'money': _standardSerializers.serializeWith(Money.serializer, money),
@@ -353,9 +447,38 @@ class InAppPayments {
           _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'collectPostalCode': collectPostalCode,
+      'paymentSourceId': paymentSourceId,
     };
     await _channel.invokeMethod(
         'startCardEntryFlowWithBuyerVerification', params);
+  }
+
+  static Future startGiftCardEntryFlowWithBuyerVerification({
+    required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+    required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+    required CardEntryCancelCallback onCardEntryCancel,
+    required CardEntryCardNonceRequestSuccessCallback onCardNonceRequestSuccess,
+    required String buyerAction,
+    required Money money,
+    required String squareLocationId,
+    required Contact contact,
+    required String paymentSourceId,
+  }) async {
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _cardEntryCancelCallback = onCardEntryCancel;
+    _cardEntryCardNonceRequestSuccessCallback = onCardNonceRequestSuccess;
+
+    var params = <String, dynamic>{
+      'buyerAction': buyerAction,
+      'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact':
+          _standardSerializers.serializeWith(Contact.serializer, contact),
+      'squareLocationId': squareLocationId,
+      'paymentSourceId': paymentSourceId,
+    };
+    await _channel.invokeMethod(
+        'startGiftCardEntryFlowWithBuyerVerification', params);
   }
 
   static Future startBuyerVerificationFlow(
@@ -396,6 +519,36 @@ class InAppPayments {
     _masterCardNonceRequestFailureCallback = onMasterCardNonceRequestFailure;
     var params = <String, dynamic>{'amount': amount};
     await _channel.invokeMethod('startSecureRemoteCommerce', params);
+  }
+
+  static Future startSecureRemoteCommerceWithBuyerVerification(
+      {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required String buyerAction,
+      required Money money,
+      required String squareLocationId,
+      required Contact contact,
+      required String paymentSourceId,
+      required int amount,
+      required MasterCardNonceRequestSuccessCallback
+          onMaterCardNonceRequestSuccess,
+      required MasterCardNonceRequestFailureCallback
+          onMasterCardNonceRequestFailure}) async {
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _masterCardNonceRequestSuccessCallback = onMaterCardNonceRequestSuccess;
+    _masterCardNonceRequestFailureCallback = onMasterCardNonceRequestFailure;
+    var params = <String, dynamic>{
+      'buyerAction': buyerAction,
+      'money': _standardSerializers.serializeWith(Money.serializer, money),
+      'contact':
+          _standardSerializers.serializeWith(Contact.serializer, contact),
+      'squareLocationId': squareLocationId,
+      'paymentSourceId': paymentSourceId,
+      'amount': amount,
+    };
+    await _channel.invokeMethod(
+        'startSecureRemoteCommerceWithBuyerVerification', params);
   }
 }
 

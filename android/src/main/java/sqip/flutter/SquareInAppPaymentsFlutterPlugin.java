@@ -91,11 +91,42 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
         result.success(null);
         break;
       case "startCardEntryFlow":
-        boolean collectPostalCode = call.argument("collectPostalCode");
-        cardEntryModule.startCardEntryFlow(result, collectPostalCode);
+        boolean sce_collectPostalCode = call.argument("collectPostalCode");
+        cardEntryModule.startCardEntryFlow(result, sce_collectPostalCode);
+        break;
+      case "startCardEntryFlowWithBuyerVerification":
+        boolean sce_bv_collectPostalCode = call.argument("collectPostalCode");
+        String sce_bv_locationId = call.argument("squareLocationId");
+        String sce_bv_buyerAction = call.argument("buyerAction");
+        HashMap<String, Object> sce_bv_moneyMap = call.argument("money");
+        HashMap<String, Object> sce_bv_contactMap = call.argument("contact");
+        String sce_bv_paymentSourceId = call.argument("paymentSourceId");
+
+        cardEntryModule.startCardEntryFlowWithBuyerVerification(
+          result, 
+          sce_bv_collectPostalCode, 
+          sce_bv_locationId, 
+          sce_bv_buyerAction, 
+          sce_bv_moneyMap, 
+          sce_bv_contactMap,
+          sce_bv_paymentSourceId);
         break;
       case "startGiftCardEntryFlow":
         cardEntryModule.startGiftCardEntryFlow(result);
+        break;
+      case "startGiftCardEntryFlowWithBuyerVerification":
+        String sge_bv_locationId = call.argument("squareLocationId");
+        String sge_bv_buyerAction = call.argument("buyerAction");
+        HashMap<String, Object> sge_bv_moneyMap = call.argument("money");
+        HashMap<String, Object> sge_bv_contactMap = call.argument("contact");
+        String sge_bv_paymentSourceId = call.argument("paymentSourceId");
+        cardEntryModule.startGiftCardEntryFlowWithBuyerVerification(
+          result,
+          sge_bv_locationId,
+          sge_bv_buyerAction,
+          sge_bv_moneyMap,
+          sge_bv_contactMap,
+          sge_bv_paymentSourceId);
         break;
       case "completeCardEntry":
         cardEntryModule.completeCardEntry(result);
@@ -105,40 +136,62 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
         cardEntryModule.showCardNonceProcessingError(result, errorMessage);
         break;
       case "initializeGooglePay":
-        String squareLocationId = call.argument("squareLocationId");
-        int environment = call.argument("environment");
-        googlePayModule.initializeGooglePay(squareLocationId, environment);
+        String igp_squareLocationId = call.argument("squareLocationId");
+        int igp_environment = call.argument("environment");
+        googlePayModule.initializeGooglePay(igp_squareLocationId, igp_environment);
         result.success(null);
         break;
       case "canUseGooglePay":
         googlePayModule.canUseGooglePay(result);
         break;
       case "requestGooglePayNonce":
-        String price = call.argument("price");
-        String currencyCode = call.argument("currencyCode");
-        int priceStatus = call.argument("priceStatus");
-        googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
+        String rgp_price = call.argument("price");
+        String rgp_currencyCode = call.argument("currencyCode");
+        int rgp_priceStatus = call.argument("priceStatus");
+        googlePayModule.requestGooglePayNonce(result, rgp_price, rgp_currencyCode, rgp_priceStatus);
         break;
-      case "startCardEntryFlowWithBuyerVerification":
-        boolean collectPostal = call.argument("collectPostalCode");
-        String locationId = call.argument("squareLocationId");
-        String buyerAction = call.argument("buyerAction");
-        HashMap<String, Object> moneyMap = call.argument("money");
-        HashMap<String, Object> contactMap = call.argument("contact");
+      case "requestGooglePayNonceWithBuyerVerification":
+        String rgp_bv_locationId = call.argument("squareLocationId");
+        String rgp_bv_buyerAction = call.argument("buyerAction");
+        HashMap<String, Object> rgp_bv_moneyMap = call.argument("money");
+        HashMap<String, Object> rgp_bv_contactMap = call.argument("contact");
+        String rgp_bv_paymentSourceId = call.argument("paymentSourceId");
+        String rgp_bv_price = call.argument("price");
+        String rgp_bv_currencyCode = call.argument("currencyCode");
+        int rgp_bv_priceStatus = call.argument("priceStatus");
 
-        cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostal, locationId, buyerAction, moneyMap, contactMap);
+        googlePayModule.requestGooglePayNonceWithBuyerVerification(
+          result,
+          rgp_bv_buyerAction,
+          rgp_bv_moneyMap,
+          rgp_bv_locationId,
+          rgp_bv_contactMap,
+          rgp_bv_paymentSourceId,
+          rgp_bv_price,
+          rgp_bv_currencyCode,
+          rgp_bv_priceStatus);
         break;
       case "startBuyerVerificationFlow":
-        String locationId2 = call.argument("squareLocationId");
-        String buyerAction2 = call.argument("buyerAction");
-        HashMap<String, Object> moneyMap2 = call.argument("money");
-        HashMap<String, Object> contactMap2 = call.argument("contact");
-        String paymentSourceId = call.argument("paymentSourceId");
+        String bv_locationId = call.argument("squareLocationId");
+        String bv_buyerAction = call.argument("buyerAction");
+        HashMap<String, Object> bv_moneyMap = call.argument("money");
+        HashMap<String, Object> bv_contactMap = call.argument("contact");
+        String bv_paymentSourceId = call.argument("paymentSourceId");
 
-        cardEntryModule.startBuyerVerificationFlow(result, buyerAction2, moneyMap2, locationId2, contactMap2, paymentSourceId);
+        cardEntryModule.startBuyerVerificationFlow(
+          result, 
+          bv_buyerAction, 
+          bv_moneyMap, 
+          bv_locationId, 
+          bv_contactMap, 
+          bv_paymentSourceId);
         break;
       case "startSecureRemoteCommerce":
         int amount = call.argument("amount");
+        // Not yet implemented
+        result.notImplemented();
+        break;
+      case "startSecureRemoteCommerceWithBuyerVerification":
         // Not yet implemented
         result.notImplemented();
         break;

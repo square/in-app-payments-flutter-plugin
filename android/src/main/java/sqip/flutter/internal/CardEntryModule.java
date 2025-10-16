@@ -52,6 +52,11 @@ public final class CardEntryModule {
   private Contact contact;
   private CardDetails cardResult;
   private String paymentSourceId;
+  private boolean collectPostalCode;
+
+  private boolean shouldListen = false;
+  private boolean shouldContinueWithRequestCardEntry = false;
+  private boolean shouldContinueWithRequestGiftCardEntry = false;
 
   public CardEntryModule(Context context, MethodChannel channel) {
     this.channel = channel;
@@ -84,6 +89,13 @@ public final class CardEntryModule {
   public void attachActivityResultListener(ActivityPluginBinding activityPluginBinding, MethodChannel channel) {
     this.currentActivity = activityPluginBinding.getActivity();
     activityPluginBinding.addActivityResultListener((requestCode, resultCode, data) -> {
+      // prevent multiple calls to the activity result listener when is called from GooglePay module
+      // added because "requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE" is used in GooglePay module
+      if (!shouldListen) {
+        return false;
+      }
+      shouldListen = false;
+
       if (requestCode == CardEntry.DEFAULT_CARD_ENTRY_REQUEST_CODE) {
         CardEntry.handleActivityResult(data, cardEntryActivityResult -> {
           if (cardEntryActivityResult.isSuccess() && CardEntryModule.this.contact != null) {
@@ -116,7 +128,16 @@ public final class CardEntryModule {
               payload.put("token", result.getSuccessValue().getVerificationToken());
             }
             channel.invokeMethod("onBuyerVerificationSuccess", payload);
+            if (shouldContinueWithRequestCardEntry) {
+              shouldContinueWithRequestCardEntry = false;
+              CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
+            } else if (shouldContinueWithRequestGiftCardEntry) {
+              shouldContinueWithRequestGiftCardEntry = false;
+              CardEntry.startGiftCardEntryActivity(currentActivity);
+            }
           } else if (result.isError()) {
+            shouldContinueWithRequestCardEntry = false;
+            shouldContinueWithRequestGiftCardEntry = false;
             Error error = result.getErrorValue();
             Map<String, String> errorMap = ErrorHandlerUtils.getCallbackErrorObject(
                 error.getCode().name(),
@@ -135,11 +156,13 @@ public final class CardEntryModule {
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
+    shouldListen = true;
     CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
 
   public void completeCardEntry(MethodChannel.Result result) {
+    shouldListen = true;
     reference.set(new CardEntryActivityCommand.Finish());
     countDownLatch.countDown();
     result.success(null);
@@ -152,27 +175,69 @@ public final class CardEntryModule {
   }
 
   public void startGiftCardEntryFlow(MethodChannel.Result result) {
+    shouldListen = true;
     CardEntry.startGiftCardEntryActivity(currentActivity);
     result.success(null);
   }
 
-  public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
-    this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = getMoney(moneyMap);
-    this.buyerAction = getBuyerAction(buyerActionString, money);
-    this.contact = getContact(contactMap);
-    this.paymentSourceId = null;
+  public void startGiftCardEntryFlowWithBuyerVerification(
+    MethodChannel.Result result,
+    String squareLocationId,
+    String buyerActionString,
+    Map<String, Object> moneyMap,
+    Map<String, Object> contactMap,
+    String paymentSourceId
+  ) {
+    shouldListen = true;
 
-    CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
-    result.success(null);
-  }
-
-  public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
     Money money = getMoney(moneyMap);
     this.buyerAction = getBuyerAction(buyerActionString, money);
     this.contact = getContact(contactMap);
     this.paymentSourceId = paymentSourceId;
+
+    shouldContinueWithRequestGiftCardEntry = true;
+
+    VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
+    BuyerVerification.verify(currentActivity, params);
+    result.success(null);
+  }
+
+  public void startCardEntryFlowWithBuyerVerification(
+    MethodChannel.Result result, 
+    boolean collectPostalCode, 
+    String squareLocationId, 
+    String buyerActionString, 
+    Map<String, Object> moneyMap, 
+    Map<String, Object> contactMap,
+    String paymentSourceId
+    ) {
+    shouldListen = true;
+
+    this.collectPostalCode = collectPostalCode;
+    this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+    Money money = getMoney(moneyMap);
+    this.buyerAction = getBuyerAction(buyerActionString, money);
+    this.contact = getContact(contactMap);
+    this.paymentSourceId = paymentSourceId;
+
+    shouldContinueWithRequestCardEntry = true;
+
+    VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
+    BuyerVerification.verify(currentActivity, params);
+    result.success(null);
+  }
+
+  public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
+    shouldListen = true;
+    this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+    Money money = getMoney(moneyMap);
+    this.buyerAction = getBuyerAction(buyerActionString, money);
+    this.contact = getContact(contactMap);
+    this.paymentSourceId = paymentSourceId;
+
+    shouldContinueWithRequestCardEntry = false;
+    shouldContinueWithRequestGiftCardEntry = false;
 
     VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
     BuyerVerification.verify(currentActivity, params);
