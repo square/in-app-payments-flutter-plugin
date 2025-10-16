@@ -16,10 +16,13 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
+@import SquareBuyerVerificationSDK;
 
 @interface FSQIPSecureRemoteCommerce : NSObject
 
 - (void)initWithMethodChannel:(FlutterMethodChannel *)channel;
 - (void)startSecureRemoteCommerce:(FlutterResult) result amount:(NSInteger)amount;
+- (void)startSecureRemoteCommerceWithVerification:(FlutterResult) result amount:(NSInteger)amount buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap squareLocationId:(NSString *)squareLocationId paymentSourceId:(NSString *)paymentSourceId;
+- (void)applyTheme:(NSDictionary *)theme;
 
 @end
