@@ -24,9 +24,9 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
-def MIN_IAP_SDK_VERSION = '1.6.6'
+def MIN_IAP_SDK_VERSION = '1.6.8'
 def COMPILE_SDK_VERSION = 35
-def TARGET_SDK_VERSION = 33
+def TARGET_SDK_VERSION = 35
 
 android {
     def sqipCompileSdkVersion = rootProject.hasProperty('sqipCompileSdkVersion') ? rootProject.sqipCompileSdkVersion : COMPILE_SDK_VERSION
@@ -35,7 +35,7 @@ android {
 
     defaultConfig {
         namespace "sqip.flutter"
-        minSdkVersion 24
+        minSdkVersion 28
         targetSdkVersion sqipTargetSdkVersion
     }
     lintOptions {

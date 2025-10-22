@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.7.12 Oct 21, 2025
+
+* Updated to IAP SDK Android to 1.6.8
+* Updated compileSdkVersion to 35
+* Updated targetSdkVersion to 35
+* Updated minSdkVersion to 28
+
 ### v1.7.11 Jul 22, 2025
 
 * Upgraded plugin to support Flutter Embedding v2 and newer Flutter versions (specifically Flutter 3.29.3+ with Dart 3.7.2+). 
