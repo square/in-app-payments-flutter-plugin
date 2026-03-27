@@ -190,11 +190,19 @@ public final class CardEntryModule {
     Object postalCode = contactMap.get("postalCode");
     Object region = contactMap.get("region");
     Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
+    ArrayList<String> addressLinesList = new ArrayList<>();
+    if (addressLines instanceof java.util.List) {
+      for (Object line : (java.util.List<?>) addressLines) {
+        if (line != null) {
+          addressLinesList.add(line.toString());
+        }
+      }
+    }
 
     return new Contact.Builder()
         .familyName((familyName != null) ? familyName.toString() : "")
         .email((email != null) ? email.toString() : "")
-        .addressLines((addressLines != null) ? (ArrayList<String>) addressLines : new ArrayList<>())
+        .addressLines(addressLinesList)
         .city((city != null) ? city.toString() : "")
         .countryCode(country)
         .postalCode((postalCode != null) ? postalCode.toString() : "")
