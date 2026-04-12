@@ -158,7 +158,7 @@ public final class CardEntryModule {
 
   public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = getMoney(moneyMap);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
     this.contact = getContact(contactMap);
     this.paymentSourceId = null;
@@ -169,7 +169,7 @@ public final class CardEntryModule {
 
   public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = getMoney(moneyMap);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
     this.contact = getContact(contactMap);
     this.paymentSourceId = paymentSourceId;

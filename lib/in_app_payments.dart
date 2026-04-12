@@ -339,21 +339,26 @@ class InAppPayments {
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,
       required CardEntryCancelCallback onCardEntryCancel,
       required String buyerAction,
-      required Money money,
+      Money? money,
       required String squareLocationId,
       required Contact contact,
       bool collectPostalCode = true}) async {
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     _cardEntryCancelCallback = onCardEntryCancel;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
-      'money': _standardSerializers.serializeWith(Money.serializer, money),
       'contact':
           _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'collectPostalCode': collectPostalCode,
     };
+    if (money != null) {
+      params['money'] =
+          _standardSerializers.serializeWith(Money.serializer, money);
+    }
     await _channel.invokeMethod(
         'startCardEntryFlowWithBuyerVerification', params);
   }
@@ -362,20 +367,25 @@ class InAppPayments {
       {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,
       required String buyerAction,
-      required Money money,
+      Money? money,
       required String squareLocationId,
       required Contact contact,
       required String paymentSourceId}) async {
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
-      'money': _standardSerializers.serializeWith(Money.serializer, money),
       'contact':
           _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'paymentSourceId': paymentSourceId,
     };
+    if (money != null) {
+      params['money'] =
+          _standardSerializers.serializeWith(Money.serializer, money);
+    }
     await _channel.invokeMethod('startBuyerVerificationFlow', params);
   }
 
