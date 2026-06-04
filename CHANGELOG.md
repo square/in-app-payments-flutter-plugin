@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.7.13 Jun 4, 2026
+
+* Updated to IAP SDK iOS to 1.6.6 (Android remains on 1.6.8)
+
 ### v1.7.12 Oct 21, 2025
 
 * Updated to IAP SDK Android to 1.6.8
