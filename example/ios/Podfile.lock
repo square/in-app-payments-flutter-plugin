@@ -1,11 +1,11 @@
 PODS:
   - Flutter (1.0.0)
-  - square_in_app_payments (1.6.3):
+  - square_in_app_payments (1.6.6):
     - Flutter
-    - SquareBuyerVerificationSDK (= 1.6.3)
-    - SquareInAppPaymentsSDK (= 1.6.3)
-  - SquareBuyerVerificationSDK (1.6.3)
-  - SquareInAppPaymentsSDK (1.6.3)
+    - SquareBuyerVerificationSDK (= 1.6.6)
+    - SquareInAppPaymentsSDK (= 1.6.6)
+  - SquareBuyerVerificationSDK (1.6.6)
+  - SquareInAppPaymentsSDK (1.6.6)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -23,11 +23,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/square_in_app_payments/ios"
 
 SPEC CHECKSUMS:
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  square_in_app_payments: 96f9a5f6fd3f5aed494f0266f334fb56e1adefa7
-  SquareBuyerVerificationSDK: d325f473a724cfa5684a837296a307152ca52854
-  SquareInAppPaymentsSDK: 4d7f1e984fee5d8d7dbd44a67661ca1aedee7f76
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  square_in_app_payments: 06fbfe68c5c4bbb354dfead8190a7e051358d4c7
+  SquareBuyerVerificationSDK: 5cea1ba9b58db082f1557adcf4087fa7b6ba862e
+  SquareInAppPaymentsSDK: 1cad924a40f39c084930478bc1021b38d70d4b61
 
-PODFILE CHECKSUM: 3095475c8b4475d5353089cfe9f0bebb1c4b418a
+PODFILE CHECKSUM: 5bcbcc3ad323c74412ce29f4f5cf20bfc411fc2c
 
 COCOAPODS: 1.16.2
