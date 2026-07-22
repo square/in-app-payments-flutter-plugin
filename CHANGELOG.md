@@ -1,5 +1,11 @@
 ## Changelog
 
+### v1.7.14 Jul 23, 2026
+
+* Updated to IAP SDK Android to 1.6.9 and iOS to 1.6.7 — see the [IAP SDK release notes](https://developer.squareup.com/docs/changelog/mobile-logs/2026-07-22)
+* Updated targetSdkVersion to 36
+* If your Android build fails with `2 files found with path 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'`, exclude that path in your app's `packaging` block (see the example app's `build.gradle.kts`)
+
 ### v1.7.13 Jun 4, 2026
 
 * Updated to IAP SDK iOS to 1.6.6 (Android remains on 1.6.8)
