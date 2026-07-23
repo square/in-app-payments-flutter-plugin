@@ -30,6 +30,14 @@ android {
         versionName = flutter.versionName
     }
 
+    packaging {
+        resources {
+            // OkHttp 5.x and jspecify (transitive deps of IAP SDK 1.6.9) both ship this
+            // OSGI manifest in their multi-release jars; it is unused on Android.
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

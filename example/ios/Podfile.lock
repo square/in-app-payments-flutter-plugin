@@ -1,11 +1,11 @@
 PODS:
   - Flutter (1.0.0)
-  - square_in_app_payments (1.6.6):
+  - square_in_app_payments (1.6.7):
     - Flutter
-    - SquareBuyerVerificationSDK (= 1.6.6)
-    - SquareInAppPaymentsSDK (= 1.6.6)
-  - SquareBuyerVerificationSDK (1.6.6)
-  - SquareInAppPaymentsSDK (1.6.6)
+    - SquareBuyerVerificationSDK (= 1.6.7)
+    - SquareInAppPaymentsSDK (= 1.6.7)
+  - SquareBuyerVerificationSDK (1.6.7)
+  - SquareInAppPaymentsSDK (1.6.7)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -24,10 +24,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  square_in_app_payments: 06fbfe68c5c4bbb354dfead8190a7e051358d4c7
-  SquareBuyerVerificationSDK: 5cea1ba9b58db082f1557adcf4087fa7b6ba862e
-  SquareInAppPaymentsSDK: 1cad924a40f39c084930478bc1021b38d70d4b61
+  square_in_app_payments: aa74685306e78d9704f2723b4dc2f4ada1a6f89e
+  SquareBuyerVerificationSDK: e4589f81dfb842c7d19134fe1d71722ae7cc8cc4
+  SquareInAppPaymentsSDK: 07eb46834e31300d27510ad3ee15940970edd327
 
-PODFILE CHECKSUM: 5bcbcc3ad323c74412ce29f4f5cf20bfc411fc2c
+PODFILE CHECKSUM: c8fdd860b4f55960a443386e2b10de33bca3d452
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0
