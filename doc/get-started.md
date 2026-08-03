@@ -5,25 +5,23 @@ project with In-App Payments SDK. See the
 [Flutter In-App Payments SDK Technical Reference](reference.md)
 for more detailed information about the methods available.
 
-
 ## Before you start
 
-* You will need a Square account enabled for payment processing. If you have not
+- You will need a Square account enabled for payment processing. If you have not
   enabled payment processing on your account (or you are not sure), visit
   [squareup.com/activate].
-* Follow the **Install** instructions in the [Flutter Getting Started] guide to
+- Follow the **Install** instructions in the [Flutter Getting Started] guide to
   set up your Flutter development environment.
-
 
 ## Process overview
 
-* [Step 1: Create a Flutter project](#step-1-create-a-flutter-project)
-* [Step 2: Add the In-App Payments SDK to your iOS project](#step-2-add-the-in-app-payments-sdk-to-your-ios-project)
-* [Step 3: Configure the In-App Payments SDK dependency](#step-3-configure-the-in-app-payments-sdk-dependency)
-* [Step 4: Get Square Application ID](#step-4-get-square-application-id)
-* [Step 5: Initialize the In-App Payments SDK](#step-5-initialize-the-in-app-payments-sdk)
-* [Step 6: Customize card entry appearance](#step-6-customize-card-entry-appearance)
-* [Step 7: Implement the Payment flow](#step-7-implement-the-payment-flow)
+- [Step 1: Create a Flutter project](#step-1-create-a-flutter-project)
+- [Step 2: Add the In-App Payments SDK to your iOS project](#step-2-add-the-in-app-payments-sdk-to-your-ios-project)
+- [Step 3: Configure the In-App Payments SDK dependency](#step-3-configure-the-in-app-payments-sdk-dependency)
+- [Step 4: Get Square Application ID](#step-4-get-square-application-id)
+- [Step 5: Initialize the In-App Payments SDK](#step-5-initialize-the-in-app-payments-sdk)
+- [Step 6: Customize card entry appearance](#step-6-customize-card-entry-appearance)
+- [Step 7: Implement the Payment flow](#step-7-implement-the-payment-flow)
 
 ## Step 1: Create a Flutter project
 
@@ -38,26 +36,27 @@ started guide for more detailed instructions.
 
 ## Step 2: Update your iOS project
 
-To use the In-App Payments plugin on iOS devices, install **In-App Payments SDK for iOS** 
-to make it an available resource for the Flutter library. 
+To use the In-App Payments plugin on iOS devices, install **In-App Payments SDK for iOS**
+to make it an available resource for the Flutter library.
 
 1. Open your iOS project `Runner.xcodeproj` with **Xcode**.
-1. Set the `iOS Deployment Target` to 12.0 or above.
+1. Set the `iOS Deployment Target` to 14.0 or above.
 1. Add an In-App Payments SDK build phase:
-    1. Open `Runner.xcworkspace` in Xcode.
-    1. In the **Build Phases** tab for your application target, click the **+**
-        button at the top of the pane.
-    1. Select **New Run Script Phase**.
-    1. Paste the following into the editor panel of the new run script:
-        ```
-        FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-        "${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
-        ```
+   1. Open `Runner.xcworkspace` in Xcode.
+   1. In the **Build Phases** tab for your application target, click the **+**
+      button at the top of the pane.
+   1. Select **New Run Script Phase**.
+   1. Paste the following into the editor panel of the new run script:
+      ```
+      FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+      "${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
+      ```
 
 ## Step 3: Configure the In-App Payments SDK dependency
 
 Edit the `pubspec.yaml` file in your `flutter` directory to define the In-App Payments
 SDK dependency:
+
 ```yaml
 dependencies:
 
@@ -78,6 +77,7 @@ dependencies:
 ## Step 5: Initialize the In-App Payments SDK
 
 1. Add code that initialize the In-App Payments SDK.
+
    ```dart
    import 'package:square_in_app_payments/models.dart';
    import 'package:square_in_app_payments/in_app_payments.dart';
@@ -88,20 +88,23 @@ dependencies:
        await InAppPayments.setSquareApplicationId('APPLICATION_ID');
      }
      ...
-   } 
+   }
 
    ```
 
 1. Replace `APPLICATION_ID` with the **application ID** from the application dashboard.
 
 ## Step 6: Customize card entry appearance
+
 The Android and iOS platforms allow customization of the card entry screen but provide
 different customization mechanisms. For more information, read about [customizing the payment entry form] in the Square developer documentation.
 
 ### Android
+
 You can customize the payment form `UI` by overriding the `sqip.Theme.CardEntry`
 theme resource. The SDK honors customization of system style attributes and provides 3 custom style
-attributes. 
+attributes.
+
 <table>
   <tr>
    <th>Custom Style attribute
@@ -132,9 +135,11 @@ attributes.
 Change the appearance of the save button and the card information form to match
 the styles in the app's theme. This will entirely override the style for these
 elements, giving the application full control over their appearance.
+
 1. Open `{YOUR_PROJECT}/android/app/src/main/res/values/themes.xml`
 2. Add an item with the `name="editTextStyle" `and the value set to your desired
    style.
+
 ```xml {"id": "inapppayments-customizeform-step 2.1", "copy_code": true}
   <style name="sqip.Theme.CardEntry" parent="sqip.Theme.BaseCardEntryAppTheme">
     …
@@ -145,6 +150,7 @@ elements, giving the application full control over their appearance.
     <item name="android:textColor">@color/blue</item>
   </style>
 ```
+
 3. Add an item with the `name="buttonStyle"` and the value set to your desired
    style.
 
@@ -161,9 +167,11 @@ elements, giving the application full control over their appearance.
 ```
 
 ### iOS
+
 For iOS devices, set the card entry error text and background color, keyboard appearance and message color.
 
 1. Add code that creates a card entry theme and sets it in the plugin.
+
    ```dart
    Future _setIOSCardEntryTheme() async {
      var themeConfiguationBuilder = IOSThemeBuilder();
@@ -197,7 +205,7 @@ For iOS devices, set the card entry error text and background color, keyboard ap
 ## Step 7: Implement the Payment flow
 
 Add code to the `_MyAppState_` class that starts the payment flow and handles
-the response. 
+the response.
 
 **Note**: You cannot start the payment flow from a modal screen. To start
 the payment flow, you must close the modal screen before calling `startCardEntryFlow`.
@@ -207,7 +215,7 @@ import 'package:square_in_app_payments/models.dart';
 import 'package:square_in_app_payments/in_app_payments.dart';
 class _MyAppState extends State<MyApp> {
 ...
-  /** 
+  /**
   * An event listener to start card entry flow
   */
   Future<void> _onStartCardEntryFlow() async {
@@ -252,17 +260,21 @@ class _MyAppState extends State<MyApp> {
     // Update UI to notify user that the payment flow is finished successfully
   }
   ...
-}  
+}
 ```
+
 **Note**: To start the payment flow with Strong Customer Authentication, you should call `startCardEntryFlowWithBuyerVerification`. `InAppPayments.completeCardEntry` is NOT needed for this call.
 
 ---
+
 **Note**: To start Strong Customer Authentication for card-on-file, you should call `startBuyerVerificationFlow`. `InAppPayments.completeCardEntry` is NOT needed for this call.
 
 ---
+
 **Note:** The `chargeCard` method in this example shows a typical REST request on a backend process that uses the **Payments API** to take a payment with the supplied nonce. See [BackendQuickStart Sample] to learn about building an app that processes payment nonces on a server.
 
 ---
+
 **Note**: To start Secure Remote Commerce (Mastercard Click-to-pay), you should call `startSecureRemoteCommerce`.
 
 ---
@@ -283,4 +295,4 @@ class _MyAppState extends State<MyApp> {
 [Test Drive]: https://flutter.io/docs/get-started/test-drive
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
 [customizing the payment entry form]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/cookbook/customize-payment-form
-[Build on iOS: Add the In-App Payments SDK to your project (Manual installation)]:https://docs.connect.squareup.com/payments/in-app-payments-sdk/build-on-ios#step-1-add-the-in-app-payments-sdk-to-your-project
+[Build on iOS: Add the In-App Payments SDK to your project (Manual installation)]: https://docs.connect.squareup.com/payments/in-app-payments-sdk/build-on-ios#step-1-add-the-in-app-payments-sdk-to-your-project
