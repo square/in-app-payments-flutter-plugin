@@ -139,7 +139,7 @@ onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificati
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
 onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
-money           | [Money](#Money)                          | Amount of money that will be charged
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
 collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br/>**Notes**: A Postal code must be collected for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
@@ -314,7 +314,7 @@ Parameter       | Type                                     | Description
 onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when buyer verification on a given payment source id succeeds
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when buyer verification on a given payment source id encouters errors
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
-money           | [Money](#Money)                          | Amount of money that will be charged
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
 paymentSourceId | string                                   | This ID can be the nonce returned by [CardEntryFlow](#startcardentryflow) or a card-on-file card ID for the buyer's payment card stored with Square.
