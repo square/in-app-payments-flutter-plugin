@@ -14,9 +14,12 @@
  limitations under the License.
 */
 
+#import <Flutter/Flutter.h>
 
-@interface UIColor (FSQIPAdditions)
 
-- (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;
-
+// Objective-C core of the plugin. It owns the FlutterMethodChannel and dispatches
+// every method call to the FSQIP* modules that wrap the Square In-App Payments SDK.
+// The public Flutter entry point is the Swift `SquareInAppPaymentsFlutterPlugin`
+// class, which simply forwards registration to this class.
+@interface FSQIPPlugin : NSObject <FlutterPlugin>
 @end

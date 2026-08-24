@@ -1,5 +1,12 @@
 ## Changelog
 
+### v2.0.0 Unreleased
+
+* Added Swift Package Manager (SPM) as the primary iOS integration for Flutter 3.44. The Objective-C bridge now lives in the `square_in_app_payments_objc` SPM target with a thin Swift entry point (`SquareInAppPaymentsFlutterPlugin`); localized error strings are loaded via `SWIFTPM_MODULE_BUNDLE`.
+* CocoaPods remains supported for existing consumers. Because the plugin now ships a Swift entry point, CocoaPods apps must enable `use_frameworks!` in their `Podfile` (the default in modern Flutter projects); pure Objective-C apps that previously built without frameworks need to add it.
+* Migrated the Android build to the Gradle Kotlin DSL (`build.gradle.kts` / `settings.gradle.kts`) and replaced `jcenter()` with `mavenCentral()`.
+* Updated the example app to the Flutter UIScene lifecycle (`SceneDelegate`) and refreshed the example and plugin dependencies.
+
 ### v1.7.14 Jul 23, 2026
 
 * Updated to IAP SDK Android to 1.6.9 and iOS to 1.6.7 — see the [IAP SDK release notes](https://developer.squareup.com/docs/changelog/mobile-logs/2026-07-22)

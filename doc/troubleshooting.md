@@ -25,19 +25,16 @@ Manually change your app settings to exclude arm64 simulator support.  Xcode won
 **IMPORTANT NOTE:**
 **This solution will only work on intel-based macs.  M1 macs are unsupported by our SDK without any workarounds available**
 
-1.) Add the following to the bottom of your podfile:
-```
-post_install do |installer|
-  installer.pods_project.build_configurations.each do |config|
-    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-    config.build_settings["ONLY_ACTIVE_ARCH"] = "YES"
-  end
-end
-```
+The iOS integration now uses Swift Package Manager, so there is no `Podfile`. Set the excluded
+architectures directly on the Runner target in Xcode instead:
 
-2.) run `pod install`
+1.) Open `example/ios/Runner.xcworkspace` (or your app's workspace) in Xcode.
 
-3.) You should be able to run the In-App-Payments SDK using the latest version of flutter on intel-based macs.
+2.) Select the **Runner** target, open **Build Settings**, and add `arm64` to
+    **Excluded Architectures** for **Any iOS Simulator SDK**
+    (`EXCLUDED_ARCHS[sdk=iphonesimulator*] = arm64`).
+
+3.) Rebuild with `flutter run`. You should be able to run on intel-based macs.
 
 ## I get iOS build error "While building module 'SquareInAppPaymentsSDK' imported from ..."
 
@@ -52,18 +49,13 @@ You created a flutter project from template without configuration of framwork su
 
 ### Solution
 
-Add `use_frameworks!` to the `{YOUR_PROJECT}/ios/Podfile`
+With Swift Package Manager there is no `Podfile`, and framework support is handled automatically,
+so no manual configuration is required. If your app still uses the legacy CocoaPods integration,
+add `use_frameworks!` to the `{YOUR_PROJECT}/ios/Podfile`:
 
-```yaml
-...
-
+```ruby
 target 'Runner' do
-  # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
-  # referring to absolute paths on developers' machines.
   use_frameworks! # <--- add line here
-  system('rm -rf .symlinks')
-  system('mkdir -p .symlinks/plugins')
-
   ...
 end
 ```
@@ -79,5 +71,36 @@ There are a few solutions you can use:
 1. Update to a version of proguard > 6.1.0-beta2 (https://sourceforge.net/p/proguard/bugs/731/)
 2. Add `android.proguard.enableRulesExtraction=false` in your android/gradle.properties file like found in the example app.
 
+## iOS Swift Package Manager fails with "unable to override package ... identity ... doesn't match"
 
+### The problem
 
+When building the example app (or any app that depends on this plugin through a local
+`path:` dependency) on iOS, Swift Package Manager fails to resolve:
+
+```
+unable to override package 'square_in_app_payments' because its identity
+'in-app-payments-flutter-plugin' doesn't match override's identity (directory name)
+'square_in_app_payments'
+```
+
+### Likely cause
+
+SPM derives a local package's identity from the **directory name** it lives in. This plugin's
+Dart package name is `square_in_app_payments`, but the repository is commonly checked out under a
+different folder name (for example `in-app-payments-flutter-plugin`). When the containing folder
+name differs from the plugin name, the identities do not match and SPM refuses to resolve.
+
+This only affects local `path:` dependencies. Apps that depend on the published package from
+pub.dev get it under the `square_in_app_payments` name, so they never hit this.
+
+### Solution
+
+Check out (or symlink) the repository into a folder named `square_in_app_payments`, then build
+from there:
+
+```bash
+git clone https://github.com/square/in-app-payments-flutter-plugin.git square_in_app_payments
+cd square_in_app_payments/example
+flutter build ios --no-codesign
+```

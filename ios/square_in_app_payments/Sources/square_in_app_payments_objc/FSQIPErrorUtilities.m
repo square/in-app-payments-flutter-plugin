@@ -23,10 +23,23 @@ NSInteger const FSQIPApplePayErrorCode = 1;
 
 @implementation FSQIPErrorUtilities
 
-+ (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode
++ (NSBundle *)resourceBundle
 {
+#ifdef SWIFTPM_MODULE_BUNDLE
+    // Swift Package Manager bundles the localized Assets into the target's own
+    // resource bundle, reachable through the generated SWIFTPM_MODULE_BUNDLE macro.
+    return SWIFTPM_MODULE_BUNDLE;
+#else
+    // CocoaPods packages them into a nested `sqip_flutter_resource.bundle`.
     NSString *bundlePath = [[NSBundle bundleForClass:FSQIPErrorUtilities.self] pathForResource:@"sqip_flutter_resource" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+    return bundle ?: [NSBundle bundleForClass:FSQIPErrorUtilities.self];
+#endif
+}
+
++ (NSString *)pluginErrorMessageFromErrorCode:(NSString *)pluginErrorCode
+{
+    NSBundle *bundle = [self resourceBundle];
     NSString *localizedErrorMessage = NSLocalizedStringWithDefaultValue(@"SQIPUnexpectedErrorMessage", nil, bundle, @"Something went wrong. Please contact the developer of this application and provide them with this error code: %@", @"Error message shown when an unexpected error occurs");
 
     return [NSString stringWithFormat:localizedErrorMessage, pluginErrorCode];

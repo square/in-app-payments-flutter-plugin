@@ -14,14 +14,14 @@
  limitations under the License.
 */
 
-#import "SquareInAppPaymentsFlutterPlugin.h"
+#import "FSQIPPlugin.h"
 #import "FSQIPCardEntry.h"
 #import "FSQIPApplePay.h"
 #import "FSQIPErrorUtilities.h"
 #import "FSQIPSecureRemoteCommerce.h"
 
 
-@interface SquareInAppPaymentsFlutterPlugin ()
+@interface FSQIPPlugin ()
 
 @property (strong, readwrite) FSQIPCardEntry *cardEntryModule;
 @property (strong, readwrite) FSQIPApplePay *applePayModule;
@@ -31,14 +31,14 @@
 FlutterMethodChannel *_channel;
 
 
-@implementation SquareInAppPaymentsFlutterPlugin
+@implementation FSQIPPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
     FlutterMethodChannel *channel = [FlutterMethodChannel
         methodChannelWithName:@"square_in_app_payments"
               binaryMessenger:[registrar messenger]];
     _channel = channel;
-    SquareInAppPaymentsFlutterPlugin *instance = [[SquareInAppPaymentsFlutterPlugin alloc] init];
+    FSQIPPlugin *instance = [[FSQIPPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 

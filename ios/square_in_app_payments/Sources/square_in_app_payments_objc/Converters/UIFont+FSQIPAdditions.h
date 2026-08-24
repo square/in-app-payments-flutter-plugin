@@ -14,10 +14,10 @@
  limitations under the License.
 */
 
-#import <Flutter/Flutter.h>
-@import SquareInAppPaymentsSDK;
-@import SquareBuyerVerificationSDK;
+@import UIKit;
 
+@interface UIFont (FSQIPAdditions)
 
-@interface SquareInAppPaymentsFlutterPlugin : NSObject <FlutterPlugin>
+- (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;
+
 @end

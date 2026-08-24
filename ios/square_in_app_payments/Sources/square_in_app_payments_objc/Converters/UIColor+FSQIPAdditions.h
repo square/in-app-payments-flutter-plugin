@@ -14,9 +14,10 @@
  limitations under the License.
 */
 
+@import UIKit;
 
-@interface UIFont (FSQIPAdditions)
+@interface UIColor (FSQIPAdditions)
 
-- (UIFont *)fromJsonDictionary:(NSDictionary *)fontDictionary;
+- (UIColor *)fromJsonDictionary:(NSDictionary *)fontDictionary;
 
 @end

@@ -8,8 +8,17 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    # Swift Package Manager derives the local package identity from the checkout
+    # directory name, so the repo must live in a folder named after the Dart
+    # package (square_in_app_payments). Otherwise the example's SPM resolution
+    # fails with a package identity mismatch against the plugin name.
+    defaults:
+      run:
+        working-directory: square_in_app_payments
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: square_in_app_payments
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -17,21 +26,18 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: "3.32.2"
+          flutter-version: "3.44.4"
            # or: 'beta', 'dev' or 'master'
+      - run: flutter config --enable-swift-package-manager
       - run: flutter pub get
-      #Android
+      # Android
       - run: |
           cd example
           flutter pub get
           flutter build apk
-      #IOS
+      # iOS (Swift Package Manager — no CocoaPods)
       - run: |
           cd example
-          flutter pub get
-          cd ios
           flutter clean
-          rm Pods && rm Podfile.lock
           flutter pub get
-          pod install --repo-update
-          xcodebuild -workspace Runner.xcworkspace -configuration Release -scheme Runner -sdk iphoneos SKIP_SETUP_SCRIPT=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          flutter build ios --no-codesign

@@ -27,24 +27,25 @@ In addition to this README, the following is available in the [flutter plugin Gi
 
 ### Flutter
 
-* Flutter version 3.0 or higher
-* Dart version 2.12 or higher
+* Flutter version 3.44 or higher (required for the Swift Package Manager iOS integration)
+* Dart version 3.12 or higher
   
 ### Android
 
 * Android minSdkVersion is API 28 (Android 9). 
 * Android Target SDK version: API 36 (Android 16).
 * Android SDK build tools: 26.0.3
-* Android Gradle Plugin: 3.0.0 or greater.
+* Android Gradle Plugin: 9.0 or greater (the plugin build uses the Gradle Kotlin DSL).
 * Support library: 27.1.1
 * Google Play Services: 16.0.1
 * Google APIs Intel x86 Atom_64 System Image
 
 ### iOS
 
-* Xcode version: 10 or greater.
-* iOS Base SDK: 12 or greater.
-* Deployment target: iOS 12.0 or greater.
+* Xcode version: 16 or greater (required for Swift Package Manager).
+* iOS Base SDK: 14 or greater.
+* Deployment target: iOS 14.0 or greater.
+* iOS integration uses Swift Package Manager (SPM). CocoaPods is still supported; because the plugin ships a Swift entry point, CocoaPods apps must enable `use_frameworks!` in their `Podfile`.
 * This plugin will work on Mac with Intel processor and Apple silicon chips.
 
 ## In-App Payments SDK requirements and limitations
