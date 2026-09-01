@@ -1,11 +1,12 @@
 ## Changelog
 
-### v2.0.0 Unreleased
+### v1.8.0 Sep 1, 2026
 
-* Added Swift Package Manager (SPM) as the primary iOS integration for Flutter 3.44. The Objective-C bridge now lives in the `square_in_app_payments_objc` SPM target with a thin Swift entry point (`SquareInAppPaymentsFlutterPlugin`); localized error strings are loaded via `SWIFTPM_MODULE_BUNDLE`.
-* CocoaPods remains supported for existing consumers. Because the plugin now ships a Swift entry point, CocoaPods apps must enable `use_frameworks!` in their `Podfile` (the default in modern Flutter projects); pure Objective-C apps that previously built without frameworks need to add it.
-* Migrated the Android build to the Gradle Kotlin DSL (`build.gradle.kts` / `settings.gradle.kts`) and replaced `jcenter()` with `mavenCentral()`.
-* Updated the example app to the Flutter UIScene lifecycle (`SceneDelegate`) and refreshed the example and plugin dependencies.
+Requires Flutter 3.44 or later (Dart 3.12) and, on Android, Android Gradle Plugin 9.0 or later. No other setup is needed to upgrade.
+
+* iOS now integrates through Swift Package Manager. Flutter 3.44 enables SPM by default, so apps on a supported Flutter version need no configuration. CocoaPods continues to work with no `Podfile` changes.
+* The CocoaPods `$sqipVersion` variable no longer overrides the iOS SDK version under SPM. The version is pinned in the plugin's `ios/square_in_app_payments/Package.swift` — see [Versioning](doc/versioning.md).
+* Migrated the Android build to the Gradle Kotlin DSL and replaced `jcenter()` with `mavenCentral()`. The `sqipVersion` override still works, most easily as a Gradle property in your app's `android/gradle.properties`.
 
 ### v1.7.14 Jul 23, 2026
 

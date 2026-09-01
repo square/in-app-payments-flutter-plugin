@@ -45,7 +45,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * Xcode version: 16 or greater (required for Swift Package Manager).
 * iOS Base SDK: 14 or greater.
 * Deployment target: iOS 14.0 or greater.
-* iOS integration uses Swift Package Manager (SPM). CocoaPods is still supported; because the plugin ships a Swift entry point, CocoaPods apps must enable `use_frameworks!` in their `Podfile`.
+* iOS integration uses Swift Package Manager (SPM), which Flutter 3.44 enables by default. CocoaPods is still supported and needs no `Podfile` changes.
 * This plugin will work on Mac with Intel processor and Apple silicon chips.
 
 ## In-App Payments SDK requirements and limitations

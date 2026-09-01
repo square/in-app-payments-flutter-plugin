@@ -8,17 +8,8 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    # Swift Package Manager derives the local package identity from the checkout
-    # directory name, so the repo must live in a folder named after the Dart
-    # package (square_in_app_payments). Otherwise the example's SPM resolution
-    # fails with a package identity mismatch against the plugin name.
-    defaults:
-      run:
-        working-directory: square_in_app_payments
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: square_in_app_payments
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -39,5 +30,25 @@ jobs:
       - run: |
           cd example
           flutter clean
+          flutter pub get
+          flutter build ios --no-codesign
+
+  # The plugin still ships a podspec, so the CocoaPods integration has to keep
+  # building. The example has no Podfile checked in (pod install rewrites
+  # Runner.xcodeproj, which would make every SPM build dirty the tracked project
+  # file), so this job copies example/ios/Podfile.cocoapods into place first.
+  build-ios-cocoapods:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: "3.44.4"
+      - run: flutter config --no-enable-swift-package-manager
+      - run: flutter pub get
+      - run: |
+          cd example
+          cp ios/Podfile.cocoapods ios/Podfile
           flutter pub get
           flutter build ios --no-codesign

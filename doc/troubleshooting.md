@@ -71,36 +71,5 @@ There are a few solutions you can use:
 1. Update to a version of proguard > 6.1.0-beta2 (https://sourceforge.net/p/proguard/bugs/731/)
 2. Add `android.proguard.enableRulesExtraction=false` in your android/gradle.properties file like found in the example app.
 
-## iOS Swift Package Manager fails with "unable to override package ... identity ... doesn't match"
 
-### The problem
 
-When building the example app (or any app that depends on this plugin through a local
-`path:` dependency) on iOS, Swift Package Manager fails to resolve:
-
-```
-unable to override package 'square_in_app_payments' because its identity
-'in-app-payments-flutter-plugin' doesn't match override's identity (directory name)
-'square_in_app_payments'
-```
-
-### Likely cause
-
-SPM derives a local package's identity from the **directory name** it lives in. This plugin's
-Dart package name is `square_in_app_payments`, but the repository is commonly checked out under a
-different folder name (for example `in-app-payments-flutter-plugin`). When the containing folder
-name differs from the plugin name, the identities do not match and SPM refuses to resolve.
-
-This only affects local `path:` dependencies. Apps that depend on the published package from
-pub.dev get it under the `square_in_app_payments` name, so they never hit this.
-
-### Solution
-
-Check out (or symlink) the repository into a folder named `square_in_app_payments`, then build
-from there:
-
-```bash
-git clone https://github.com/square/in-app-payments-flutter-plugin.git square_in_app_payments
-cd square_in_app_payments/example
-flutter build ios --no-codesign
-```
