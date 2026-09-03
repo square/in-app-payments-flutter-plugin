@@ -1,8 +1,8 @@
 ## Changelog
 
-### v1.8.0 Sep 1, 2026
+### v2.0.0 Sep 2, 2026
 
-Requires Flutter 3.44 or later (Dart 3.12) and, on Android, Android Gradle Plugin 9.0 or later. No other setup is needed to upgrade.
+Requires Flutter 3.44 or later (Dart 3.12). No other setup is needed to upgrade.
 
 * iOS now integrates through Swift Package Manager. Flutter 3.44 enables SPM by default, so apps on a supported Flutter version need no configuration. CocoaPods continues to work with no `Podfile` changes.
 * The CocoaPods `$sqipVersion` variable no longer overrides the iOS SDK version under SPM. The version is pinned in the plugin's `ios/square_in_app_payments/Package.swift` — see [Versioning](doc/versioning.md).

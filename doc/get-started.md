@@ -49,9 +49,11 @@ to make it an available resource for the Flutter library.
         button at the top of the pane.
     1. Select **New Run Script Phase**.
     1. Paste the following into the editor panel of the new run script:
-        ```
-        FRAMEWORKS="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-        "${FRAMEWORKS}/SquareInAppPaymentsSDK.framework/setup"
+        ```bash
+        SETUP_SCRIPT=${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"/SquareInAppPaymentsSDK.framework/setup"
+        if [ -f "$SETUP_SCRIPT" ]; then
+        "$SETUP_SCRIPT"
+        fi
         ```
 
 ## Step 3: Configure the In-App Payments SDK dependency
@@ -63,7 +65,7 @@ dependencies:
 
   ...
 
-  square_in_app_payments: ^1.8.0
+  square_in_app_payments: ^2.0.0
 ```
 
 ## Step 4: Get Square Application ID

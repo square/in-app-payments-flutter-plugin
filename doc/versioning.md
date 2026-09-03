@@ -7,23 +7,34 @@ You can override the default In-App Payments SDK versions by following this guid
 
 ## iOS
 
-The iOS integration uses Swift Package Manager. The native In-App Payments SDK version is pinned
-in the plugin's Swift package manifest at `ios/square_in_app_payments/Package.swift`:
+### Swift Package Manager
 
-```swift
-.package(url: "https://github.com/square/in-app-payments-ios", exact: "1.6.7")
-```
+There is no per-app override. The plugin's Swift package pins the native SDK to the exact version its
+Objective-C bridge is built against, so the way to move to a different native SDK version is to move
+to a plugin version that ships it.
 
-1. Change the version in the `exact:` constraint to the one you want. This matches the CocoaPods podspec, which pins `SquareInAppPaymentsSDK` / `SquareBuyerVerificationSDK` to a single version.
+### CocoaPods
 
-1. Re-resolve packages and rebuild. Removing the resolved file forces a fresh resolution:
-    ```bash
-    rm -f example/ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved
-    flutter run
+Apps still using the CocoaPods integration can override the version with the `$sqipVersion` variable:
+
+1. Open the `ios/Podfile` file, add the `$sqipVersion` variable and specify your desired version.
+
+    ```ruby
+    # Uncomment this line to define a global platform for your project
+    platform :ios, '14.0'
+
+    # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+    ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+    # specify the version of SquareInAppPaymentsSDK
+    $sqipVersion = '1.7.1'
     ```
 
-> **Note:** Unlike the previous CocoaPods `$sqipVersion` variable, SPM has no per-app override hook,
-> so the version is controlled directly in the plugin's `Package.swift`.
+1. Remove the `ios/Podfile.lock` and build your project again.
+    ```bash
+    rm ios/Podfile.lock
+    flutter run
+    ```
 
 ## Android
 

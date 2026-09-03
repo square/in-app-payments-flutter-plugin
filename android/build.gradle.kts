@@ -1,16 +1,4 @@
 group = "com.squareup.sqip.flutter"
-version = "1.4.0"
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath("com.android.tools.build:gradle:9.0.1")
-    }
-}
 
 rootProject.allprojects {
     repositories {

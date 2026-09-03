@@ -35,7 +35,7 @@ In addition to this README, the following is available in the [flutter plugin Gi
 * Android minSdkVersion is API 28 (Android 9). 
 * Android Target SDK version: API 36 (Android 16).
 * Android SDK build tools: 26.0.3
-* Android Gradle Plugin: 9.0 or greater (the plugin build uses the Gradle Kotlin DSL).
+* Android Gradle Plugin: the plugin inherits your app's version (the plugin build uses the Gradle Kotlin DSL).
 * Support library: 27.1.1
 * Google Play Services: 16.0.1
 * Google APIs Intel x86 Atom_64 System Image
