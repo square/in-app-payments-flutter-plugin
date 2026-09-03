@@ -1,5 +1,13 @@
 ## Changelog
 
+### v2.0.0 Sep 2, 2026
+
+Requires Flutter 3.44 or later (Dart 3.12). No other setup is needed to upgrade.
+
+* iOS now integrates through Swift Package Manager. Flutter 3.44 enables SPM by default, so apps on a supported Flutter version need no configuration. CocoaPods continues to work with no `Podfile` changes.
+* The CocoaPods `$sqipVersion` variable no longer overrides the iOS SDK version under SPM. The version is pinned in the plugin's `ios/square_in_app_payments/Package.swift` — see [Versioning](doc/versioning.md).
+* Migrated the Android build to the Gradle Kotlin DSL and replaced `jcenter()` with `mavenCentral()`. The `sqipVersion` override still works, most easily as a Gradle property in your app's `android/gradle.properties`.
+
 ### v1.7.14 Jul 23, 2026
 
 * Updated to IAP SDK Android to 1.6.9 and iOS to 1.6.7 — see the [IAP SDK release notes](https://developer.squareup.com/docs/changelog/mobile-logs/2026-07-22)

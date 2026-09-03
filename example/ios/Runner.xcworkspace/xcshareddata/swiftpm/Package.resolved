@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "in-app-payments-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/square/in-app-payments-ios",
+      "state" : {
+        "revision" : "386889b41c945b64a147a2999823356c0883504e",
+        "version" : "1.6.7"
+      }
+    }
+  ],
+  "version" : 2
+}

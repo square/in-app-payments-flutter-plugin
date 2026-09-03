@@ -5,6 +5,9 @@ on:
   pull_request:
     branches: master
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: macos-latest
@@ -17,21 +20,38 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: "3.32.2"
+          flutter-version: "3.44.4"
            # or: 'beta', 'dev' or 'master'
+      - run: flutter config --enable-swift-package-manager
       - run: flutter pub get
-      #Android
+      # Android
       - run: |
           cd example
           flutter pub get
           flutter build apk
-      #IOS
+      # iOS (Swift Package Manager — no CocoaPods)
       - run: |
           cd example
-          flutter pub get
-          cd ios
           flutter clean
-          rm Pods && rm Podfile.lock
           flutter pub get
-          pod install --repo-update
-          xcodebuild -workspace Runner.xcworkspace -configuration Release -scheme Runner -sdk iphoneos SKIP_SETUP_SCRIPT=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          flutter build ios --no-codesign
+
+  # The plugin still ships a podspec, so the CocoaPods integration has to keep
+  # building. The example has no Podfile checked in (pod install rewrites
+  # Runner.xcodeproj, which would make every SPM build dirty the tracked project
+  # file), so this job copies example/ios/Podfile.cocoapods into place first.
+  build-ios-cocoapods:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: "3.44.4"
+      - run: flutter config --no-enable-swift-package-manager
+      - run: flutter pub get
+      - run: |
+          cd example
+          cp ios/Podfile.cocoapods ios/Podfile
+          flutter pub get
+          flutter build ios --no-codesign

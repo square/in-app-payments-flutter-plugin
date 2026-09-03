@@ -1,0 +1,1 @@
+rootProject.name = "square_in_app_payments"

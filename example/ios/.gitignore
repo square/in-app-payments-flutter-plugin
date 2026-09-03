@@ -11,6 +11,11 @@
 **/DerivedData/
 Icon?
 **/Pods/
+# The example integrates through Swift Package Manager; the CocoaPods build is a
+# CI-only regression check that copies Podfile.cocoapods into place (see that
+# file), so neither the generated Podfile nor its lockfile is tracked.
+Podfile
+Podfile.lock
 **/.symlinks/
 profile
 xcuserdata
