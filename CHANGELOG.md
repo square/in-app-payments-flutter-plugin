@@ -1,6 +1,6 @@
 ## Changelog
 
-### v2.0.0 Sep 2, 2026
+### v2.0.0 Sep 4, 2026
 
 Requires Flutter 3.44 or later (Dart 3.12). No other setup is needed to upgrade.
 
