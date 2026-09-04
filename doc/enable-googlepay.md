@@ -13,6 +13,18 @@ before using **Google Pay**.
 * If you haven't already created a Flutter project with In-App Payments SDK, use the [Getting Started with the Flutter Plugin for In-App Payments SDK](get-started.md) to 
 set up a Flutter project .
 
+## Google Pay API approval (production)
+
+Google requires a **separate production approval** for the Google Pay API. Passing the Square plugin’s test environment (`environmentTest`) does not mean Google has approved your app to charge real cards in production.
+
+Before you ship Google Pay to users with real payments:
+
+1. Complete Google’s prerequisites (supported processor/gateway or PCI-compliant environment, setup steps). See Google’s [Request production access] guide.
+2. Create a merchant profile and register your Android app in the [Google Pay & Wallet Console].
+3. Submit your integration for Google’s review and wait for approval.
+4. After approval, switch your app to the production Google Pay environment (for this plugin, `google_pay_constants.environmentProduction` in `initializeGooglePay`) and use a **release-signed** build, as Google expects for production.
+
+Until Google approves production access, users may see payment failures in production (for example errors such as `OR_BIBED_11`) even when the integration works in test or staging. The [integration checklist] summarizes production readiness.
 
 ## Process overview
 
@@ -162,3 +174,6 @@ class _MyAppState extends State<MyApp> {
 [Google Pay objects]: https://developers.google.com/pay/api/android/reference/object 
 [BackendQuickStart Sample]: https://github.com/square/in-app-payments-server-quickstart
 [add a card or payment account]: https://support.google.com/pay/answer/7625139?visit_id=636775920124642581-1648826871&rd=1
+[Request production access]: https://developers.google.com/pay/api/android/guides/test-and-deploy/request-prod-access
+[Google Pay & Wallet Console]: https://pay.google.com/business/console?utm_source=devsite&utm_medium=devsite&utm_campaign=devsite
+[integration checklist]: https://developers.google.com/pay/api/android/guides/test-and-deploy/integration-checklist
