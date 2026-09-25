@@ -14,7 +14,7 @@ plugins {
     id("com.android.library")
 }
 
-val minIapSdkVersion = "1.6.9"
+val minIapSdkVersion = "1.7.0"
 val compileSdkVersionDefault = 36
 
 android {

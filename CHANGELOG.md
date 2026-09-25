@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.0.1 Sep 25, 2026
+
+* Updated IAP SDK Android to 1.7.0 (iOS remains on 1.6.7). 1.7.0 is a hotfix on top of 1.6.9: buyer verification no longer sets a `threeDSRequestorAppURL` the app can never receive on, which fixes 3DS out-of-band challenge flows. No API changes.
+
 ### v2.0.0 Sep 4, 2026
 
 Requires Flutter 3.44 or later (Dart 3.12). No other setup is needed to upgrade.
