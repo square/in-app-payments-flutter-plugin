@@ -119,6 +119,16 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
         int priceStatus = call.argument("priceStatus");
         googlePayModule.requestGooglePayNonce(result, price, currencyCode, priceStatus);
         break;
+      case "requestGooglePayNonceWithBuyerVerification":
+        String googlePayPrice = call.argument("price");
+        String googlePayCurrencyCode = call.argument("currencyCode");
+        int googlePayPriceStatus = call.argument("priceStatus");
+        String googlePayLocationId = call.argument("squareLocationId");
+        String googlePayBuyerAction = call.argument("buyerAction");
+        HashMap<String, Object> googlePayMoneyMap = call.argument("money");
+        HashMap<String, Object> googlePayContactMap = call.argument("contact");
+        googlePayModule.requestGooglePayNonceWithBuyerVerification(result, googlePayPrice, googlePayCurrencyCode, googlePayPriceStatus, googlePayLocationId, googlePayBuyerAction, googlePayMoneyMap, googlePayContactMap);
+        break;
       case "startCardEntryFlowWithBuyerVerification":
         boolean collectPostal = call.argument("collectPostalCode");
         String locationId = call.argument("squareLocationId");
@@ -127,6 +137,14 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
         HashMap<String, Object> contactMap = call.argument("contact");
 
         cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostal, locationId, buyerAction, moneyMap, contactMap);
+        break;
+      case "startGiftCardEntryFlowWithBuyerVerification":
+        String giftLocationId = call.argument("squareLocationId");
+        String giftBuyerAction = call.argument("buyerAction");
+        HashMap<String, Object> giftMoneyMap = call.argument("money");
+        HashMap<String, Object> giftContactMap = call.argument("contact");
+
+        cardEntryModule.startGiftCardEntryFlowWithBuyerVerification(result, giftLocationId, giftBuyerAction, giftMoneyMap, giftContactMap);
         break;
       case "startBuyerVerificationFlow":
         String locationId2 = call.argument("squareLocationId");

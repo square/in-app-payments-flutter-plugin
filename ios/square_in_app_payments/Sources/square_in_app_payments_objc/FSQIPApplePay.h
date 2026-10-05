@@ -16,6 +16,7 @@
 
 #import <Flutter/Flutter.h>
 @import SquareInAppPaymentsSDK;
+@import SquareBuyerVerificationSDK;
 
 
 @interface FSQIPApplePay : NSObject <PKPaymentAuthorizationViewControllerDelegate>
@@ -32,6 +33,17 @@
                 summaryLabel:(NSString *)summaryLabel
                        price:(NSString *)price
                  paymentType:(NSString *)paymentType;
+
+- (void)requestApplePayNonceWithBuyerVerification:(FlutterResult)result
+                                      countryCode:(NSString *)countryCode
+                                     currencyCode:(NSString *)currencyCode
+                                     summaryLabel:(NSString *)summaryLabel
+                                            price:(NSString *)price
+                                      paymentType:(NSString *)paymentType
+                                       locationId:(NSString *)locationId
+                                buyerActionString:(NSString *)buyerActionString
+                                         moneyMap:(NSDictionary *)moneyMap
+                                       contactMap:(NSDictionary *)contactMap;
 
 - (void)completeApplePayAuthorization:(FlutterResult)result
                             isSuccess:(BOOL)isSuccess

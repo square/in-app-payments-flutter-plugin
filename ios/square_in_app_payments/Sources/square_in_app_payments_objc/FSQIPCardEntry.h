@@ -24,6 +24,7 @@
 - (void)startCardEntryFlow:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode;
 - (void)startCardEntryFlowWithVerification:(FlutterResult)result collectPostalCode:(BOOL)collectPostalCode locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap;
 - (void)startGiftCardEntryFlow:(FlutterResult)result;
+- (void)startGiftCardEntryFlowWithVerification:(FlutterResult)result locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap;
 - (void)completeCardEntry:(FlutterResult)result;
 - (void)showCardNonceProcessingError:(FlutterResult)result errorMessage:(NSString *)errorMessage;
 - (void)setTheme:(FlutterResult)result theme:(NSDictionary *)theme;

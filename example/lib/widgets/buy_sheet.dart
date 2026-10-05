@@ -77,6 +77,9 @@ class BuySheetState extends State<BuySheet> {
       case PaymentType.giftcardPayment:
         // call _onStartGiftCardEntryFlow to start Gift Card Entry.
         await _onStartGiftCardEntryFlow();
+        // OR call _onStartGiftCardEntryFlowWithBuyerVerification to start Gift Card Entry with buyer verification (SCA)
+        // NOTE this requires _squareLocationSet to be set
+        // await _onStartGiftCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
@@ -90,14 +93,21 @@ class BuySheetState extends State<BuySheet> {
         break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled!) {
+          // call _onStartGooglePay to start Google Pay without buyer verification (SCA)
           _onStartGooglePay();
+          // OR call _onStartGooglePayWithBuyerVerification to start Google Pay with buyer verification (SCA)
+          // _onStartGooglePayWithBuyerVerification();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
       case PaymentType.applePay:
         if (_applePayMerchantIdSet && widget.applePayEnabled!) {
+          // call _onStartApplePay to start Apple Pay without buyer verification (SCA)
           _onStartApplePay();
+          // OR call _onStartApplePayWithBuyerVerification to start Apple Pay with buyer verification (SCA)
+          // NOTE this requires _squareLocationSet to be set
+          // _onStartApplePayWithBuyerVerification();
         } else {
           _showapplePayMerchantIdNotSet();
         }
@@ -234,6 +244,41 @@ class BuySheetState extends State<BuySheet> {
     );
   }
 
+  // ignore: unused_element
+  Future<void> _onStartGiftCardEntryFlowWithBuyerVerification() async {
+    var money = Money(
+      (b) => b
+        ..amount = 100
+        ..currencyCode = 'USD',
+    );
+
+    var contact = Contact(
+      (b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = BuiltList<String>([
+          "London Eye",
+          "Riverside Walk",
+        ]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7",
+    );
+
+    await InAppPayments.startGiftCardEntryFlowWithBuyerVerification(
+      onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+      onBuyerVerificationFailure: _onBuyerVerificationFailure,
+      onCardEntryCancel: _onCancelCardEntryFlow,
+      buyerAction: "Charge",
+      money: money,
+      squareLocationId: squareLocationId,
+      contact: contact,
+    );
+  }
+
+  // ignore: unused_element
   Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
     var money = Money(
       (b) => b
@@ -362,6 +407,52 @@ class BuySheetState extends State<BuySheet> {
     _showOrderSheet();
   }
 
+  // ignore: unused_element
+  void _onStartGooglePayWithBuyerVerification() async {
+    var money = Money(
+      (b) => b
+        ..amount = 100
+        ..currencyCode = 'USD',
+    );
+
+    var contact = Contact(
+      (b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = BuiltList<String>([
+          "London Eye",
+          "Riverside Walk",
+        ]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7",
+    );
+
+    try {
+      await InAppPayments.requestGooglePayNonceWithBuyerVerification(
+        priceStatus: google_pay_constants.totalPriceStatusFinal,
+        price: getCookieAmount(),
+        currencyCode: 'USD',
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onGooglePayCanceled: onGooglePayEntryCanceled,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start GooglePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
@@ -373,6 +464,54 @@ class BuySheetState extends State<BuySheet> {
         onApplePayNonceRequestSuccess: _onApplePayNonceRequestSuccess,
         onApplePayNonceRequestFailure: _onApplePayNonceRequestFailure,
         onApplePayComplete: _onApplePayEntryComplete,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start ApplePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
+  // ignore: unused_element
+  void _onStartApplePayWithBuyerVerification() async {
+    var money = Money(
+      (b) => b
+        ..amount = 100
+        ..currencyCode = 'USD',
+    );
+
+    var contact = Contact(
+      (b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = BuiltList<String>([
+          "London Eye",
+          "Riverside Walk",
+        ]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7",
+    );
+
+    try {
+      await InAppPayments.requestApplePayNonceWithBuyerVerification(
+        price: getCookieAmount(),
+        summaryLabel: 'Cookie',
+        countryCode: 'US',
+        currencyCode: 'USD',
+        paymentType: ApplePayPaymentType.finalPayment,
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onApplePayComplete: _onApplePayEntryComplete,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
       );
     } on PlatformException catch (ex) {
       showAlertDialog(

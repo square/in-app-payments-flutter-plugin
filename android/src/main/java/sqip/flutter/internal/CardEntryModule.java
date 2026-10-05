@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -105,6 +106,9 @@ public final class CardEntryModule {
       }
 
       if (requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE) {
+        if (CardEntryModule.this.contact == null && CardEntryModule.this.paymentSourceId == null) {
+          return false;
+        }
         BuyerVerification.handleActivityResult(data, result -> {
           if (result.isSuccess()) {
             Map<String, Object> payload = new LinkedHashMap<>();
@@ -128,6 +132,8 @@ public final class CardEntryModule {
         });
 
         this.contact = null;
+        this.paymentSourceId = null;
+        return true;
       }
 
       return false;
@@ -135,6 +141,7 @@ public final class CardEntryModule {
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
+    this.contact = null;
     CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
@@ -152,13 +159,25 @@ public final class CardEntryModule {
   }
 
   public void startGiftCardEntryFlow(MethodChannel.Result result) {
+    this.contact = null;
+    CardEntry.startGiftCardEntryActivity(currentActivity);
+    result.success(null);
+  }
+
+  public void startGiftCardEntryFlowWithBuyerVerification(MethodChannel.Result result, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
+    this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
+    this.buyerAction = getBuyerAction(buyerActionString, money);
+    this.contact = getContact(contactMap);
+    this.paymentSourceId = null;
+
     CardEntry.startGiftCardEntryActivity(currentActivity);
     result.success(null);
   }
 
   public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = getMoney(moneyMap);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
     this.contact = getContact(contactMap);
     this.paymentSourceId = null;
@@ -169,7 +188,7 @@ public final class CardEntryModule {
 
   public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = getMoney(moneyMap);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
     this.contact = getContact(contactMap);
     this.paymentSourceId = paymentSourceId;
@@ -194,7 +213,7 @@ public final class CardEntryModule {
     return new Contact.Builder()
         .familyName((familyName != null) ? familyName.toString() : "")
         .email((email != null) ? email.toString() : "")
-        .addressLines((addressLines != null) ? (ArrayList<String>) addressLines : new ArrayList<>())
+        .addressLines(toStringList(addressLines))
         .city((city != null) ? city.toString() : "")
         .countryCode(country)
         .postalCode((postalCode != null) ? postalCode.toString() : "")
@@ -227,4 +246,17 @@ public final class CardEntryModule {
     typedArray.recycle();
     return delay;
   }
+  
+  static List<String> toStringList(Object value) {
+    List<String> lines = new ArrayList<>();
+    if (value instanceof List<?>) {
+      for (Object line : (List<?>) value) {
+        if (line != null) {
+          lines.add(line.toString());
+        }
+      }
+    }
+    return lines;
+  }
+
 }
