@@ -93,6 +93,8 @@ public final class CardEntryModule {
             VerificationParameters params = new VerificationParameters(nonce, buyerAction, squareIdentifier, contact);
             BuyerVerification.verify(currentActivity, params);
           } else {
+            // Release ownership before the cancel callback can start another payment flow.
+            clearBuyerVerificationState();
             long delayMs = readCardEntryCloseExitAnimationDurationMs();
             handler.postDelayed(() -> {
               if (cardEntryActivityResult.isCanceled()) {
@@ -131,8 +133,7 @@ public final class CardEntryModule {
           }
         });
 
-        this.contact = null;
-        this.paymentSourceId = null;
+        clearBuyerVerificationState();
         return true;
       }
 
@@ -141,7 +142,7 @@ public final class CardEntryModule {
   }
 
   public void startCardEntryFlow(MethodChannel.Result result, boolean collectPostalCode) {
-    this.contact = null;
+    clearBuyerVerificationState();
     CardEntry.startCardEntryActivity(currentActivity, collectPostalCode);
     result.success(null);
   }
@@ -159,12 +160,13 @@ public final class CardEntryModule {
   }
 
   public void startGiftCardEntryFlow(MethodChannel.Result result) {
-    this.contact = null;
+    clearBuyerVerificationState();
     CardEntry.startGiftCardEntryActivity(currentActivity);
     result.success(null);
   }
 
   public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
+    clearBuyerVerificationState();
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
     Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
@@ -176,6 +178,7 @@ public final class CardEntryModule {
   }
 
   public void startBuyerVerificationFlow(MethodChannel.Result result, String buyerActionString, Map<String, Object> moneyMap, String squareLocationId, Map<String, Object> contactMap, String paymentSourceId) {
+    clearBuyerVerificationState();
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
     Money money = moneyMap != null ? getMoney(moneyMap) : null;
     this.buyerAction = getBuyerAction(buyerActionString, money);
@@ -185,6 +188,14 @@ public final class CardEntryModule {
     VerificationParameters params = new VerificationParameters(paymentSourceId, buyerAction, squareIdentifier, contact);
     BuyerVerification.verify(currentActivity, params);
     result.success(null);
+  }
+
+  private void clearBuyerVerificationState() {
+    contact = null;
+    cardResult = null;
+    paymentSourceId = null;
+    buyerAction = null;
+    squareIdentifier = null;
   }
 
   private Contact getContact(Map<String, Object> contactMap) {
