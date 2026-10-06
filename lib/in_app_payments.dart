@@ -370,6 +370,10 @@ class InAppPayments {
     }
   }
 
+  /// Completes and dismisses the Apple Pay sheet before verifying the buyer.
+  /// [onApplePayComplete] reports sheet dismissal before verification callbacks.
+  /// After verification succeeds, charge on your backend and show the payment
+  /// result in your app; this flow does not use [completeApplePayAuthorization].
   static Future requestApplePayNonceWithBuyerVerification(
       {required String price,
       required String summaryLabel,

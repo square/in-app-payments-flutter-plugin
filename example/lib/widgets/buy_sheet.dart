@@ -80,10 +80,10 @@ class BuySheetState extends State<BuySheet> {
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
-        await _onStartCardEntryFlow();
+        //await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-        // await _onStartCardEntryFlowWithBuyerVerification();
+         await _onStartCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.buyerVerification:
         await _onStartBuyerVerificationFlow();
@@ -91,9 +91,9 @@ class BuySheetState extends State<BuySheet> {
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled!) {
           // call _onStartGooglePay to start Google Pay without buyer verification (SCA)
-          _onStartGooglePay();
+          //_onStartGooglePay();
           // OR call _onStartGooglePayWithBuyerVerification to start Google Pay with buyer verification (SCA)
-          // _onStartGooglePayWithBuyerVerification();
+           _onStartGooglePayWithBuyerVerification();
         } else {
           _showSquareLocationIdNotSet();
         }
@@ -470,7 +470,8 @@ class BuySheetState extends State<BuySheet> {
         paymentType: ApplePayPaymentType.finalPayment,
         onBuyerVerificationSuccess: _onApplePayBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
-        onApplePayComplete: _onApplePayEntryComplete,
+        // Sheet dismissal precedes verification and does not imply cancellation.
+        onApplePayComplete: () {},
         buyerAction: "Charge",
         money: money,
         squareLocationId: squareLocationId,
@@ -490,10 +491,6 @@ class BuySheetState extends State<BuySheet> {
       BuyerVerificationDetails result) async {
     if (!_chargeServerHostReplaced) {
       _applePayStatus = ApplePayStatus.fail;
-      await InAppPayments.completeApplePayAuthorization(
-        isSuccess: false,
-        errorMessage: 'Payment server is not configured.',
-      );
       _showUrlNotSetAndPrintCurlCommand(
         result.nonce,
         verificationToken: result.token,
@@ -508,10 +505,6 @@ class BuySheetState extends State<BuySheet> {
           ? ex.errorMessage
           : 'Unable to confirm the payment. Check its status before retrying.';
       _applePayStatus = ApplePayStatus.fail;
-      await InAppPayments.completeApplePayAuthorization(
-        isSuccess: false,
-        errorMessage: errorMessage,
-      );
       showAlertDialog(
         context: BuySheet.scaffoldKey.currentContext!,
         title: 'Error processing ApplePay payment',
@@ -522,7 +515,12 @@ class BuySheetState extends State<BuySheet> {
     }
 
     _applePayStatus = ApplePayStatus.success;
-    await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+    showAlertDialog(
+      context: BuySheet.scaffoldKey.currentContext!,
+      title: 'Payment successful',
+      description: 'Your payment was accepted.',
+      status: true,
+    );
   }
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {

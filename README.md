@@ -43,8 +43,8 @@ In addition to this README, the following is available in the [flutter plugin Gi
 ### iOS
 
 * Xcode version: 16 or greater (required for Swift Package Manager).
-* iOS Base SDK: 14 or greater.
-* Deployment target: iOS 14.0 or greater.
+* iOS Base SDK: 15 or greater.
+* Deployment target: iOS 15.0 or greater.
 * iOS integration uses Swift Package Manager (SPM), which Flutter 3.44 enables by default. CocoaPods is still supported and needs no `Podfile` changes.
 * This plugin will work on Mac with Intel processor and Apple silicon chips.
 

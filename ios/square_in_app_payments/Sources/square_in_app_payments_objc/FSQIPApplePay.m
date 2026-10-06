@@ -35,6 +35,7 @@ API_AVAILABLE(ios(11.0))
 @property (strong, readwrite) SQIPBuyerAction *buyerAction;
 @property (strong, readwrite) SQIPContact *contact;
 @property (strong, readwrite) SQIPCardDetails *cardDetails;
+@property (weak, readwrite) PKPaymentAuthorizationViewController *paymentController;
 
 @end
 
@@ -122,6 +123,10 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
     self.completionHandler = completion;
 
     [nonceRequest performWithCompletionHandler:^(SQIPCardDetails *_Nullable result, NSError *_Nullable error) {
+        // Ignore a nonce response arriving after the buyer dismissed this sheet.
+        if (self.paymentController != controller) {
+            return;
+        }
         if (error) {
             if (self.contact) {
                 [self _finishApplePayAuthorization:NO errorMessage:error.localizedDescription];
@@ -140,35 +145,8 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
 
         if (self.contact) {
             self.cardDetails = result;
-            SQIPVerificationParameters *params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:result.nonce
-                                                                                                 buyerAction:self.buyerAction
-                                                                                                  locationID:self.locationId
-                                                                                                     contact:self.contact];
-            [SQIPBuyerVerificationSDK.shared verifyWithParameters:params
-                                                            theme:self.theme
-                                                   viewController:controller
-                                                          success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
-                NSDictionary *verificationResult =
-                    @{
-                        @"nonce" : self.cardDetails.nonce,
-                        @"card" : [self.cardDetails.card jsonDictionary],
-                        @"token" : verifiedDetails.verificationToken
-                    };
-                [self.channel invokeMethod:@"onBuyerVerificationSuccess" arguments:verificationResult];
-                // The app reports authorization success after its backend accepts the payment.
-                self.contact = nil;
-            }
-                                                          failure:^(NSError *_Nonnull verificationError) {
-                NSString *debugCode = verificationError.userInfo[SQIPErrorDebugCodeKey];
-                NSString *debugMessage = verificationError.userInfo[SQIPErrorDebugMessageKey];
-                [self.channel invokeMethod:@"onBuyerVerificationError"
-                                 arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
-                                                                            message:verificationError.localizedDescription
-                                                                          debugCode:debugCode
-                                                                       debugMessage:debugMessage]];
-                [self _finishApplePayAuthorization:NO errorMessage:verificationError.localizedDescription];
-                self.contact = nil;
-            }];
+            // Release the wallet sheet before presenting buyer verification.
+            [self _finishApplePayAuthorization:YES errorMessage:nil];
             return;
         }
 
@@ -178,16 +156,65 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
 
 - (void)paymentAuthorizationViewControllerDidFinish:(nonnull PKPaymentAuthorizationViewController *)controller;
 {
-    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [rootViewController.navigationController popViewControllerAnimated:YES];
-    } else {
-        [rootViewController dismissViewControllerAnimated:YES completion:nil];
+    if (self.paymentController != controller) {
+        return;
     }
-    [self.channel invokeMethod:@"onApplePayComplete" arguments:nil];
+    UIViewController *presenter = controller.presentingViewController;
+    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    SQIPCardDetails *cardDetails = self.cardDetails;
+    SQIPVerificationParameters *params = nil;
+    if (cardDetails && self.contact) {
+        params = [[SQIPVerificationParameters alloc] initWithPaymentSourceID:cardDetails.nonce
+                                                               buyerAction:self.buyerAction
+                                                                locationID:self.locationId
+                                                                   contact:self.contact];
+    }
+
+    // Cancellation must not leave a nonce or verification request for a later sheet.
+    self.paymentController = nil;
+    self.completionHandler = nil;
+    self.cardDetails = nil;
+    self.contact = nil;
+    self.buyerAction = nil;
+    self.locationId = nil;
+
+    [controller dismissViewControllerAnimated:YES completion:^{
+        [self.channel invokeMethod:@"onApplePayComplete" arguments:nil];
+        if (params) {
+            [self _verifyBuyerWithParameters:params
+                                cardDetails:cardDetails
+                             viewController:presenter ?: rootViewController];
+        }
+    }];
 }
 
 #pragma mark - Private Methods
+
+- (void)_verifyBuyerWithParameters:(SQIPVerificationParameters *)params
+                      cardDetails:(SQIPCardDetails *)cardDetails
+                   viewController:(UIViewController *)viewController
+{
+    [SQIPBuyerVerificationSDK.shared verifyWithParameters:params
+                                                  theme:self.theme
+                                         viewController:viewController
+                                                success:^(SQIPBuyerVerifiedDetails *_Nonnull verifiedDetails) {
+        NSDictionary *verificationResult = @{
+            @"nonce" : cardDetails.nonce,
+            @"card" : [cardDetails.card jsonDictionary],
+            @"token" : verifiedDetails.verificationToken
+        };
+        [self.channel invokeMethod:@"onBuyerVerificationSuccess" arguments:verificationResult];
+    }
+                                                failure:^(NSError *_Nonnull verificationError) {
+        NSString *debugCode = verificationError.userInfo[SQIPErrorDebugCodeKey];
+        NSString *debugMessage = verificationError.userInfo[SQIPErrorDebugMessageKey];
+        [self.channel invokeMethod:@"onBuyerVerificationError"
+                         arguments:[FSQIPErrorUtilities callbackErrorObject:FlutterInAppPaymentsUsageError
+                                                                    message:verificationError.localizedDescription
+                                                                  debugCode:debugCode
+                                                               debugMessage:debugMessage]];
+    }];
+}
 
 - (void)_requestApplePayNonce:(FlutterResult)result
                   countryCode:(NSString *)countryCode
@@ -196,6 +223,8 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                         price:(NSString *)price
                   paymentType:(NSString *)paymentType
 {
+    self.cardDetails = nil;
+    self.completionHandler = nil;
     if (!self.applePayMerchantId) {
         self.contact = nil;
         result([FlutterError errorWithCode:FlutterInAppPaymentsUsageError
@@ -232,6 +261,7 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
         [[PKPaymentAuthorizationViewController alloc] initWithPaymentRequest:paymentRequest];
 
     paymentAuthorizationViewController.delegate = self;
+    self.paymentController = paymentAuthorizationViewController;
     UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     [rootViewController presentViewController:paymentAuthorizationViewController animated:YES completion:nil];
     result(nil);
@@ -239,10 +269,12 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
 
 - (void)_finishApplePayAuthorization:(BOOL)isSuccess errorMessage:(NSString *__nullable)errorMessage
 {
-    if (self.completionHandler != nil) {
+    CompletionHandler completion = self.completionHandler;
+    self.completionHandler = nil;
+    if (completion != nil) {
         if (isSuccess) {
             PKPaymentAuthorizationResult *authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil];
-            self.completionHandler(authResult);
+            completion(authResult);
         } else {
             NSDictionary *userInfo = errorMessage == nil || errorMessage.length == 0 ? nil : @{NSLocalizedDescriptionKey : errorMessage };
             NSError *error = [NSError errorWithDomain:NSGlobalDomain
@@ -250,13 +282,12 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                                              userInfo:userInfo];
             if (@available(iOS 11.0, *)) {
                 PKPaymentAuthorizationResult *authResult = [[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ error ]];
-                self.completionHandler(authResult);
+                completion(authResult);
             } else {
                 // This should never happen as we require target to be 11.0 or above
                 NSAssert(false, @"No Apple Pay support for iOS 10 or below.");
             }
         }
-        self.completionHandler = nil;
     }
 }
 

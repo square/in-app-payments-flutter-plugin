@@ -536,7 +536,9 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 Starts the Apple Pay payment authorization with buyer verification flow enabled. Unlike [requestApplePayNonce](#requestapplepaynonce), the nonce and the verification token are both delivered through the buyer verification callbacks.
 
-Verification success does not mean the payment has been accepted. In `onBuyerVerificationSuccess`, send the nonce and verification token to your backend and await the payment result before calling [completeApplePayAuthorization](#completeapplepayauthorization) with success or failure. Nonce and verification errors complete the native authorization with failure automatically.
+The native layer completes Apple Pay authorization after obtaining the nonce, then dismisses the sheet and emits `onApplePayComplete`. Buyer verification starts only after dismissal, as required by [Square's verification guidance](https://developer.squareup.com/docs/in-app-payments-sdk/verify-buyer). If the buyer cancels before a nonce is available, verification does not start.
+
+`onApplePayComplete` indicates sheet dismissal, not payment success or cancellation. Verification success also does not mean the payment has been accepted. In `onBuyerVerificationSuccess`, send the nonce and verification token to your backend and display the final payment result in your app. Do not call `completeApplePayAuthorization` for this flow: the sheet is already closed and its completion handler has been released. Nonce errors complete the authorization with failure; verification errors are reported in the app after dismissal.
 
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
@@ -581,15 +583,14 @@ import 'package:square_in_app_payments/in_app_payments.dart';
           try {
             await chargeCardAfterBuyerVerification(result.nonce, result.token);
           } on Exception catch (_) {
-            await InAppPayments.completeApplePayAuthorization(
-                isSuccess: false,
-                errorMessage: 'Unable to confirm the payment.');
+            // Display the payment failure in your app.
             return;
           }
-          await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+          // Display payment success only after your backend accepts it.
         },
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
-        onApplePayComplete: _onApplePayEntryComplete,
+        // The sheet closes before verification; do not treat this as payment success.
+        onApplePayComplete: () {},
         buyerAction: "Charge",
         money: money,
         squareLocationId: squareLocationId,
