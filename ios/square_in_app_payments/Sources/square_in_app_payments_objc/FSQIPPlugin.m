@@ -68,16 +68,6 @@ FlutterMethodChannel *_channel;
         [self.cardEntryModule startCardEntryFlow:result collectPostalCode:collectPostalCode];
     } else if ([@"startGiftCardEntryFlow" isEqualToString:call.method]) {
         [self.cardEntryModule startGiftCardEntryFlow:result];
-    } else if ([@"startGiftCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
-        NSString *squareLocationId = call.arguments[@"squareLocationId"];
-        NSString *buyerActionString = call.arguments[@"buyerAction"];
-        NSDictionary *moneyMap = call.arguments[@"money"];
-        NSDictionary *contactMap = call.arguments[@"contact"];
-        [self.cardEntryModule startGiftCardEntryFlowWithVerification:result
-            locationId:squareLocationId
-            buyerActionString:buyerActionString
-            moneyMap:moneyMap
-            contactMap:contactMap];
     } else if ([@"startCardEntryFlowWithBuyerVerification" isEqualToString:call.method]) {
         BOOL collectPostalCode = [call.arguments[@"collectPostalCode"] boolValue];
         NSString *squareLocationId = call.arguments[@"squareLocationId"];

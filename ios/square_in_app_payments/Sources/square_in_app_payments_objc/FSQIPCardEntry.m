@@ -111,29 +111,6 @@ static NSString *const FSQIPOnBuyerVerificationErrorEventName = @"onBuyerVerific
     result(nil);
 }
 
-- (void)startGiftCardEntryFlowWithVerification:(FlutterResult)result locationId:(NSString *)locationId buyerActionString:(NSString *)buyerActionString moneyMap:(NSDictionary *)moneyMap contactMap:(NSDictionary *)contactMap
-{
-    SQIPMoney * money = moneyMap != nil ? [self _getMoney:moneyMap] : nil;
-    SQIPBuyerAction * buyerAction = [self _getBuyerAction:buyerActionString money:money];
-    SQIPContact * contact = [self _getContact:contactMap];
-
-    self.locationId = locationId;
-    self.buyerAction = buyerAction;
-    self.contact = contact;
-    SQIPCardEntryViewController *cardEntryForm = [self _makeGiftCardEntryForm];
-    cardEntryForm.delegate = self;
-    self.cardEntryViewController = cardEntryForm;
-
-    UIViewController *rootViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [((UINavigationController *)rootViewController) pushViewController:cardEntryForm animated:YES];
-    } else {
-        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cardEntryForm];
-        [rootViewController presentViewController:navigationController animated:YES completion:nil];
-    }
-    result(nil);
-}
-
 #pragma mark - SQIPCardEntryViewControllerDelegate
 
 - (void)cardEntryViewController:(SQIPCardEntryViewController *)cardEntryViewController didObtainCardDetails:(SQIPCardDetails *)cardDetails completionHandler:(CompletionHandler)completionHandler

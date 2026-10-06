@@ -460,33 +460,6 @@ class InAppPayments {
         'startCardEntryFlowWithBuyerVerification', params);
   }
 
-  static Future startGiftCardEntryFlowWithBuyerVerification(
-      {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
-      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
-      required CardEntryCancelCallback onCardEntryCancel,
-      required String buyerAction,
-      Money? money,
-      required String squareLocationId,
-      required Contact contact}) async {
-    assert(buyerAction != 'Charge' || money != null,
-        'money is required when buyerAction is "Charge"');
-    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
-    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
-    _cardEntryCancelCallback = onCardEntryCancel;
-    var params = <String, dynamic>{
-      'buyerAction': buyerAction,
-      'contact':
-          _standardSerializers.serializeWith(Contact.serializer, contact),
-      'squareLocationId': squareLocationId,
-    };
-    if (money != null) {
-      params['money'] =
-          _standardSerializers.serializeWith(Money.serializer, money);
-    }
-    await _channel.invokeMethod(
-        'startGiftCardEntryFlowWithBuyerVerification', params);
-  }
-
   static Future startBuyerVerificationFlow(
       {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,

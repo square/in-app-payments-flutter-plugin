@@ -138,14 +138,6 @@ public class SquareInAppPaymentsFlutterPlugin implements MethodCallHandler, Flut
 
         cardEntryModule.startCardEntryFlowWithBuyerVerification(result, collectPostal, locationId, buyerAction, moneyMap, contactMap);
         break;
-      case "startGiftCardEntryFlowWithBuyerVerification":
-        String giftLocationId = call.argument("squareLocationId");
-        String giftBuyerAction = call.argument("buyerAction");
-        HashMap<String, Object> giftMoneyMap = call.argument("money");
-        HashMap<String, Object> giftContactMap = call.argument("contact");
-
-        cardEntryModule.startGiftCardEntryFlowWithBuyerVerification(result, giftLocationId, giftBuyerAction, giftMoneyMap, giftContactMap);
-        break;
       case "startBuyerVerificationFlow":
         String locationId2 = call.argument("squareLocationId");
         String buyerAction2 = call.argument("buyerAction");

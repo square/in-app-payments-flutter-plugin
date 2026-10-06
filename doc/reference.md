@@ -26,7 +26,6 @@ Method                                                       | Return Object    
 [setSquareApplicationId](#setsquareapplicationid)            | void                      | Sets the Square Application ID.
 [startCardEntryFlow](#startcardentryflow)                    | void                      | Displays a full-screen card entry view.
 [startCardEntryFlowWithBuyerVerification](#startcardentryflowwithbuyerverification) | void | Displays a full-screen card entry view with buyer verification flow enabled.
-[startGiftCardEntryFlowWithBuyerVerification](#startgiftcardentryflowwithbuyerverification) | void | Displays a full-screen gift card entry view with buyer verification flow enabled.
 [completeCardEntry](#completecardentry)                      | void                      | Closes the card entry form on success.
 [showCardNonceProcessingError](#showcardnonceprocessingerror)| void                      | Shows an error in the card entry form without closing the form.
 [setIOSCardEntryTheme](#setioscardentrytheme)                | void                      | Sets the customization theme for the card entry view controller in the native layer.
@@ -191,53 +190,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
   }
 ```
 ---
-### startGiftCardEntryFlowWithBuyerVerification
-
-Displays a full-screen gift card entry view with buyer verification flow enabled. The method takes three callback parameters which correspond
-to the possible results of the request.
-
-Parameter       | Type                                     | Description
-:-------------- | :--------------------------------------- | :-----------
-onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when gift card entry with buyer verification is completed successfully.
-onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when gift card entry with buyer verification encounters errors.
-onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when gift card entry is canceled.
-buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
-money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
-squareLocationId | string                                  | The location that is being verified against.
-contact         | [Contact](#Contact)                      | The customers information
-
-#### Example usage
-
-```dart
-import 'package:square_in_app_payments/in_app_payments.dart';
-
-  Future<void> _onStartGiftCardEntryFlowWithBuyerVerification() async {
-    var money = Money((b) => b
-        ..amount = 100
-        ..currencyCode = 'USD');
-
-    var contact = Contact((b) => b
-        ..givenName = "John"
-        ..familyName = "Doe"
-        ..addressLines = new BuiltList<String>(["London Eye","Riverside Walk"]).toBuilder()
-        ..city = "London"
-        ..countryCode = "GB"
-        ..email = "johndoe@example.com"
-        ..phone = "8001234567"
-        ..postalCode = "SE1 7");
-
-    await InAppPayments.startGiftCardEntryFlowWithBuyerVerification(
-        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
-        onBuyerVerificationFailure: _onBuyerVerificationFailure,
-        onCardEntryCancel: _onCancelCardEntryFlow,
-        buyerAction: "Charge",
-        money: money,
-        squareLocationId: squareLocationId,
-        contact: contact);
-  }
-```
----
-
 ### completeCardEntry
 
 Called in the `onCardNonceRequestSuccess` callback for `startCardEntryFlow` to close the card entry form.

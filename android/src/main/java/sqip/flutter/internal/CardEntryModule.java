@@ -164,17 +164,6 @@ public final class CardEntryModule {
     result.success(null);
   }
 
-  public void startGiftCardEntryFlowWithBuyerVerification(MethodChannel.Result result, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
-    this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
-    Money money = moneyMap != null ? getMoney(moneyMap) : null;
-    this.buyerAction = getBuyerAction(buyerActionString, money);
-    this.contact = getContact(contactMap);
-    this.paymentSourceId = null;
-
-    CardEntry.startGiftCardEntryActivity(currentActivity);
-    result.success(null);
-  }
-
   public void startCardEntryFlowWithBuyerVerification(MethodChannel.Result result, boolean collectPostalCode, String squareLocationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
     this.squareIdentifier = new SquareIdentifier.LocationToken(squareLocationId);
     Money money = moneyMap != null ? getMoney(moneyMap) : null;

@@ -2,7 +2,7 @@
 
 ### v2.1.0 Oct 05, 2026
 
-* Added buyer verification to three more flows: `requestApplePayNonceWithBuyerVerification`, `requestGooglePayNonceWithBuyerVerification` and `startGiftCardEntryFlowWithBuyerVerification`.
+* Added buyer verification to two more flows: `requestApplePayNonceWithBuyerVerification` and `requestGooglePayNonceWithBuyerVerification`.
 * `money` is now optional on every buyer verification flow. It is only required when `buyerAction` is `Charge`, and is ignored for `Store`.
 * Replaced the deprecated Google Pay nonce call on Android and fixed the unchecked casts.
 

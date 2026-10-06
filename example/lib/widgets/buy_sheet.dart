@@ -77,9 +77,6 @@ class BuySheetState extends State<BuySheet> {
       case PaymentType.giftcardPayment:
         // call _onStartGiftCardEntryFlow to start Gift Card Entry.
         await _onStartGiftCardEntryFlow();
-        // OR call _onStartGiftCardEntryFlowWithBuyerVerification to start Gift Card Entry with buyer verification (SCA)
-        // NOTE this requires _squareLocationSet to be set
-        // await _onStartGiftCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
@@ -241,40 +238,6 @@ class BuySheetState extends State<BuySheet> {
     await InAppPayments.startGiftCardEntryFlow(
       onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
       onCardEntryCancel: _onCancelCardEntryFlow,
-    );
-  }
-
-  // ignore: unused_element
-  Future<void> _onStartGiftCardEntryFlowWithBuyerVerification() async {
-    var money = Money(
-      (b) => b
-        ..amount = 100
-        ..currencyCode = 'USD',
-    );
-
-    var contact = Contact(
-      (b) => b
-        ..givenName = "John"
-        ..familyName = "Doe"
-        ..addressLines = BuiltList<String>([
-          "London Eye",
-          "Riverside Walk",
-        ]).toBuilder()
-        ..city = "London"
-        ..countryCode = "GB"
-        ..email = "johndoe@example.com"
-        ..phone = "8001234567"
-        ..postalCode = "SE1 7",
-    );
-
-    await InAppPayments.startGiftCardEntryFlowWithBuyerVerification(
-      onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
-      onBuyerVerificationFailure: _onBuyerVerificationFailure,
-      onCardEntryCancel: _onCancelCardEntryFlow,
-      buyerAction: "Charge",
-      money: money,
-      squareLocationId: squareLocationId,
-      contact: contact,
     );
   }
 
