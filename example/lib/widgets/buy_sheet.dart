@@ -468,7 +468,7 @@ class BuySheetState extends State<BuySheet> {
         countryCode: 'US',
         currencyCode: 'USD',
         paymentType: ApplePayPaymentType.finalPayment,
-        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationSuccess: _onApplePayBuyerVerificationSuccess,
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         onApplePayComplete: _onApplePayEntryComplete,
         buyerAction: "Charge",
@@ -484,6 +484,45 @@ class BuySheetState extends State<BuySheet> {
         status: false,
       );
     }
+  }
+
+  Future<void> _onApplePayBuyerVerificationSuccess(
+      BuyerVerificationDetails result) async {
+    if (!_chargeServerHostReplaced) {
+      _applePayStatus = ApplePayStatus.fail;
+      await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false,
+        errorMessage: 'Payment server is not configured.',
+      );
+      _showUrlNotSetAndPrintCurlCommand(
+        result.nonce,
+        verificationToken: result.token,
+      );
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on Exception catch (ex) {
+      final errorMessage = ex is ChargeException
+          ? ex.errorMessage
+          : 'Unable to confirm the payment. Check its status before retrying.';
+      _applePayStatus = ApplePayStatus.fail;
+      await InAppPayments.completeApplePayAuthorization(
+        isSuccess: false,
+        errorMessage: errorMessage,
+      );
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: 'Error processing ApplePay payment',
+        description: errorMessage,
+        status: false,
+      );
+      return;
+    }
+
+    _applePayStatus = ApplePayStatus.success;
+    await InAppPayments.completeApplePayAuthorization(isSuccess: true);
   }
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {

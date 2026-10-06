@@ -536,6 +536,8 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 Starts the Apple Pay payment authorization with buyer verification flow enabled. Unlike [requestApplePayNonce](#requestapplepaynonce), the nonce and the verification token are both delivered through the buyer verification callbacks.
 
+Verification success does not mean the payment has been accepted. In `onBuyerVerificationSuccess`, send the nonce and verification token to your backend and await the payment result before calling [completeApplePayAuthorization](#completeapplepayauthorization) with success or failure. Nonce and verification errors complete the native authorization with failure automatically.
+
 Parameter       | Type                                     | Description
 :-------------- | :--------------------------------------- | :-----------
 price           | String                                   | The payment authorization amount as a string.
@@ -575,7 +577,17 @@ import 'package:square_in_app_payments/in_app_payments.dart';
         countryCode: 'US',
         currencyCode: 'USD',
         paymentType: ApplePayPaymentType.finalPayment,
-        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationSuccess: (result) async {
+          try {
+            await chargeCardAfterBuyerVerification(result.nonce, result.token);
+          } on Exception catch (_) {
+            await InAppPayments.completeApplePayAuthorization(
+                isSuccess: false,
+                errorMessage: 'Unable to confirm the payment.');
+            return;
+          }
+          await InAppPayments.completeApplePayAuthorization(isSuccess: true);
+        },
         onBuyerVerificationFailure: _onBuyerVerificationFailure,
         onApplePayComplete: _onApplePayEntryComplete,
         buyerAction: "Charge",

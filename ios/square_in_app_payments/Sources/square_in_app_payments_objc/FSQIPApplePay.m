@@ -155,7 +155,7 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
                         @"token" : verifiedDetails.verificationToken
                     };
                 [self.channel invokeMethod:@"onBuyerVerificationSuccess" arguments:verificationResult];
-                [self _finishApplePayAuthorization:YES errorMessage:nil];
+                // The app reports authorization success after its backend accepts the payment.
                 self.contact = nil;
             }
                                                           failure:^(NSError *_Nonnull verificationError) {
