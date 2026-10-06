@@ -291,6 +291,7 @@ class InAppPayments {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     _googlePayCancelCallback = onGooglePayCanceled;
+    _googlePayNonceRequestFailureCallback = onBuyerVerificationFailure;
 
     try {
       var params = <String, dynamic>{
@@ -392,6 +393,7 @@ class InAppPayments {
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     _applePayCompleteCallback = onApplePayComplete;
+    _applePayNonceRequestFailureCallback = onBuyerVerificationFailure;
 
     var paymentTypeString = _standardSerializers.serializeWith(
         ApplePayPaymentType.serializer, paymentType);

@@ -123,6 +123,11 @@ static NSString *const FSQIPMessageApplePayNotSupported = @"This device does not
 
     [nonceRequest performWithCompletionHandler:^(SQIPCardDetails *_Nullable result, NSError *_Nullable error) {
         if (error) {
+            if (self.contact) {
+                [self _finishApplePayAuthorization:NO errorMessage:error.localizedDescription];
+                self.contact = nil;
+                self.cardDetails = nil;
+            }
             NSString *debugCode = error.userInfo[SQIPErrorDebugCodeKey];
             NSString *debugMessage = error.userInfo[SQIPErrorDebugMessageKey];
             [self.channel invokeMethod:@"onApplePayNonceRequestFailure"

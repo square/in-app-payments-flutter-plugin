@@ -544,7 +544,7 @@ countryCode     | String                                   | The Apple Pay count
 currencyCode    | String                                   | ISO currency code of the payment amount.
 paymentType     | [ApplePayPaymentType](#applepaypaymenttype) | Type of the payment summary item.
 onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when Apple Pay authorization with buyer verification is completed successfully.
-onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when Apple Pay authorization with buyer verification encounters errors.
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when the Apple Pay nonce request or buyer verification encounters errors.
 onApplePayComplete | [ApplePayCompleteCallback](#applepaycompletecallback) | Invoked when Apple Pay sheet is closed after success, failure, or cancellation.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
 money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
@@ -799,7 +799,7 @@ price                          | String                                 | The pa
 currencyCode                   | String                                 | The ISO currency code
 priceStatus                    | [google_pay_constants](#google-pay-price-status-values).totalPriceStatusFinal | The status of the total price used
 onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when Google Pay authorization with buyer verification is completed successfully.
-onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when Google Pay authorization with buyer verification encounters errors.
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when the Google Pay nonce request or buyer verification encounters errors.
 onGooglePayCanceled | [GooglePayCancelCallback](#googlepaycancelcallback) | Cancel callback invoked when user cancels payment authorization.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
 money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
