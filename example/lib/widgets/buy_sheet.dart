@@ -90,14 +90,21 @@ class BuySheetState extends State<BuySheet> {
         break;
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled!) {
+          // call _onStartGooglePay to start Google Pay without buyer verification (SCA)
           _onStartGooglePay();
+          // OR call _onStartGooglePayWithBuyerVerification to start Google Pay with buyer verification (SCA)
+          // _onStartGooglePayWithBuyerVerification();
         } else {
           _showSquareLocationIdNotSet();
         }
         break;
       case PaymentType.applePay:
         if (_applePayMerchantIdSet && widget.applePayEnabled!) {
+          // call _onStartApplePay to start Apple Pay without buyer verification (SCA)
           _onStartApplePay();
+          // OR call _onStartApplePayWithBuyerVerification to start Apple Pay with buyer verification (SCA)
+          // NOTE this requires _squareLocationSet to be set
+          // _onStartApplePayWithBuyerVerification();
         } else {
           _showapplePayMerchantIdNotSet();
         }
@@ -234,6 +241,7 @@ class BuySheetState extends State<BuySheet> {
     );
   }
 
+  // ignore: unused_element
   Future<void> _onStartCardEntryFlowWithBuyerVerification() async {
     var money = Money(
       (b) => b
@@ -362,6 +370,52 @@ class BuySheetState extends State<BuySheet> {
     _showOrderSheet();
   }
 
+  // ignore: unused_element
+  void _onStartGooglePayWithBuyerVerification() async {
+    var money = Money(
+      (b) => b
+        ..amount = 100
+        ..currencyCode = 'USD',
+    );
+
+    var contact = Contact(
+      (b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = BuiltList<String>([
+          "London Eye",
+          "Riverside Walk",
+        ]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7",
+    );
+
+    try {
+      await InAppPayments.requestGooglePayNonceWithBuyerVerification(
+        priceStatus: google_pay_constants.totalPriceStatusFinal,
+        price: getCookieAmount(),
+        currencyCode: 'USD',
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onGooglePayCanceled: onGooglePayEntryCanceled,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start GooglePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
   void _onStartApplePay() async {
     try {
       await InAppPayments.requestApplePayNonce(
@@ -382,6 +436,91 @@ class BuySheetState extends State<BuySheet> {
         status: false,
       );
     }
+  }
+
+  // ignore: unused_element
+  void _onStartApplePayWithBuyerVerification() async {
+    var money = Money(
+      (b) => b
+        ..amount = 100
+        ..currencyCode = 'USD',
+    );
+
+    var contact = Contact(
+      (b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..addressLines = BuiltList<String>([
+          "London Eye",
+          "Riverside Walk",
+        ]).toBuilder()
+        ..city = "London"
+        ..countryCode = "GB"
+        ..email = "johndoe@example.com"
+        ..phone = "8001234567"
+        ..postalCode = "SE1 7",
+    );
+
+    try {
+      await InAppPayments.requestApplePayNonceWithBuyerVerification(
+        price: getCookieAmount(),
+        summaryLabel: 'Cookie',
+        countryCode: 'US',
+        currencyCode: 'USD',
+        paymentType: ApplePayPaymentType.finalPayment,
+        onBuyerVerificationSuccess: _onApplePayBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        // Sheet dismissal precedes verification and does not imply cancellation.
+        onApplePayComplete: () {},
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact,
+      );
+    } on PlatformException catch (ex) {
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: "Failed to start ApplePay",
+        description: ex.toString(),
+        status: false,
+      );
+    }
+  }
+
+  Future<void> _onApplePayBuyerVerificationSuccess(
+      BuyerVerificationDetails result) async {
+    if (!_chargeServerHostReplaced) {
+      _applePayStatus = ApplePayStatus.fail;
+      _showUrlNotSetAndPrintCurlCommand(
+        result.nonce,
+        verificationToken: result.token,
+      );
+      return;
+    }
+
+    try {
+      await chargeCardAfterBuyerVerification(result.nonce, result.token);
+    } on Exception catch (ex) {
+      final errorMessage = ex is ChargeException
+          ? ex.errorMessage
+          : 'Unable to confirm the payment. Check its status before retrying.';
+      _applePayStatus = ApplePayStatus.fail;
+      showAlertDialog(
+        context: BuySheet.scaffoldKey.currentContext!,
+        title: 'Error processing ApplePay payment',
+        description: errorMessage,
+        status: false,
+      );
+      return;
+    }
+
+    _applePayStatus = ApplePayStatus.success;
+    showAlertDialog(
+      context: BuySheet.scaffoldKey.currentContext!,
+      title: 'Payment successful',
+      description: 'Your payment was accepted.',
+      status: true,
+    );
   }
 
   void _onBuyerVerificationSuccess(BuyerVerificationDetails result) async {

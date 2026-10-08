@@ -273,6 +273,51 @@ class InAppPayments {
     }
   }
 
+  static Future requestGooglePayNonceWithBuyerVerification(
+      {required String price,
+      required String currencyCode,
+      required int priceStatus,
+      required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required GooglePayCancelCallback onGooglePayCanceled,
+      required String buyerAction,
+      Money? money,
+      required String squareLocationId,
+      required Contact contact}) async {
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _googlePayCancelCallback = onGooglePayCanceled;
+    _googlePayNonceRequestFailureCallback = onBuyerVerificationFailure;
+
+    try {
+      var params = <String, dynamic>{
+        'price': price,
+        'currencyCode': currencyCode,
+        'priceStatus': priceStatus,
+        'buyerAction': buyerAction,
+        'contact':
+            _standardSerializers.serializeWith(Contact.serializer, contact),
+        'squareLocationId': squareLocationId,
+      };
+      if (money != null) {
+        params['money'] =
+            _standardSerializers.serializeWith(Money.serializer, money);
+      }
+      await _channel.invokeMethod(
+          'requestGooglePayNonceWithBuyerVerification', params);
+    } on PlatformException catch (ex) {
+      throw InAppPaymentsException(
+          ex.code,
+          ex.message,
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
+    }
+  }
+
   static Future initializeApplePay(String applePayMerchantId) async {
     assert(applePayMerchantId.isNotEmpty,
         'applePayMerchantId should not be empty.');
@@ -325,6 +370,64 @@ class InAppPayments {
     }
   }
 
+  /// Completes and dismisses the Apple Pay sheet before verifying the buyer.
+  /// [onApplePayComplete] reports sheet dismissal before verification callbacks.
+  /// After verification succeeds, charge on your backend and show the payment
+  /// result in your app; this flow does not use [completeApplePayAuthorization].
+  static Future requestApplePayNonceWithBuyerVerification(
+      {required String price,
+      required String summaryLabel,
+      required String countryCode,
+      required String currencyCode,
+      required ApplePayPaymentType paymentType,
+      required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
+      required BuyerVerificationErrorCallback onBuyerVerificationFailure,
+      required ApplePayCompleteCallback onApplePayComplete,
+      required String buyerAction,
+      Money? money,
+      required String squareLocationId,
+      required Contact contact}) async {
+    assert(summaryLabel.isNotEmpty, 'summaryLabel should not be empty.');
+    assert(price.isNotEmpty, 'price should not be empty.');
+    assert(countryCode.isNotEmpty, 'countryCode should not be empty.');
+    assert(currencyCode.isNotEmpty, 'currencyCode should not be empty.');
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
+
+    _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
+    _buyerVerificationErrorCallback = onBuyerVerificationFailure;
+    _applePayCompleteCallback = onApplePayComplete;
+    _applePayNonceRequestFailureCallback = onBuyerVerificationFailure;
+
+    var paymentTypeString = _standardSerializers.serializeWith(
+        ApplePayPaymentType.serializer, paymentType);
+    try {
+      var params = <String, dynamic>{
+        'price': price,
+        'summaryLabel': summaryLabel,
+        'countryCode': countryCode,
+        'currencyCode': currencyCode,
+        'paymentType': paymentTypeString,
+        'buyerAction': buyerAction,
+        'contact':
+            _standardSerializers.serializeWith(Contact.serializer, contact),
+        'squareLocationId': squareLocationId,
+      };
+      if (money != null) {
+        params['money'] =
+            _standardSerializers.serializeWith(Money.serializer, money);
+      }
+      await _channel.invokeMethod(
+          'requestApplePayNonceWithBuyerVerification', params);
+    } on PlatformException catch (ex) {
+      throw InAppPaymentsException(
+          ex.code,
+          ex.message,
+          ex.details[InAppPaymentsException.debugCodeKey],
+          ex.details[InAppPaymentsException.debugMessageKey]);
+    }
+  }
+
   static Future completeApplePayAuthorization(
       {required bool isSuccess, String errorMessage = ''}) async {
     var params = <String, dynamic>{
@@ -339,21 +442,26 @@ class InAppPayments {
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,
       required CardEntryCancelCallback onCardEntryCancel,
       required String buyerAction,
-      required Money money,
+      Money? money,
       required String squareLocationId,
       required Contact contact,
       bool collectPostalCode = true}) async {
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     _cardEntryCancelCallback = onCardEntryCancel;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
-      'money': _standardSerializers.serializeWith(Money.serializer, money),
       'contact':
           _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'collectPostalCode': collectPostalCode,
     };
+    if (money != null) {
+      params['money'] =
+          _standardSerializers.serializeWith(Money.serializer, money);
+    }
     await _channel.invokeMethod(
         'startCardEntryFlowWithBuyerVerification', params);
   }
@@ -362,20 +470,25 @@ class InAppPayments {
       {required BuyerVerificationSuccessCallback onBuyerVerificationSuccess,
       required BuyerVerificationErrorCallback onBuyerVerificationFailure,
       required String buyerAction,
-      required Money money,
+      Money? money,
       required String squareLocationId,
       required Contact contact,
       required String paymentSourceId}) async {
+    assert(buyerAction != 'Charge' || money != null,
+        'money is required when buyerAction is "Charge"');
     _buyerVerificationSuccessCallback = onBuyerVerificationSuccess;
     _buyerVerificationErrorCallback = onBuyerVerificationFailure;
     var params = <String, dynamic>{
       'buyerAction': buyerAction,
-      'money': _standardSerializers.serializeWith(Money.serializer, money),
       'contact':
           _standardSerializers.serializeWith(Contact.serializer, contact),
       'squareLocationId': squareLocationId,
       'paymentSourceId': paymentSourceId,
     };
+    if (money != null) {
+      params['money'] =
+          _standardSerializers.serializeWith(Money.serializer, money);
+    }
     await _channel.invokeMethod('startBuyerVerificationFlow', params);
   }
 

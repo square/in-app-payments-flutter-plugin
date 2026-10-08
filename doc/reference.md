@@ -39,6 +39,7 @@ Method                                                          | Return Object 
 [initializeApplePay](#initializeapplepay)                       | void                      | Initializes the In-App Payments flutter plugin for Apple Pay.
 [canUseApplePay](#canuseapplepay)                               | bool                      | Returns `true` if the device supports Apple Pay and the user has added at least one card that Square supports.
 [requestApplePayNonce](#requestapplepaynonce)                   | void                      | Starts the Apple Pay payment authorization and returns a nonce based on the authorized Apple Pay payment token.
+[requestApplePayNonceWithBuyerVerification](#requestapplepaynoncewithbuyerverification) | void | Starts the Apple Pay payment authorization with buyer verification flow enabled.
 [completeApplePayAuthorization](#completeapplepayauthorization) | void                      | Notifies the native layer to close the Apple Pay sheet with success or failure status.
 
 
@@ -50,6 +51,7 @@ Method                                                       | Return Object    
 [initalizeGooglePay](#initializegooglepay)                   | void                              | Initializes the flutter plugin for Google Pay.
 [canUseGooglePay](#canusegooglepay)                          | bool                              | Returns `true` if the device supports Google Pay and the user has added at least one card that Square supports.
 [requestGooglePayNonce](#requestgooglepaynonce)              | void                              | Starts the Google Pay payment authorization and returns a nonce based on the authorized Google Pay payment token.
+[requestGooglePayNonceWithBuyerVerification](#requestgooglepaynoncewithbuyerverification) | void          | Starts the Google Pay payment authorization with buyer verification flow enabled.
 
 
 
@@ -139,7 +141,7 @@ onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificati
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when card entry with buyer verification encounters errors.
 onCardEntryCancel | [CardEntryCancelCallback](#cardentrycancelcallback) | Invoked when card entry is canceled.
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
-money           | [Money](#Money)                          | Amount of money that will be charged
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
 collectPostalCode | bool                                   | Indicates that the customer must enter the postal code associated with their payment card. When false, the postal code field will not be displayed. Defaults to `true`.<br/>**Notes**: A Postal code must be collected for processing payments for Square accounts based in the United States, Canada, and United Kingdom. Disabling postal code collection in those regions will result in all credit card transactions being declined.
@@ -314,7 +316,7 @@ Parameter       | Type                                     | Description
 onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when buyer verification on a given payment source id succeeds
 onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when buyer verification on a given payment source id encouters errors
 buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
-money           | [Money](#Money)                          | Amount of money that will be charged
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
 squareLocationId | string                                  | The location that is being verified against.
 contact         | [Contact](#Contact)                      | The customers information
 paymentSourceId | string                                   | This ID can be the nonce returned by [CardEntryFlow](#startcardentryflow) or a card-on-file card ID for the buyer's payment card stored with Square.
@@ -528,6 +530,76 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 
 ---
 
+### requestApplePayNonceWithBuyerVerification
+**iOS Only**
+
+
+Starts the Apple Pay payment authorization with buyer verification flow enabled. Unlike [requestApplePayNonce](#requestapplepaynonce), the nonce and the verification token are both delivered through the buyer verification callbacks.
+
+The native layer completes Apple Pay authorization after obtaining the nonce, then dismisses the sheet and emits `onApplePayComplete`. Buyer verification starts only after dismissal, as required by [Square's verification guidance](https://developer.squareup.com/docs/in-app-payments-sdk/verify-buyer). If the buyer cancels before a nonce is available, verification does not start.
+
+`onApplePayComplete` indicates sheet dismissal, not payment success or cancellation. Verification success also does not mean the payment has been accepted. In `onBuyerVerificationSuccess`, send the nonce and verification token to your backend and display the final payment result in your app. Do not call `completeApplePayAuthorization` for this flow: the sheet is already closed and its completion handler has been released. Nonce errors complete the authorization with failure; verification errors are reported in the app after dismissal.
+
+Parameter       | Type                                     | Description
+:-------------- | :--------------------------------------- | :-----------
+price           | String                                   | The payment authorization amount as a string.
+summaryLabel    | String                                   | A label that displays the checkout summary in the Apple Pay view.
+countryCode     | String                                   | The Apple Pay country code.
+currencyCode    | String                                   | ISO currency code of the payment amount.
+paymentType     | [ApplePayPaymentType](#applepaypaymenttype) | Type of the payment summary item.
+onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when Apple Pay authorization with buyer verification is completed successfully.
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when the Apple Pay nonce request or buyer verification encounters errors.
+onApplePayComplete | [ApplePayCompleteCallback](#applepaycompletecallback) | Invoked when Apple Pay sheet is closed after success, failure, or cancellation.
+buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
+squareLocationId | string                                  | The location that is being verified against.
+contact         | [Contact](#Contact)                      | The customers information
+
+Throws [InAppPaymentsException](#inapppaymentsexception)
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+
+  Future<void> _onStartApplePayWithBuyerVerification() async {
+    var money = Money((b) => b
+        ..amount = 100
+        ..currencyCode = 'USD');
+
+    var contact = Contact((b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..email = "johndoe@example.com"
+        ..countryCode = "GB");
+
+    await InAppPayments.requestApplePayNonceWithBuyerVerification(
+        price: '1.00',
+        summaryLabel: 'Cookie',
+        countryCode: 'US',
+        currencyCode: 'USD',
+        paymentType: ApplePayPaymentType.finalPayment,
+        onBuyerVerificationSuccess: (result) async {
+          try {
+            await chargeCardAfterBuyerVerification(result.nonce, result.token);
+          } on Exception catch (_) {
+            // Display the payment failure in your app.
+            return;
+          }
+          // Display payment success only after your backend accepts it.
+        },
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        // The sheet closes before verification; do not treat this as payment success.
+        onApplePayComplete: () {},
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact);
+  }
+```
+
+---
+
 ### completeApplePayAuthorization
 **iOS Only**
 
@@ -726,6 +798,60 @@ import 'package:square_in_app_payments/google_pay_constants.dart'
   }
 ```
 
+
+---
+
+### requestGooglePayNonceWithBuyerVerification
+**Android Only**
+
+Starts the Google Pay payment authorization with buyer verification flow enabled. Unlike [requestGooglePayNonce](#requestgooglepaynonce), the nonce and the verification token are both delivered through the buyer verification callbacks.
+
+Parameter                      | Type                                   | Description
+:----------------------------- | :------------------------------------- | :-----------
+price                          | String                                 | The payment authorization amount as a string.
+currencyCode                   | String                                 | The ISO currency code
+priceStatus                    | [google_pay_constants](#google-pay-price-status-values).totalPriceStatusFinal | The status of the total price used
+onBuyerVerificationSuccess | [BuyerVerificationSuccessCallback](#BuyerVerificationSuccessCallback) | Invoked when Google Pay authorization with buyer verification is completed successfully.
+onBuyerVerificationFailure | [BuyerVerificationErrorCallback](#BuyerVerificationErrorCallback) | Invoked when the Google Pay nonce request or buyer verification encounters errors.
+onGooglePayCanceled | [GooglePayCancelCallback](#googlepaycancelcallback) | Cancel callback invoked when user cancels payment authorization.
+buyerAction     | string                                   | Indicates the action (`Charge` or `Store`) that will be performed onto the card after retrieving the verification token.
+money           | [Money](#Money)                          | **Optional.** Amount of money that will be charged. Required when `buyerAction` is `Charge`. Not used when `buyerAction` is `Store`.
+squareLocationId | string                                  | The location that is being verified against.
+contact         | [Contact](#Contact)                      | The customers information
+
+Throws [InAppPaymentsException](#inapppaymentsexception)
+
+#### Example usage
+
+```dart
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart'
+    as google_pay_constants;
+
+  Future<void> _onStartGooglePayWithBuyerVerification() async {
+    var money = Money((b) => b
+        ..amount = 100
+        ..currencyCode = 'USD');
+
+    var contact = Contact((b) => b
+        ..givenName = "John"
+        ..familyName = "Doe"
+        ..email = "johndoe@example.com"
+        ..countryCode = "GB");
+
+    await InAppPayments.requestGooglePayNonceWithBuyerVerification(
+        price: '1.00',
+        currencyCode: 'USD',
+        priceStatus: google_pay_constants.totalPriceStatusFinal,
+        onBuyerVerificationSuccess: _onBuyerVerificationSuccess,
+        onBuyerVerificationFailure: _onBuyerVerificationFailure,
+        onGooglePayCanceled: onGooglePayEntryCanceled,
+        buyerAction: "Charge",
+        money: money,
+        squareLocationId: squareLocationId,
+        contact: contact);
+  }
+```
 
 ---
 

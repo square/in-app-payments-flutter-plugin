@@ -103,6 +103,26 @@ FlutterMethodChannel *_channel;
                                      summaryLabel:summaryLabel
                                             price:price
                                       paymentType:paymentType];
+    } else if ([@"requestApplePayNonceWithBuyerVerification" isEqualToString:call.method]) {
+        NSString *countryCode = call.arguments[@"countryCode"];
+        NSString *currencyCode = call.arguments[@"currencyCode"];
+        NSString *summaryLabel = call.arguments[@"summaryLabel"];
+        NSString *price = call.arguments[@"price"];
+        NSString *paymentType = call.arguments[@"paymentType"];
+        NSString *squareLocationId = call.arguments[@"squareLocationId"];
+        NSString *buyerActionString = call.arguments[@"buyerAction"];
+        NSDictionary *moneyMap = call.arguments[@"money"];
+        NSDictionary *contactMap = call.arguments[@"contact"];
+        [self.applePayModule requestApplePayNonceWithBuyerVerification:result
+                                      countryCode:countryCode
+                                     currencyCode:currencyCode
+                                     summaryLabel:summaryLabel
+                                            price:price
+                                      paymentType:paymentType
+                                       locationId:squareLocationId
+                                buyerActionString:buyerActionString
+                                         moneyMap:moneyMap
+                                       contactMap:contactMap];
     } else if ([@"completeApplePayAuthorization" isEqualToString:call.method]) {
         BOOL isSuccess = [call.arguments[@"isSuccess"] boolValue];
         NSString *errorMessage = call.arguments[@"errorMessage"];

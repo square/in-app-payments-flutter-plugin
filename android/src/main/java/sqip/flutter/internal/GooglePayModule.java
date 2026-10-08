@@ -2,7 +2,6 @@ package sqip.flutter.internal;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
@@ -13,11 +12,22 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 
+import java.util.Map;
+
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodChannel;
+import sqip.BuyerAction;
+import sqip.BuyerVerification;
+import sqip.BuyerVerificationResult.Error;
 import sqip.Callback;
+import sqip.CardDetails;
+import sqip.Contact;
+import sqip.Country;
 import sqip.GooglePay;
 import sqip.GooglePayNonceResult;
+import sqip.Money;
+import sqip.SquareIdentifier;
+import sqip.VerificationParameters;
 import sqip.flutter.internal.converter.CardConverter;
 import sqip.flutter.internal.converter.CardDetailsConverter;
 
@@ -37,6 +47,10 @@ public final class GooglePayModule {
   private String squareLocationId;
 
   private Activity currentActivity;
+  private SquareIdentifier squareIdentifier;
+  private BuyerAction buyerAction;
+  private Contact contact;
+  private CardDetails cardResult;
 
   public GooglePayModule(Context context, MethodChannel channel) {
     this.cardDetailsConverter = new CardDetailsConverter(new CardConverter());
@@ -51,13 +65,20 @@ public final class GooglePayModule {
           case Activity.RESULT_OK:
             PaymentData paymentData = PaymentData.getFromIntent(data);
             ErrorHandlerUtils.checkNotNull(paymentData, "paymentData should never be null.");
-            String googlePayToken = paymentData.getPaymentMethodToken().getToken();
-            GooglePay.requestGooglePayNonce(googlePayToken).enqueue(new Callback<GooglePayNonceResult>() {
+            GooglePay.requestGooglePayNonce(paymentData).enqueue(new Callback<GooglePayNonceResult>() {
               @Override
               public void onResult(GooglePayNonceResult result) {
                 if (result.isSuccess()) {
-                  channel.invokeMethod("onGooglePayNonceRequestSuccess", cardDetailsConverter.toMapObject(result.getSuccessValue()));
+                  if (GooglePayModule.this.contact != null) {
+                    cardResult = result.getSuccessValue();
+                    String nonce = cardResult.getNonce();
+                    VerificationParameters params = new VerificationParameters(nonce, buyerAction, squareIdentifier, contact);
+                    BuyerVerification.verify(currentActivity, params);
+                  } else {
+                    channel.invokeMethod("onGooglePayNonceRequestSuccess", cardDetailsConverter.toMapObject(result.getSuccessValue()));
+                  }
                 } else if (result.isError()) {
+                  GooglePayModule.this.contact = null;
                   GooglePayNonceResult.Error error = result.getErrorValue();
                   channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(
                       error.getCode().name(), error.getMessage(), error.getDebugCode(), error.getDebugMessage()));
@@ -66,19 +87,45 @@ public final class GooglePayModule {
             });
             break;
           case Activity.RESULT_CANCELED:
+            GooglePayModule.this.contact = null;
             channel.invokeMethod("onGooglePayCanceled", null);
             break;
           case AutoResolveHelper.RESULT_ERROR:
+            GooglePayModule.this.contact = null;
             channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(
                 ErrorHandlerUtils.USAGE_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR,
                 FL_GOOGLE_PAY_RESULT_ERROR, FL_MESSAGE_GOOGLE_PAY_RESULT_ERROR));
             break;
           default:
+            GooglePayModule.this.contact = null;
             channel.invokeMethod("onGooglePayNonceRequestFailure", ErrorHandlerUtils.getCallbackErrorObject(
                 ErrorHandlerUtils.USAGE_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR,
                 FL_GOOGLE_PAY_UNKNOWN_ERROR, FL_MESSAGE_GOOGLE_PAY_UNKNOWN_ERROR));
             break;
         }
+      }
+
+      if (requestCode == BuyerVerification.DEFAULT_BUYER_VERIFICATION_REQUEST_CODE) {
+        if (GooglePayModule.this.contact == null) {
+          return false;
+        }
+        BuyerVerification.handleActivityResult(data, result -> {
+          if (result.isSuccess()) {
+            Map<String, Object> payload = cardDetailsConverter.toMapObject(cardResult);
+            payload.put("token", result.getSuccessValue().getVerificationToken());
+            channel.invokeMethod("onBuyerVerificationSuccess", payload);
+          } else if (result.isError()) {
+            Error error = result.getErrorValue();
+            Map<String, String> errorMap = ErrorHandlerUtils.getCallbackErrorObject(
+                error.getCode().name(),
+                error.getMessage(),
+                error.getDebugCode(),
+                error.getDebugMessage());
+            channel.invokeMethod("onBuyerVerificationError", errorMap);
+          }
+        });
+        this.contact = null;
+        return true;
       }
       return false;
     });
@@ -108,7 +155,21 @@ public final class GooglePayModule {
   }
 
   public void requestGooglePayNonce(MethodChannel.Result result, String price, String currencyCode, int priceStatus) {
+    this.contact = null;
+    launchGooglePay(result, price, currencyCode, priceStatus);
+  }
+
+  public void requestGooglePayNonceWithBuyerVerification(MethodChannel.Result result, String price, String currencyCode, int priceStatus, String locationId, String buyerActionString, Map<String, Object> moneyMap, Map<String, Object> contactMap) {
+    this.squareIdentifier = new SquareIdentifier.LocationToken(locationId);
+    Money money = moneyMap != null ? getMoney(moneyMap) : null;
+    this.buyerAction = getBuyerAction(buyerActionString, money);
+    this.contact = getContact(contactMap);
+    launchGooglePay(result, price, currencyCode, priceStatus);
+  }
+
+  private void launchGooglePay(MethodChannel.Result result, String price, String currencyCode, int priceStatus) {
     if (googlePayClients == null) {
+      this.contact = null;
       result.error(ErrorHandlerUtils.USAGE_ERROR,
           ErrorHandlerUtils.getPluginErrorMessage(FL_GOOGLE_PAY_NOT_INITIALIZED),
           ErrorHandlerUtils.getDebugErrorObject(FL_GOOGLE_PAY_NOT_INITIALIZED, FL_MESSAGE_GOOGLE_PAY_NOT_INITIALIZED));
@@ -128,4 +189,37 @@ public final class GooglePayModule {
         .build();
     return GooglePay.createPaymentDataRequest(squareLocationId, transactionInfo);
   }
+
+  private Contact getContact(Map<String, Object> contactMap) {
+    Object givenName = contactMap.get("givenName");
+    Object familyName = contactMap.get("familyName");
+    Object addressLines = contactMap.get("addressLines");
+    Object city = contactMap.get("city");
+    Object countryCode = contactMap.get("countryCode");
+    Object email = contactMap.get("email");
+    Object phone = contactMap.get("phone");
+    Object postalCode = contactMap.get("postalCode");
+    Object region = contactMap.get("region");
+    Country country = Country.valueOf((countryCode != null) ? countryCode.toString() : "US");
+
+    return new Contact.Builder()
+        .familyName((familyName != null) ? familyName.toString() : "")
+        .email((email != null) ? email.toString() : "")
+        .addressLines(CardEntryModule.toStringList(addressLines))
+        .city((city != null) ? city.toString() : "")
+        .countryCode(country)
+        .postalCode((postalCode != null) ? postalCode.toString() : "")
+        .phone((phone != null) ? phone.toString() : "")
+        .region((region != null) ? region.toString() : "")
+        .build((givenName != null) ? givenName.toString() : "");
+  }
+
+  private Money getMoney(Map<String, Object> moneyMap) {
+    return new Money((Integer) moneyMap.get("amount"), sqip.Currency.valueOf((String) moneyMap.get("currencyCode")));
+  }
+
+  private BuyerAction getBuyerAction(String buyerActionString, Money money) {
+    return buyerActionString.equals("Store") ? new BuyerAction.Store() : new BuyerAction.Charge(money);
+  }
+
 }

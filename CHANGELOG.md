@@ -1,5 +1,11 @@
 ## Changelog
 
+### v2.1.0 Oct 05, 2026
+
+* Added buyer verification to two more flows: `requestApplePayNonceWithBuyerVerification` and `requestGooglePayNonceWithBuyerVerification`.
+* `money` is now optional on every buyer verification flow. It is only required when `buyerAction` is `Charge`, and is ignored for `Store`.
+* Replaced the deprecated Google Pay nonce call on Android and fixed the unchecked casts.
+
 ### v2.0.1 Sep 25, 2026
 
 * Updated IAP SDK Android to 1.7.0 (iOS remains on 1.6.7). 1.7.0 is a hotfix on top of 1.6.9: buyer verification no longer sets a `threeDSRequestorAppURL` the app can never receive on, which fixes 3DS out-of-band challenge flows. No API changes.
