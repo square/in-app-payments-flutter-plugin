@@ -80,10 +80,10 @@ class BuySheetState extends State<BuySheet> {
         break;
       case PaymentType.cardPayment:
         // call _onStartCardEntryFlow to start Card Entry without buyer verification (SCA)
-        //await _onStartCardEntryFlow();
+        await _onStartCardEntryFlow();
         // OR call _onStartCardEntryFlowWithBuyerVerification to start Card Entry with buyer verification (SCA)
         // NOTE this requires _squareLocationSet to be set
-         await _onStartCardEntryFlowWithBuyerVerification();
+        // await _onStartCardEntryFlowWithBuyerVerification();
         break;
       case PaymentType.buyerVerification:
         await _onStartBuyerVerificationFlow();
@@ -91,9 +91,9 @@ class BuySheetState extends State<BuySheet> {
       case PaymentType.googlePay:
         if (_squareLocationSet && widget.googlePayEnabled!) {
           // call _onStartGooglePay to start Google Pay without buyer verification (SCA)
-          //_onStartGooglePay();
+          _onStartGooglePay();
           // OR call _onStartGooglePayWithBuyerVerification to start Google Pay with buyer verification (SCA)
-           _onStartGooglePayWithBuyerVerification();
+          // _onStartGooglePayWithBuyerVerification();
         } else {
           _showSquareLocationIdNotSet();
         }

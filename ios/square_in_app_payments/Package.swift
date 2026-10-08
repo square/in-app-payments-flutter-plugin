@@ -8,7 +8,7 @@ let package = Package(
     // Required because the Objective-C target ships localized (.lproj) resources.
     defaultLocalization: "en",
     platforms: [
-        .iOS("15.0")
+        .iOS("14.0")
     ],
     products: [
         .library(name: "square-in-app-payments", targets: ["square_in_app_payments"])
