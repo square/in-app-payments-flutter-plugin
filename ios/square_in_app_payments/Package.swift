@@ -8,7 +8,7 @@ let package = Package(
     // Required because the Objective-C target ships localized (.lproj) resources.
     defaultLocalization: "en",
     platforms: [
-        .iOS("14.0")
+        .iOS("17.1")
     ],
     products: [
         .library(name: "square-in-app-payments", targets: ["square_in_app_payments"])
@@ -17,7 +17,7 @@ let package = Package(
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
         // Square In-App Payments native iOS SDK, distributed as binary XCFrameworks.
         // Provides the `SquareInAppPaymentsSDK` and `SquareBuyerVerificationSDK` products.
-        .package(url: "https://github.com/square/in-app-payments-ios", exact: "1.6.7")
+        .package(url: "https://github.com/square/in-app-payments-ios", exact: "1.7.0")
     ],
     targets: [
         // Objective-C bridge: owns the method channel and wraps the Square SDK.

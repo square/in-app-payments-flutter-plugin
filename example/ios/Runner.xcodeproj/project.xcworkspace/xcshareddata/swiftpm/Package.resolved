@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/square/in-app-payments-ios",
       "state" : {
-        "revision" : "386889b41c945b64a147a2999823356c0883504e",
-        "version" : "1.6.7"
+        "revision" : "aa4b6d5c8e8a7745a31eacca3dbd7cf62d6f20b1",
+        "version" : "1.7.0"
       }
     }
   ],
