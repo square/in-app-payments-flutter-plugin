@@ -6,7 +6,7 @@
 The Flutter plugin for Square [In-App Payments SDK] is a wrapper for the native Android and iOS SDKs and 
 supports the following native In-App Payments SDK versions:
 
-  * iOS: 1.6.7
+  * iOS: 1.7.0
   * Android: 1.7.0
 
 ## Additional documentation
@@ -43,9 +43,9 @@ In addition to this README, the following is available in the [flutter plugin Gi
 ### iOS
 
 * Xcode version: 16 or greater (required for Swift Package Manager).
-* iOS Base SDK: 14 or greater.
-* Deployment target: iOS 14.0 or greater.
-* iOS integration uses Swift Package Manager (SPM), which Flutter 3.44 enables by default. CocoaPods is still supported and needs no `Podfile` changes.
+* iOS Base SDK: 17.1 or greater.
+* Deployment target: iOS 17.1 or greater.
+* iOS integration uses Swift Package Manager (SPM), which Flutter 3.44 enables by default. CocoaPods is also supported. Set your Podfile platform to iOS 17.1 or later.
 * This plugin will work on Mac with Intel processor and Apple silicon chips.
 
 ## In-App Payments SDK requirements and limitations

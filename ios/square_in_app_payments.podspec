@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'square_in_app_payments'
-  s.version          = '1.6.7'
+  s.version          = '1.7.0'
   s.summary          = 'A flutter plugin for Square In-App Payments SDK.'
   s.description      = <<-DESC
 An open source Flutter plugin for calling Square's native In-App Payments SDK to take in-app payments.
@@ -17,8 +17,8 @@ An open source Flutter plugin for calling Square's native In-App Payments SDK to
   s.public_header_files = 'square_in_app_payments/Sources/square_in_app_payments_objc/include/**/*.h'
   s.dependency 'Flutter'
   s.framework = 'SquareInAppPaymentsSDK'
-  s.platform = :ios, '14.0'
-  s.ios.deployment_target = '14.0'
+  s.platform = :ios, '17.1'
+  s.ios.deployment_target = '17.1'
   s.resource_bundle = { 'sqip_flutter_resource' => ['square_in_app_payments/Sources/square_in_app_payments_objc/Assets/**/*.{lproj,strings}'] }
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
@@ -28,7 +28,7 @@ An open source Flutter plugin for calling Square's native In-App Payments SDK to
     s.dependency 'SquareInAppPaymentsSDK', $sqipVersion
     s.dependency 'SquareBuyerVerificationSDK', $sqipVersion
   else
-    s.dependency 'SquareInAppPaymentsSDK', '1.6.7'
-    s.dependency 'SquareBuyerVerificationSDK', '1.6.7'
+    s.dependency 'SquareInAppPaymentsSDK', '1.7.0'
+    s.dependency 'SquareBuyerVerificationSDK', '1.7.0'
   end
 end

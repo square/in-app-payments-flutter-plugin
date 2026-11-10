@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.1.2 Nov 10, 2026
+
+* Updated the native iOS In-App Payments SDK and Buyer Verification SDK to 1.7.0. This raises the minimum deployment target to iOS 17.1.
+
 ### v2.1.0 Oct 05, 2026
 
 * Added buyer verification to two more flows: `requestApplePayNonceWithBuyerVerification` and `requestGooglePayNonceWithBuyerVerification`.

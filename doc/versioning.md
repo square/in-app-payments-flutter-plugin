@@ -21,7 +21,7 @@ Apps still using the CocoaPods integration can override the version with the `$s
 
     ```ruby
     # Uncomment this line to define a global platform for your project
-    platform :ios, '14.0'
+    platform :ios, '17.1'
 
     # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
     ENV['COCOAPODS_DISABLE_STATS'] = 'true'

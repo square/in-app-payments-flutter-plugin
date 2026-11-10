@@ -20,12 +20,12 @@
 #                   example/ios/Runner.xcworkspace/contents.xcworkspacedata
 #   flutter config --enable-swift-package-manager
 
-platform :ios, '14.0'
+platform :ios, '17.1'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-$sqipVersion = '1.6.7'
+$sqipVersion = '1.7.0'
 
 project 'Runner', {
   'Debug' => :debug,
@@ -46,6 +46,24 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
+post_integrate do |installer|
+  installer.aggregate_targets.map(&:user_project).compact.uniq.each do |project|
+    runner = project.native_targets.find { |target| target.name == 'Runner' }
+    next unless runner
+
+    phases = runner.build_phases
+    embed_phase = phases.find { |phase| phase.display_name == '[CP] Embed Pods Frameworks' }
+    setup_phase = phases.find { |phase| phase.display_name == 'Setup Square In-App Payments SDK' }
+    next unless embed_phase && setup_phase
+    next if phases.index(setup_phase) > phases.index(embed_phase)
+
+    # CocoaPods adds its embed phase after the existing setup phase.
+    phases.delete(setup_phase)
+    phases.insert(phases.index(embed_phase) + 1, setup_phase)
+    project.save
+  end
+end
+
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
@@ -61,7 +79,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.1'
     end
   end
 end
